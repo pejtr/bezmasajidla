@@ -19,6 +19,7 @@ import Recipes from "./pages/Recipes";
 import RecipeDetail from "./pages/RecipeDetail";
 import MapPage from "./pages/MapPage";
 import ProfilePage from "./pages/ProfilePage";
+import AboutPage from "./pages/AboutPage";
 
 function Router() {
   useScrollToTop();
@@ -31,6 +32,7 @@ function Router() {
       <Route path="/recepty/:slug" component={RecipeDetail} />
       <Route path="/mapa" component={MapPage} />
       <Route path="/profil" component={ProfilePage} />
+      <Route path="/o-nas" component={AboutPage} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

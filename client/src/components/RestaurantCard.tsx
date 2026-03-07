@@ -1,6 +1,8 @@
 // ============================================================
 // BEZMASAJIDLA.CZ — RestaurantCard Component
 // "Zelená Metropole" — card with rating, tags, open/closed, heart button
+// Mobile: stacked layout (image top, content below)
+// Desktop: horizontal layout (image left, content right)
 // ============================================================
 
 import { Link } from "wouter";
@@ -27,13 +29,14 @@ export default function RestaurantCard({ restaurant, rank }: Props) {
   return (
     <Link href={`/restaurace/${restaurant.slug}`}>
       <div className="restaurant-card bg-white rounded-xl border border-emerald-100 overflow-hidden group cursor-pointer">
-        <div className="flex gap-0">
+        {/* Mobile: stacked | Desktop: horizontal */}
+        <div className="flex flex-col sm:flex-row gap-0">
           {/* Image */}
-          <div className="relative w-36 sm:w-44 flex-shrink-0">
+          <div className="relative w-full sm:w-44 flex-shrink-0">
             <img
               src={restaurant.image}
               alt={restaurant.name}
-              className="w-full h-full object-cover min-h-[140px] group-hover:scale-105 transition-transform duration-300"
+              className="w-full h-44 sm:h-full object-cover sm:min-h-[140px] group-hover:scale-105 transition-transform duration-300"
             />
             {rank && (
               <div className="absolute top-2 left-2 w-7 h-7 bg-emerald-700 text-white text-xs font-bold rounded-full flex items-center justify-center shadow-md">
@@ -46,22 +49,38 @@ export default function RestaurantCard({ restaurant, rank }: Props) {
                 <span>TOP</span>
               </div>
             )}
+            {/* Heart button on image — mobile */}
+            <button
+              onClick={handleHeartClick}
+              className={`absolute bottom-2 right-2 sm:hidden w-8 h-8 rounded-full flex items-center justify-center transition-all shadow-md ${
+                isFav
+                  ? "bg-red-500 text-white"
+                  : "bg-white/90 text-gray-400 hover:text-red-400"
+              }`}
+              title={isFav ? "Odebrat z oblíbených" : "Přidat do oblíbených"}
+            >
+              <Heart className={`w-4 h-4 ${isFav ? "fill-white" : ""}`} />
+            </button>
           </div>
 
           {/* Content */}
-          <div className="flex-1 p-4 min-w-0">
-            {/* Header row */}
+          <div className="flex-1 p-3 sm:p-4 min-w-0">
+            {/* Header row — name always prominent */}
             <div className="flex items-start justify-between gap-2 mb-1">
-              <h3 className="font-semibold text-gray-900 text-base leading-tight group-hover:text-emerald-700 transition-colors truncate" style={{ fontFamily: "'DM Serif Display', serif" }}>
+              <h3
+                className="font-semibold text-gray-900 text-base sm:text-base leading-tight group-hover:text-emerald-700 transition-colors line-clamp-2 sm:truncate"
+                style={{ fontFamily: "'DM Serif Display', serif" }}
+              >
                 {restaurant.name}
               </h3>
               <div className="flex items-center gap-1.5 flex-shrink-0">
                 <span className={`text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${getTypeColor(restaurant.type)}`}>
                   {restaurant.type === "vegan" ? "Vegan" : restaurant.type === "vegetarian" ? "Vegetarián" : "Vegan-friendly"}
                 </span>
+                {/* Heart button — desktop only (mobile has overlay on image) */}
                 <button
                   onClick={handleHeartClick}
-                  className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+                  className={`hidden sm:flex w-7 h-7 rounded-full items-center justify-center transition-all ${
                     isFav
                       ? "bg-red-50 text-red-500 hover:bg-red-100"
                       : "bg-gray-50 text-gray-300 hover:bg-red-50 hover:text-red-400"
@@ -74,7 +93,7 @@ export default function RestaurantCard({ restaurant, rank }: Props) {
             </div>
 
             {/* Rating */}
-            <div className="flex items-center gap-1.5 mb-2">
+            <div className="flex items-center gap-1.5 mb-2 flex-wrap">
               <div className="flex items-center gap-0.5">
                 {Array.from({ length: stars.filled }).map((_, i) => (
                   <Star key={`f${i}`} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
@@ -85,8 +104,8 @@ export default function RestaurantCard({ restaurant, rank }: Props) {
                 ))}
               </div>
               <span className="text-sm font-semibold text-gray-800">{restaurant.rating.toFixed(1)}</span>
-              <span className="text-xs text-gray-400">({restaurant.reviewCount} recenzí)</span>
-              <span className={`text-xs font-medium ml-1 ${restaurant.isOpen ? "text-emerald-600" : "text-red-500"}`}>
+              <span className="text-xs text-gray-400">({restaurant.reviewCount})</span>
+              <span className={`text-xs font-medium ${restaurant.isOpen ? "text-emerald-600" : "text-red-500"}`}>
                 {restaurant.isOpen ? "● Otevřeno" : "● Zavřeno"}
               </span>
             </div>
@@ -100,8 +119,8 @@ export default function RestaurantCard({ restaurant, rank }: Props) {
               ))}
             </div>
 
-            {/* Description */}
-            <p className="text-xs text-gray-500 leading-relaxed line-clamp-2 mb-2">
+            {/* Description — hidden on very small screens to save space */}
+            <p className="hidden sm:block text-xs text-gray-500 leading-relaxed line-clamp-2 mb-2">
               {restaurant.description}
             </p>
 

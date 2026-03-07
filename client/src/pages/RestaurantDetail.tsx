@@ -12,6 +12,7 @@ import { restaurants, getTypeLabel, getTypeColor, renderStars } from "@/lib/data
 import { MapView } from "@/components/Map";
 import { useState } from "react";
 import { toast } from "sonner";
+import { RestaurantJsonLd, BreadcrumbJsonLd } from "@/components/JsonLd";
 
 const RESTAURANT_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/restaurant-placeholder-NfsuHQoJhFmyxCXwn7EygE.webp";
 
@@ -19,6 +20,17 @@ export default function RestaurantDetail() {
   const params = useParams<{ slug: string }>();
   const restaurant = restaurants.find((r) => r.slug === params.slug);
   const [mapReady, setMapReady] = useState(false);
+
+  const jsonLd = restaurant ? (
+    <>
+      <RestaurantJsonLd restaurant={restaurant} />
+      <BreadcrumbJsonLd items={[
+        { name: "Domů", url: "/" },
+        { name: "Restaurace", url: "/restaurace" },
+        { name: restaurant.name, url: `/restaurace/${restaurant.slug}` },
+      ]} />
+    </>
+  ) : null;
 
   if (!restaurant) {
     return (
@@ -51,6 +63,7 @@ export default function RestaurantDetail() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAF6]">
+      {jsonLd}
       <Header />
 
       {/* Breadcrumb */}
