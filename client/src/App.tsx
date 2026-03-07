@@ -1,3 +1,9 @@
+// ============================================================
+// BEZMASAJIDLA.CZ — App Router
+// "Zelená Metropole" design system
+// Routes: /, /restaurace, /restaurace/:slug, /recepty, /recepty/:slug, /mapa
+// ============================================================
+
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
@@ -5,31 +11,33 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
-
+import { useScrollToTop } from "./hooks/useScrollToTop";
+import Restaurants from "./pages/Restaurants";
+import RestaurantDetail from "./pages/RestaurantDetail";
+import Recipes from "./pages/Recipes";
+import RecipeDetail from "./pages/RecipeDetail";
+import MapPage from "./pages/MapPage";
 
 function Router() {
+  useScrollToTop();
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
+      <Route path="/" component={Home} />
+      <Route path="/restaurace" component={Restaurants} />
+      <Route path="/restaurace/:slug" component={RestaurantDetail} />
+      <Route path="/recepty" component={Recipes} />
+      <Route path="/recepty/:slug" component={RecipeDetail} />
+      <Route path="/mapa" component={MapPage} />
+      <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
   );
 }
 
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
-
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
+      <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster />
           <Router />

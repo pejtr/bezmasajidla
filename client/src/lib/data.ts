@@ -1,0 +1,476 @@
+// ============================================================
+// BEZMASAJIDLA.CZ — Restaurant & Recipe Data
+// "Zelená Metropole" design system
+// ============================================================
+
+export type RestaurantType = "vegan" | "vegetarian" | "friendly";
+
+export interface Restaurant {
+  id: string;
+  name: string;
+  slug: string;
+  type: RestaurantType;
+  rating: number;
+  reviewCount: number;
+  isOpen: boolean;
+  isPremium: boolean;
+  address: string;
+  district: string;
+  phone?: string;
+  website?: string;
+  description: string;
+  tags: string[];
+  image: string;
+  lat: number;
+  lng: number;
+  priceLevel: 1 | 2 | 3;
+  hours?: string;
+}
+
+export interface Recipe {
+  id: string;
+  title: string;
+  slug: string;
+  category: string;
+  prepTime: number;
+  cookTime: number;
+  servings: number;
+  difficulty: "snadný" | "střední" | "náročný";
+  image: string;
+  description: string;
+  tags: string[];
+  isVegan: boolean;
+}
+
+const RESTAURANT_PLACEHOLDER = "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/restaurant-placeholder-NfsuHQoJhFmyxCXwn7EygE.webp";
+
+export const restaurants: Restaurant[] = [
+  {
+    id: "1",
+    name: "Shromaždiště",
+    slug: "shromazdistepraha",
+    type: "vegan",
+    rating: 5.0,
+    reviewCount: 223,
+    isOpen: false,
+    isPremium: true,
+    address: "Krásova 13, Praha 3 — Žižkov",
+    district: "Praha 3",
+    phone: "+420 776 148 259",
+    description: "Veganský gastropub specializovaný na veganizaci tradičních českých jídel. Také nabízí výběr naložených/špinavých hranolek. Nachází se v tradiční a rustikální české hospodě v Žižkově.",
+    tags: ["Česká kuchyně", "Americká", "Fast food", "Pivo/Víno", "Evropská"],
+    image: RESTAURANT_PLACEHOLDER,
+    lat: 50.0820,
+    lng: 14.4501,
+    priceLevel: 2,
+    hours: "Po–Pá 11:00–22:00, So–Ne 12:00–22:00",
+  },
+  {
+    id: "2",
+    name: "Dosa Dosa",
+    slug: "dosa-dosa",
+    type: "vegan",
+    rating: 5.0,
+    reviewCount: 251,
+    isOpen: false,
+    isPremium: true,
+    address: "Újezd 43, Praha 1 — Malá Strana",
+    district: "Praha 1",
+    phone: "+420 725 511 536",
+    description: "Veganská jídelna/kavárna servírující dosy, indická a asijská jídla a dezerty. Nabízí také českou kuchyni jako součást denního menu.",
+    tags: ["Indická", "Organická", "Thajská", "Asijská", "Pekárna", "Snídaně", "Bezlepková"],
+    image: RESTAURANT_PLACEHOLDER,
+    lat: 50.0833,
+    lng: 14.4033,
+    priceLevel: 2,
+    hours: "Po–Ne 10:00–21:00",
+  },
+  {
+    id: "3",
+    name: "Share Sweet and Espresso Bar",
+    slug: "share-sweet-espresso",
+    type: "vegan",
+    rating: 5.0,
+    reviewCount: 334,
+    isOpen: false,
+    isPremium: false,
+    address: "Revoluční 18, Praha 1 — Nové Město",
+    district: "Praha 1",
+    phone: "+420 771 151 113",
+    description: "Veganský sladký a espresso bar provozovaný restaurací Palo Verde. Servíruje kávu, svačiny, obědy a dorty. Nabízí catering, narozeninové a svatební dorty.",
+    tags: ["Pekárna", "Catering", "Snídaně", "Rozvoz", "S sebou"],
+    image: RESTAURANT_PLACEHOLDER,
+    lat: 50.0897,
+    lng: 14.4282,
+    priceLevel: 1,
+    hours: "Po–Pá 8:00–18:00, So 9:00–17:00",
+  },
+  {
+    id: "4",
+    name: "Chutnej",
+    slug: "chutnej",
+    type: "vegan",
+    rating: 5.0,
+    reviewCount: 335,
+    isOpen: true,
+    isPremium: true,
+    address: "Letohradská 50, Praha 7 — Holešovice",
+    district: "Praha 7",
+    phone: "+420 222 250 724",
+    description: "Rostlinná restaurace a kavárna poblíž Letenské pláně. Nabízí denní brunch, oběd a sdílené večerní menu. Má také dezerty včetně pečiva ze sesterského podniku Krafin.",
+    tags: ["Italská", "Středomořská", "Pivo/Víno", "Snídaně", "S sebou"],
+    image: RESTAURANT_PLACEHOLDER,
+    lat: 50.1012,
+    lng: 14.4201,
+    priceLevel: 2,
+    hours: "Po–Pá 9:00–22:00, So–Ne 10:00–22:00",
+  },
+  {
+    id: "5",
+    name: "Eaternia",
+    slug: "eaternia",
+    type: "vegan",
+    rating: 5.0,
+    reviewCount: 150,
+    isOpen: false,
+    isPremium: false,
+    address: "Nádražní 349/3, Praha 5 — Smíchov",
+    district: "Praha 5",
+    description: "Veganský podnik v budově bývalé sladovny mezi dvěma železničními mosty. Sezónní pokrmy z místních surovin. Burgery, hot dogy, tradiční česká kuchyně a saláty.",
+    tags: ["Americká", "Mezinárodní", "Pivo/Víno", "Catering", "Rozvoz"],
+    image: RESTAURANT_PLACEHOLDER,
+    lat: 50.0701,
+    lng: 14.4052,
+    priceLevel: 2,
+    hours: "Út–Ne 12:00–21:00",
+  },
+  {
+    id: "6",
+    name: "Palo Verde",
+    slug: "palo-verde",
+    type: "vegan",
+    rating: 4.5,
+    reviewCount: 676,
+    isOpen: true,
+    isPremium: true,
+    address: "Žitná 45, Praha 2 — Nové Město",
+    district: "Praha 2",
+    phone: "+420 775 285 430",
+    description: "Rostlinný bistro s organickými víny a kávovými nápoji, denním výběrem pečiva a croissantů a slanými pokrmy jako čerstvě vyrobené těstoviny, houbové ravioli, Beyond burger, fusion misky a španské tapas.",
+    tags: ["Organická", "Pivo/Víno", "Pekárna", "Španělská", "Česká", "Fusion"],
+    image: RESTAURANT_PLACEHOLDER,
+    lat: 50.0762,
+    lng: 14.4261,
+    priceLevel: 2,
+    hours: "Po–Pá 8:00–22:00, So–Ne 9:00–22:00",
+  },
+  {
+    id: "7",
+    name: "Střecha",
+    slug: "strecha",
+    type: "vegan",
+    rating: 4.5,
+    reviewCount: 797,
+    isOpen: true,
+    isPremium: false,
+    address: "Křemencova 7, Praha 1 — Nové Město",
+    district: "Praha 1",
+    phone: "+420 737 048 487",
+    description: "Sociální podnik veganská restaurace zaměstnávající lidi bez domova a lidi po propuštění z vězení. Nabízí obědová menu, českou veganskou kuchyni, fair-trade kávu a alkoholické nápoje.",
+    tags: ["Mezinárodní", "Pivo/Víno", "Catering", "Česká"],
+    image: RESTAURANT_PLACEHOLDER,
+    lat: 50.0788,
+    lng: 14.4181,
+    priceLevel: 1,
+    hours: "Po–Pá 11:00–21:00",
+  },
+  {
+    id: "8",
+    name: "Koko Organic",
+    slug: "koko-organic",
+    type: "vegetarian",
+    rating: 5.0,
+    reviewCount: 58,
+    isOpen: false,
+    isPremium: false,
+    address: "Biskupská 1753/5, Praha 1 — Nové Město",
+    district: "Praha 1",
+    phone: "+420 777 583 999",
+    description: "Vegetariánský vietnamský podnik. Servíruje rýži, nudle a pad thai pokrmy. Téměř všechna jídla jsou veganská.",
+    tags: ["Asijská", "Vietnamská", "Organická"],
+    image: RESTAURANT_PLACEHOLDER,
+    lat: 50.0901,
+    lng: 14.4361,
+    priceLevel: 1,
+    hours: "Po–So 11:00–20:00",
+  },
+  {
+    id: "9",
+    name: "Linh — Not Just A Restaurant",
+    slug: "linh-restaurant",
+    type: "vegan",
+    rating: 4.5,
+    reviewCount: 454,
+    isOpen: true,
+    isPremium: true,
+    address: "Mánesova 7, Praha 2 — Vinohrady",
+    district: "Praha 2",
+    phone: "+420 608 045 711",
+    description: "Veganská vietnamská restaurace s pohádkovým interiérem. Nabízí rostlinná teplá jídla spolu s domácími dezerty, raw dorty, čerstvými džusy, smoothie a horkými nápoji. Pho, burgery, banh mi a pad thai.",
+    tags: ["Mezinárodní", "Pivo/Víno", "Asijská", "Vietnamská", "Bezlepková"],
+    image: RESTAURANT_PLACEHOLDER,
+    lat: 50.0762,
+    lng: 14.4401,
+    priceLevel: 2,
+    hours: "Po–Ne 11:00–22:00",
+  },
+  {
+    id: "10",
+    name: "Vegan's Prague",
+    slug: "vegans-prague",
+    type: "vegan",
+    rating: 4.5,
+    reviewCount: 884,
+    isOpen: false,
+    isPremium: false,
+    address: "Nerudova 36, Praha 1 — Malá Strana",
+    district: "Praha 1",
+    phone: "+420 735 171 313",
+    description: "Veganská restaurace v budově z 16. století poblíž Pražského hradu s terasou a výhledem, zal. 2016. Domácí česká a mezinárodní kuchyně. Guláš, raw čokoládový dort, bruschetta, sójové latte, cuketové lasagne.",
+    tags: ["Mezinárodní", "Organická", "Raw", "Juice bar", "Česká"],
+    image: RESTAURANT_PLACEHOLDER,
+    lat: 50.0882,
+    lng: 14.4001,
+    priceLevel: 2,
+    hours: "Po–Ne 11:00–21:00",
+  },
+  {
+    id: "11",
+    name: "Belzepub",
+    slug: "belzepub",
+    type: "vegan",
+    rating: 4.5,
+    reviewCount: 185,
+    isOpen: true,
+    isPremium: false,
+    address: "Záhřebská 6, Praha 2 — Vinohrady",
+    district: "Praha 2",
+    description: "Veganský bar a restaurace s výběrem piv, koktejlů a jídel. Přátelská atmosféra v srdci Vinohrad.",
+    tags: ["Pivo/Víno", "Česká", "Mezinárodní"],
+    image: RESTAURANT_PLACEHOLDER,
+    lat: 50.0741,
+    lng: 14.4421,
+    priceLevel: 2,
+    hours: "Po–Ne 16:00–01:00",
+  },
+  {
+    id: "12",
+    name: "Herbivore",
+    slug: "herbivore",
+    type: "vegan",
+    rating: 4.5,
+    reviewCount: 134,
+    isOpen: false,
+    isPremium: false,
+    address: "Mánesova 59, Praha 2 — Vinohrady",
+    district: "Praha 2",
+    description: "Útulná veganská kavárna a bistro na Vinohradech. Domácí pečivo, snídaně, obědy a dezerty.",
+    tags: ["Snídaně", "Pekárna", "Káva"],
+    image: RESTAURANT_PLACEHOLDER,
+    lat: 50.0752,
+    lng: 14.4441,
+    priceLevel: 1,
+    hours: "Po–Pá 8:00–18:00, So–Ne 9:00–17:00",
+  },
+  {
+    id: "13",
+    name: "Pastva",
+    slug: "pastva",
+    type: "vegetarian",
+    rating: 4.5,
+    reviewCount: 179,
+    isOpen: true,
+    isPremium: false,
+    address: "Mánesova 87, Praha 2 — Vinohrady",
+    district: "Praha 2",
+    description: "Vegetariánská restaurace s důrazem na lokální a sezónní suroviny. Kreativní pokrmy inspirované českou i mezinárodní kuchyní.",
+    tags: ["Česká", "Mezinárodní", "Organická", "Sezónní"],
+    image: RESTAURANT_PLACEHOLDER,
+    lat: 50.0731,
+    lng: 14.4461,
+    priceLevel: 2,
+    hours: "Út–Ne 12:00–22:00",
+  },
+  {
+    id: "14",
+    name: "Onigirazu",
+    slug: "onigirazu",
+    type: "friendly",
+    rating: 4.5,
+    reviewCount: 69,
+    isOpen: false,
+    isPremium: false,
+    address: "Korunní 18, Praha 2 — Vinohrady",
+    district: "Praha 2",
+    description: "Japonský podnik specializovaný na onigirazu — japonské sendviče z rýže. Mnoho veganských možností.",
+    tags: ["Japonská", "Asijská", "S sebou"],
+    image: RESTAURANT_PLACEHOLDER,
+    lat: 50.0771,
+    lng: 14.4381,
+    priceLevel: 1,
+    hours: "Po–So 11:00–19:00",
+  },
+  {
+    id: "15",
+    name: "Loving Hut — Na Poříčí",
+    slug: "loving-hut-na-porici",
+    type: "vegan",
+    rating: 4.5,
+    reviewCount: 238,
+    isOpen: false,
+    isPremium: false,
+    address: "Na Poříčí 25, Praha 1 — Nové Město",
+    district: "Praha 1",
+    description: "Součást mezinárodního řetězce veganských restaurací. Nabízí asijská jídla, polévky, saláty a dezerty za dostupné ceny.",
+    tags: ["Asijská", "Mezinárodní", "Rozvoz", "S sebou"],
+    image: RESTAURANT_PLACEHOLDER,
+    lat: 50.0921,
+    lng: 14.4341,
+    priceLevel: 1,
+    hours: "Po–Pá 10:00–20:00, So 11:00–19:00",
+  },
+];
+
+const RECIPE_PLACEHOLDER = "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/recipe-hero-kAEk42WS8auJkLKnU8C6NV.webp";
+
+export const recipes: Recipe[] = [
+  {
+    id: "r1",
+    title: "Veganská svíčková na smetaně",
+    slug: "veganska-svickova",
+    category: "Hlavní jídla",
+    prepTime: 30,
+    cookTime: 90,
+    servings: 4,
+    difficulty: "střední",
+    image: RECIPE_PLACEHOLDER,
+    description: "Klasická česká svíčková v rostlinné verzi. Seitan místo hovězího, cashew smetana a tradiční omáčka z kořenové zeleniny.",
+    tags: ["Česká kuchyně", "Seitan", "Tradiční"],
+    isVegan: true,
+  },
+  {
+    id: "r2",
+    title: "Čočková polévka s uzenou paprikou",
+    slug: "cocková-polevka-uzena-paprika",
+    category: "Polévky",
+    prepTime: 10,
+    cookTime: 30,
+    servings: 4,
+    difficulty: "snadný",
+    image: RECIPE_PLACEHOLDER,
+    description: "Hustá a výživná čočková polévka s kouřovým aroma uzené papriky. Ideální na chladné dny.",
+    tags: ["Polévka", "Čočka", "Rychlé"],
+    isVegan: true,
+  },
+  {
+    id: "r3",
+    title: "Buddha bowl s pečenou zeleninou",
+    slug: "buddha-bowl-pecena-zelenina",
+    category: "Saláty a misky",
+    prepTime: 15,
+    cookTime: 25,
+    servings: 2,
+    difficulty: "snadný",
+    image: RECIPE_PLACEHOLDER,
+    description: "Barevná miska plná výživy — quinoa, pečená zelenina, avokádo, cizrna a tahini dresink.",
+    tags: ["Bowl", "Quinoa", "Zdravé"],
+    isVegan: true,
+  },
+  {
+    id: "r4",
+    title: "Veganský guláš s knedlíky",
+    slug: "vegansky-gulas-knedliky",
+    category: "Hlavní jídla",
+    prepTime: 20,
+    cookTime: 60,
+    servings: 4,
+    difficulty: "střední",
+    image: RECIPE_PLACEHOLDER,
+    description: "Tradiční český guláš bez masa — houby a seitan v bohaté paprikové omáčce s domácími houskových knedlíky.",
+    tags: ["Česká kuchyně", "Guláš", "Tradiční"],
+    isVegan: true,
+  },
+  {
+    id: "r5",
+    title: "Špenátové palačinky s tofu ricottou",
+    slug: "spenatove-palacinkys-tofu-ricottou",
+    category: "Snídaně",
+    prepTime: 15,
+    cookTime: 20,
+    servings: 2,
+    difficulty: "snadný",
+    image: RECIPE_PLACEHOLDER,
+    description: "Zelené špenátové palačinky plněné krémovou tofu ricottou s citronem a čerstvými bylinkami.",
+    tags: ["Snídaně", "Palačinky", "Špenát"],
+    isVegan: true,
+  },
+  {
+    id: "r6",
+    title: "Houbové rizoto s parmezánem z kešu",
+    slug: "houbove-rizoto-kešu-parmezan",
+    category: "Hlavní jídla",
+    prepTime: 10,
+    cookTime: 35,
+    servings: 3,
+    difficulty: "střední",
+    image: RECIPE_PLACEHOLDER,
+    description: "Krémové rizoto s lesními houbami a domácím veganským parmezánem z kešu ořechů.",
+    tags: ["Italská", "Rizoto", "Houby"],
+    isVegan: true,
+  },
+];
+
+export const districts = [
+  "Všechny čtvrti",
+  "Praha 1",
+  "Praha 2",
+  "Praha 3",
+  "Praha 5",
+  "Praha 7",
+];
+
+export const cuisineTags = [
+  "Česká kuchyně",
+  "Asijská",
+  "Italská",
+  "Indická",
+  "Vietnamská",
+  "Mezinárodní",
+  "Organická",
+  "Raw",
+  "Snídaně",
+  "Pekárna",
+];
+
+export const getTypeLabel = (type: RestaurantType): string => {
+  switch (type) {
+    case "vegan": return "Veganská restaurace";
+    case "vegetarian": return "Vegetariánská restaurace";
+    case "friendly": return "Vegan-friendly";
+  }
+};
+
+export const getTypeColor = (type: RestaurantType): string => {
+  switch (type) {
+    case "vegan": return "bg-emerald-700 text-white";
+    case "vegetarian": return "bg-emerald-500 text-white";
+    case "friendly": return "bg-amber-400 text-amber-900";
+  }
+};
+
+export const renderStars = (rating: number): { filled: number; half: boolean; empty: number } => {
+  const filled = Math.floor(rating);
+  const half = rating % 1 >= 0.5;
+  const empty = 5 - filled - (half ? 1 : 0);
+  return { filled, half, empty };
+};
