@@ -34,7 +34,10 @@ const categories = [
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
-  const topRestaurants = restaurants.slice(0, 5);
+  // Curated top restaurants: sort by popularity score (rating × reviewCount), show top 6
+  const topRestaurants = [...restaurants]
+    .sort((a, b) => (b.rating * b.reviewCount) - (a.rating * a.reviewCount))
+    .slice(0, 6);
   const featuredRecipes = recipes.slice(0, 3);
 
   const handleSearch = (e: React.FormEvent) => {

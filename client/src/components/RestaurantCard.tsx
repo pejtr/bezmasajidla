@@ -1,11 +1,12 @@
 // ============================================================
 // BEZMASAJIDLA.CZ — RestaurantCard Component
-// "Zelená Metropole" — card with rating, tags, open/closed
+// "Zelená Metropole" — card with rating, tags, open/closed, heart button
 // ============================================================
 
 import { Link } from "wouter";
-import { MapPin, Phone, Star, Crown } from "lucide-react";
-import { Restaurant, getTypeLabel, getTypeColor, renderStars } from "@/lib/data";
+import { MapPin, Phone, Star, Crown, Heart } from "lucide-react";
+import { Restaurant, getTypeColor, renderStars } from "@/lib/data";
+import { useFavorites } from "@/contexts/FavoritesContext";
 
 interface Props {
   restaurant: Restaurant;
@@ -14,6 +15,14 @@ interface Props {
 
 export default function RestaurantCard({ restaurant, rank }: Props) {
   const stars = renderStars(restaurant.rating);
+  const { isRestaurantFavorite, toggleRestaurant } = useFavorites();
+  const isFav = isRestaurantFavorite(restaurant.slug);
+
+  const handleHeartClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleRestaurant(restaurant.slug);
+  };
 
   return (
     <Link href={`/restaurace/${restaurant.slug}`}>
@@ -46,11 +55,22 @@ export default function RestaurantCard({ restaurant, rank }: Props) {
               <h3 className="font-semibold text-gray-900 text-base leading-tight group-hover:text-emerald-700 transition-colors truncate" style={{ fontFamily: "'DM Serif Display', serif" }}>
                 {restaurant.name}
               </h3>
-              <span
-                className={`text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0 ${getTypeColor(restaurant.type)}`}
-              >
-                {restaurant.type === "vegan" ? "Vegan" : restaurant.type === "vegetarian" ? "Vegetarián" : "Vegan-friendly"}
-              </span>
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${getTypeColor(restaurant.type)}`}>
+                  {restaurant.type === "vegan" ? "Vegan" : restaurant.type === "vegetarian" ? "Vegetarián" : "Vegan-friendly"}
+                </span>
+                <button
+                  onClick={handleHeartClick}
+                  className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+                    isFav
+                      ? "bg-red-50 text-red-500 hover:bg-red-100"
+                      : "bg-gray-50 text-gray-300 hover:bg-red-50 hover:text-red-400"
+                  }`}
+                  title={isFav ? "Odebrat z oblíbených" : "Přidat do oblíbených"}
+                >
+                  <Heart className={`w-3.5 h-3.5 ${isFav ? "fill-red-500" : ""}`} />
+                </button>
+              </div>
             </div>
 
             {/* Rating */}

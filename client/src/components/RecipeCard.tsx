@@ -1,11 +1,12 @@
 // ============================================================
 // BEZMASAJIDLA.CZ — RecipeCard Component
-// "Zelená Metropole" — recipe card with time, difficulty, tags
+// "Zelená Metropole" — recipe card with time, difficulty, bookmark button
 // ============================================================
 
 import { Link } from "wouter";
-import { Clock, Users, ChefHat } from "lucide-react";
+import { Clock, Users, ChefHat, Bookmark } from "lucide-react";
 import { Recipe } from "@/lib/data";
+import { useFavorites } from "@/contexts/FavoritesContext";
 
 interface Props {
   recipe: Recipe;
@@ -13,12 +14,20 @@ interface Props {
 
 export default function RecipeCard({ recipe }: Props) {
   const totalTime = recipe.prepTime + recipe.cookTime;
+  const { isRecipeFavorite, toggleRecipe } = useFavorites();
+  const isFav = isRecipeFavorite(recipe.slug);
 
   const difficultyColor = {
     snadný: "bg-emerald-100 text-emerald-700",
     střední: "bg-amber-100 text-amber-700",
     náročný: "bg-red-100 text-red-700",
   }[recipe.difficulty];
+
+  const handleBookmarkClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleRecipe(recipe.slug);
+  };
 
   return (
     <Link href={`/recepty/${recipe.slug}`}>
@@ -39,6 +48,18 @@ export default function RecipeCard({ recipe }: Props) {
           <span className={`absolute top-3 right-3 text-xs font-semibold px-2 py-0.5 rounded-full ${difficultyColor}`}>
             {recipe.difficulty}
           </span>
+          {/* Bookmark button */}
+          <button
+            onClick={handleBookmarkClick}
+            className={`absolute bottom-3 right-3 w-8 h-8 rounded-full flex items-center justify-center shadow-md transition-all ${
+              isFav
+                ? "bg-emerald-700 text-white"
+                : "bg-white/80 text-gray-500 hover:bg-emerald-700 hover:text-white"
+            }`}
+            title={isFav ? "Odebrat z oblíbených" : "Uložit recept"}
+          >
+            <Bookmark className={`w-4 h-4 ${isFav ? "fill-white" : ""}`} />
+          </button>
         </div>
 
         {/* Content */}

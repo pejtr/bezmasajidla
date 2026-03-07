@@ -1,16 +1,20 @@
 // ============================================================
 // BEZMASAJIDLA.CZ — Header Component
 // "Zelená Metropole" — sticky nav, emerald brand, DM Serif logo
+// Includes profile icon with favorites count badge
 // ============================================================
 
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, Search, Leaf, ChevronDown } from "lucide-react";
+import { Menu, X, Search, Leaf, Heart, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useFavorites } from "@/contexts/FavoritesContext";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [location] = useLocation();
+  const { favoriteRestaurants, favoriteRecipes } = useFavorites();
+  const totalFavorites = favoriteRestaurants.length + favoriteRecipes.length;
 
   const navLinks = [
     { href: "/restaurace", label: "Restaurace" },
@@ -54,10 +58,30 @@ export default function Header() {
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-2">
             <button className="p-2 text-gray-500 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors">
               <Search className="w-4 h-4" />
             </button>
+
+            {/* Profile / Favorites icon */}
+            <Link href="/profil">
+              <button
+                className={`relative p-2 rounded-lg transition-colors ${
+                  location === "/profil"
+                    ? "bg-emerald-50 text-emerald-700"
+                    : "text-gray-500 hover:text-emerald-700 hover:bg-emerald-50"
+                }`}
+                title="Můj profil a oblíbené"
+              >
+                <User className="w-4 h-4" />
+                {totalFavorites > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                    {totalFavorites > 9 ? "9+" : totalFavorites}
+                  </span>
+                )}
+              </button>
+            </Link>
+
             <Button
               size="sm"
               className="bg-emerald-700 hover:bg-emerald-600 text-white text-sm font-medium"
@@ -67,12 +91,25 @@ export default function Header() {
           </div>
 
           {/* Mobile Menu Toggle */}
-          <button
-            className="md:hidden p-2 text-gray-600 hover:text-emerald-700 rounded-lg"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+          <div className="md:hidden flex items-center gap-2">
+            {/* Mobile profile icon */}
+            <Link href="/profil">
+              <button className="relative p-2 text-gray-600 hover:text-emerald-700 rounded-lg">
+                <User className="w-5 h-5" />
+                {totalFavorites > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                    {totalFavorites > 9 ? "9+" : totalFavorites}
+                  </span>
+                )}
+              </button>
+            </Link>
+            <button
+              className="p-2 text-gray-600 hover:text-emerald-700 rounded-lg"
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
@@ -89,6 +126,19 @@ export default function Header() {
                   {link.label}
                 </Link>
               ))}
+              <Link
+                href="/profil"
+                className="px-4 py-3 text-sm font-medium text-gray-700 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors flex items-center gap-2"
+                onClick={() => setMenuOpen(false)}
+              >
+                <Heart className="w-4 h-4 text-red-400" />
+                Moje oblíbené
+                {totalFavorites > 0 && (
+                  <span className="ml-auto bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+                    {totalFavorites}
+                  </span>
+                )}
+              </Link>
               <div className="pt-2 border-t border-emerald-100 mt-2">
                 <Button className="w-full bg-emerald-700 hover:bg-emerald-600 text-white">
                   + Přidat restauraci

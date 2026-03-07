@@ -1,7 +1,7 @@
 // ============================================================
 // BEZMASAJIDLA.CZ — App Router
 // "Zelená Metropole" design system
-// Routes: /, /restaurace, /restaurace/:slug, /recepty, /recepty/:slug, /mapa
+// Routes: /, /restaurace, /restaurace/:slug, /recepty, /recepty/:slug, /mapa, /profil
 // ============================================================
 
 import { Toaster } from "@/components/ui/sonner";
@@ -10,6 +10,7 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { FavoritesProvider } from "./contexts/FavoritesContext";
 import Home from "./pages/Home";
 import { useScrollToTop } from "./hooks/useScrollToTop";
 import Restaurants from "./pages/Restaurants";
@@ -17,6 +18,7 @@ import RestaurantDetail from "./pages/RestaurantDetail";
 import Recipes from "./pages/Recipes";
 import RecipeDetail from "./pages/RecipeDetail";
 import MapPage from "./pages/MapPage";
+import ProfilePage from "./pages/ProfilePage";
 
 function Router() {
   useScrollToTop();
@@ -28,6 +30,7 @@ function Router() {
       <Route path="/recepty" component={Recipes} />
       <Route path="/recepty/:slug" component={RecipeDetail} />
       <Route path="/mapa" component={MapPage} />
+      <Route path="/profil" component={ProfilePage} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
@@ -37,12 +40,14 @@ function Router() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="light">
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
-      </ThemeProvider>
+      <FavoritesProvider>
+        <ThemeProvider defaultTheme="light">
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+          </TooltipProvider>
+        </ThemeProvider>
+      </FavoritesProvider>
     </ErrorBoundary>
   );
 }
