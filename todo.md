@@ -24,3 +24,15 @@
 - [x] Add dietary tags to restaurant data (vegan, vegetarian, gluten-free, raw, etc.)
 - [x] Implement dietary filter UI on Restaurants page (multi-select filter chips)
 - [x] Ensure filters work with existing search and district filters
+- [x] Optimize image loading: add lazy loading, blur placeholders, and progressive loading
+- [x] Add sorting options to Restaurants page (rating, reviews, distance, price)
+- [x] Add price level data to all restaurants ($, $$, $$$)
+- [x] Add price range filter in sidebar
+- [x] Add dynamic SEO meta tags (title, description) for all pages
+- [x] Add Open Graph meta tags for restaurant and recipe detail pages
+- [x] Fix price level display: change KčKčKč to readable format (e.g. $ / $$ / $$$ or Kč icons)
+- [x] Fix Google Maps API loaded multiple times on /mapa page
+- [x] Add 15-20 new SEO-optimized vegetarian/vegan recipes targeting high-volume keywords
+- [x] Generate 3 AI images per new recipe with SEO-optimized filenames
+- [x] Add full ingredients and step-by-step instructions for each new recipe
+- [x] Add all Beas Dhaba branches in Prague to restaurant data (21 branches added)

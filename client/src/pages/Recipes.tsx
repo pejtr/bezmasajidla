@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import RecipeCard from "@/components/RecipeCard";
 import { recipes } from "@/lib/data";
 import { Link } from "wouter";
+import SEOHead from "@/components/SEOHead";
 
 const RECIPE_HERO = "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/recipe-hero-kAEk42WS8auJkLKnU8C6NV.webp";
 
@@ -31,6 +32,11 @@ export default function Recipes() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAF6]">
+      <SEOHead
+        title="Bezmasé Recepty — Veganské a Vegetariánské Recepty"
+        description="Sbírka ověřených veganských a vegetariánských receptů. Hlavní jídla, polévky, saláty, dezerty a snídaně bez masa."
+        ogUrl="https://www.bezmasajidla.cz/recepty"
+      />
       <Header />
 
       {/* Hero */}

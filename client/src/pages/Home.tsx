@@ -15,6 +15,7 @@ import RecipeCard from "@/components/RecipeCard";
 import { restaurants, recipes } from "@/lib/data";
 import NewsletterBanner from "@/components/NewsletterBanner";
 import { WebsiteJsonLd } from "@/components/JsonLd";
+import SEOHead from "@/components/SEOHead";
 
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hero-bg-8DsoJ9QpVxJTndww9Yv7SZ.webp";
 const MAP_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/map-section-bg-Xt3deu7E3AeXh6WhYnAxDq.webp";
@@ -50,6 +51,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAF6]">
+      <SEOHead
+        title="Bezmasá Jídla — Veganské a Vegetariánské Restaurace v Praze"
+        description="Největší český průvodce veganskými a vegetariánskými restauracemi v Praze. Najdi nejlepší bezmasá jídla, přečti recenze a objevuj nové recepty."
+        ogUrl="https://www.bezmasajidla.cz/"
+      />
       <WebsiteJsonLd />
       <Header />
 

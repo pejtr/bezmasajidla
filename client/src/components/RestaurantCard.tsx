@@ -9,6 +9,7 @@ import { Link } from "wouter";
 import { MapPin, Phone, Star, Crown, Heart } from "lucide-react";
 import { Restaurant, getTypeColor, renderStars } from "@/lib/data";
 import { useFavorites } from "@/contexts/FavoritesContext";
+import OptimizedImage from "@/components/OptimizedImage";
 
 interface Props {
   restaurant: Restaurant;
@@ -33,10 +34,11 @@ export default function RestaurantCard({ restaurant, rank }: Props) {
         <div className="flex flex-col sm:flex-row gap-0">
           {/* Image */}
           <div className="relative w-full sm:w-44 flex-shrink-0">
-            <img
+            <OptimizedImage
               src={restaurant.image}
-              alt={restaurant.name}
-              className="w-full h-44 sm:h-full object-cover sm:min-h-[140px] group-hover:scale-105 transition-transform duration-300"
+              alt={`${restaurant.name} — ${restaurant.type === "vegan" ? "veganská" : restaurant.type === "vegetarian" ? "vegetariánská" : "vegan-friendly"} restaurace v Praze`}
+              className="w-full h-44 sm:h-full sm:min-h-[140px] group-hover:scale-105 transition-transform duration-300"
+              placeholderColor="#d1fae5"
             />
             {rank && (
               <div className="absolute top-2 left-2 w-7 h-7 bg-emerald-700 text-white text-xs font-bold rounded-full flex items-center justify-center shadow-md">
@@ -107,6 +109,14 @@ export default function RestaurantCard({ restaurant, rank }: Props) {
               <span className="text-xs text-gray-400">({restaurant.reviewCount})</span>
               <span className={`text-xs font-medium ${restaurant.isOpen ? "text-emerald-600" : "text-red-500"}`}>
                 {restaurant.isOpen ? "● Otevřeno" : "● Zavřeno"}
+              </span>
+              <span className="text-xs font-medium" title={restaurant.priceLevel === 1 ? "Do 200 Kč" : restaurant.priceLevel === 2 ? "200–400 Kč" : "400+ Kč"}>
+                {Array.from({ length: restaurant.priceLevel }).map((_, i) => (
+                  <span key={i} className="text-amber-600">Kč</span>
+                ))}
+                {Array.from({ length: 3 - restaurant.priceLevel }).map((_, i) => (
+                  <span key={i} className="text-amber-300/50">Kč</span>
+                ))}
               </span>
             </div>
 

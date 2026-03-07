@@ -7,6 +7,7 @@ import { Link } from "wouter";
 import { Clock, Users, ChefHat, Bookmark } from "lucide-react";
 import { Recipe } from "@/lib/data";
 import { useFavorites } from "@/contexts/FavoritesContext";
+import OptimizedImage from "@/components/OptimizedImage";
 
 interface Props {
   recipe: Recipe;
@@ -34,10 +35,11 @@ export default function RecipeCard({ recipe }: Props) {
       <div className="restaurant-card bg-white rounded-xl border border-emerald-100 overflow-hidden group cursor-pointer">
         {/* Image */}
         <div className="relative h-48 overflow-hidden">
-          <img
+          <OptimizedImage
             src={recipe.images?.[0]?.url || recipe.image}
             alt={recipe.images?.[0]?.alt || recipe.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full group-hover:scale-105 transition-transform duration-300"
+            placeholderColor="#d1fae5"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
           {recipe.isVegan && (

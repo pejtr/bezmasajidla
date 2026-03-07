@@ -1,18 +1,36 @@
 // ============================================================
 // BEZMASAJIDLA.CZ — Restaurants Listing Page
 // "Zelená Metropole" — two-column: filters left, results right
-// Includes dietary options filter (bezlepkové, raw, bio, etc.)
+// Includes dietary options filter, price filter, and sorting
 // ============================================================
 
 import { useState, useMemo } from "react";
 import { useLocation } from "wouter";
-import { Search, SlidersHorizontal, X, MapPin, Filter } from "lucide-react";
+import { Search, SlidersHorizontal, X, MapPin, Filter, ArrowUpDown, ChevronDown } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import RestaurantCard from "@/components/RestaurantCard";
 import { restaurants, districts, cuisineTags, dietaryOptionsConfig, RestaurantType, DietaryOption } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import SEOHead from "@/components/SEOHead";
+
+type SortOption = "popularity" | "rating" | "reviews" | "price-asc" | "price-desc" | "name";
+
+const sortOptions: { value: SortOption; label: string }[] = [
+  { value: "popularity", label: "Popularita" },
+  { value: "rating", label: "Nejlépe hodnocené" },
+  { value: "reviews", label: "Nejvíce recenzí" },
+  { value: "price-asc", label: "Cena: nejlevnější" },
+  { value: "price-desc", label: "Cena: nejdražší" },
+  { value: "name", label: "Název A–Z" },
+];
+
+const priceLevels = [
+  { value: 1, label: "Kč", description: "Do 200 Kč" },
+  { value: 2, label: "Kč Kč", description: "200–400 Kč" },
+  { value: 3, label: "Kč Kč Kč", description: "400+ Kč" },
+] as const;
 
 export default function Restaurants() {
   const [location] = useLocation();
@@ -25,22 +43,49 @@ export default function Restaurants() {
   const [selectedDistrict, setSelectedDistrict] = useState(params.get("district") || "Všechny čtvrti");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedDietary, setSelectedDietary] = useState<DietaryOption[]>([]);
+  const [selectedPriceLevels, setSelectedPriceLevels] = useState<number[]>([]);
   const [showOpenOnly, setShowOpenOnly] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [sortBy, setSortBy] = useState<SortOption>("popularity");
+  const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
 
   const filtered = useMemo(() => {
-    return restaurants.filter((r) => {
+    let result = restaurants.filter((r) => {
       if (searchQuery && !r.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
           !r.description.toLowerCase().includes(searchQuery.toLowerCase())) return false;
       if (selectedType !== "all" && r.type !== selectedType) return false;
       if (selectedDistrict !== "Všechny čtvrti" && r.district !== selectedDistrict) return false;
       if (showOpenOnly && !r.isOpen) return false;
       if (selectedTags.length > 0 && !selectedTags.some(t => r.tags.includes(t))) return false;
-      // Dietary filter: restaurant must have ALL selected dietary options
       if (selectedDietary.length > 0 && !selectedDietary.every(d => r.dietaryOptions.includes(d))) return false;
+      if (selectedPriceLevels.length > 0 && !selectedPriceLevels.includes(r.priceLevel)) return false;
       return true;
     });
-  }, [searchQuery, selectedType, selectedDistrict, showOpenOnly, selectedTags, selectedDietary]);
+
+    // Sort
+    switch (sortBy) {
+      case "popularity":
+        result.sort((a, b) => (b.rating * b.reviewCount) - (a.rating * a.reviewCount));
+        break;
+      case "rating":
+        result.sort((a, b) => b.rating - a.rating || b.reviewCount - a.reviewCount);
+        break;
+      case "reviews":
+        result.sort((a, b) => b.reviewCount - a.reviewCount);
+        break;
+      case "price-asc":
+        result.sort((a, b) => a.priceLevel - b.priceLevel || b.rating - a.rating);
+        break;
+      case "price-desc":
+        result.sort((a, b) => b.priceLevel - a.priceLevel || b.rating - a.rating);
+        break;
+      case "name":
+        result.sort((a, b) => a.name.localeCompare(b.name, "cs"));
+        break;
+    }
+
+    return result;
+  }, [searchQuery, selectedType, selectedDistrict, showOpenOnly, selectedTags, selectedDietary, selectedPriceLevels, sortBy]);
 
   const toggleTag = (tag: string) => {
     setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
@@ -50,6 +95,10 @@ export default function Restaurants() {
     setSelectedDietary(prev => prev.includes(option) ? prev.filter(d => d !== option) : [...prev, option]);
   };
 
+  const togglePriceLevel = (level: number) => {
+    setSelectedPriceLevels(prev => prev.includes(level) ? prev.filter(l => l !== level) : [...prev, level]);
+  };
+
   const clearFilters = () => {
     setSearchQuery("");
     setSelectedType("all");
@@ -57,11 +106,12 @@ export default function Restaurants() {
     setShowOpenOnly(false);
     setSelectedTags([]);
     setSelectedDietary([]);
+    setSelectedPriceLevels([]);
   };
 
-  const hasFilters = selectedType !== "all" || selectedDistrict !== "Všechny čtvrti" || showOpenOnly || selectedTags.length > 0 || searchQuery || selectedDietary.length > 0;
+  const hasFilters = selectedType !== "all" || selectedDistrict !== "Všechny čtvrti" || showOpenOnly || selectedTags.length > 0 || searchQuery || selectedDietary.length > 0 || selectedPriceLevels.length > 0;
 
-  const activeFilterCount = (selectedType !== "all" ? 1 : 0) + (selectedDistrict !== "Všechny čtvrti" ? 1 : 0) + (showOpenOnly ? 1 : 0) + selectedTags.length + selectedDietary.length;
+  const activeFilterCount = (selectedType !== "all" ? 1 : 0) + (selectedDistrict !== "Všechny čtvrti" ? 1 : 0) + (showOpenOnly ? 1 : 0) + selectedTags.length + selectedDietary.length + selectedPriceLevels.length;
 
   const typeOptions: { value: RestaurantType | "all"; label: string; color: string }[] = [
     { value: "all", label: "Vše", color: "bg-gray-100 text-gray-700 hover:bg-gray-200" },
@@ -79,6 +129,11 @@ export default function Restaurants() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAF6]">
+      <SEOHead
+        title="Veganské a Vegetariánské Restaurace v Praze"
+        description="Kompletní přehled veganských, vegetariánských a vegan-friendly restaurací v Praze. Filtrujte podle čtvrti, kuchyně, cenové hladiny a dietních preferencí."
+        ogUrl="https://www.bezmasajidla.cz/restaurace"
+      />
       <Header />
 
       {/* Page header */}
@@ -155,6 +210,14 @@ export default function Restaurants() {
                 </button>
               </span>
             )}
+            {selectedPriceLevels.map(level => (
+              <span key={level} className="inline-flex items-center gap-1 text-xs bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full font-medium">
+                {priceLevels.find(p => p.value === level)?.label} — {priceLevels.find(p => p.value === level)?.description}
+                <button onClick={() => togglePriceLevel(level)} className="hover:text-amber-950">
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            ))}
             {selectedDietary.map(d => {
               const config = dietaryOptionsConfig.find(c => c.value === d);
               return (
@@ -214,6 +277,39 @@ export default function Restaurants() {
                       }`}
                     >
                       {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* ── PRICE LEVEL FILTER ── */}
+              <div className="mb-5">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                  Cenová hladina
+                </p>
+                <div className="flex flex-col gap-1.5">
+                  {priceLevels.map((level) => (
+                    <button
+                      key={level.value}
+                      onClick={() => togglePriceLevel(level.value)}
+                      className={`flex items-center gap-2.5 py-2 px-3 rounded-lg border transition-all duration-200 text-left ${
+                        selectedPriceLevels.includes(level.value)
+                          ? "bg-amber-50 border-amber-400 text-amber-800 shadow-sm"
+                          : "bg-white border-emerald-100 text-gray-500 hover:border-amber-300 hover:text-amber-700 hover:bg-amber-50/50"
+                      }`}
+                      title={level.description}
+                    >
+                      <span className={`text-sm font-bold whitespace-nowrap ${
+                        selectedPriceLevels.includes(level.value) ? "text-amber-600" : "text-gray-400"
+                      }`}>
+                        {Array.from({ length: level.value }).map((_, i) => (
+                          <span key={i} className="inline-block">Kč</span>
+                        ))}
+                        {Array.from({ length: 3 - level.value }).map((_, i) => (
+                          <span key={i} className="inline-block opacity-25">Kč</span>
+                        ))}
+                      </span>
+                      <span className="text-xs">{level.description}</span>
                     </button>
                   ))}
                 </div>
@@ -304,16 +400,49 @@ export default function Restaurants() {
 
           {/* ── RESULTS ── */}
           <div className="flex-1 min-w-0">
-            {/* Results count */}
+            {/* Results count + sorting */}
             <div className="flex items-center justify-between mb-4">
               <p className="text-sm text-gray-500">
                 Nalezeno <span className="font-semibold text-gray-900">{filtered.length}</span> restaurací
               </p>
-              {hasFilters && (
-                <button onClick={clearFilters} className="text-xs text-emerald-600 hover:text-emerald-800 flex items-center gap-1 md:hidden">
-                  <X className="w-3 h-3" /> Vymazat filtry
-                </button>
-              )}
+              <div className="flex items-center gap-3">
+                {hasFilters && (
+                  <button onClick={clearFilters} className="text-xs text-emerald-600 hover:text-emerald-800 flex items-center gap-1 md:hidden">
+                    <X className="w-3 h-3" /> Vymazat filtry
+                  </button>
+                )}
+                {/* Sort dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
+                    className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-emerald-700 bg-white border border-emerald-100 rounded-lg px-3 py-1.5 shadow-sm transition-colors"
+                  >
+                    <ArrowUpDown className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">{sortOptions.find(s => s.value === sortBy)?.label}</span>
+                    <ChevronDown className="w-3 h-3" />
+                  </button>
+                  {sortDropdownOpen && (
+                    <>
+                      <div className="fixed inset-0 z-10" onClick={() => setSortDropdownOpen(false)} />
+                      <div className="absolute right-0 top-full mt-1 bg-white border border-emerald-100 rounded-xl shadow-lg z-20 py-1 w-48">
+                        {sortOptions.map((opt) => (
+                          <button
+                            key={opt.value}
+                            onClick={() => { setSortBy(opt.value); setSortDropdownOpen(false); }}
+                            className={`w-full text-left text-sm px-4 py-2 transition-colors ${
+                              sortBy === opt.value
+                                ? "bg-emerald-50 text-emerald-700 font-medium"
+                                : "text-gray-600 hover:bg-emerald-50 hover:text-emerald-700"
+                            }`}
+                          >
+                            {opt.label}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
 
             {filtered.length === 0 ? (

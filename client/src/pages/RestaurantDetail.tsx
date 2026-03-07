@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { RestaurantJsonLd, BreadcrumbJsonLd } from "@/components/JsonLd";
 import ReviewSection from "@/components/ReviewSection";
 import { getNearestRestaurants } from "@/lib/geo";
+import SEOHead from "@/components/SEOHead";
 
 const RESTAURANT_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/restaurant-placeholder-NfsuHQoJhFmyxCXwn7EygE.webp";
 
@@ -115,6 +116,13 @@ export default function RestaurantDetail() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAF6]">
+      <SEOHead
+        title={`${restaurant.name} — ${restaurant.type === "vegan" ? "Veganská" : restaurant.type === "vegetarian" ? "Vegetariánská" : "Vegan-friendly"} restaurace v Praze`}
+        description={`${restaurant.name} — ${restaurant.description.slice(0, 150)}. Hodnocení ${restaurant.rating.toFixed(1)}/5, ${restaurant.district}.`}
+        ogImage={restaurant.image}
+        ogType="restaurant"
+        ogUrl={`https://www.bezmasajidla.cz/restaurace/${restaurant.slug}`}
+      />
       {jsonLd}
       <Header />
 

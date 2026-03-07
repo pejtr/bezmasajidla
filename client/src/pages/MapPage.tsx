@@ -9,6 +9,7 @@ import { X, MapPin, Star, Phone } from "lucide-react";
 import Header from "@/components/Header";
 import { MapView } from "@/components/Map";
 import { restaurants, getTypeColor, getTypeLabel, Restaurant } from "@/lib/data";
+import SEOHead from "@/components/SEOHead";
 
 const typeColors: Record<string, string> = {
   vegan: "#1B6B45",
@@ -51,6 +52,11 @@ export default function MapPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAF6]">
+      <SEOHead
+        title="Mapa Veganských a Vegetariánských Restaurací v Praze"
+        description="Interaktivní mapa všech veganských a vegetariánských restaurací v Praze. Najděte bezmasé restaurace v okolí."
+        ogUrl="https://www.bezmasajidla.cz/mapa"
+      />
       <Header />
 
       {/* Filter bar */}
