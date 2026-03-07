@@ -1,15 +1,16 @@
 // ============================================================
 // BEZMASAJIDLA.CZ — Restaurants Listing Page
 // "Zelená Metropole" — two-column: filters left, results right
+// Includes dietary options filter (bezlepkové, raw, bio, etc.)
 // ============================================================
 
 import { useState, useMemo } from "react";
 import { useLocation } from "wouter";
-import { Search, SlidersHorizontal, X, MapPin } from "lucide-react";
+import { Search, SlidersHorizontal, X, MapPin, Filter } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import RestaurantCard from "@/components/RestaurantCard";
-import { restaurants, districts, cuisineTags, RestaurantType } from "@/lib/data";
+import { restaurants, districts, cuisineTags, dietaryOptionsConfig, RestaurantType, DietaryOption } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 
@@ -23,6 +24,7 @@ export default function Restaurants() {
   );
   const [selectedDistrict, setSelectedDistrict] = useState(params.get("district") || "Všechny čtvrti");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedDietary, setSelectedDietary] = useState<DietaryOption[]>([]);
   const [showOpenOnly, setShowOpenOnly] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -34,12 +36,18 @@ export default function Restaurants() {
       if (selectedDistrict !== "Všechny čtvrti" && r.district !== selectedDistrict) return false;
       if (showOpenOnly && !r.isOpen) return false;
       if (selectedTags.length > 0 && !selectedTags.some(t => r.tags.includes(t))) return false;
+      // Dietary filter: restaurant must have ALL selected dietary options
+      if (selectedDietary.length > 0 && !selectedDietary.every(d => r.dietaryOptions.includes(d))) return false;
       return true;
     });
-  }, [searchQuery, selectedType, selectedDistrict, showOpenOnly, selectedTags]);
+  }, [searchQuery, selectedType, selectedDistrict, showOpenOnly, selectedTags, selectedDietary]);
 
   const toggleTag = (tag: string) => {
     setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
+  };
+
+  const toggleDietary = (option: DietaryOption) => {
+    setSelectedDietary(prev => prev.includes(option) ? prev.filter(d => d !== option) : [...prev, option]);
   };
 
   const clearFilters = () => {
@@ -48,9 +56,12 @@ export default function Restaurants() {
     setSelectedDistrict("Všechny čtvrti");
     setShowOpenOnly(false);
     setSelectedTags([]);
+    setSelectedDietary([]);
   };
 
-  const hasFilters = selectedType !== "all" || selectedDistrict !== "Všechny čtvrti" || showOpenOnly || selectedTags.length > 0 || searchQuery;
+  const hasFilters = selectedType !== "all" || selectedDistrict !== "Všechny čtvrti" || showOpenOnly || selectedTags.length > 0 || searchQuery || selectedDietary.length > 0;
+
+  const activeFilterCount = (selectedType !== "all" ? 1 : 0) + (selectedDistrict !== "Všechny čtvrti" ? 1 : 0) + (showOpenOnly ? 1 : 0) + selectedTags.length + selectedDietary.length;
 
   const typeOptions: { value: RestaurantType | "all"; label: string; color: string }[] = [
     { value: "all", label: "Vše", color: "bg-gray-100 text-gray-700 hover:bg-gray-200" },
@@ -58,6 +69,13 @@ export default function Restaurants() {
     { value: "vegetarian", label: "Vegetariánské", color: "bg-emerald-500 text-white hover:bg-emerald-400" },
     { value: "friendly", label: "Vegan-friendly", color: "bg-amber-400 text-amber-900 hover:bg-amber-300" },
   ];
+
+  // Only show dietary options that exist in at least one restaurant
+  const availableDietary = useMemo(() => {
+    const available = new Set<DietaryOption>();
+    restaurants.forEach(r => r.dietaryOptions.forEach(d => available.add(d)));
+    return dietaryOptionsConfig.filter(opt => available.has(opt.value));
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAF6]">
@@ -84,7 +102,7 @@ export default function Restaurants() {
       </div>
 
       <div className="container py-8">
-        {/* Search bar */}
+        {/* Search bar + mobile filter toggle */}
         <div className="flex gap-3 mb-6">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -98,11 +116,16 @@ export default function Restaurants() {
           </div>
           <Button
             variant="outline"
-            className="flex items-center gap-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50 md:hidden"
+            className="flex items-center gap-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50 md:hidden relative"
             onClick={() => setFiltersOpen(!filtersOpen)}
           >
             <SlidersHorizontal className="w-4 h-4" />
             Filtry
+            {activeFilterCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-emerald-700 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                {activeFilterCount}
+              </span>
+            )}
           </Button>
           <Link href="/mapa">
             <Button variant="outline" className="hidden md:flex items-center gap-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50">
@@ -111,6 +134,59 @@ export default function Restaurants() {
             </Button>
           </Link>
         </div>
+
+        {/* Active filters bar (shown when filters are applied) */}
+        {hasFilters && (
+          <div className="flex flex-wrap items-center gap-2 mb-4">
+            <Filter className="w-3.5 h-3.5 text-gray-400" />
+            {selectedType !== "all" && (
+              <span className="inline-flex items-center gap-1 text-xs bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full font-medium">
+                {typeOptions.find(t => t.value === selectedType)?.label}
+                <button onClick={() => setSelectedType("all")} className="hover:text-emerald-950">
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            )}
+            {selectedDistrict !== "Všechny čtvrti" && (
+              <span className="inline-flex items-center gap-1 text-xs bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full font-medium">
+                {selectedDistrict}
+                <button onClick={() => setSelectedDistrict("Všechny čtvrti")} className="hover:text-emerald-950">
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            )}
+            {selectedDietary.map(d => {
+              const config = dietaryOptionsConfig.find(c => c.value === d);
+              return (
+                <span key={d} className="inline-flex items-center gap-1 text-xs bg-teal-100 text-teal-800 px-2.5 py-1 rounded-full font-medium">
+                  {config?.icon} {config?.label}
+                  <button onClick={() => toggleDietary(d)} className="hover:text-teal-950">
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              );
+            })}
+            {selectedTags.map(tag => (
+              <span key={tag} className="inline-flex items-center gap-1 text-xs bg-gray-100 text-gray-700 px-2.5 py-1 rounded-full font-medium">
+                {tag}
+                <button onClick={() => toggleTag(tag)} className="hover:text-gray-900">
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            ))}
+            {showOpenOnly && (
+              <span className="inline-flex items-center gap-1 text-xs bg-green-100 text-green-800 px-2.5 py-1 rounded-full font-medium">
+                Otevřeno
+                <button onClick={() => setShowOpenOnly(false)} className="hover:text-green-950">
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            )}
+            <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium ml-1">
+              Vymazat vše
+            </button>
+          </div>
+        )}
 
         <div className="flex gap-8">
           {/* ── SIDEBAR FILTERS ── */}
@@ -143,10 +219,38 @@ export default function Restaurants() {
                 </div>
               </div>
 
+              {/* ── DIETARY OPTIONS FILTER ── */}
+              <div className="mb-5">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                  Dietní preference
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {availableDietary.map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() => toggleDietary(opt.value)}
+                      className={`text-xs px-2.5 py-1.5 rounded-full border transition-all duration-200 flex items-center gap-1 ${
+                        selectedDietary.includes(opt.value)
+                          ? "bg-teal-600 text-white border-teal-600 shadow-sm"
+                          : "bg-white text-gray-600 border-emerald-100 hover:border-teal-400 hover:text-teal-700 hover:bg-teal-50"
+                      }`}
+                    >
+                      <span className="text-sm leading-none">{opt.icon}</span>
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+                {selectedDietary.length > 0 && (
+                  <p className="text-[10px] text-gray-400 mt-1.5">
+                    Zobrazeny restaurace se <span className="font-medium">všemi</span> vybranými preferencemi
+                  </p>
+                )}
+              </div>
+
               {/* District filter */}
               <div className="mb-5">
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Čtvrť</p>
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1 max-h-48 overflow-y-auto">
                   {districts.map((d) => (
                     <button
                       key={d}

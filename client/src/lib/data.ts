@@ -5,6 +5,8 @@
 
 export type RestaurantType = "vegan" | "vegetarian" | "friendly";
 
+export type DietaryOption = "bezlepkové" | "raw" | "bio" | "bez-soji" | "bez-oriskove" | "whole-food" | "ayurvédské" | "makrobiotické" | "low-carb" | "high-protein";
+
 export interface Restaurant {
   id: string;
   name: string;
@@ -20,6 +22,7 @@ export interface Restaurant {
   website?: string;
   description: string;
   tags: string[];
+  dietaryOptions: DietaryOption[];
   image: string;
   lat: number;
   lng: number;
@@ -65,6 +68,7 @@ export const restaurants: Restaurant[] = [
     phone: "+420 776 148 259",
     description: "Veganský gastropub specializovaný na veganizaci tradičních českých jídel. Také nabízí výběr naložených/špinavých hranolek. Nachází se v tradiční a rustikální české hospodě v Žižkově.",
     tags: ["Česká kuchyně", "Americká", "Fast food", "Pivo/Víno", "Evropská"],
+    dietaryOptions: ["whole-food"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/shromazdiste-vegansky-gastropub-praha_d8c02b20.png",
     lat: 50.0820,
     lng: 14.4501,
@@ -85,6 +89,7 @@ export const restaurants: Restaurant[] = [
     phone: "+420 725 511 536",
     description: "Veganská jídelna/kavárna servírující dosy, indická a asijská jídla a dezerty. Nabízí také českou kuchyni jako součást denního menu.",
     tags: ["Indická", "Organická", "Thajská", "Asijská", "Pekárna", "Snídaně", "Bezlepková"],
+    dietaryOptions: ["bezlepkové", "bio"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/dosa-dosa-veganska-indicka-restaurace-praha_c42f79c4.jpg",
     lat: 50.0833,
     lng: 14.4033,
@@ -105,6 +110,7 @@ export const restaurants: Restaurant[] = [
     phone: "+420 771 151 113",
     description: "Veganský sladký a espresso bar provozovaný restaurací Palo Verde. Servíruje kávu, svačiny, obědy a dorty. Nabízí catering, narozeninové a svatební dorty.",
     tags: ["Pekárna", "Catering", "Snídaně", "Rozvoz", "S sebou"],
+    dietaryOptions: ["bez-soji"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/share-sweet-espresso-bar-veganska-kavarna-praha_49623671.jpg",
     lat: 50.0897,
     lng: 14.4282,
@@ -125,6 +131,7 @@ export const restaurants: Restaurant[] = [
     phone: "+420 222 250 724",
     description: "Rostlinná restaurace a kavárna poblíž Letenské pláně. Nabízí denní brunch, oběd a sdílené večerní menu. Má také dezerty včetně pečiva ze sesterského podniku Krafin.",
     tags: ["Italská", "Středomořská", "Pivo/Víno", "Snídaně", "S sebou"],
+    dietaryOptions: ["whole-food"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/chutnej-rostlinna-restaurace-praha_b868fc30.jpg",
     lat: 50.1012,
     lng: 14.4201,
@@ -144,6 +151,7 @@ export const restaurants: Restaurant[] = [
     district: "Praha 5",
     description: "Veganský podnik v budově bývalé sladovny mezi dvěma železničními mosty. Sezónní pokrmy z místních surovin. Burgery, hot dogy, tradiční česká kuchyně a saláty.",
     tags: ["Americká", "Mezinárodní", "Pivo/Víno", "Catering", "Rozvoz"],
+    dietaryOptions: ["whole-food"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/eaternia-veganska-restaurace-praha_e9d6cb9b.jpg",
     lat: 50.0701,
     lng: 14.4052,
@@ -164,6 +172,7 @@ export const restaurants: Restaurant[] = [
     phone: "+420 775 285 430",
     description: "Rostlinný bistro s organickými víny a kávovými nápoji, denním výběrem pečiva a croissantů a slanými pokrmy jako čerstvě vyrobené těstoviny, houbové ravioli, Beyond burger, fusion misky a španské tapas.",
     tags: ["Organická", "Pivo/Víno", "Pekárna", "Španělská", "Česká", "Fusion"],
+    dietaryOptions: ["bio", "whole-food"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/palo-verde-rostlinne-bistro-praha_e364e468.jpg",
     lat: 50.0762,
     lng: 14.4261,
@@ -184,6 +193,7 @@ export const restaurants: Restaurant[] = [
     phone: "+420 737 048 487",
     description: "Sociální podnik veganská restaurace zaměstnávající lidi bez domova a lidi po propuštění z vězení. Nabízí obědová menu, českou veganskou kuchyni, fair-trade kávu a alkoholické nápoje.",
     tags: ["Mezinárodní", "Pivo/Víno", "Catering", "Česká"],
+    dietaryOptions: ["whole-food"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strecha-veganska-restaurace-praha_e6ed5ed3.jpg",
     lat: 50.0788,
     lng: 14.4181,
@@ -204,6 +214,7 @@ export const restaurants: Restaurant[] = [
     phone: "+420 777 583 999",
     description: "Vegetariánský vietnamský podnik. Servíruje rýži, nudle a pad thai pokrmy. Téměř všechna jídla jsou veganská.",
     tags: ["Asijská", "Vietnamská", "Organická"],
+    dietaryOptions: ["bio", "bezlepkové"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/koko-organic-vegetarianska-vietnamska-praha_332be252.jpg",
     lat: 50.0901,
     lng: 14.4361,
@@ -224,6 +235,7 @@ export const restaurants: Restaurant[] = [
     phone: "+420 608 045 711",
     description: "Veganská vietnamská restaurace s pohádkovým interiérem. Nabízí rostlinná teplá jídla spolu s domácími dezerty, raw dorty, čerstvými džusy, smoothie a horkými nápoji. Pho, burgery, banh mi a pad thai.",
     tags: ["Mezinárodní", "Pivo/Víno", "Asijská", "Vietnamská", "Bezlepková"],
+    dietaryOptions: ["bezlepkové", "raw"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/linh-veganska-vietnamska-restaurace-praha_59241983.jpg",
     lat: 50.0762,
     lng: 14.4401,
@@ -244,6 +256,7 @@ export const restaurants: Restaurant[] = [
     phone: "+420 735 171 313",
     description: "Veganská restaurace v budově z 16. století poblíž Pražského hradu s terasou a výhledem, zal. 2016. Domácí česká a mezinárodní kuchyně. Guláš, raw čokoládový dort, bruschetta, sójové latte, cuketové lasagne.",
     tags: ["Mezinárodní", "Organická", "Raw", "Juice bar", "Česká"],
+    dietaryOptions: ["raw", "bio"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegans-prague-veganska-restaurace-prazsky-hrad_0b442ee7.jpg",
     lat: 50.0882,
     lng: 14.4001,
@@ -263,6 +276,7 @@ export const restaurants: Restaurant[] = [
     district: "Praha 2",
     description: "Veganský bar a restaurace s výběrem piv, koktejlů a jídel. Přátelská atmosféra v srdci Vinohrad.",
     tags: ["Pivo/Víno", "Česká", "Mezinárodní"],
+    dietaryOptions: [],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/belzepub-vegansky-bar-praha_eb4792f1.jpg",
     lat: 50.0741,
     lng: 14.4421,
@@ -282,6 +296,7 @@ export const restaurants: Restaurant[] = [
     district: "Praha 2",
     description: "Útulná veganská kavárna a bistro na Vinohradech. Domácí pečivo, snídaně, obědy a dezerty.",
     tags: ["Snídaně", "Pekárna", "Káva"],
+    dietaryOptions: ["whole-food"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/herbivore-veganske-bistro-vinohrady_d6bfed1f.jpg",
     lat: 50.0752,
     lng: 14.4441,
@@ -301,6 +316,7 @@ export const restaurants: Restaurant[] = [
     district: "Praha 2",
     description: "Vegetariánská restaurace s důrazem na lokální a sezónní suroviny. Kreativní pokrmy inspirované českou i mezinárodní kuchyní.",
     tags: ["Česká", "Mezinárodní", "Organická", "Sezónní"],
+    dietaryOptions: ["bio", "whole-food"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pastva-vegetarianska-restaurace-praha_758414c7.jpg",
     lat: 50.0731,
     lng: 14.4461,
@@ -320,6 +336,7 @@ export const restaurants: Restaurant[] = [
     district: "Praha 2",
     description: "Japonský podnik specializovaný na onigirazu — japonské sendviče z rýže. Mnoho veganských možností.",
     tags: ["Japonská", "Asijská", "S sebou"],
+    dietaryOptions: ["bezlepkové"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/onigirazu-japonske-jidlo-praha_daca78f3.jpg",
     lat: 50.0771,
     lng: 14.4381,
@@ -339,6 +356,7 @@ export const restaurants: Restaurant[] = [
     district: "Praha 1",
     description: "Součást mezinárodního řetězce veganských restaurací. Nabízí asijská jídla, polévky, saláty a dezerty za dostupné ceny.",
     tags: ["Asijská", "Mezinárodní", "Rozvoz", "S sebou"],
+    dietaryOptions: ["bez-soji"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/loving-hut-na-porici-veganska-restaurace_a795d30a.jpg",
     lat: 50.0921,
     lng: 14.4341,
@@ -360,6 +378,7 @@ export const restaurants: Restaurant[] = [
     website: "https://www.restaurace-maitrea.cz",
     description: "Dvě patra plná magických zákoutí a vegetariánské chutě inspirované srdcem. Interiér ve stylu Feng Shui s fontánami, krbem a sochou Buddhy. Dlouhodobě v Top 10 vegetariánských restaurací v Praze, držitel TripAdvisor Hall of Fame 2018.",
     tags: ["Vegetariánská", "Vegan-friendly", "Feng Shui", "Fine dining", "Rezervace"],
+    dietaryOptions: ["bezlepkové"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/maitrea-vegetarianska-fine-dining-praha_4b7a231a.jpg",
     lat: 50.0878,
     lng: 14.4241,
@@ -381,6 +400,7 @@ export const restaurants: Restaurant[] = [
     website: "https://www.lehkahlava.cz",
     description: "Jedna z nejstarších vegetariánských restaurací v Praze od roku 2005. Kreativní bezmasá kuchyně v kouzelném prostředí Starého Města, pár kroků od Karlova mostu. Každý pokoj zdoben jiným tématem — hvězdný strop, akvárium, modrý sál.",
     tags: ["Vegetariánská", "Vegan-friendly", "Tapas", "Džusy", "Sezónní menu"],
+    dietaryOptions: ["bezlepkové", "raw"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/lehka-hlava-vegetarianska-restaurace-praha_caeb1735.jpg",
     lat: 50.0848,
     lng: 14.4138,
@@ -402,6 +422,7 @@ export const restaurants: Restaurant[] = [
     website: "https://www.natureza.cz",
     description: "Vegetariánská restaurace s kouzelnou zahradou v těsné blízkosti kostela sv. Vavřince. Denní menu (polévka + hlavní jídlo), vegetariánská, veganská i bezlepková jídla, raw dezerty. Vhodná i pro svatební hostiny.",
     tags: ["Vegetariánská", "Vegan-friendly", "Zahrada", "Bezlepkové", "Raw dezerty", "Catering"],
+    dietaryOptions: ["bezlepkové", "raw"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/natureza-vegetarianska-restaurace-zahrada-praha_b7174c8e.jpg",
     lat: 50.0789,
     lng: 14.4031,
@@ -422,6 +443,7 @@ export const restaurants: Restaurant[] = [
     phone: "+420 775 123 456",
     description: "Vinohradské veganské bistro s vysoce kvalitními čerstvými pokrmy včetně bezlepkové varianty. Samoobslužný bufet s výběrem zeleninových salátů a teplých jídel v libovolném množství.",
     tags: ["Veganská", "Bufet", "Bezlepkové", "Samoobslužný", "Vinohrady"],
+    dietaryOptions: ["bezlepkové", "whole-food"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/sandokan-veganske-bistro-vinohrady_afb8b906.png",
     lat: 50.0752,
     lng: 14.4412,
@@ -443,6 +465,7 @@ export const restaurants: Restaurant[] = [
     website: "https://www.countrylife.cz",
     description: "Průkopník biopotravin v ČR od roku 1991. Teplá i studená veganská jídla, saláty, sendviče, burgery v příjemném prostředí. Prodej biopotravin, přírodní kosmetiky a produktů z vlastní ekofarmy. Preferuje bezobalový prodej.",
     tags: ["Veganská", "Bio", "Bufet", "Zdravá výživa", "Bezobalový", "S sebou"],
+    dietaryOptions: ["bio", "whole-food", "bezlepkové"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/country-life-vegansky-bufet-praha_d58e3685.jpg",
     lat: 50.0851,
     lng: 14.4201,
@@ -464,6 +487,7 @@ export const restaurants: Restaurant[] = [
     website: "https://www.beas-dhaba.cz",
     description: "Rušná indická jídelna na několika místech v Praze. Ideální pro rychlé a levné jídlo. Z denní nabídky si naložíte tolik, na kolik máte chuť, a u pokladny vám jídlo zváží. Zdravá a chutná alternativa, většina jídel není příliš ostrá.",
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné", "S sebou", "Denní menu"],
+    dietaryOptions: ["bezlepkové"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-indicka-vegetarianska-jidelna-praha_983284c8.jpg",
     lat: 50.0901,
     lng: 14.4321,
@@ -485,6 +509,7 @@ export const restaurants: Restaurant[] = [
     website: "https://www.spojkakarlin.cz",
     description: "První flexitariánská restaurace v ČR. A la carte menu s veganskými, vegetariánskými, bezlepkovými i masovými jídly, vše v bio kvalitě. Spojuje u jednoho stolu všechny bez předsudků.",
     tags: ["Flexitariánská", "Bio", "Vegan-friendly", "Bezlepkové", "Karlín"],
+    dietaryOptions: ["bio", "bezlepkové"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spojka-karlin-flexitarianska-restaurace-praha_5dc99c86.jpg",
     lat: 50.0931,
     lng: 14.4512,
@@ -504,6 +529,7 @@ export const restaurants: Restaurant[] = [
     district: "Praha 7",
     description: "Veganské bistro na Letné se stálou nabídkou i samoobslužným bufetem. Nechybí ani výborné dezerty. Příjemná alternativa pro každodenní veganské stravování.",
     tags: ["Veganská", "Bufet", "Letná", "Dezerty", "S sebou"],
+    dietaryOptions: ["whole-food"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganland-express-veganske-bistro-letna_86f24c5d.jpg",
     lat: 50.1001,
     lng: 14.4201,
@@ -523,6 +549,7 @@ export const restaurants: Restaurant[] = [
     district: "Praha 6",
     description: "Veganská restaurace v těsné blízkosti metra A Dejvická. Samoobslužný pult s širokou nabídkou nejen asijské kuchyně. Rychlé a dostupné veganské stravování v Dejvicích.",
     tags: ["Veganská", "Asijská", "Samoobslužný", "Dejvice", "S sebou"],
+    dietaryOptions: [],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegetka-veganska-restaurace-dejvice_873d2bbd.png",
     lat: 50.1021,
     lng: 14.3921,
@@ -542,6 +569,7 @@ export const restaurants: Restaurant[] = [
     district: "Praha 1",
     description: "Raw veganská kavárna v samém centru Prahy. Specialita na syrovou rostlinnou stravu — raw dezerty, smoothie bowls, čerstvé šťávy a raw hlavní jídla. Ideální pro příznivce raw food.",
     tags: ["Veganská", "Raw food", "Smoothie", "Dezerty", "Kavárna", "Centrum"],
+    dietaryOptions: ["raw", "bezlepkové", "whole-food"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/myraw-cafe-raw-veganska-kavarna-praha_94c3f050.png",
     lat: 50.0821,
     lng: 14.4161,
@@ -561,6 +589,7 @@ export const restaurants: Restaurant[] = [
     district: "Praha 1",
     description: "Restaurace s čistě rostlinnou nabídkou pokrmů v bio kvalitě v centru Prahy. Dočasně uzavřena. Kreativní veganská kuchyně s důrazem na bio suroviny.",
     tags: ["Veganská", "Bio", "Fine dining", "Centrum"],
+    dietaryOptions: ["bio"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/chef-co-veganske-fine-dining-praha_549b5394.jpg",
     lat: 50.0871,
     lng: 14.4131,
@@ -580,6 +609,7 @@ export const restaurants: Restaurant[] = [
     district: "Praha 4",
     description: "Součást sítě veganských bistr Loving Hut. Veganský způsob stravování jako chutná, zdravá a vyvážená alternativa. Asijská jídla, polévky, saláty a dezerty za dostupné ceny.",
     tags: ["Veganská", "Asijská", "Bufet", "Pankrác", "Dostupné ceny"],
+    dietaryOptions: [],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/loving-bistro-pankrac-veganske-bistro_38e6d9e6.jpg",
     lat: 50.0631,
     lng: 14.4321,
@@ -599,6 +629,7 @@ export const restaurants: Restaurant[] = [
     district: "Praha 5",
     description: "Rostlinné bistro v Košířích s pestrou kuchyní, skvělými dezerty a různými nápoji. Útulné místo pro milovníky rostlinné stravy mimo centrum.",
     tags: ["Veganská", "Rostlinná strava", "Dezerty", "Košíře"],
+    dietaryOptions: ["whole-food"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/bistro-pod-kavalirkou-rostlinne-bistro-kosire_6febc750.jpg",
     lat: 50.0701,
     lng: 14.3901,
@@ -731,8 +762,11 @@ export const districts = [
   "Praha 1",
   "Praha 2",
   "Praha 3",
+  "Praha 4",
   "Praha 5",
+  "Praha 6",
   "Praha 7",
+  "Praha 8",
 ];
 
 export const cuisineTags = [
@@ -746,6 +780,19 @@ export const cuisineTags = [
   "Raw",
   "Snídaně",
   "Pekárna",
+];
+
+export const dietaryOptionsConfig: { value: DietaryOption; label: string; icon: string }[] = [
+  { value: "bezlepkové", label: "Bezlepkové", icon: "🌾" },
+  { value: "raw", label: "Raw food", icon: "🥦" },
+  { value: "bio", label: "Bio / Organic", icon: "🌱" },
+  { value: "whole-food", label: "Whole food", icon: "🥜" },
+  { value: "bez-soji", label: "Bez sóji", icon: "🚫" },
+  { value: "bez-oriskove", label: "Bez ořechů", icon: "🥜" },
+  { value: "ayurvédské", label: "Ayurvédské", icon: "🧘" },
+  { value: "makrobiotické", label: "Makrobiotické", icon: "☘️" },
+  { value: "low-carb", label: "Low carb", icon: "📉" },
+  { value: "high-protein", label: "High protein", icon: "💪" },
 ];
 
 export const getTypeLabel = (type: RestaurantType): string => {

@@ -21,3 +21,6 @@
 - [x] Add admin route protection (role-based access)
 - [x] Vitest tests for admin and enhanced recipe features
 - [x] Show 5 nearest restaurants on detail page with distance (m/km) and walking time
+- [x] Add dietary tags to restaurant data (vegan, vegetarian, gluten-free, raw, etc.)
+- [x] Implement dietary filter UI on Restaurants page (multi-select filter chips)
+- [x] Ensure filters work with existing search and district filters
