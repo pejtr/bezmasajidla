@@ -6,7 +6,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, Search, Heart, User, LogOut, ChefHat, BookOpen, Star } from "lucide-react";
+import { Menu, X, Search, Heart, User, LogOut, ChefHat, BookOpen, Star, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -157,6 +157,16 @@ export default function Header() {
                       <BookOpen className="w-4 h-4" />
                       Přidat recept
                     </Link>
+                    {user.role === "admin" && (
+                      <Link
+                        href="/admin"
+                        className="flex items-center gap-2 px-4 py-2.5 text-sm text-amber-700 hover:bg-amber-50 transition-colors"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        <Shield className="w-4 h-4" />
+                        Administrace
+                      </Link>
+                    )}
                     <div className="border-t border-emerald-50 mt-1">
                       <button
                         onClick={handleLogout}
@@ -270,6 +280,16 @@ export default function Header() {
                     <ChefHat className="w-4 h-4 text-emerald-600" />
                     Přidat recept
                   </Link>
+                  {user.role === "admin" && (
+                    <Link
+                      href="/admin"
+                      className="px-4 py-3 text-sm font-medium text-amber-700 hover:text-amber-800 hover:bg-amber-50 rounded-lg transition-colors flex items-center gap-2"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <Shield className="w-4 h-4" />
+                      Administrace
+                    </Link>
+                  )}
                   <div className="pt-2 border-t border-emerald-100 mt-2">
                     <button
                       onClick={() => { setMenuOpen(false); handleLogout(); }}

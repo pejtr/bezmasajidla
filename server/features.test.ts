@@ -19,6 +19,11 @@ vi.mock("./db", () => ({
   createUserRecipe: vi.fn(),
   deleteUserRecipe: vi.fn(),
   syncFavorites: vi.fn(),
+  getAllUserRecipes: vi.fn(),
+  approveUserRecipe: vi.fn(),
+  rejectUserRecipe: vi.fn(),
+  getAllReviews: vi.fn(),
+  adminDeleteReview: vi.fn(),
 }));
 
 import {
@@ -36,6 +41,11 @@ import {
   createUserRecipe,
   deleteUserRecipe,
   syncFavorites,
+  getAllUserRecipes,
+  approveUserRecipe,
+  rejectUserRecipe,
+  getAllReviews,
+  adminDeleteReview,
 } from "./db";
 
 // ── Helpers ─────────────────────────────────────────────────
@@ -397,6 +407,112 @@ describe("userRecipes", () => {
       await authedCaller().userRecipes.delete({ recipeId: 1 });
 
       expect(deleteUserRecipe).toHaveBeenCalledWith(1, 42);
+    });
+  });
+});
+
+// ── Admin ───────────────────────────────────────────────────
+
+const adminUser: User = {
+  ...testUser,
+  id: 1,
+  openId: "admin-open-id",
+  name: "Admin",
+  role: "admin",
+};
+
+function adminCaller() {
+  return appRouter.createCaller(createMockContext(adminUser));
+}
+
+describe("admin", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  describe("admin.allRecipes (admin only)", () => {
+    it("rejects unauthenticated users", async () => {
+      await expect(publicCaller().admin.allRecipes()).rejects.toThrow();
+    });
+
+    it("rejects non-admin users", async () => {
+      await expect(authedCaller().admin.allRecipes()).rejects.toThrow(/admin|forbidden/i);
+    });
+
+    it("returns all recipes for admin", async () => {
+      const mockRecipes = [
+        { id: 1, userId: 42, title: "Pending Recipe", slug: "pending-abc", description: null, category: null, difficulty: null, prepTime: null, servings: null, image: null, isApproved: false, createdAt: new Date(), authorName: "Test" },
+      ];
+      vi.mocked(getAllUserRecipes).mockResolvedValue(mockRecipes);
+
+      const result = await adminCaller().admin.allRecipes();
+
+      expect(getAllUserRecipes).toHaveBeenCalled();
+      expect(result).toEqual(mockRecipes);
+    });
+  });
+
+  describe("admin.approveRecipe (admin only)", () => {
+    it("rejects non-admin users", async () => {
+      await expect(
+        authedCaller().admin.approveRecipe({ recipeId: 1 })
+      ).rejects.toThrow(/admin|forbidden/i);
+    });
+
+    it("approves a recipe", async () => {
+      vi.mocked(approveUserRecipe).mockResolvedValue(undefined);
+
+      await adminCaller().admin.approveRecipe({ recipeId: 5 });
+
+      expect(approveUserRecipe).toHaveBeenCalledWith(5);
+    });
+  });
+
+  describe("admin.rejectRecipe (admin only)", () => {
+    it("rejects non-admin users", async () => {
+      await expect(
+        authedCaller().admin.rejectRecipe({ recipeId: 1 })
+      ).rejects.toThrow(/admin|forbidden/i);
+    });
+
+    it("rejects (deletes) a recipe", async () => {
+      vi.mocked(rejectUserRecipe).mockResolvedValue(undefined);
+
+      await adminCaller().admin.rejectRecipe({ recipeId: 3 });
+
+      expect(rejectUserRecipe).toHaveBeenCalledWith(3);
+    });
+  });
+
+  describe("admin.allReviews (admin only)", () => {
+    it("rejects non-admin users", async () => {
+      await expect(authedCaller().admin.allReviews()).rejects.toThrow(/admin|forbidden/i);
+    });
+
+    it("returns all reviews for admin", async () => {
+      const mockReviews = [
+        { id: 1, userId: 42, restaurantSlug: "maitrea", rating: 5, comment: "Great", createdAt: new Date(), userName: "Test" },
+      ];
+      vi.mocked(getAllReviews).mockResolvedValue(mockReviews);
+
+      const result = await adminCaller().admin.allReviews();
+
+      expect(getAllReviews).toHaveBeenCalled();
+      expect(result).toEqual(mockReviews);
+    });
+  });
+
+  describe("admin.deleteReview (admin only)", () => {
+    it("rejects non-admin users", async () => {
+      await expect(
+        authedCaller().admin.deleteReview({ reviewId: 1 })
+      ).rejects.toThrow(/admin|forbidden/i);
+    });
+
+    it("deletes any review as admin", async () => {
+      vi.mocked(adminDeleteReview).mockResolvedValue(undefined);
+
+      await adminCaller().admin.deleteReview({ reviewId: 7 });
+
+      expect(adminDeleteReview).toHaveBeenCalledWith(7);
     });
   });
 });

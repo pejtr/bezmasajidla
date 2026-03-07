@@ -4,18 +4,69 @@
 // ============================================================
 
 import { useParams, Link } from "wouter";
-import { MapPin, Phone, Globe, Clock, Star, Crown, ArrowLeft, ExternalLink, Share2 } from "lucide-react";
+import { MapPin, Phone, Globe, Clock, Star, Crown, ArrowLeft, ExternalLink, Share2, Navigation, Footprints } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { restaurants, getTypeLabel, getTypeColor, renderStars } from "@/lib/data";
 import { MapView } from "@/components/Map";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import { RestaurantJsonLd, BreadcrumbJsonLd } from "@/components/JsonLd";
 import ReviewSection from "@/components/ReviewSection";
+import { getNearestRestaurants } from "@/lib/geo";
 
 const RESTAURANT_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/restaurant-placeholder-NfsuHQoJhFmyxCXwn7EygE.webp";
+
+function NearbyRestaurantsSection({ slug }: { slug: string }) {
+  const nearby = useMemo(() => getNearestRestaurants(slug, 5), [slug]);
+
+  if (nearby.length === 0) return null;
+
+  return (
+    <div className="bg-white rounded-xl border border-emerald-100 p-5">
+      <h3
+        className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2"
+      >
+        <Navigation className="w-4 h-4 text-emerald-600" />
+        Nejbližší restaurace
+      </h3>
+      <div className="flex flex-col gap-3">
+        {nearby.map((item) => (
+          <Link key={item.restaurant.id} href={`/restaurace/${item.restaurant.slug}`}>
+            <div className="flex items-center gap-3 group cursor-pointer p-2 -mx-2 rounded-lg hover:bg-emerald-50/50 transition-colors">
+              <img
+                src={item.restaurant.image}
+                alt={item.restaurant.name}
+                className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+              />
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium text-gray-900 group-hover:text-emerald-700 transition-colors truncate">
+                  {item.restaurant.name}
+                </p>
+                <div className="flex items-center gap-1">
+                  <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                  <span className="text-xs text-gray-500">{item.restaurant.rating.toFixed(1)}</span>
+                  <span className="text-xs text-gray-300 mx-0.5">·</span>
+                  <span className="text-xs text-gray-500">{item.restaurant.district}</span>
+                </div>
+              </div>
+              <div className="flex flex-col items-end flex-shrink-0">
+                <span className="text-xs font-semibold text-emerald-700">
+                  {item.formattedDistance}
+                </span>
+                <span className="text-[11px] text-gray-400 flex items-center gap-0.5">
+                  <Footprints className="w-3 h-3" />
+                  {item.walkingTime}
+                </span>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function RestaurantDetail() {
   const params = useParams<{ slug: string }>();
@@ -271,35 +322,8 @@ export default function RestaurantDetail() {
               </div>
             </div>
 
-            {/* Similar restaurants */}
-            <div className="bg-white rounded-xl border border-emerald-100 p-5">
-              <h3 className="text-sm font-semibold text-gray-900 mb-4">Podobné restaurace</h3>
-              <div className="flex flex-col gap-3">
-                {restaurants
-                  .filter((r) => r.id !== restaurant.id && r.type === restaurant.type)
-                  .slice(0, 3)
-                  .map((r) => (
-                    <Link key={r.id} href={`/restaurace/${r.slug}`}>
-                      <div className="flex items-center gap-3 group cursor-pointer">
-                        <img
-                          src={r.image}
-                          alt={r.name}
-                          className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
-                        />
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium text-gray-900 group-hover:text-emerald-700 transition-colors truncate">
-                            {r.name}
-                          </p>
-                          <div className="flex items-center gap-1">
-                            <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                            <span className="text-xs text-gray-500">{r.rating.toFixed(1)} · {r.district}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-              </div>
-            </div>
+            {/* Nearest restaurants */}
+            <NearbyRestaurantsSection slug={restaurant.slug} />
           </div>
         </div>
       </div>

@@ -11,3 +11,13 @@
 - [x] Fix recipe photos: generate multiple images per recipe with SEO-optimized filenames
 - [x] Update recipe data structure to support multiple images per recipe
 - [x] Update recipe detail page with image gallery
+- [x] Enhance AddRecipe form with step-by-step instructions builder (add/remove steps)
+- [x] Enhance AddRecipe form with ingredients builder (add/remove ingredients with amounts)
+- [x] Update backend to store recipe steps and ingredients in DB
+- [x] Generate unique AI photos for all restaurants (replace placeholders)
+- [x] Upload restaurant photos to CDN and update data
+- [x] Create admin panel page with recipe approval workflow
+- [x] Add review management to admin panel (delete inappropriate reviews)
+- [x] Add admin route protection (role-based access)
+- [x] Vitest tests for admin and enhanced recipe features
+- [x] Show 5 nearest restaurants on detail page with distance (m/km) and walking time

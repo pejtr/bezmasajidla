@@ -2,6 +2,7 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import {
   getReviewsByRestaurant,
@@ -18,7 +19,20 @@ import {
   getUserRecipeBySlug,
   createUserRecipe,
   deleteUserRecipe,
+  getAllUserRecipes,
+  approveUserRecipe,
+  rejectUserRecipe,
+  getAllReviews,
+  adminDeleteReview,
 } from "./db";
+
+// Admin-only procedure middleware
+const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
+  if (ctx.user.role !== "admin") {
+    throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
+  }
+  return next({ ctx });
+});
 
 export const appRouter = router({
   system: systemRouter,
@@ -149,6 +163,32 @@ export const appRouter = router({
     delete: protectedProcedure
       .input(z.object({ recipeId: z.number() }))
       .mutation(({ ctx, input }) => deleteUserRecipe(input.recipeId, ctx.user.id)),
+  }),
+
+  // ── Admin ──────────────────────────────────────────────
+  admin: router({
+    // List all user-submitted recipes (pending + approved)
+    allRecipes: adminProcedure
+      .query(() => getAllUserRecipes()),
+
+    // Approve a pending recipe
+    approveRecipe: adminProcedure
+      .input(z.object({ recipeId: z.number() }))
+      .mutation(({ input }) => approveUserRecipe(input.recipeId)),
+
+    // Reject (delete) a recipe
+    rejectRecipe: adminProcedure
+      .input(z.object({ recipeId: z.number() }))
+      .mutation(({ input }) => rejectUserRecipe(input.recipeId)),
+
+    // List all reviews
+    allReviews: adminProcedure
+      .query(() => getAllReviews()),
+
+    // Delete any review (admin override — no userId check)
+    deleteReview: adminProcedure
+      .input(z.object({ reviewId: z.number() }))
+      .mutation(({ input }) => adminDeleteReview(input.reviewId)),
   }),
 });
 

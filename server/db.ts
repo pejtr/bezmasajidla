@@ -314,3 +314,63 @@ export async function deleteUserRecipe(recipeId: number, userId: number) {
   if (!db) throw new Error("Database not available");
   await db.delete(userRecipes).where(and(eq(userRecipes.id, recipeId), eq(userRecipes.userId, userId)));
 }
+
+// ── Admin Helpers ─────────────────────────────────────────
+
+export async function getAllUserRecipes() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select({
+    id: userRecipes.id,
+    userId: userRecipes.userId,
+    title: userRecipes.title,
+    slug: userRecipes.slug,
+    description: userRecipes.description,
+    category: userRecipes.category,
+    difficulty: userRecipes.difficulty,
+    prepTime: userRecipes.prepTime,
+    servings: userRecipes.servings,
+    image: userRecipes.image,
+    isApproved: userRecipes.isApproved,
+    createdAt: userRecipes.createdAt,
+    authorName: users.name,
+  })
+    .from(userRecipes)
+    .leftJoin(users, eq(userRecipes.userId, users.id))
+    .orderBy(desc(userRecipes.createdAt));
+}
+
+export async function approveUserRecipe(recipeId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(userRecipes).set({ isApproved: true }).where(eq(userRecipes.id, recipeId));
+}
+
+export async function rejectUserRecipe(recipeId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(userRecipes).where(eq(userRecipes.id, recipeId));
+}
+
+export async function getAllReviews() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select({
+    id: reviews.id,
+    userId: reviews.userId,
+    restaurantSlug: reviews.restaurantSlug,
+    rating: reviews.rating,
+    comment: reviews.comment,
+    createdAt: reviews.createdAt,
+    userName: users.name,
+  })
+    .from(reviews)
+    .leftJoin(users, eq(reviews.userId, users.id))
+    .orderBy(desc(reviews.createdAt));
+}
+
+export async function adminDeleteReview(reviewId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(reviews).where(eq(reviews.id, reviewId));
+}
