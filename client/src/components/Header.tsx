@@ -6,7 +6,7 @@
 
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, Search, Leaf, Heart, User } from "lucide-react";
+import { Menu, X, Search, Heart, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFavorites } from "@/contexts/FavoritesContext";
 
@@ -27,17 +27,13 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-emerald-100 shadow-sm">
       <div className="container">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-emerald-700 rounded-lg flex items-center justify-center shadow-sm group-hover:bg-emerald-600 transition-colors">
-              <Leaf className="w-4 h-4 text-white" />
-            </div>
-            <span
-              className="text-xl font-bold text-emerald-800 leading-none"
-              style={{ fontFamily: "'DM Serif Display', serif" }}
-            >
-              bezmasá<span className="text-emerald-600">jídla</span>
-            </span>
+          {/* Logo — Variant A: fork+leaf wordmark */}
+          <Link href="/" className="flex items-center group">
+            <img
+              src="https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/logo-variant-a-3f285dQs3N5kjFYoTGziUu.webp"
+              alt="bezmasá jídla — průvodce bezmasou Prahou"
+              className="h-10 w-auto object-contain transition-opacity group-hover:opacity-80"
+            />
           </Link>
 
           {/* Desktop Nav */}
