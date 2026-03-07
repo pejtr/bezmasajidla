@@ -13,6 +13,7 @@ import { MapView } from "@/components/Map";
 import { useState } from "react";
 import { toast } from "sonner";
 import { RestaurantJsonLd, BreadcrumbJsonLd } from "@/components/JsonLd";
+import ReviewSection from "@/components/ReviewSection";
 
 const RESTAURANT_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/restaurant-placeholder-NfsuHQoJhFmyxCXwn7EygE.webp";
 
@@ -220,22 +221,11 @@ export default function RestaurantDetail() {
               </div>
             </div>
 
-            {/* Reviews placeholder */}
-            <div className="bg-white rounded-xl border border-emerald-100 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4" style={{ fontFamily: "'DM Serif Display', serif" }}>
-                Recenze ({restaurant.reviewCount})
-              </h3>
-              <div className="text-center py-8 text-gray-400">
-                <Star className="w-8 h-8 mx-auto mb-2 text-gray-200" />
-                <p className="text-sm">Recenze budou brzy dostupné.</p>
-                <Button
-                  className="mt-4 bg-emerald-700 hover:bg-emerald-600 text-white text-sm"
-                  onClick={() => toast.info("Funkce recenzí bude brzy spuštěna!")}
-                >
-                  Napsat recenzi
-                </Button>
-              </div>
-            </div>
+            {/* Reviews Section — fully functional with database */}
+            <ReviewSection
+              restaurantSlug={restaurant.slug}
+              restaurantName={restaurant.name}
+            />
           </div>
 
           {/* ── SIDEBAR ── */}

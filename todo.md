@@ -1,0 +1,7 @@
+- [x] Database schema for reviews, favorites, and user recipes
+- [x] tRPC API endpoints for reviews, favorites, and user recipes
+- [x] Review and rating system on restaurant detail page
+- [x] User profile page with favorites and submitted reviews
+- [x] Form for users to submit their own meat-free recipes
+- [x] Login/logout in header with Manus OAuth
+- [x] Vitest tests for new API endpoints

@@ -20,7 +20,7 @@ import RecipeDetail from "./pages/RecipeDetail";
 import MapPage from "./pages/MapPage";
 import ProfilePage from "./pages/ProfilePage";
 import AboutPage from "./pages/AboutPage";
-
+import AddRecipe from "./pages/AddRecipe";
 function Router() {
   useScrollToTop();
   return (
@@ -33,6 +33,7 @@ function Router() {
       <Route path="/mapa" component={MapPage} />
       <Route path="/profil" component={ProfilePage} />
       <Route path="/o-nas" component={AboutPage} />
+      <Route path="/pridat-recept" component={AddRecipe} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
