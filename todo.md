@@ -5,3 +5,9 @@
 - [x] Form for users to submit their own meat-free recipes
 - [x] Login/logout in header with Manus OAuth
 - [x] Vitest tests for new API endpoints
+- [x] Backend: add sync/merge endpoint for favorites (merge localStorage + DB)
+- [x] Frontend: update FavoritesContext to sync with DB on login
+- [x] Vitest tests for favorites sync functionality
+- [x] Fix recipe photos: generate multiple images per recipe with SEO-optimized filenames
+- [x] Update recipe data structure to support multiple images per recipe
+- [x] Update recipe detail page with image gallery

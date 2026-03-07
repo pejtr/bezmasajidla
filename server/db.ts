@@ -193,6 +193,50 @@ export async function isFavorited(userId: number, itemType: "restaurant" | "reci
   return result.length > 0;
 }
 
+export async function syncFavorites(
+  userId: number,
+  localRestaurants: string[],
+  localRecipes: string[]
+) {
+  const db = await getDb();
+  if (!db) return { restaurants: localRestaurants, recipes: localRecipes };
+
+  // Get existing DB favorites
+  const dbFavs = await db
+    .select()
+    .from(favorites)
+    .where(eq(favorites.userId, userId));
+
+  const dbRestaurantSlugs = new Set(
+    dbFavs.filter((f) => f.itemType === "restaurant").map((f) => f.itemSlug)
+  );
+  const dbRecipeSlugs = new Set(
+    dbFavs.filter((f) => f.itemType === "recipe").map((f) => f.itemSlug)
+  );
+
+  // Merge: union of localStorage + DB
+  const mergedRestaurants = new Set([...localRestaurants, ...Array.from(dbRestaurantSlugs)]);
+  const mergedRecipes = new Set([...localRecipes, ...Array.from(dbRecipeSlugs)]);
+
+  // Insert any localStorage items not yet in DB
+  const newRestaurants = localRestaurants.filter((s) => !dbRestaurantSlugs.has(s));
+  const newRecipes = localRecipes.filter((s) => !dbRecipeSlugs.has(s));
+
+  const toInsert = [
+    ...newRestaurants.map((slug) => ({ userId, itemType: "restaurant" as const, itemSlug: slug })),
+    ...newRecipes.map((slug) => ({ userId, itemType: "recipe" as const, itemSlug: slug })),
+  ];
+
+  if (toInsert.length > 0) {
+    await db.insert(favorites).values(toInsert);
+  }
+
+  return {
+    restaurants: Array.from(mergedRestaurants),
+    recipes: Array.from(mergedRecipes),
+  };
+}
+
 // ── User Recipes ───────────────────────────────────────────
 
 export async function getUserRecipes(userId: number) {

@@ -27,6 +27,11 @@ export interface Restaurant {
   hours?: string;
 }
 
+export interface RecipeImage {
+  url: string;
+  alt: string;
+}
+
 export interface Recipe {
   id: string;
   title: string;
@@ -37,6 +42,7 @@ export interface Recipe {
   servings: number;
   difficulty: "snadný" | "střední" | "náročný";
   image: string;
+  images: RecipeImage[];
   description: string;
   tags: string[];
   isVegan: boolean;
@@ -613,7 +619,12 @@ export const recipes: Recipe[] = [
     cookTime: 90,
     servings: 4,
     difficulty: "střední",
-    image: RECIPE_PLACEHOLDER,
+    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-svickova-na-smetane-hlavni-jidlo_2614da46.jpg",
+    images: [
+      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-svickova-na-smetane-hlavni-jidlo_2614da46.jpg", alt: "Veganská svíčková na smetaně — hotové jídlo se seitanem, houskový knedlík a brusinkový dresink" },
+      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-svickova-kremova-omacka-detail_1fe82997.jpg", alt: "Detail krémové omáčky veganské svíčkové z kořenové zeleniny" },
+      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-svickova-suroviny-priprava_9bdb24fd.jpg", alt: "Suroviny na veganskou svíčkovou — kořenová zelenina, seitan, kešu ořechy a brusinky" },
+    ],
     description: "Klasická česká svíčková v rostlinné verzi. Seitan místo hovězího, cashew smetana a tradiční omáčka z kořenové zeleniny.",
     tags: ["Česká kuchyně", "Seitan", "Tradiční"],
     isVegan: true,
@@ -627,7 +638,12 @@ export const recipes: Recipe[] = [
     cookTime: 30,
     servings: 4,
     difficulty: "snadný",
-    image: RECIPE_PLACEHOLDER,
+    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cockova-polevka-uzena-paprika-miska_8da21fd8.jpg",
+    images: [
+      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cockova-polevka-uzena-paprika-miska_8da21fd8.jpg", alt: "Miska čočkové polévky s uzenou paprikou a chlebem" },
+      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cockova-polevka-detail-textura-cocky_397dd7e9.jpg", alt: "Detail textury čočkové polévky s bylinkami a olivovým olejem" },
+      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cockova-polevka-suroviny-na-stole_864a01cd.jpg", alt: "Suroviny na čočkovou polévku — červená čočka, uzená paprika, cibule a rajčata" },
+    ],
     description: "Hustá a výživná čočková polévka s kouřovým aroma uzené papriky. Ideální na chladné dny.",
     tags: ["Polévka", "Čočka", "Rychlé"],
     isVegan: true,
@@ -641,7 +657,12 @@ export const recipes: Recipe[] = [
     cookTime: 25,
     servings: 2,
     difficulty: "snadný",
-    image: RECIPE_PLACEHOLDER,
+    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/buddha-bowl-pecena-zelenina-barevna-miska_97d30037.jpg",
+    images: [
+      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/buddha-bowl-pecena-zelenina-barevna-miska_97d30037.jpg", alt: "Barevná buddha bowl miska s pečenou zeleninou, quinoou a avokádem" },
+      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/buddha-bowl-detail-textury-zeleniny_00d33332.jpg", alt: "Detail textur buddha bowlu — křupavá cizrna, krémové avokádo a pečená zelenina" },
+      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/buddha-bowl-priprava-ingredience_87630686.jpg", alt: "Příprava ingrediencí na buddha bowl — misky s quinoou, zeleninou a tahini" },
+    ],
     description: "Barevná miska plná výživy — quinoa, pečená zelenina, avokádo, cizrna a tahini dresink.",
     tags: ["Bowl", "Quinoa", "Zdravé"],
     isVegan: true,
@@ -655,7 +676,12 @@ export const recipes: Recipe[] = [
     cookTime: 60,
     servings: 4,
     difficulty: "střední",
-    image: RECIPE_PLACEHOLDER,
+    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-gulas-s-knedliky-cesky-talir_bfcd04f6.jpg",
+    images: [
+      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-gulas-s-knedliky-cesky-talir_bfcd04f6.jpg", alt: "Veganský guláš s houskovými knedlíky na tradičním českém talíři" },
+      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-gulas-detail-omacka-houby_63b3a98b.jpg", alt: "Detail paprikové omáčky veganského guláše s houbami a seitanem" },
+      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-gulas-suroviny-na-dreve_343b5850.jpg", alt: "Suroviny na veganský guláš — houby, seitan, paprika, cibule a kmín" },
+    ],
     description: "Tradiční český guláš bez masa — houby a seitan v bohaté paprikové omáčce s domácími houskových knedlíky.",
     tags: ["Česká kuchyně", "Guláš", "Tradiční"],
     isVegan: true,
@@ -669,7 +695,12 @@ export const recipes: Recipe[] = [
     cookTime: 20,
     servings: 2,
     difficulty: "snadný",
-    image: RECIPE_PLACEHOLDER,
+    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-palacinky-tofu-ricotta-talir_a1a00801.jpg",
+    images: [
+      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-palacinky-tofu-ricotta-talir_a1a00801.jpg", alt: "Špenátové palačinky plněné tofu ricottou na bílém talíři" },
+      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-palacinky-detail-naplne_36e3799d.jpg", alt: "Detail krémové tofu ricotta náplně uvnitř špenátové palačinky" },
+      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-palacinky-priprava-kuchyne_2f15af24.jpg", alt: "Příprava špenátových palačinek v kuchyni — pánev, špenát a tofu ricotta" },
+    ],
     description: "Zelené špenátové palačinky plněné krémovou tofu ricottou s citronem a čerstvými bylinkami.",
     tags: ["Snídaně", "Palačinky", "Špenát"],
     isVegan: true,
@@ -683,7 +714,12 @@ export const recipes: Recipe[] = [
     cookTime: 35,
     servings: 3,
     difficulty: "střední",
-    image: RECIPE_PLACEHOLDER,
+    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-kesu-parmezan-servir_34a5ea66.jpg",
+    images: [
+      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-kesu-parmezan-servir_34a5ea66.jpg", alt: "Houbové rizoto s veganským parmezánem z kešu ořechů a čerstvým tymiánem" },
+      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-detail-houby-kremove_543a4dc6.jpg", alt: "Detail krémového houbového rizota s plátky lesních hub" },
+      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-suroviny-ingredience_0647f571.jpg", alt: "Suroviny na houbové rizoto — arborio rýže, lesní houby, kešu ořechy a tymián" },
+    ],
     description: "Krémové rizoto s lesními houbami a domácím veganským parmezánem z kešu ořechů.",
     tags: ["Italská", "Rizoto", "Houby"],
     isVegan: true,

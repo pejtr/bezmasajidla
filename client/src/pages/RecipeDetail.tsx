@@ -1,10 +1,11 @@
 // ============================================================
 // BEZMASAJIDLA.CZ — Recipe Detail Page
-// "Zelená Metropole" — full recipe with ingredients, steps
+// "Zelená Metropole" — full recipe with gallery, ingredients, steps
 // ============================================================
 
+import { useState } from "react";
 import { useParams, Link } from "wouter";
-import { Clock, Users, ChefHat, ArrowLeft, Leaf } from "lucide-react";
+import { Clock, Users, ChefHat, ArrowLeft, Leaf, ChevronLeft, ChevronRight } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,71 @@ const sampleIngredients: Record<string, string[]> = {
     "Houskové knedlíky k podávání",
     "Brusinkový džem k podávání",
   ],
+  "cocková-polevka-uzena-paprika": [
+    "250 g červené čočky",
+    "1 velká cibule",
+    "3 stroužky česneku",
+    "2 mrkve",
+    "2 lžičky uzené papriky",
+    "400 ml pasírovaných rajčat",
+    "1 l zeleninového vývaru",
+    "2 lžíce olivového oleje",
+    "Sůl, pepř, kmín",
+    "Čerstvá petrželka na ozdobu",
+    "Chléb k podávání",
+  ],
+  "buddha-bowl-pecena-zelenina": [
+    "150 g quinoy",
+    "1 batát",
+    "200 g cizrny (z konzervy)",
+    "1 avokádo",
+    "100 g červeného zelí",
+    "1 mrkev",
+    "2 lžíce tahini",
+    "1 lžíce citronové šťávy",
+    "1 lžíce olivového oleje",
+    "Sůl, pepř, kmín, česnek",
+    "Sezamová semínka na posypání",
+  ],
+  "vegansky-gulas-knedliky": [
+    "300 g směsi hub (žampiony, hlívy, portobello)",
+    "200 g seitanu",
+    "2 velké cibule",
+    "3 stroužky česneku",
+    "3 lžíce sladké papriky",
+    "1 lžička kmínu",
+    "2 lžíce rajčatového protlaku",
+    "500 ml zeleninového vývaru",
+    "2 lžíce olivového oleje",
+    "Sůl, pepř",
+    "Houskové knedlíky k podávání",
+    "Čerstvá petrželka na ozdobu",
+  ],
+  "spenatove-palacinkys-tofu-ricottou": [
+    "200 g čerstvého špenátu",
+    "150 g hladké mouky",
+    "250 ml rostlinného mléka",
+    "200 g tvrdého tofu",
+    "1 lžíce citronové šťávy",
+    "2 stroužky česneku",
+    "2 lžíce nutričního droždí",
+    "Sůl, pepř, muškátový oříšek",
+    "Olivový olej na smažení",
+    "Čerstvé bylinky (bazalka, petrželka)",
+  ],
+  "houbove-rizoto-kešu-parmezan": [
+    "300 g arborio rýže",
+    "250 g směsi lesních hub",
+    "1 cibule",
+    "2 stroužky česneku",
+    "100 ml bílého vína",
+    "800 ml zeleninového vývaru (teplého)",
+    "50 g kešu ořechů",
+    "2 lžíce nutričního droždí",
+    "2 lžíce olivového oleje",
+    "Čerstvý tymián",
+    "Sůl, pepř",
+  ],
   default: [
     "Ingredience budou brzy doplněny.",
   ],
@@ -37,12 +103,132 @@ const sampleSteps: Record<string, string[]> = {
     "Vařte na mírném ohni 45 minut, dokud zelenina nezměkne.",
     "Zeleninu rozmixujte dohladka, přidejte cashew smetanu, hořčici a citronovou šťávu.",
     "Omáčku dochutíte solí a pepřem, případně přidejte trochu cukru pro vyvážení chuti.",
-    "Podávejte s housekovými knedlíky a brusinkovým džemem.",
+    "Podávejte s houskovými knedlíky a brusinkovým džemem.",
+  ],
+  "cocková-polevka-uzena-paprika": [
+    "Na olivovém oleji orestujte nakrájenou cibuli a česnek do zlatova.",
+    "Přidejte nakrájenou mrkev a restujte 3 minuty.",
+    "Vsypte uzenou papriku a kmín, míchejte 30 sekund.",
+    "Přidejte promytou čočku, pasírovaná rajčata a zeleninový vývar.",
+    "Přiveďte k varu, poté snižte teplotu a vařte 20–25 minut, dokud čočka nezměkne.",
+    "Dochutíte solí a pepřem. Polévku můžete částečně rozmixovat pro krémovější konzistenci.",
+    "Podávejte s kapkou olivového oleje, čerstvou petrželkou a chlebem.",
+  ],
+  "buddha-bowl-pecena-zelenina": [
+    "Quinou propláchněte a uvařte podle návodu na obalu (cca 15 minut).",
+    "Batát nakrájejte na kostky, obalte v oleji a koření, pečte 25 minut na 200 °C.",
+    "Cizrnu obalte v oleji s kmínem a pečte spolu s batátem posledních 15 minut.",
+    "Připravte tahini dresink — smíchejte tahini, citronovou šťávu, trochu vody a sůl.",
+    "Červené zelí jemně nakrájejte, mrkev nastrouháte, avokádo nakrájejte na plátky.",
+    "Do misky naskládejte quinou, pečenou zeleninu, cizrnu, zelí, mrkev a avokádo.",
+    "Polijte tahini dresinkem a posypte sezamovými semínky.",
+  ],
+  "vegansky-gulas-knedliky": [
+    "Cibuli nakrájejte na půlměsíce a na oleji restujte do zlatova (cca 10 minut).",
+    "Přidejte nakrájený česnek a restujte minutu.",
+    "Vsypte sladkou papriku a kmín, rychle promíchejte (nepřepalujte papriku).",
+    "Přidejte nakrájené houby a seitan, restujte 5 minut.",
+    "Vmíchejte rajčatový protlak a zalijte zeleninovým vývarem.",
+    "Vařte pod pokličkou na mírném ohni 40–50 minut, dokud guláš nezhoustne.",
+    "Dochutíte solí a pepřem. Podávejte s houskovými knedlíky a čerstvou petrželkou.",
+  ],
+  "spenatove-palacinkys-tofu-ricottou": [
+    "Špenát blanšírujte, scedíte a rozmixujte s rostlinným mlékem.",
+    "Smíchejte špenátovou směs s moukou a špetkou soli. Těsto by mělo být hladké.",
+    "Tofu rozmačkejte vidličkou, přidejte citronovou šťávu, česnek, nutriční droždí a koření.",
+    "Na lehce olejem potřené pánvi smažte tenké palačinky z obou stran.",
+    "Na každou palačinku naneste vrstvu tofu ricotty a srolujte nebo přeložte.",
+    "Podávejte teplé, ozdobené čerstvými bylinkami a citronovou kůrou.",
+  ],
+  "houbove-rizoto-kešu-parmezan": [
+    "Kešu ořechy rozmixujte s nutričním droždím na jemný prášek — to je váš veganský parmezán.",
+    "Na oleji orestujte nakrájenou cibuli a česnek do sklovata.",
+    "Přidejte nakrájené houby a restujte 5 minut, dokud pustí šťávu.",
+    "Vsypte arborio rýži a míchejte 2 minuty, aby se obalila olejem.",
+    "Zalijte bílým vínem a míchejte, dokud se nevsákne.",
+    "Postupně přilévejte teplý vývar po naběračkách a stále míchejte (cca 18–20 minut).",
+    "Na závěr vmíchejte kešu parmezán, dochutíte solí a pepřem. Ozdobte čerstvým tymánem.",
   ],
   default: [
     "Postup přípravy bude brzy doplněn.",
   ],
 };
+
+// ── Image Gallery Component ─────────────────────────────────
+function ImageGallery({ images, title }: { images: { url: string; alt: string }[]; title: string }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  if (!images || images.length === 0) return null;
+
+  const goNext = () => setActiveIndex((prev) => (prev + 1) % images.length);
+  const goPrev = () => setActiveIndex((prev) => (prev - 1 + images.length) % images.length);
+
+  return (
+    <div className="mb-6">
+      {/* Main image */}
+      <div className="relative rounded-2xl overflow-hidden h-72 sm:h-96 group">
+        <img
+          src={images[activeIndex].url}
+          alt={images[activeIndex].alt}
+          className="w-full h-full object-cover transition-opacity duration-300"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+
+        {/* Navigation arrows */}
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={goPrev}
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+              aria-label="Předchozí fotografie"
+            >
+              <ChevronLeft className="w-5 h-5 text-gray-800" />
+            </button>
+            <button
+              onClick={goNext}
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+              aria-label="Další fotografie"
+            >
+              <ChevronRight className="w-5 h-5 text-gray-800" />
+            </button>
+          </>
+        )}
+
+        {/* Image counter */}
+        {images.length > 1 && (
+          <div className="absolute bottom-4 right-4 bg-black/60 text-white text-xs font-medium px-3 py-1 rounded-full">
+            {activeIndex + 1} / {images.length}
+          </div>
+        )}
+      </div>
+
+      {/* Thumbnails */}
+      {images.length > 1 && (
+        <div className="flex gap-2 mt-3">
+          {images.map((img, i) => (
+            <button
+              key={i}
+              onClick={() => setActiveIndex(i)}
+              className={`relative rounded-lg overflow-hidden h-16 w-24 flex-shrink-0 transition-all duration-200 ${
+                i === activeIndex
+                  ? "ring-2 ring-emerald-600 ring-offset-2 opacity-100"
+                  : "opacity-60 hover:opacity-90"
+              }`}
+              aria-label={img.alt}
+            >
+              <img
+                src={img.url}
+                alt={img.alt}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function RecipeDetail() {
   const params = useParams<{ slug: string }>();
@@ -72,7 +258,6 @@ export default function RecipeDetail() {
 
   const ingredients = sampleIngredients[recipe.slug] || sampleIngredients.default;
   const steps = sampleSteps[recipe.slug] || sampleSteps.default;
-  const totalTime = recipe.prepTime + recipe.cookTime;
 
   const difficultyColor = {
     snadný: "bg-emerald-100 text-emerald-700",
@@ -105,21 +290,27 @@ export default function RecipeDetail() {
             Zpět na recepty
           </Link>
 
-          {/* Hero image */}
-          <div className="relative rounded-2xl overflow-hidden mb-6 h-72">
-            <img
-              src={recipe.image}
-              alt={recipe.title}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-            {recipe.isVegan && (
-              <div className="absolute top-4 left-4 bg-emerald-700 text-white text-sm font-semibold px-3 py-1 rounded-full flex items-center gap-1 shadow-md">
-                <Leaf className="w-3.5 h-3.5" />
-                Veganský recept
-              </div>
-            )}
-          </div>
+          {/* Image Gallery */}
+          {recipe.images && recipe.images.length > 0 ? (
+            <ImageGallery images={recipe.images} title={recipe.title} />
+          ) : (
+            <div className="relative rounded-2xl overflow-hidden mb-6 h-72">
+              <img
+                src={recipe.image}
+                alt={recipe.title}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+            </div>
+          )}
+
+          {/* Vegan badge */}
+          {recipe.isVegan && (
+            <div className="inline-flex items-center gap-1 bg-emerald-700 text-white text-sm font-semibold px-3 py-1 rounded-full mb-4 shadow-md">
+              <Leaf className="w-3.5 h-3.5" />
+              Veganský recept
+            </div>
+          )}
 
           {/* Header */}
           <div className="bg-white rounded-xl border border-emerald-100 p-6 mb-6">

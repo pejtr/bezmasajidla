@@ -18,6 +18,7 @@ vi.mock("./db", () => ({
   getUserRecipeBySlug: vi.fn(),
   createUserRecipe: vi.fn(),
   deleteUserRecipe: vi.fn(),
+  syncFavorites: vi.fn(),
 }));
 
 import {
@@ -34,6 +35,7 @@ import {
   getUserRecipeBySlug,
   createUserRecipe,
   deleteUserRecipe,
+  syncFavorites,
 } from "./db";
 
 // ── Helpers ─────────────────────────────────────────────────
@@ -239,6 +241,40 @@ describe("favorites", () => {
 
       expect(isFavorited).toHaveBeenCalledWith(42, "restaurant", "maitrea");
       expect(result).toBe(true);
+    });
+  });
+
+  describe("favorites.sync (protected)", () => {
+    it("rejects unauthenticated users", async () => {
+      await expect(
+        publicCaller().favorites.sync({ localRestaurants: ["maitrea"], localRecipes: [] })
+      ).rejects.toThrow();
+    });
+
+    it("merges localStorage favorites with DB favorites", async () => {
+      const merged = { restaurants: ["maitrea", "lehka-hlava"], recipes: ["pad-thai"] };
+      vi.mocked(syncFavorites).mockResolvedValue(merged);
+
+      const result = await authedCaller().favorites.sync({
+        localRestaurants: ["maitrea"],
+        localRecipes: ["pad-thai"],
+      });
+
+      expect(syncFavorites).toHaveBeenCalledWith(42, ["maitrea"], ["pad-thai"]);
+      expect(result).toEqual(merged);
+    });
+
+    it("handles empty localStorage arrays", async () => {
+      const merged = { restaurants: ["lehka-hlava"], recipes: [] };
+      vi.mocked(syncFavorites).mockResolvedValue(merged);
+
+      const result = await authedCaller().favorites.sync({
+        localRestaurants: [],
+        localRecipes: [],
+      });
+
+      expect(syncFavorites).toHaveBeenCalledWith(42, [], []);
+      expect(result).toEqual(merged);
     });
   });
 });

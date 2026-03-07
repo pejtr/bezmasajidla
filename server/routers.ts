@@ -12,6 +12,7 @@ import {
   getUserFavorites,
   toggleFavorite,
   isFavorited,
+  syncFavorites,
   getUserRecipes,
   getApprovedUserRecipes,
   getUserRecipeBySlug,
@@ -84,6 +85,15 @@ export const appRouter = router({
       }))
       .query(({ ctx, input }) =>
         isFavorited(ctx.user.id, input.itemType, input.itemSlug)
+      ),
+
+    sync: protectedProcedure
+      .input(z.object({
+        localRestaurants: z.array(z.string()),
+        localRecipes: z.array(z.string()),
+      }))
+      .mutation(({ ctx, input }) =>
+        syncFavorites(ctx.user.id, input.localRestaurants, input.localRecipes)
       ),
   }),
 
