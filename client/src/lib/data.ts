@@ -1496,9 +1496,9 @@ export const restaurants: Restaurant[] = [
     priceLevel: 1,
     hours: "Po–Pá 7:00–21:00, So–Ne 8:00–20:00",
     fastFoodItems: [
-      { name: "Caprese bageta", description: "Mozzarella, rajčata, pesto genovese, mascarpone, rukola, balsamico. Vegetariánská.", isVegan: false, price: "129 Kč" },
-      { name: "Švýcarská bageta", description: "Maasdamer, camembert, sýr s modrou plísní, pečené rajče, máslo, grilovaná cibulka, ořechy. Vegetariánská.", isVegan: false, price: "139 Kč" },
-      { name: "Caprese wrap", description: "Mozzarella, rajčata, pesto genovese, mascarpone, rukola, balsamico v pšeničné tortille. Vegetariánský.", isVegan: false, price: "150 Kč" },
+      { name: "Caprese bageta", description: "Mozzarella, rajčata, pesto genovese, mascarpone, rukola, balsamico. Vegetariánská.", isVegan: false, price: "129 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/caprese-bageta-thumb_2de34491.webp" },
+      { name: "Švýcarská bageta", description: "Maasdamer, camembert, sýr s modrou plísní, pečené rajče, máslo, grilovaná cibulka, ořechy. Vegetariánská.", isVegan: false, price: "139 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/svycarska-bageta-thumb_7faae822.webp" },
+      { name: "Caprese wrap", description: "Mozzarella, rajčata, pesto genovese, mascarpone, rukola, balsamico v pšeničné tortille. Vegetariánský.", isVegan: false, price: "150 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/caprese-wrap-thumb_ecf66324.webp" },
     ],
   },
   // ── UGO ──
@@ -1523,9 +1523,9 @@ export const restaurants: Restaurant[] = [
     priceLevel: 1,
     hours: "Po–Ne 8:00–21:00",
     fastFoodItems: [
-      { name: "Smoothie bowl", description: "Acai nebo mango základ, granola, čerstvé ovoce, semínka. 100% veganský.", isVegan: true, price: "149 Kč" },
-      { name: "Buddha bowl", description: "Quinoa, pečená zelenina, avokádo, cizrna, tahini dresink. 100% veganský.", isVegan: true, price: "169 Kč" },
-      { name: "Fresh pomerančový džus", description: "100% čerstvě lisovaný pomerančový džus bez přidaného cukru. Veganský.", isVegan: true, price: "79 Kč" },
+      { name: "Smoothie bowl", description: "Acai nebo mango základ, granola, čerstvé ovoce, semínka. 100% veganský.", isVegan: true, price: "149 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/smoothie-bowl-thumb_1be292f5.webp" },
+      { name: "Buddha bowl", description: "Quinoa, pečená zelenina, avokádo, cizrna, tahini dresink. 100% veganský.", isVegan: true, price: "169 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/buddha-bowl-thumb_1d6285da.webp" },
+      { name: "Fresh pomerančový džus", description: "100% čerstvě lisovaný pomerančový džus bez přidaného cukru. Veganský.", isVegan: true, price: "79 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/orange-juice-thumb_d86c2d1a.webp" },
       { name: "Zeleninová polévka", description: "Denně měněná sezónní polévka. Vegetariánská nebo veganská.", isVegan: true, price: "89 Kč" },
     ],
   },
