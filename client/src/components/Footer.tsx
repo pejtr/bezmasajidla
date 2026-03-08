@@ -102,9 +102,9 @@ export default function Footer() {
         </div>
 
         {/* Partner Projects Row */}
-        <div className="border-t border-emerald-800 mt-10 pt-6 pb-4">
+        <div className="border-t border-emerald-800 mt-10 pt-6 pb-4 text-center">
           <p className="text-xs text-emerald-500 uppercase tracking-wider mb-3">Naše další projekty</p>
-          <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-emerald-300">
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-semibold text-emerald-200">
             <a href="https://www.akcni-letenky.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Akční letenky</a>
             <a href="https://www.do-italie.cz" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Do Itálie</a>
             <a href="https://www.katastr-online.cz" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Katastr Online</a>
