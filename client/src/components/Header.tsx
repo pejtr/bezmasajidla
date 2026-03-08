@@ -12,11 +12,13 @@ import { useFavorites } from "@/contexts/FavoritesContext";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import SearchOverlay from "@/components/SearchOverlay";
+import FavoritesPanel from "@/components/FavoritesPanel";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [favoritesOpen, setFavoritesOpen] = useState(false);
   const [location] = useLocation();
   const { favoriteRestaurants, favoriteRecipes } = useFavorites();
   const totalFavorites = favoriteRestaurants.length + favoriteRecipes.length;
@@ -51,6 +53,7 @@ export default function Header() {
   return (
     <>
       <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
+      <FavoritesPanel open={favoritesOpen} onClose={() => setFavoritesOpen(false)} />
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-emerald-100 shadow-sm">
       <div className="container">
         <div className="flex items-center justify-between h-16">
@@ -93,6 +96,18 @@ export default function Header() {
               aria-label="Otevřít vyhledávání"
             >
               <Search className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setFavoritesOpen(true)}
+              className="relative p-2 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              aria-label="Zobrazit oblíbené"
+            >
+              <Heart className={`w-4 h-4 ${totalFavorites > 0 ? 'fill-red-500 text-red-500' : ''}`} />
+              {totalFavorites > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {totalFavorites > 9 ? '9+' : totalFavorites}
+                </span>
+              )}
             </button>
 
             {/* Auth: User menu or Login button */}

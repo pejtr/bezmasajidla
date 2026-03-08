@@ -103,3 +103,4 @@
 - [x] Přidat pole gallery[] do Restaurant typu a implementovat fotogalerii na detailní stránce
 - [x] Nahrát 3 fotky KRO Kitchen na CDN a přidat galerii ke všem pobočkám
 - [x] Přidat "v Praze" k popisku článků v patičce
+- [x] Přidat ikonu srdíčka do headeru pro zobrazení oblíbených (FavoritesPanel overlay)
