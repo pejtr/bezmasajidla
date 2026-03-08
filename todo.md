@@ -104,3 +104,4 @@
 - [x] Nahrát 3 fotky KRO Kitchen na CDN a přidat galerii ke všem pobočkám
 - [x] Přidat "v Praze" k popisku článků v patičce
 - [x] Přidat ikonu srdíčka do headeru pro zobrazení oblíbených (FavoritesPanel overlay)
+- [x] Přidat sekci "Naše projekty" do patičky s 5 partnerskými weby

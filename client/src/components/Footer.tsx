@@ -97,25 +97,23 @@ export default function Footer() {
               <li><Link href="/kontakt" className="hover:text-white transition-colors">Kontakt</Link></li>
             </ul>
 
-            <h4 className="text-sm font-semibold text-white uppercase tracking-wider mt-6 mb-4">
-              Sesterské projekty
-            </h4>
-            <ul className="space-y-2 text-sm text-emerald-300">
-              <li>
-                <a
-                  href="https://www.cajovny-praha.cz"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white transition-colors"
-                >
-                  Čajovny Praha
-                </a>
-              </li>
-            </ul>
+
           </div>
         </div>
 
-        <div className="border-t border-emerald-800 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-emerald-400">
+        {/* Partner Projects Row */}
+        <div className="border-t border-emerald-800 mt-10 pt-6 pb-4">
+          <p className="text-xs text-emerald-500 uppercase tracking-wider mb-3">Naše další projekty</p>
+          <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-emerald-300">
+            <a href="https://www.akcni-letenky.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Akční letenky</a>
+            <a href="https://www.do-italie.cz" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Do Itálie</a>
+            <a href="https://www.katastr-online.cz" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Katastr Online</a>
+            <a href="https://www.cajovny-praha.cz" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Čajovny Praha</a>
+            <a href="https://www.humandesignmapa.cz" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Human Design</a>
+          </div>
+        </div>
+
+        <div className="border-t border-emerald-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-emerald-400">
           <p>© 2026 Bezmasájídla.cz — Všechna práva vyhrazena</p>
           <div className="flex gap-4">
             <Link href="/ochrana-soukromi" className="hover:text-emerald-200 transition-colors">Ochrana soukromí</Link>
