@@ -37,9 +37,9 @@ const categories = [
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
-  // Curated top restaurants: only vegan and vegetarian (exclude fast food and vegan-friendly), sort by popularity score (rating × reviewCount), show top 6
+  // Curated top restaurants: vegan, vegetarian and vegan-friendly (exclude fast food), sort by popularity score (rating × reviewCount), show top 6
   const topRestaurants = [...restaurants]
-    .filter(r => r.type === "vegan" || r.type === "vegetarian")
+    .filter(r => r.type === "vegan" || r.type === "vegetarian" || r.type === "friendly")
     .sort((a, b) => (b.rating * b.reviewCount) - (a.rating * a.reviewCount))
     .slice(0, 6);
   const featuredRecipes = recipes.slice(0, 3);
