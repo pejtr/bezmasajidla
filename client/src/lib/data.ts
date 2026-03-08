@@ -1526,7 +1526,7 @@ export const restaurants: Restaurant[] = [
       { name: "Smoothie bowl", description: "Acai nebo mango základ, granola, čerstvé ovoce, semínka. 100% veganský.", isVegan: true, price: "149 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/smoothie-bowl-thumb_1be292f5.webp" },
       { name: "Buddha bowl", description: "Quinoa, pečená zelenina, avokádo, cizrna, tahini dresink. 100% veganský.", isVegan: true, price: "169 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/buddha-bowl-thumb_1d6285da.webp" },
       { name: "Fresh pomerančový džus", description: "100% čerstvě lisovaný pomerančový džus bez přidaného cukru. Veganský.", isVegan: true, price: "79 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/orange-juice-thumb_d86c2d1a.webp" },
-      { name: "Zeleninová polévka", description: "Denně měněná sezónní polévka. Vegetariánská nebo veganská.", isVegan: true, price: "89 Kč" },
+      { name: "Zeleninová polévka", description: "Denně měněná sezónní polévka. Vegetariánská nebo veganská.", isVegan: true, price: "89 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/zeleninova-polevka-thumb_ce4a8a5d.webp" },
     ],
   },
   // ── FAST FOOD CHAINS ──
