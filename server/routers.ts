@@ -4,6 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { notifyOwner } from "./_core/notification";
 import {
   getReviewsByRestaurant,
   getReviewsByUser,
@@ -190,6 +191,38 @@ export const appRouter = router({
       .input(z.object({ reviewId: z.number() }))
       .mutation(({ input }) => adminDeleteReview(input.reviewId)),
   }),
+  // ── Kontakt ───────────────────────────────────────────────────────
+  contact: router({
+    send: publicProcedure
+      .input(
+        z.object({
+          name: z.string().min(2, "Jméno musí mít alespoň 2 znaky"),
+          email: z.string().email("Neplatná e-mailová adresa"),
+          subject: z.string().min(3, "Předmět musí mít alespoň 3 znaky"),
+          message: z.string().min(10, "Zpráva musí mít alespoň 10 znaků"),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const { name, email, subject, message } = input;
+        const title = `📧 Kontaktní formulář: ${subject}`;
+        const content = [
+          `**Od:** ${name} <${email}>`,
+          `**Předmět:** ${subject}`,
+          `**Zpráva:**`,
+          message,
+          `---`,
+          `*Odesláno z bezmasajidla.cz kontaktního formuláře*`,
+          `*Odpovězte na: ${email}*`,
+        ].join("\n\n");
+        const sent = await notifyOwner({ title, content });
+        if (!sent) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Zprávu se nepodařilo odeslat. Zkuste to prosím znovu.",
+          });
+        }
+        return { success: true };
+      }),
+  }),
 });
-
 export type AppRouter = typeof appRouter;

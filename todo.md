@@ -69,3 +69,19 @@
 - [x] Optimalizovat loga fast-food řetězců na 64×64 px WebP
 - [x] Vytvořit blogovou sekci s 5 SEO články o veganských restauracích v Praze
 - [x] Přidat blog do navigace (Header), footeru a homepage
+- [ ] Napsat 5 nových SEO blogových článků (veganský fast food, bezlepkové, vánoční trh, zdravé obědy, veganské pizzerie)
+- [ ] Přidat 5 nových článků do blogData.ts
+- [ ] Vygenerovat originální AI náhledové obrázky pro všech 10 blogových článků
+- [ ] Nahrát blog obrázky na CDN a aktualizovat URL v blogData.ts
+- [ ] Vytvořit stránku Kontakt s kontaktním formulářem (jméno, email, zpráva)
+- [ ] Nastavit odesílání kontaktních zpráv na petr.matej@gmail.com
+- [ ] Přidat Kontakt do navigace a footeru
+- [ ] Přidat Bageterie Boulevard do fast-food sekce (bagety, vegetariánské/veganské možnosti)
+- [ ] Přidat UGO do fast-food sekce (fresh džusy, saláty, smoothie bowls)
+- [ ] Opravit syntax chybu v routers.ts (contact endpoint)
+- [ ] Přidat Kro jako vegan-friendly podnik do dat
+- [ ] Rozdělit UGO na dva záznamy: UGO Salaterie a UGO Freshbar s odlišným menu
+- [ ] Přidat správná loga Bageterie Boulevard a UGO (stáhnout z webu)
+- [ ] Přidat CDN URL miniatur do fastFoodItems Bageterie Boulevard a UGO
+- [x] Odfiltrovat Vegan-friendly restaurace z homepage sekce "Top restaurace" (zobrazovat jen vegan a vegetarian)
+- [x] Opravit filtrování na mapě: při výběru "Veganské" zobrazit pouze vegan, "Vegetariánské" pouze vegetarian (ne vegan-friendly)
