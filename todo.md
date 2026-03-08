@@ -91,3 +91,8 @@
 - [ ] Změnit VEG-friendly zpět na Vegan-friendly v celé aplikaci
 - [ ] Nahrát logo UGO na CDN a aktualizovat data.ts
 - [ ] Nahrát logo Bageterie Boulevard na CDN a aktualizovat data.ts
+- [x] Přidat affiliate tlačítko "Objednat přes Wolt" na stránky restaurací
+- [x] Přidat affiliate tlačítka "Koupit ingredience na Rohlík.cz" a "Košík.cz" na stránky receptů
+- [x] Vytvořit soubor affiliate konstant (snadno aktualizovatelné URL)
+- [x] Implementovat full-text vyhledávání přes lupu v headeru (overlay s live výsledky)
+- [x] Integrovat Mailchimp do newsletter banneru (sběr e-mailů)

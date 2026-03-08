@@ -11,10 +11,12 @@ import { Button } from "@/components/ui/button";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
+import SearchOverlay from "@/components/SearchOverlay";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [location] = useLocation();
   const { favoriteRestaurants, favoriteRecipes } = useFavorites();
   const totalFavorites = favoriteRestaurants.length + favoriteRecipes.length;
@@ -47,7 +49,9 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-emerald-100 shadow-sm">
+    <>
+      <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-emerald-100 shadow-sm">
       <div className="container">
         <div className="flex items-center justify-between h-16">
           {/* Logo + Tagline */}
@@ -83,7 +87,11 @@ export default function Header() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-2">
-            <button className="p-2 text-gray-500 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors">
+            <button
+              onClick={() => setSearchOpen(true)}
+              className="p-2 text-gray-500 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors"
+              aria-label="Otevřít vyhledávání"
+            >
               <Search className="w-4 h-4" />
             </button>
 
@@ -320,5 +328,6 @@ export default function Header() {
         )}
       </div>
     </header>
+    </>
   );
 }

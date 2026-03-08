@@ -4,7 +4,7 @@
 // ============================================================
 
 import { useParams, Link } from "wouter";
-import { MapPin, Phone, Globe, Clock, Star, Crown, ArrowLeft, ExternalLink, Share2, Navigation, Footprints } from "lucide-react";
+import { MapPin, Phone, Globe, Clock, Star, Crown, ArrowLeft, ExternalLink, Share2, Navigation, Footprints, ShoppingBag } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import { RestaurantJsonLd, BreadcrumbJsonLd } from "@/components/JsonLd";
 import ReviewSection from "@/components/ReviewSection";
 import { getNearestRestaurants, getNearestFastFood } from "@/lib/geo";
 import SEOHead from "@/components/SEOHead";
+import { getWoltLink } from "@/lib/affiliates";
 
 const RESTAURANT_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/restaurant-placeholder-NfsuHQoJhFmyxCXwn7EygE.webp";
 
@@ -403,13 +404,17 @@ export default function RestaurantDetail() {
                     Navigovat
                   </Button>
                 </a>
-                <Button
-                  variant="outline"
-                  className="w-full border-emerald-200 text-emerald-700 hover:bg-emerald-50"
-                  onClick={() => toast.info("Funkce objednávky bude brzy dostupná!")}
+                <a
+                  href={getWoltLink((restaurant as any).woltUrl)}
+                  target="_blank"
+                  rel="noopener noreferrer sponsored"
+                  className="block"
                 >
-                  Objednat online
-                </Button>
+                  <Button className="w-full font-semibold text-white" style={{ backgroundColor: '#009DE0' }}>
+                    <ShoppingBag className="w-4 h-4 mr-2" />
+                    Objednat přes Wolt
+                  </Button>
+                </a>
               </div>
 
               {/* Price level */}

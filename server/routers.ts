@@ -191,7 +191,53 @@ export const appRouter = router({
       .input(z.object({ reviewId: z.number() }))
       .mutation(({ input }) => adminDeleteReview(input.reviewId)),
   }),
-  // ── Kontakt ───────────────────────────────────────────────────────
+  // ── Newsletter ───────────────────────────────────────────
+  newsletter: router({
+    subscribe: publicProcedure
+      .input(z.object({ email: z.string().email("Neplatný e-mail") }))
+      .mutation(async ({ input }) => {
+        const { email } = input;
+
+        // Mailchimp API integration
+        const apiKey = process.env.MAILCHIMP_API_KEY;
+        const audienceId = process.env.MAILCHIMP_AUDIENCE_ID;
+        const serverPrefix = process.env.MAILCHIMP_SERVER_PREFIX; // e.g. "us21"
+
+        if (apiKey && audienceId && serverPrefix) {
+          // Full Mailchimp API integration
+          const url = `https://${serverPrefix}.api.mailchimp.com/3.0/lists/${audienceId}/members`;
+          const response = await fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Basic ${Buffer.from(`anystring:${apiKey}`).toString("base64")}`,
+            },
+            body: JSON.stringify({
+              email_address: email,
+              status: "subscribed",
+              tags: ["bezmasajidla"],
+            }),
+          });
+          const data = await response.json() as { title?: string; detail?: string };
+          if (!response.ok && data.title !== "Member Exists") {
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: data.detail || "Nastala chyba při přihlášení.",
+            });
+          }
+        }
+
+        // Always notify owner about new subscriber
+        await notifyOwner({
+          title: `📧 Nový odběratel newsletteru`,
+          content: `E-mail: **${email}**\n\n*Přihlášen z bezmasajidla.cz*`,
+        });
+
+        return { success: true };
+      }),
+  }),
+
+  // ── Contact ───────────────────────────────────────────────────────
   contact: router({
     send: publicProcedure
       .input(

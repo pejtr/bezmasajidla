@@ -2,12 +2,13 @@
 // BEZMASAJIDLA.CZ — Newsletter Banner Component
 // "Zelená Metropole" — shown only once per session
 // Prague skyline silhouette (Pražský hrad + Karlův most) at top
+// Mailchimp integration via tRPC backend
 // ============================================================
 
 import { useState, useEffect } from "react";
-import { X, Mail } from "lucide-react";
+import { X, Mail, CheckCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
 
 /** Prague skyline silhouette — Pražský hrad, Karlův most, věže */
 function PragueSkyline() {
@@ -18,7 +19,6 @@ function PragueSkyline() {
       className="w-full h-10 block"
       aria-hidden="true"
     >
-      {/* Sky / transparent top */}
       <defs>
         <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#065f46" stopOpacity="0" />
@@ -26,8 +26,6 @@ function PragueSkyline() {
         </linearGradient>
       </defs>
       <rect width="500" height="60" fill="url(#skyGrad)" />
-
-      {/* Silhouette path — Prague Castle, St. Vitus, Charles Bridge towers, Old Town */}
       <path
         d="
           M0,60
@@ -92,8 +90,6 @@ function PragueSkyline() {
         fill="#065f46"
         opacity="0.5"
       />
-
-      {/* Foreground silhouette — closer buildings */}
       <path
         d="
           M0,60 L0,52
@@ -116,9 +112,21 @@ function PragueSkyline() {
 
 export default function NewsletterBanner() {
   const [visible, setVisible] = useState(false);
+  const [email, setEmail] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const subscribe = trpc.newsletter.subscribe.useMutation({
+    onSuccess: () => {
+      setSubscribed(true);
+      sessionStorage.setItem("newsletter_seen", "1");
+    },
+    onError: (err: { message?: string }) => {
+      setErrorMsg(err.message || "Nastala chyba. Zkuste to prosím znovu.");
+    },
+  });
 
   useEffect(() => {
-    // Show only once per session
     const seen = sessionStorage.getItem("newsletter_seen");
     if (!seen) {
       const timer = setTimeout(() => setVisible(true), 8000);
@@ -133,8 +141,8 @@ export default function NewsletterBanner() {
 
   const handleSubscribe = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    toast.success("Děkujeme za přihlášení k odběru novinek!");
-    handleDismiss();
+    setErrorMsg("");
+    subscribe.mutate({ email });
   };
 
   if (!visible) return null;
@@ -152,36 +160,68 @@ export default function NewsletterBanner() {
           <button
             onClick={handleDismiss}
             className="absolute top-3 right-3 text-emerald-400 hover:text-white transition-colors"
+            aria-label="Zavřít"
           >
             <X className="w-4 h-4" />
           </button>
-          <div className="flex items-start gap-3 mb-3">
-            <div className="w-8 h-8 bg-amber-400 rounded-lg flex items-center justify-center flex-shrink-0">
-              <Mail className="w-4 h-4 text-amber-900" />
+
+          {subscribed ? (
+            /* Success state */
+            <div className="flex items-center gap-3 py-2">
+              <CheckCircle className="w-8 h-8 text-amber-400 flex-shrink-0" />
+              <div>
+                <p className="text-white font-semibold text-sm">Jste přihlášeni!</p>
+                <p className="text-emerald-300 text-xs mt-0.5">
+                  Brzy dostanete první novinky ze světa bezmasé Prahy.
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-white font-semibold text-sm" style={{ fontFamily: "'DM Serif Display', serif" }}>
-                Novinky ze světa bezmasé Prahy
-              </h3>
-              <p className="text-emerald-300 text-xs mt-0.5">
-                Nové restaurace, recepty a tipy každý týden.
-              </p>
-            </div>
-          </div>
-          <form onSubmit={handleSubscribe} className="flex gap-2">
-            <input
-              type="email"
-              placeholder="Tvůj e-mail..."
-              required
-              className="flex-1 bg-emerald-700 border border-emerald-600 text-white placeholder-emerald-400 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
-            />
-            <Button
-              type="submit"
-              className="bg-amber-400 hover:bg-amber-300 text-amber-900 font-semibold text-sm px-4 rounded-lg"
-            >
-              Přihlásit
-            </Button>
-          </form>
+          ) : (
+            <>
+              <div className="flex items-start gap-3 mb-3">
+                <div className="w-8 h-8 bg-amber-400 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Mail className="w-4 h-4 text-amber-900" />
+                </div>
+                <div>
+                  <h3
+                    className="text-white font-semibold text-sm"
+                    style={{ fontFamily: "'DM Serif Display', serif" }}
+                  >
+                    Novinky ze světa bezmasé Prahy
+                  </h3>
+                  <p className="text-emerald-300 text-xs mt-0.5">
+                    Nové restaurace, recepty a tipy každý týden.
+                  </p>
+                </div>
+              </div>
+
+              <form onSubmit={handleSubscribe} className="flex gap-2">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Tvůj e-mail..."
+                  required
+                  className="flex-1 bg-emerald-700 border border-emerald-600 text-white placeholder-emerald-400 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                />
+                <Button
+                  type="submit"
+                  disabled={subscribe.isPending}
+                  className="bg-amber-400 hover:bg-amber-300 text-amber-900 font-semibold text-sm px-4 rounded-lg"
+                >
+                  {subscribe.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    "Přihlásit"
+                  )}
+                </Button>
+              </form>
+
+              {errorMsg && (
+                <p className="text-red-300 text-xs mt-2">{errorMsg}</p>
+              )}
+            </>
+          )}
         </div>
       </div>
     </div>

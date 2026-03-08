@@ -5,13 +5,14 @@
 
 import { useState } from "react";
 import { useParams, Link } from "wouter";
-import { Clock, Users, ChefHat, ArrowLeft, Leaf, ChevronLeft, ChevronRight } from "lucide-react";
+import { Clock, Users, ChefHat, ArrowLeft, Leaf, ChevronLeft, ChevronRight, ShoppingCart, ExternalLink } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { recipes, type Recipe } from "@/lib/data";
 import SEOHead from "@/components/SEOHead";
 import OptimizedImage from "@/components/OptimizedImage";
+import { getRohlikLink, getKosikLink } from "@/lib/affiliates";
 
 const sampleIngredients: Record<string, string[]> = {
   "veganska-svickova": [
@@ -836,6 +837,41 @@ export default function RecipeDetail() {
                   </li>
                 ))}
               </ul>
+            </div>
+
+            {/* Affiliate: Buy ingredients */}
+            <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border border-emerald-100 p-5 mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <ShoppingCart className="w-4 h-4 text-emerald-700" />
+                <h3 className="text-sm font-semibold text-emerald-800">Koupit ingredience online</h3>
+              </div>
+              <p className="text-xs text-gray-500 mb-4">Objednejte všechny suroviny pohodlně domů a začněte vařit ještě dnes.</p>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <a
+                  href={getRohlikLink(recipe.title)}
+                  target="_blank"
+                  rel="noopener noreferrer sponsored"
+                  className="flex-1"
+                >
+                  <Button className="w-full font-semibold text-white text-sm" style={{ backgroundColor: '#E8002D' }}>
+                    <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
+                    Koupit na Rohlík.cz
+                    <ExternalLink className="w-3 h-3 ml-1.5 opacity-70" />
+                  </Button>
+                </a>
+                <a
+                  href={getKosikLink(recipe.title)}
+                  target="_blank"
+                  rel="noopener noreferrer sponsored"
+                  className="flex-1"
+                >
+                  <Button className="w-full font-semibold text-white text-sm" style={{ backgroundColor: '#F5A623' }}>
+                    <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
+                    Koupit na Košík.cz
+                    <ExternalLink className="w-3 h-3 ml-1.5 opacity-70" />
+                  </Button>
+                </a>
+              </div>
             </div>
 
             {/* Steps */}
