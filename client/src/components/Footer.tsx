@@ -103,7 +103,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-emerald-300">
               <li>
                 <a
-                  href="https://cajovny.cz"
+                  href="https://www.cajovny-praha.cz"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-white transition-colors"
