@@ -140,3 +140,4 @@
 - [x] Přidat filtr kuchyně na stránku receptů (řada tlačítek: Česká, Italská, Gruzínská, Asijská, Maďarská, Slovenská...)
 - [x] Přidat 9 nových receptů — Italské (risotto, spaghetti, tiramisu, pizza), Maďarské (guláš, lángos, palacsinky), Slovenské (bryndzové halušky, kapustnica)
 - [x] GPS geolokace v mapě — tlačítko "V okolí" zobrazí restaurace do 1,5 km od uživatele s modrým markerem a kruhem
+- [x] Opravit KRO Kitchen typ z "vegetarian" na "vegan-friendly" (všechny pobočky)
