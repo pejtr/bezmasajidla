@@ -269,7 +269,7 @@ export default function Home() {
               className="text-3xl font-bold text-gray-900"
               style={{ fontFamily: "'DM Serif Display', serif" }}
             >
-              Vegetariánské &amp; Veganské možnosti ve fastfoodových řetězcích
+              Fastfood řetězce
             </h2>
             <p className="text-sm text-gray-500 mt-1">Co si dát v běžných řetězcích, když nechcete maso</p>
           </div>
@@ -284,10 +284,17 @@ export default function Home() {
           {fastFoodChains.map((chain) => (
             <Link key={chain.id} href={`/restaurace/${chain.slug}`}>
               <div className="bg-white rounded-xl border border-orange-100 overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
-                {/* Header strip */}
-                <div className="bg-gradient-to-r from-orange-500 to-amber-500 px-4 py-3 flex items-center justify-between">
-                  <span className="text-white font-bold text-sm">{chain.name}</span>
-                  <span className="text-orange-100 text-xs">{chain.priceLevel === 1 ? "Kč" : chain.priceLevel === 2 ? "KčKč" : "KčKčKč"}</span>
+                {/* Header strip with logo */}
+                <div className="bg-gradient-to-r from-orange-500 to-amber-500 px-4 py-3 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 min-w-0">
+                    {chain.image && (
+                      <div className="w-8 h-8 rounded-md bg-white flex-shrink-0 overflow-hidden flex items-center justify-center p-0.5">
+                        <img src={chain.image} alt={chain.name} className="w-full h-full object-contain" />
+                      </div>
+                    )}
+                    <span className="text-white font-bold text-sm truncate">{chain.name}</span>
+                  </div>
+                  <span className="text-orange-100 text-xs flex-shrink-0">{chain.priceLevel === 1 ? "Kč" : chain.priceLevel === 2 ? "KčKč" : "KčKčKč"}</span>
                 </div>
                 {/* Menu items */}
                 <div className="p-4">
@@ -295,7 +302,13 @@ export default function Home() {
                   <div className="flex flex-col gap-2">
                     {(chain.fastFoodItems || []).slice(0, 3).map((item, idx) => (
                       <div key={idx} className="flex items-center gap-2">
-                        <span className="text-xs flex-shrink-0">{item.isVegan ? '🌱' : '🥚'}</span>
+                        {item.image ? (
+                          <div className="w-9 h-9 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
+                            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                          </div>
+                        ) : (
+                          <span className="text-xs flex-shrink-0 w-9 text-center">{item.isVegan ? '🌱' : '🥚'}</span>
+                        )}
                         <div className="flex-1 min-w-0">
                           <span className="text-xs font-semibold text-gray-800">{item.name}</span>
                           {item.price && <span className="text-xs text-orange-600 font-bold ml-2">{item.price}</span>}

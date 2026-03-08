@@ -15,10 +15,58 @@ import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import { RestaurantJsonLd, BreadcrumbJsonLd } from "@/components/JsonLd";
 import ReviewSection from "@/components/ReviewSection";
-import { getNearestRestaurants } from "@/lib/geo";
+import { getNearestRestaurants, getNearestFastFood } from "@/lib/geo";
 import SEOHead from "@/components/SEOHead";
 
 const RESTAURANT_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/restaurant-placeholder-NfsuHQoJhFmyxCXwn7EygE.webp";
+
+function NearbyFastFoodSection({ slug }: { slug: string }) {
+  const nearby = useMemo(() => getNearestFastFood(slug, 5), [slug]);
+
+  if (nearby.length === 0) return null;
+
+  return (
+    <div className="bg-white rounded-xl border border-orange-100 p-5">
+      <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
+        <Navigation className="w-4 h-4 text-orange-500" />
+        Nejbližší fastfood řetězce
+      </h3>
+      <div className="flex flex-col gap-3">
+        {nearby.map((item) => (
+          <Link key={item.restaurant.id} href={`/restaurace/${item.restaurant.slug}`}>
+            <div className="flex items-center gap-3 group cursor-pointer p-2 -mx-2 rounded-lg hover:bg-orange-50/50 transition-colors">
+              <img
+                src={item.restaurant.image}
+                alt={item.restaurant.name}
+                className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+              />
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium text-gray-900 group-hover:text-orange-600 transition-colors truncate">
+                  {item.restaurant.name.split(" — ")[0].split(" Praha")[0].trim()}
+                </p>
+                <div className="flex items-center gap-1">
+                  <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                  <span className="text-xs text-gray-500">{item.restaurant.rating.toFixed(1)}</span>
+                  <span className="text-xs text-gray-300 mx-0.5">·</span>
+                  <span className="text-xs text-gray-500">{item.restaurant.district}</span>
+                </div>
+              </div>
+              <div className="flex flex-col items-end flex-shrink-0">
+                <span className="text-xs font-semibold text-orange-600">
+                  {item.formattedDistance}
+                </span>
+                <span className="text-[11px] text-gray-400 flex items-center gap-0.5">
+                  <Footprints className="w-3 h-3" />
+                  {item.walkingTime}
+                </span>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function NearbyRestaurantsSection({ slug }: { slug: string }) {
   const nearby = useMemo(() => getNearestRestaurants(slug, 5), [slug]);
@@ -334,7 +382,7 @@ export default function RestaurantDetail() {
           {/* ── SIDEBAR ── */}
           <div className="lg:col-span-1">
             {/* Quick actions */}
-            <div className="bg-white rounded-xl border border-emerald-100 p-5 mb-4 lg:sticky lg:top-20">
+            <div className="bg-white rounded-xl border border-emerald-100 p-5 mb-4">
               <h3 className="text-sm font-semibold text-gray-900 mb-4">Rychlé akce</h3>
               <div className="flex flex-col gap-2">
                 {restaurant.phone && (
@@ -376,6 +424,9 @@ export default function RestaurantDetail() {
 
             {/* Nearest restaurants */}
             <NearbyRestaurantsSection slug={restaurant.slug} />
+
+            {/* Nearest fastfood chains */}
+            <NearbyFastFoodSection slug={restaurant.slug} />
           </div>
         </div>
       </div>

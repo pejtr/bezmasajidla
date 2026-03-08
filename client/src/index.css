@@ -173,3 +173,14 @@
     color: oklch(0.88 0.02 152);
   }
 }
+
+/* Logo animated shimmer/glow */
+@keyframes logo-shimmer {
+  0%   { filter: brightness(1) saturate(1); }
+  40%  { filter: brightness(1.12) saturate(1.25) drop-shadow(0 0 6px oklch(0.72 0.18 152 / 0.35)); }
+  100% { filter: brightness(1) saturate(1); }
+}
+
+.logo-animated {
+  animation: logo-shimmer 3.5s ease-in-out infinite;
+}

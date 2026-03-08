@@ -66,6 +66,41 @@ export interface NearbyRestaurant {
 }
 
 /**
+ * Find the N nearest fastfood chains to a given restaurant.
+ */
+export function getNearestFastFood(
+  currentSlug: string,
+  count: number = 5
+): NearbyRestaurant[] {
+  const current = restaurants.find((r) => r.slug === currentSlug);
+  if (!current) return [];
+
+  // Get unique chains (by name prefix) — pick the closest branch per chain
+  const chainMap = new Map<string, NearbyRestaurant>();
+
+  restaurants
+    .filter((r) => r.type === "fastfood")
+    .forEach((r) => {
+      const distance = haversineDistance(current.lat, current.lng, r.lat, r.lng);
+      // Use chain name as key (strip branch suffix after " — ")
+      const chainName = r.name.split(" — ")[0].split(" Praha")[0].trim();
+      const existing = chainMap.get(chainName);
+      if (!existing || distance < existing.distance) {
+        chainMap.set(chainName, {
+          restaurant: r,
+          distance,
+          formattedDistance: formatDistance(distance),
+          walkingTime: estimateWalkingTime(distance),
+        });
+      }
+    });
+
+  return Array.from(chainMap.values())
+    .sort((a, b) => a.distance - b.distance)
+    .slice(0, count);
+}
+
+/**
  * Find the N nearest restaurants to a given restaurant.
  * Excludes the restaurant itself.
  */
@@ -77,7 +112,7 @@ export function getNearestRestaurants(
   if (!current) return [];
 
   return restaurants
-    .filter((r) => r.slug !== currentSlug)
+    .filter((r) => r.slug !== currentSlug && r.type !== "fastfood")
     .map((r) => {
       const distance = haversineDistance(current.lat, current.lng, r.lat, r.lng);
       return {

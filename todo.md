@@ -59,3 +59,8 @@
 - [ ] Add BurgerKing, KFC, McDonald's, Subway, Pizza Hut entries with veg/vegan menu items
 - [ ] Add Fast Food filter button to Restaurants page
 - [ ] Add Fast Food section to homepage with chain cards showing veg/vegan menu items
+- [x] Fix FastFoodCard: display chain logo in card header (chain.image)
+- [x] Fix FastFoodCard: display product thumbnail images for each menu item (item.image)
+- [x] Add CDN image URLs to all fast-food menu items (Burger King, McDonald's, Subway, Pizza Hut)
+- [x] Remove Nordsee from fast-food chains (only has side dishes, no plant-based protein)
+- [x] Add Havelská Koruna as vegan-friendly restaurant (traditional Czech vegetarian dishes)

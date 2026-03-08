@@ -54,7 +54,7 @@ export default function Header() {
             <img
               src="https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/logo-cropped_d7cd6ecf.png"
               alt="bezmasá jídla — průvodce bezmasou Prahou"
-              className="h-10 sm:h-12 md:h-14 w-auto object-contain transition-opacity group-hover:opacity-80"
+              className="h-10 sm:h-12 md:h-14 w-auto object-contain logo-animated group-hover:opacity-90"
             />
           </Link>
 
