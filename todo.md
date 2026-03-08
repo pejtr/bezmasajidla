@@ -64,3 +64,4 @@
 - [x] Add CDN image URLs to all fast-food menu items (Burger King, McDonald's, Subway, Pizza Hut)
 - [x] Remove Nordsee from fast-food chains (only has side dishes, no plant-based protein)
 - [x] Add Havelská Koruna as vegan-friendly restaurant (traditional Czech vegetarian dishes)
+- [x] Optimalizovat miniatury fast-food produktů: zmenšit na 80×80 px WebP, nahrát na CDN, aktualizovat URL v data.ts
