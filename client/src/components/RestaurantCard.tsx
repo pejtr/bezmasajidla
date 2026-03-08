@@ -79,7 +79,7 @@ export default function RestaurantCard({ restaurant, rank }: Props) {
               </h3>
               <div className="flex items-center gap-1.5 flex-shrink-0">
                 <span className={`text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${getTypeColor(restaurant.type)}`}>
-                  {restaurant.type === "vegan" ? "Vegan" : restaurant.type === "vegetarian" ? "Vegetarián" : "Vegan-friendly"}
+                  {restaurant.type === "vegan" ? "Veganská" : restaurant.type === "vegetarian" ? "Vegetariánská" : "Vegan-friendly"}
                 </span>
                 {/* Heart button — desktop only (mobile has overlay on image) */}
                 <button
