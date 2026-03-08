@@ -369,7 +369,7 @@ export default function Home() {
               className="text-3xl font-bold text-gray-900"
               style={{ fontFamily: "'DM Serif Display', serif" }}
             >
-              Průvodce veganským Prahou
+              Průvodce veganskou Prahou
             </h2>
           </div>
           <Link href="/blog">
