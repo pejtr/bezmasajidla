@@ -108,3 +108,27 @@
 - [x] Přidat recepty na slané štrůdly (s modrým sýrem, se zelím, se špenátem)
 - [x] Přidat gruzínské recepty (chačapuri, lobiani, pkhali)
 - [x] Analýza VisitChef.com a návrhy na zlepšení webu
+- [ ] Přidat ikonu srdíčka do mobilního hamburger menu
+- [ ] Implementovat fullscreen lightbox pro fotogalerie restaurací (Střecha, KRO Kitchen)
+- [ ] Přidat pole instagramUrl a facebookUrl do datové struktury Restaurant
+- [ ] Zobrazit ikony sociálních sítí na detailní stránce restaurace
+- [ ] Přidat sekci "Příběh receptu" s kulturním kontextem na stránku detailu receptu
+- [ ] Napsat kulturní příběhy pro gruzínské recepty (chačapuri, lobiani, pkhali) a slané štrůdly
+- [ ] Vytvořit sekci "Průvodci" — listing stránka s edukačními články
+- [ ] Napsat 3 průvodce: Veganská Praha po čtvrtích, Jak začít s rostlinnou stravou, Sezonní průvodce
+- [ ] Přidat "Průvodci" do navigace (Header) a footeru
+- [ ] Přidat sekci "Naše hodnocení" na stránku detailu restaurace (kritický text, pro koho, nejlepší pokrmy)
+- [ ] Napsat editorská hodnocení pro vybrané restaurace (Střecha, KRO Kitchen, Beas Dhaba, Satsanga...)
+- [ ] Opravit filtr "Malá Strana" — přidat "Malá Strana" jako alias pro Praha 1/Praha 5 v datech nebo přidat district "Malá Strana" k relevantním restauracím
+- [ ] Přejmenovat "Recepty" na "Veg Recepty" v navigaci (Header + Footer)
+- [ ] Přidat Gluten-free a Keto jako dietní štítky k receptům
+- [ ] Přidat Gluten-free a Keto filtr na stránce receptů
+- [ ] Přidat makro živiny (kalorie, bílkoviny, sacharidy, tuky, vláknina) do Recipe interface a dat
+- [ ] Zobrazit makro živiny na detailní stránce receptu (vizuální panel)
+- [ ] Přidat isGlutenFree a isKeto štítky k receptům + filtr na stránce receptů
+- [ ] Přejmenovat "Veg Recepty" → "VEG Recepty" v navigaci (kapitálky)
+- [ ] Přidat kalkulátor porcí (změna počtu porcí přepočítá ingredience)
+- [ ] Přidat interaktivní checklist ingrediencí (zaškrtávání při vaření)
+- [ ] Přidat hodnocení receptu (hvězdičky) na detailní stránce
+- [x] Mega menu pro VEG Recepty (kategorie, dietní filtry, featured recept)
+- [x] Mega menu pro Restaurace (typy, čtvrti, rychlé filtry, featured restaurace)

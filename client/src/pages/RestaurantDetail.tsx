@@ -4,14 +4,14 @@
 // ============================================================
 
 import { useParams, Link } from "wouter";
-import { MapPin, Phone, Globe, Clock, Star, Crown, ArrowLeft, ExternalLink, Share2, Navigation, Footprints, ShoppingBag } from "lucide-react";
+import { MapPin, Phone, Globe, Clock, Star, Crown, ArrowLeft, ExternalLink, Share2, Navigation, Footprints, ShoppingBag, X, ChevronLeft, ChevronRight, Maximize2 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { restaurants, getTypeLabel, getTypeColor, renderStars, type Restaurant } from "@/lib/data";
 import { getOpenStatus } from "@/lib/openingHours";
 import { MapView } from "@/components/Map";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { RestaurantJsonLd, BreadcrumbJsonLd } from "@/components/JsonLd";
 import ReviewSection from "@/components/ReviewSection";
@@ -119,54 +119,192 @@ function NearbyRestaurantsSection({ slug }: { slug: string }) {
   );
 }
 
+function GalleryLightbox({
+  images,
+  startIdx,
+  restaurantName,
+  onClose,
+}: {
+  images: string[];
+  startIdx: number;
+  restaurantName: string;
+  onClose: () => void;
+}) {
+  const [idx, setIdx] = useState(startIdx);
+
+  const prev = useCallback(() => setIdx((i) => (i - 1 + images.length) % images.length), [images.length]);
+  const next = useCallback(() => setIdx((i) => (i + 1) % images.length), [images.length]);
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") prev();
+      if (e.key === "ArrowRight") next();
+    };
+    document.addEventListener("keydown", handleKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", handleKey);
+      document.body.style.overflow = "";
+    };
+  }, [onClose, prev, next]);
+
+  return (
+    <div
+      className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center"
+      onClick={onClose}
+    >
+      {/* Close button */}
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center transition-colors"
+        aria-label="Zavřít"
+      >
+        <X className="w-5 h-5" />
+      </button>
+
+      {/* Counter */}
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/50 text-white text-sm px-3 py-1 rounded-full">
+        {idx + 1} / {images.length}
+      </div>
+
+      {/* Prev arrow */}
+      {images.length > 1 && (
+        <button
+          onClick={(e) => { e.stopPropagation(); prev(); }}
+          className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/25 text-white rounded-full flex items-center justify-center transition-colors"
+          aria-label="Předchozí foto"
+        >
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+      )}
+
+      {/* Main image */}
+      <div
+        className="max-w-5xl max-h-[85vh] w-full px-16 flex items-center justify-center"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <img
+          src={images[idx]}
+          alt={`${restaurantName} — foto ${idx + 1}`}
+          className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+        />
+      </div>
+
+      {/* Next arrow */}
+      {images.length > 1 && (
+        <button
+          onClick={(e) => { e.stopPropagation(); next(); }}
+          className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/25 text-white rounded-full flex items-center justify-center transition-colors"
+          aria-label="Další foto"
+        >
+          <ChevronRight className="w-6 h-6" />
+        </button>
+      )}
+
+      {/* Thumbnail strip at bottom */}
+      {images.length > 1 && (
+        <div
+          className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 overflow-x-auto max-w-[90vw] pb-1"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {images.map((src, i) => (
+            <button
+              key={i}
+              onClick={() => setIdx(i)}
+              className={`flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden border-2 transition-all ${
+                i === idx ? "border-white" : "border-transparent opacity-50 hover:opacity-80"
+              }`}
+            >
+              <img src={src} alt={`Miniatura ${i + 1}`} className="w-full h-full object-cover" />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function GallerySection({ restaurant, fallbackImg }: { restaurant: Restaurant; fallbackImg: string }) {
   const allImages = [
     restaurant.image || fallbackImg,
     ...(restaurant.gallery || []),
   ];
   const [activeIdx, setActiveIdx] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxStart, setLightboxStart] = useState(0);
+
+  const openLightbox = (idx: number) => {
+    setLightboxStart(idx);
+    setLightboxOpen(true);
+  };
 
   return (
-    <div className="mb-6">
-      {/* Main hero image */}
-      <div className="relative rounded-2xl overflow-hidden h-72 mb-2">
-        <img
-          src={allImages[activeIdx]}
-          alt={`${restaurant.name} — foto ${activeIdx + 1}`}
-          className="w-full h-full object-cover transition-all duration-300"
+    <>
+      {lightboxOpen && (
+        <GalleryLightbox
+          images={allImages}
+          startIdx={lightboxStart}
+          restaurantName={restaurant.name}
+          onClose={() => setLightboxOpen(false)}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        {restaurant.isPremium && (
-          <div className="absolute top-4 right-4 bg-amber-400 text-amber-900 text-sm font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-md">
-            <Crown className="w-3.5 h-3.5" />
-            Prémiový profil
+      )}
+      <div className="mb-6">
+        {/* Main hero image — clickable to open lightbox */}
+        <div
+          className="relative rounded-2xl overflow-hidden h-72 mb-2 cursor-zoom-in group"
+          onClick={() => openLightbox(activeIdx)}
+        >
+          <img
+            src={allImages[activeIdx]}
+            alt={`${restaurant.name} — foto ${activeIdx + 1}`}
+            className="w-full h-full object-cover transition-all duration-300 group-hover:scale-[1.02]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+          {/* Zoom hint overlay */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="bg-black/40 text-white text-sm px-3 py-1.5 rounded-full flex items-center gap-1.5">
+              <Maximize2 className="w-4 h-4" />
+              Zobrazit v celé velikosti
+            </div>
           </div>
-        )}
+          {restaurant.isPremium && (
+            <div className="absolute top-4 right-4 bg-amber-400 text-amber-900 text-sm font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-md">
+              <Crown className="w-3.5 h-3.5" />
+              Prémiový profil
+            </div>
+          )}
+          {allImages.length > 1 && (
+            <div className="absolute bottom-3 right-3 bg-black/50 text-white text-xs px-2 py-1 rounded-full">
+              {activeIdx + 1} / {allImages.length}
+            </div>
+          )}
+        </div>
+        {/* Thumbnail strip — only shown when gallery exists */}
         {allImages.length > 1 && (
-          <div className="absolute bottom-3 right-3 bg-black/50 text-white text-xs px-2 py-1 rounded-full">
-            {activeIdx + 1} / {allImages.length}
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {allImages.map((src, i) => (
+              <button
+                key={i}
+                onClick={(e) => { e.stopPropagation(); setActiveIdx(i); }}
+                className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
+                  i === activeIdx
+                    ? "border-emerald-500 ring-2 ring-emerald-300"
+                    : "border-transparent opacity-70 hover:opacity-100"
+                }`}
+              >
+                <img
+                  src={src}
+                  alt={`Foto ${i + 1}`}
+                  className="w-full h-full object-cover"
+                  onClick={(e) => { e.stopPropagation(); openLightbox(i); }}
+                />
+              </button>
+            ))}
           </div>
         )}
       </div>
-      {/* Thumbnail strip — only shown when gallery exists */}
-      {allImages.length > 1 && (
-        <div className="flex gap-2 overflow-x-auto pb-1">
-          {allImages.map((src, i) => (
-            <button
-              key={i}
-              onClick={() => setActiveIdx(i)}
-              className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
-                i === activeIdx
-                  ? "border-emerald-500 ring-2 ring-emerald-300"
-                  : "border-transparent opacity-70 hover:opacity-100"
-              }`}
-            >
-              <img src={src} alt={`Foto ${i + 1}`} className="w-full h-full object-cover" />
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
+    </>
   );
 }
 
@@ -351,6 +489,55 @@ export default function RestaurantDetail() {
                 </div>
               )}
             </div>
+
+            {/* Social Media Links */}
+            {(restaurant.instagramUrl || restaurant.facebookUrl || restaurant.website) && (
+              <div className="bg-white rounded-xl border border-emerald-100 p-4 mb-2">
+                <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-emerald-600" />
+                  Online přítomnost
+                </h3>
+                <div className="flex flex-wrap gap-3">
+                  {restaurant.website && (
+                    <a
+                      href={restaurant.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 hover:bg-gray-100 text-gray-700 text-sm font-medium transition-colors"
+                    >
+                      <Globe className="w-4 h-4 text-gray-500" />
+                      Web
+                    </a>
+                  )}
+                  {restaurant.instagramUrl && (
+                    <a
+                      href={restaurant.instagramUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 text-pink-700 text-sm font-medium transition-colors"
+                    >
+                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                      </svg>
+                      Instagram
+                    </a>
+                  )}
+                  {restaurant.facebookUrl && (
+                    <a
+                      href={restaurant.facebookUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm font-medium transition-colors"
+                    >
+                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                      </svg>
+                      Facebook
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Fast Food Menu Items */}
             {restaurant.fastFoodItems && restaurant.fastFoodItems.length > 0 && (

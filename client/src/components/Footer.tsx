@@ -61,17 +61,19 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Recepty */}
+          {/* VEG Recepty */}
           <div>
             <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">
-              Recepty
+              VEG Recepty
             </h4>
             <ul className="space-y-2 text-sm text-emerald-300">
               <li><Link href="/recepty" className="hover:text-white transition-colors">Všechny recepty</Link></li>
               <li><Link href="/recepty?cat=hlavni-jidla" className="hover:text-white transition-colors">Hlavní jídla</Link></li>
               <li><Link href="/recepty?cat=polevky" className="hover:text-white transition-colors">Polévky</Link></li>
-              <li><Link href="/recepty?cat=snidane" className="hover:text-white transition-colors">Snídaně</Link></li>
+              <li><Link href="/recepty?cat=snidane" className="hover:text-white transition-colors">Snídane</Link></li>
               <li><Link href="/recepty?cat=dezerty" className="hover:text-white transition-colors">Dezerty</Link></li>
+              <li><Link href="/recepty?dietary=bezlepkove" className="hover:text-white transition-colors">Bezleptkové recepty</Link></li>
+              <li><Link href="/recepty?dietary=keto" className="hover:text-white transition-colors">Keto recepty</Link></li>
             </ul>
           </div>
 

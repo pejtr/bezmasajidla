@@ -35,6 +35,10 @@ export interface Restaurant {
   woltUrl?: string;
   /** Additional photo gallery images */
   gallery?: string[];
+  /** Instagram profile URL */
+  instagramUrl?: string;
+  /** Facebook page URL */
+  facebookUrl?: string;
 }
 
 export interface FastFoodItem {
@@ -48,6 +52,21 @@ export interface FastFoodItem {
 export interface RecipeImage {
   url: string;
   alt: string;
+}
+
+export interface MacroNutrients {
+  /** Calories per serving (kcal) */
+  calories: number;
+  /** Protein in grams per serving */
+  protein: number;
+  /** Total carbohydrates in grams per serving */
+  carbs: number;
+  /** Dietary fiber in grams per serving */
+  fiber: number;
+  /** Total fat in grams per serving */
+  fat: number;
+  /** Sugars in grams per serving */
+  sugars?: number;
 }
 
 export interface Recipe {
@@ -64,6 +83,23 @@ export interface Recipe {
   description: string;
   tags: string[];
   isVegan: boolean;
+  /** Whether the recipe is gluten-free */
+  isGlutenFree?: boolean;
+  /** Whether the recipe is keto-friendly */
+  isKeto?: boolean;
+  /** Short title for the cultural story section */
+  storyTitle?: string;
+  /** Cultural/historical context paragraphs (2-3 paragraphs) */
+  story?: string[];
+  /** Macro nutrients per serving */
+  macros?: MacroNutrients;
+  /** Editorial review: who is it for, best dishes, what to skip */
+  editorialReview?: {
+    summary: string;
+    bestFor: string;
+    highlight: string;
+    rating: number;
+  };
 }
 
 const RESTAURANT_PLACEHOLDER = "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/restaurant-placeholder-NfsuHQoJhFmyxCXwn7EygE.webp";
@@ -102,7 +138,7 @@ export const restaurants: Restaurant[] = [
     isOpen: false,
     isPremium: true,
     address: "Újezd 43, Praha 1 — Malá Strana",
-    district: "Praha 1",
+    district: "Malá Strana",
     phone: "+420 725 511 536",
     description: "Veganská jídelna/kavárna servírující dosy, indická a asijská jídla a dezerty. Nabízí také českou kuchyni jako součást denního menu.",
     tags: ["Indická", "Organická", "Thajská", "Asijská", "Pekárna", "Snídaně", "Bezlepková"],
@@ -225,6 +261,8 @@ export const restaurants: Restaurant[] = [
     lng: 14.4181,
     priceLevel: 1,
     hours: "Po–Pá 11:00–21:00",
+    instagramUrl: "https://www.instagram.com/strecha_restaurant/",
+    facebookUrl: "https://www.facebook.com/strechapraha/",
   },
   {
     id: "8",
@@ -279,7 +317,7 @@ export const restaurants: Restaurant[] = [
     isOpen: false,
     isPremium: false,
     address: "Nerudova 36, Praha 1 — Malá Strana",
-    district: "Praha 1",
+    district: "Malá Strana",
     phone: "+420 735 171 313",
     description: "Veganská restaurace v budově z 16. století poblíž Pražského hradu s terasou a výhledem, zal. 2016. Domácí česká a mezinárodní kuchyně. Guláš, raw čokoládový dort, bruschetta, sójové latte, cuketové lasagne.",
     tags: ["Mezinárodní", "Organická", "Raw", "Juice bar", "Česká"],
@@ -450,7 +488,7 @@ export const restaurants: Restaurant[] = [
     isOpen: true,
     isPremium: false,
     address: "Štefánikova 44, Praha 5 — Malá Strana",
-    district: "Praha 5",
+    district: "Malá Strana",
     phone: "+420 602 123 456",
     website: "https://www.natureza.cz",
     description: "Vegetariánská restaurace s kouzelnou zahradou v těsné blízkosti kostela sv. Vavřince. Denní menu (polévka + hlavní jídlo), vegetariánská, veganská i bezlepková jídla, raw dezerty. Vhodná i pro svatební hostiny.",
@@ -555,6 +593,8 @@ export const restaurants: Restaurant[] = [
     lng: 14.4567,
     priceLevel: 2,
     hours: "Po–Pá 11:00–22:00, So–Ne 11:00–22:00",
+    instagramUrl: "https://www.instagram.com/kro_kitchen/",
+    facebookUrl: "https://www.facebook.com/krokitchen/",
   },
   {
     id: "29",
@@ -1484,6 +1524,8 @@ export const restaurants: Restaurant[] = [
     lng: 14.4432,
     priceLevel: 2,
     hours: "Po–Pá 11:00–22:00, So–Ne 11:00–22:00",
+    instagramUrl: "https://www.instagram.com/kro_kitchen/",
+    facebookUrl: "https://www.facebook.com/krokitchen/",
     fastFoodItems: [
       { name: "Tempeh combo", description: "Domácí čočkový tempeh, jasmanová rýže, kimchi, míchaný salát, vegetable demi glace. 100% veganské.", isVegan: true, price: "265 Kč" },
       { name: "Chickpea & lentil tempeh", description: "Pečené mrkve, kale chimichurri, labneh. Vegetariánské.", isVegan: false, price: "265 Kč" },
@@ -1517,6 +1559,8 @@ export const restaurants: Restaurant[] = [
     lng: 14.4678,
     priceLevel: 2,
     hours: "Po–Pá 11:00–22:00, So–Ne 10:00–22:00",
+    instagramUrl: "https://www.instagram.com/kro_kitchen/",
+    facebookUrl: "https://www.facebook.com/krokitchen/",
   },
   // ── BAGETERIE BOULEVARD ──
   {
@@ -1720,6 +1764,7 @@ export const recipes: Recipe[] = [
     description: "Klasická česká svíčková v rostlinné verzi. Seitan místo hovězího, cashew smetana a tradiční omáčka z kořenové zeleniny.",
     tags: ["Česká kuchyně", "Seitan", "Tradiční"],
     isVegan: true,
+    macros: { calories: 420, protein: 22, carbs: 48, fiber: 6, fat: 14, sugars: 12 },
   },
   {
     id: "r2",
@@ -1739,6 +1784,8 @@ export const recipes: Recipe[] = [
     description: "Hustá a výživná čočková polévka s kouřovým aroma uzené papriky. Ideální na chladné dny.",
     tags: ["Polévka", "Čočka", "Rychlé"],
     isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 210, protein: 13, carbs: 32, fiber: 9, fat: 3, sugars: 4 },
   },
   {
     id: "r3",
@@ -1758,6 +1805,8 @@ export const recipes: Recipe[] = [
     description: "Barevná miska plná výživy — quinoa, pečená zelenina, avokádo, cizrna a tahini dresink.",
     tags: ["Bowl", "Quinoa", "Zdravé"],
     isVegan: true,
+    isGlutenFree: true,
+        macros: { calories: 380, protein: 14, carbs: 52, fiber: 10, fat: 13, sugars: 8 },
   },
   {
     id: "r4",
@@ -1777,6 +1826,7 @@ export const recipes: Recipe[] = [
     description: "Tradiční český guláš bez masa — houby a seitan v bohaté paprikové omáčce s domácími houskových knedlíky.",
     tags: ["Česká kuchyně", "Guláš", "Tradiční"],
     isVegan: true,
+    macros: { calories: 490, protein: 16, carbs: 72, fiber: 8, fat: 12, sugars: 10 },
   },
   {
     id: "r5",
@@ -1796,6 +1846,7 @@ export const recipes: Recipe[] = [
     description: "Zelené špenátové palačinky plněné krémovou tofu ricottou s citronem a čerstvými bylinkami.",
     tags: ["Snídaně", "Palačinky", "Špenát"],
     isVegan: true,
+    macros: { calories: 310, protein: 16, carbs: 38, fiber: 4, fat: 10, sugars: 5 },
   },
   {
     id: "r6",
@@ -1815,6 +1866,7 @@ export const recipes: Recipe[] = [
     description: "Krémové rizoto s lesními houbami a domácím veganským parmezánem z kešu ořechů.",
     tags: ["Italská", "Rizoto", "Houby"],
     isVegan: true,
+    macros: { calories: 450, protein: 12, carbs: 62, fiber: 4, fat: 16, sugars: 3 },
   },
   // ── NEW SEO-OPTIMIZED RECIPES (r7–r24) ──────────────────────
   // Target keywords: palačinky (50k), bramborový salát (50k), brownies (50k),
@@ -1840,6 +1892,7 @@ export const recipes: Recipe[] = [
     description: "Nadýchané veganské palačinky bez vajec a mléka. Podávané s čerstvým ovocem, javorovým sirupem a kokosovou šlehačkou. Ideální snídaně pro celou rodinu.",
     tags: ["Snídaně", "Palačinky", "Ovoce", "Rychlé"],
     isVegan: true,
+    macros: { calories: 220, protein: 6, carbs: 42, fiber: 3, fat: 4, sugars: 18 },
   },
   {
     id: "r8",
@@ -1859,6 +1912,8 @@ export const recipes: Recipe[] = [
     description: "Tradiční český bramborový salát v bezmasé verzi. Krémový, s nakládanými okurkami, mrkví a hráškem. Ideální příloha ke svátečnímu stolu nebo na piknik.",
     tags: ["Salát", "Brambory", "Česká kuchyně", "Sváteční"],
     isVegan: false,
+    isGlutenFree: true,
+        macros: { calories: 290, protein: 8, carbs: 38, fiber: 4, fat: 12, sugars: 5 },
   },
   {
     id: "r9",
@@ -1878,6 +1933,8 @@ export const recipes: Recipe[] = [
     description: "Neodolatelné čokoládové brownies bez vajec a másla. Vlhké, intenzivně čokoládové a s křupavou kůrkou. Nikdo nepozná, že jsou veganské!",
     tags: ["Dezert", "Čokoláda", "Brownies", "Pečení"],
     isVegan: true,
+    isGlutenFree: true,
+        macros: { calories: 310, protein: 5, carbs: 40, fiber: 4, fat: 16, sugars: 28 },
   },
   {
     id: "r10",
@@ -1897,6 +1954,7 @@ export const recipes: Recipe[] = [
     description: "Luxusní krémové rizoto s lesními houbami a domácím veganským parmezánem z kešu. Italská klasika v rostlinné verzi, která chutná božsky.",
     tags: ["Italská", "Rizoto", "Houby", "Hlavní jídlo"],
     isVegan: true,
+    macros: { calories: 420, protein: 11, carbs: 60, fiber: 3, fat: 14, sugars: 4 },
   },
   {
     id: "r11",
@@ -1916,6 +1974,7 @@ export const recipes: Recipe[] = [
     description: "Vláčná čokoládová bábovka bez vajec a másla. Jednoduchý recept s bohatou čokoládovou chutí a lesklou polevou. Perfektní ke kávě.",
     tags: ["Dezert", "Bábovka", "Čokoláda", "Pečení"],
     isVegan: true,
+    macros: { calories: 340, protein: 5, carbs: 52, fiber: 3, fat: 13, sugars: 30 },
   },
   {
     id: "r12",
@@ -1935,6 +1994,7 @@ export const recipes: Recipe[] = [
     description: "Autentický thajský pad thai v rostlinné verzi s křupavým tofu, rýžovými nudlemi a domácí tamarindovou omáčkou. Rychlé a plné chutí.",
     tags: ["Asijská", "Thajská", "Tofu", "Nudle"],
     isVegan: true,
+    macros: { calories: 480, protein: 20, carbs: 58, fiber: 5, fat: 18, sugars: 8 },
   },
   {
     id: "r13",
@@ -1954,6 +2014,7 @@ export const recipes: Recipe[] = [
     description: "Domácí pizza s křupavým těstem, rajčatovou omáčkou a bohatou zeleninovou náplní. Jednoduchý recept na dokonalou vegetariánskou pizzu.",
     tags: ["Italská", "Pizza", "Zelenina", "Domácí"],
     isVegan: false,
+    macros: { calories: 520, protein: 18, carbs: 72, fiber: 6, fat: 16, sugars: 9 },
   },
   {
     id: "r14",
@@ -1973,6 +2034,8 @@ export const recipes: Recipe[] = [
     description: "Luxusní raw veganský cheesecake s krémovou kešu náplní a borůvkovou polevou. Bez pečení, bez cukru, plný chutí. Dokonalý dezert pro každou příležitost.",
     tags: ["Dezert", "Cheesecake", "Raw", "Borůvky"],
     isVegan: true,
+    isGlutenFree: true,
+        macros: { calories: 380, protein: 8, carbs: 32, fiber: 3, fat: 26, sugars: 22 },
   },
   {
     id: "r15",
@@ -1992,6 +2055,7 @@ export const recipes: Recipe[] = [
     description: "Křupavá tortilla plněná grilovanou zeleninou, domácím hummusem a čerstvými bylinkami. Rychlý a výživný oběd nebo svačina.",
     tags: ["Mexická", "Tortilla", "Grilování", "Rychlé"],
     isVegan: true,
+    macros: { calories: 340, protein: 10, carbs: 48, fiber: 7, fat: 12, sugars: 6 },
   },
   {
     id: "r16",
@@ -2011,6 +2075,7 @@ export const recipes: Recipe[] = [
     description: "Vláčný banánový chléb bez vajec a másla. Přirozeně sladký díky zralým banánům, s vlašskými ořechy a špetkou skořice. Ideální ke snídani nebo svačině.",
     tags: ["Dezert", "Banán", "Pečení", "Snídaně"],
     isVegan: true,
+    macros: { calories: 290, protein: 5, carbs: 50, fiber: 3, fat: 9, sugars: 24 },
   },
   {
     id: "r17",
@@ -2030,6 +2095,8 @@ export const recipes: Recipe[] = [
     description: "Barevná a výživná smoothie bowl s mixovaným ovocem, domácí granolou, kokosovými chipsy a chia semínky. Perfektní start do dne.",
     tags: ["Snídaně", "Smoothie", "Ovoce", "Zdravé"],
     isVegan: true,
+    isGlutenFree: true,
+        macros: { calories: 320, protein: 9, carbs: 58, fiber: 8, fat: 7, sugars: 32 },
   },
   {
     id: "r18",
@@ -2049,6 +2116,8 @@ export const recipes: Recipe[] = [
     description: "Krémová špenátová polévka s brambory a česnekem. Sytá, výživná a plná železa. Klasika české kuchyně v lehké vegetariánské verzi.",
     tags: ["Polévka", "Špenát", "Brambory", "Česká kuchyně"],
     isVegan: false,
+    isGlutenFree: true,
+        macros: { calories: 180, protein: 7, carbs: 24, fiber: 4, fat: 6, sugars: 4 },
   },
   {
     id: "r19",
@@ -2068,6 +2137,8 @@ export const recipes: Recipe[] = [
     description: "Hedvábně krémová květáková polévka s jemným zázvorem a kokosovým mlékem. Lehká, zahřívající a plná chutí. Ideální na chladné dny.",
     tags: ["Polévka", "Květák", "Zázvor", "Zdravé"],
     isVegan: true,
+    isGlutenFree: true,
+        macros: { calories: 160, protein: 4, carbs: 18, fiber: 5, fat: 8, sugars: 6 },
   },
   {
     id: "r20",
@@ -2087,6 +2158,8 @@ export const recipes: Recipe[] = [
     description: "Aromatické indické curry s cizrnou v krémové kokosové omáčce. Jednoduché, rychlé a neuvěřitelně chutné. Podávejte s basmati rýží a čerstvým koriandrem.",
     tags: ["Indická", "Curry", "Cizrna", "Kokos"],
     isVegan: true,
+    isGlutenFree: true,
+        macros: { calories: 390, protein: 14, carbs: 44, fiber: 10, fat: 18, sugars: 7 },
   },
   {
     id: "r21",
@@ -2106,6 +2179,9 @@ export const recipes: Recipe[] = [
     description: "Rychlý a zdravý stir-fry s křupavým tofu a barevnou zeleninou v pikantní sójovo-zázvorové omáčce. Hotovo za 25 minut.",
     tags: ["Asijská", "Tofu", "Wok", "Rychlé"],
     isVegan: true,
+    isGlutenFree: true,
+        isKeto: true,
+        macros: { calories: 280, protein: 18, carbs: 16, fiber: 6, fat: 16, sugars: 5 },
   },
   {
     id: "r22",
@@ -2125,6 +2201,8 @@ export const recipes: Recipe[] = [
     description: "Pikantní mexické fazole v rajčatové omáčce s kukuřicí, paprikou a koriandrem. Podávané s rýží a avokádem. Sytý a výživný bezmasý oběd.",
     tags: ["Mexická", "Fazole", "Rýže", "Pikantní"],
     isVegan: true,
+    isGlutenFree: true,
+        macros: { calories: 360, protein: 15, carbs: 58, fiber: 12, fat: 6, sugars: 5 },
   },
   {
     id: "r23",
@@ -2144,6 +2222,7 @@ export const recipes: Recipe[] = [
     description: "Rychlé krémové těstoviny s čerstvým špenátem a ricottou. Jednoduchý italský recept, který zvládnete za 25 minut. Ideální na rychlý oběd.",
     tags: ["Italská", "Těstoviny", "Špenát", "Rychlé"],
     isVegan: false,
+    macros: { calories: 440, protein: 16, carbs: 62, fiber: 5, fat: 14, sugars: 4 },
   },
   {
     id: "r24",
@@ -2163,6 +2242,8 @@ export const recipes: Recipe[] = [
     description: "Svěží a krémová hráškova polévka s čerstvou mátou. Sytě zelená, plná vitamínů a neuvěřitelně jednoduchá na přípravu. Skvělá teplá i studená.",
     tags: ["Polévka", "Hrášek", "Máta", "Zdravé"],
     isVegan: true,
+    isGlutenFree: true,
+        macros: { calories: 170, protein: 9, carbs: 26, fiber: 7, fat: 3, sugars: 8 },
   },
   {
     id: "r25",
@@ -2180,6 +2261,13 @@ export const recipes: Recipe[] = [
     description: "Křupavý listový štrůdl plněný intenzivním modrým sýrem, sladkou karamelizovanou cibulí a vlašskými ořechy. Elegantní vegetariánský hlavní chod nebo skvělý předkrm na večírek.",
     tags: ["Štrůdl", "Modrý sýr", "Listové těsto", "Vegetariánské"],
     isVegan: false,
+    storyTitle: "Od sladkosti k soli: jak štrůdl dobyl evropské kuchyně",
+    story: [
+      "Štrůdl má kořeny v osmanské kuchyni, odkud se přes Madarsko a Rakůusko rozšířil do celé střední Evropy. V habsburské říši se stal symbolem důmyslnosti domácí kuchyně — umění natáhnout těsto tak tenké, aby skrze něj bylo vidět noviny, bylo známkou skutečné zručnosti. Sladná verze s jablky a skřicemi je dnes nejznámější, ale slané štrůdly měly vždy své místo na středoevropských stolech.",
+      "Kombinace modrého sýra a karamelizované cibule je klasická francouzská dvojice, která v listovém těstě získává nový rozměr. Modré sýry jako Roquefort, Gorgonzola nebo český Niva mají díky plešňové kultivě intenzivní, lehce kořeněnou chuť, která se krásně vyvazuje se sladkostí karamelizované cibule. Všechno zabaleno do křupavého listového těsta vytváří dokonalou texturní hru.",
+        "V Praze se slané štrůdly začínají objevovat na menu moderních bistro restaurací jako alternativa k tradičním quiche nebo tartěm. Je to jedno z těch jídel, které překlenívá propast mezi domácí kuchyní a restaurační úrovní — přitom ho zvládne každý, kdo pracuje s kupovaným listovým těstem.",
+    ],
+    macros: { calories: 480, protein: 14, carbs: 38, fiber: 3, fat: 30, sugars: 8 },
   },
   {
     id: "r26",
@@ -2194,9 +2282,16 @@ export const recipes: Recipe[] = [
     images: [
       { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strudel-zeli-1-MMUaNTmswd6G4jpzMdDu9x.webp", alt: "Zlatavý štrůdl se zelím a kmínem, podávaný s kysanou smetanou a koprem" },
     ],
-    description: "Tradiční český štrůdl plněný dušeným zelím, kmínem a cibulí. Jednoduchý, sytý a neuvěřitelně vonný. Podávejte s kysanou smetanou — ideální podzimní jídlo.",
+    description: "Tradiční český štrůdl plněný dušeným zelím, kmínem a cibulí. Jednoduchý, sytý a neuvěřitelně vonný. Podávejte s kysané smetanou — ideální podzimní jídlo.",
     tags: ["Štrůdl", "Zelí", "Česká kuchyně", "Veganské"],
     isVegan: true,
+    storyTitle: "Zelí v české kuchyni: od sudového kvšení k modernímu bistru",
+    story: [
+      "Kysaneé a dušené zelí je jedním z nejstarších konzervovaných potravin ve střední Evropě. Před érou chladniček bylo sudové zelí základem zimní stravy — zdroj vitaminu C v době, kdy čerstvé ovoce nebylo k dispozici. Kmín, který se k němu přidavá, nemá jen chuťovou funkci — tradičně se věřilo, že pomocí trávení a snižuje nadměrení.",
+      "Slaný štrůdl se zelím je česká varianta, která spojuje habsburské dědictví (listové těsto) s domácí tradicí (zelí s kmínem). V některých oblastech Čech se podobné náplně používaly v pirozích nebo knedlících. Listové těsto je modernější interpretace, která dává jídlu elegantnější charakter.",
+      "Dnes se zelí v Praze zažívá renesanci — fermentované potraviny jsou trendem, a zelí je jejich nejdostupnější formou. Šef kuchaři jako Radek Kasašík nebo Pavel Maurer opakovaně zdůrazňují, že české zelí je světové kvality — jen jsme ho přestali vnímat jako něco výji mečného.",
+    ],
+    macros: { calories: 320, protein: 7, carbs: 42, fiber: 5, fat: 14, sugars: 6 },
   },
   {
     id: "r27",
@@ -2214,8 +2309,14 @@ export const recipes: Recipe[] = [
     description: "Italsky inspirovaný štrůdl plněný čerstvým špenátem, krémovou ricottou a česnekem. Lehký, aromatický a vizuálně efektní — zelená náplň v zlatavém listovém těstě.",
     tags: ["Štrůdl", "Špenát", "Ricotta", "Italská kuchyně", "Vegetariánské"],
     isVegan: false,
-  },
-  {
+    storyTitle: "Spinaci e ricotta: italská klasika v novém šatě",
+    story: [
+      "Kombinace špenátu a ricotty je jednou z nejstarších italských kulinářských dvojic. Objevíme ji v ravioli, cannelloni, lasagnich i v toskanskch crostatach. Ricotta — doslova 're-vařená' — je syrovátkový sýr, který vznikl jako vedlejší produkt výroby tvrdých sýrů. Dnes je cennou surovinou sám o sobě.",
+      "Špenát má v italské kuchyni délnou historii — do Evropy ho přinesli Arabé ve středověku a rychle si získal místo v kuchyních od Sicilie po Toskanu. Florentská kuchyně ho používala tak často, že termn ‘à la Florentine’ dnes v celm světě znamená ‘se špenátem’. Katedrala Medicejských prý špenát přivezla do Francie, kde se stal módním jídlem aristokracie.",
+      "Zabalit tuto kombinaci do listového těsta je moderní přístup, který dává jídlu křupavost a vizulání efekt. Zelená náplň prosvitající skrze zlatavé těsto je opticky působivá — ideální jídlo pro přátelské večeře nebo brunch.",
+    ],
+    macros: { calories: 390, protein: 13, carbs: 36, fiber: 4, fat: 22, sugars: 5 },
+  },  {
     id: "r28",
     title: "Adžarský chačapuri (gruzínský chlebový člun se sýrem)",
     slug: "adzarsky-khachapuri",
@@ -2228,9 +2329,16 @@ export const recipes: Recipe[] = [
     images: [
       { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/khachapuri-adjarsky-1-NvBcPLYARE4yt6W5ZF6pmt.webp", alt: "Adžarský chačapuri — gruzínský chlebový člun s roztaveným sýrem a žloutkem" },
     ],
-    description: "Ikonické gruzínské jídlo ve tvaru lodičky — křupavý chléb plněný roztaveným sýrem, do středu přidáte syrový žloutek a kousek másla. Jí se tak, že odlamujete okraje a mícháte do sýrové náplně.",
+    description: "Ikonické gruzínské jídlo ve tvaru lodičky — křupavý chleb plněný roztaveným sýrem, do středu přidáte syrový žlouték a kousek másla. Jí se tak, že odlamujete okraje a mícháte do sýrné náplně.",
     tags: ["Gruzínská kuchyně", "Chačapuri", "Sýr", "Pečení", "Vegetariánské"],
     isVegan: false,
+    storyTitle: "Chačapuri: gruzínská duše na talkiři",
+    story: [
+      "Chačapuri — doslova 'chleb se sýrem' (chadi = chleb, puri = sýr) — je neoficiálním národním jídlem Gruzie. Existuje v desetičkách regionálních variant: megrelské, imerétské, gurijské nebo adžarské. Každá oblast má svůj tvar, svůj sýr a svůj způsob pečení. Adžarská varianta ve tvaru lodičky s vejcem je nejfotogenickější a dnes nejznámější za hranicemi Gruzie.",
+      "Gruzínská kuchyně je jedním z nejstarších kulinářských tradic na světě. Gruzie leží na křižovatce hedvábné stezky — vlivy perské, turecké, řecké a ruské se zde míchají s autochtonní tradicí. Gruzínci jsou také jedními z prvních pěstitelů vínové révy — víno a jídlo jsou v Gruzii neoddlitelné.",
+      "V Praze se gruzínská kuchyně začíná prosazovat — restaurace jako Tamada nebo Kavkaz nabízejí autentické chačapuri a khinkali. Chačapuri je přitom ideální jídlo pro domácí kuchyně: suroviny jsou běžně dostupné, technika je jednoduchá a výsledek je vždy impozantní.",
+    ],
+    macros: { calories: 560, protein: 22, carbs: 58, fiber: 3, fat: 28, sugars: 4 },
   },
   {
     id: "r29",
@@ -2248,6 +2356,7 @@ export const recipes: Recipe[] = [
     description: "Lobiani je tradiční gruzínský plochý chléb plněný kořeněnými červenými fazolemi s cibulí, česnekem a gruzínskou směsí koření khmeli-suneli. Veganský, sytý a neuvěřitelně aromatický.",
     tags: ["Gruzínská kuchyně", "Lobiani", "Fazole", "Veganské", "Pečení"],
     isVegan: true,
+    macros: { calories: 380, protein: 14, carbs: 62, fiber: 10, fat: 8, sugars: 4 },
   },
   {
     id: "r30",
@@ -2265,6 +2374,9 @@ export const recipes: Recipe[] = [
     description: "Pchali jsou tradiční gruzínské předkrmy — kompaktní kuličky ze špenátu, vlašských ořechů, česneku a gruzínského koření. Zdobí se semínky granátového jablka. Veganské, bez lepku a plné chuti.",
     tags: ["Gruzínská kuchyně", "Pchali", "Špenát", "Ořechy", "Veganské", "Předkrm"],
     isVegan: true,
+    isGlutenFree: true,
+        isKeto: true,
+        macros: { calories: 180, protein: 7, carbs: 8, fiber: 4, fat: 14, sugars: 2 },
   },
 ];
 
@@ -2281,6 +2393,15 @@ export const districts = [
   "Praha 9",
   "Praha 10",
   "Praha 13",
+  "Malá Strana",
+  "Vinohrady",
+  "Karlin",
+  "Žižkov",
+  "Holešovice",
+  "Smíchov",
+  "Dejvice",
+  "Liběň",
+  "Nusle",
 ];
 
 export const cuisineTags = [
