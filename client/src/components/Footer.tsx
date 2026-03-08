@@ -86,6 +86,22 @@ export default function Footer() {
               <li><Link href="/premium" className="hover:text-white transition-colors">Prémiový profil</Link></li>
               <li><Link href="/kontakt" className="hover:text-white transition-colors">Kontakt</Link></li>
             </ul>
+
+            <h4 className="text-sm font-semibold text-white uppercase tracking-wider mt-6 mb-4">
+              Sesterské projekty
+            </h4>
+            <ul className="space-y-2 text-sm text-emerald-300">
+              <li>
+                <a
+                  href="https://cajovny.cz"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                >
+                  Čajovny Praha
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
 

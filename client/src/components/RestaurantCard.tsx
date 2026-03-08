@@ -6,10 +6,11 @@
 // ============================================================
 
 import { Link } from "wouter";
-import { MapPin, Phone, Star, Crown, Heart } from "lucide-react";
+import { MapPin, Phone, Star, Crown, Heart, ShoppingBag } from "lucide-react";
 import { Restaurant, getTypeColor, renderStars } from "@/lib/data";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import OptimizedImage from "@/components/OptimizedImage";
+import { getOpenStatus } from "@/lib/openingHours";
 
 interface Props {
   restaurant: Restaurant;
@@ -20,6 +21,7 @@ export default function RestaurantCard({ restaurant, rank }: Props) {
   const stars = renderStars(restaurant.rating);
   const { isRestaurantFavorite, toggleRestaurant } = useFavorites();
   const isFav = isRestaurantFavorite(restaurant.slug);
+  const openStatus = getOpenStatus(restaurant.hours || "");
 
   const handleHeartClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -107,9 +109,30 @@ export default function RestaurantCard({ restaurant, rank }: Props) {
               </div>
               <span className="text-sm font-semibold text-gray-800">{restaurant.rating.toFixed(1)}</span>
               <span className="text-xs text-gray-400">({restaurant.reviewCount})</span>
-              <span className={`text-xs font-medium ${restaurant.isOpen ? "text-emerald-600" : "text-red-500"}`}>
-                {restaurant.isOpen ? "● Otevřeno" : "● Zavřeno"}
-              </span>
+              {openStatus.isOpen ? (
+                <span className="text-xs font-medium text-emerald-600" title={openStatus.statusText}>
+                  ● Otevřeno
+                </span>
+              ) : (() => {
+                // Split "Zavřeno · otevírá zítra v 11:30" into parts
+                const parts = openStatus.statusText.split("·");
+                const closedPart = parts[0]?.trim() || "Zavřeno";
+                const opensPart = parts[1]?.trim() || "";
+                // Extract time (last word after last space) and prefix
+                const lastSpaceIdx = opensPart.lastIndexOf(" ");
+                const opensPrefix = lastSpaceIdx >= 0 ? opensPart.slice(0, lastSpaceIdx + 1) : opensPart;
+                const opensTime = lastSpaceIdx >= 0 ? opensPart.slice(lastSpaceIdx + 1) : "";
+                return (
+                  <span className="text-xs" title={openStatus.statusText}>
+                    <span className="text-red-500 font-medium">● {closedPart}</span>
+                    {opensPart && (
+                      <span className="text-gray-400">
+                        {" · "}{opensPrefix}<span className="font-bold text-gray-600">{opensTime}</span>
+                      </span>
+                    )}
+                  </span>
+                );
+              })()}
               <span className="text-xs font-medium" title={restaurant.priceLevel === 1 ? "Do 200 Kč" : restaurant.priceLevel === 2 ? "200–400 Kč" : "400+ Kč"}>
                 {Array.from({ length: restaurant.priceLevel }).map((_, i) => (
                   <span key={i} className="text-amber-600">Kč</span>
@@ -133,6 +156,14 @@ export default function RestaurantCard({ restaurant, rank }: Props) {
             <p className="hidden sm:block text-xs text-gray-500 leading-relaxed line-clamp-2 mb-2">
               {restaurant.description}
             </p>
+
+            {/* Shopping Center badge */}
+            {restaurant.shoppingCenter && (
+              <div className="flex items-center gap-1 text-xs text-purple-600 mb-1">
+                <ShoppingBag className="w-3 h-3 flex-shrink-0" />
+                <span className="font-medium">{restaurant.shoppingCenter}</span>
+              </div>
+            )}
 
             {/* Address & Phone */}
             <div className="flex flex-col gap-1">

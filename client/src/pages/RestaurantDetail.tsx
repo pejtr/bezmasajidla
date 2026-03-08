@@ -9,6 +9,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { restaurants, getTypeLabel, getTypeColor, renderStars } from "@/lib/data";
+import { getOpenStatus } from "@/lib/openingHours";
 import { MapView } from "@/components/Map";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
@@ -200,9 +201,14 @@ export default function RestaurantDetail() {
                 </div>
                 <span className="text-xl font-bold text-gray-900">{restaurant.rating.toFixed(1)}</span>
                 <span className="text-sm text-gray-500">({restaurant.reviewCount} recenzí)</span>
-                <span className={`text-sm font-medium ${restaurant.isOpen ? "text-emerald-600" : "text-red-500"}`}>
-                  {restaurant.isOpen ? "● Nyní otevřeno" : "● Nyní zavřeno"}
-                </span>
+                {(() => {
+                  const status = getOpenStatus(restaurant.hours || "");
+                  return (
+                    <span className={`text-sm font-medium ${status.isOpen ? "text-emerald-600" : "text-red-500"}`}>
+                      {status.isOpen ? `● ${status.statusText}` : `● ${status.statusText}`}
+                    </span>
+                  );
+                })()}
               </div>
 
               {/* Tags */}
@@ -259,6 +265,44 @@ export default function RestaurantDetail() {
               )}
             </div>
 
+            {/* Fast Food Menu Items */}
+            {restaurant.fastFoodItems && restaurant.fastFoodItems.length > 0 && (
+              <div className="bg-white rounded-xl border border-orange-100 overflow-hidden mb-6">
+                <div className="p-4 border-b border-orange-100 bg-orange-50">
+                  <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                    🍔 Vegetariánské & Veganské položky v menu
+                  </h3>
+                  <p className="text-xs text-gray-500 mt-1">Tyto položky jsou vhodné pro vegetariány a vegany</p>
+                </div>
+                <div className="divide-y divide-orange-50">
+                  {restaurant.fastFoodItems.map((item, idx) => (
+                    <div key={idx} className="p-4 flex items-start gap-3 hover:bg-orange-50/30 transition-colors">
+                      <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm"
+                        style={{ background: item.isVegan ? '#d1fae5' : '#fef3c7' }}>
+                        {item.isVegan ? '🌱' : '🥚'}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-sm font-semibold text-gray-900">{item.name}</span>
+                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                            item.isVegan
+                              ? 'bg-emerald-100 text-emerald-700'
+                              : 'bg-amber-100 text-amber-700'
+                          }`}>
+                            {item.isVegan ? 'Veganské' : 'Vegetariánské'}
+                          </span>
+                          {item.price && (
+                            <span className="text-xs font-bold text-orange-600 ml-auto">{item.price}</span>
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{item.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Map */}
             <div className="bg-white rounded-xl border border-emerald-100 overflow-hidden mb-6">
               <div className="p-4 border-b border-emerald-100">
@@ -290,7 +334,7 @@ export default function RestaurantDetail() {
           {/* ── SIDEBAR ── */}
           <div className="lg:col-span-1">
             {/* Quick actions */}
-            <div className="bg-white rounded-xl border border-emerald-100 p-5 mb-4 sticky top-20">
+            <div className="bg-white rounded-xl border border-emerald-100 p-5 mb-4 lg:sticky lg:top-20">
               <h3 className="text-sm font-semibold text-gray-900 mb-4">Rychlé akce</h3>
               <div className="flex flex-col gap-2">
                 {restaurant.phone && (

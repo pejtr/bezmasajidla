@@ -9,6 +9,7 @@ import { X, MapPin, Star, Phone } from "lucide-react";
 import Header from "@/components/Header";
 import { MapView } from "@/components/Map";
 import { restaurants, getTypeColor, getTypeLabel, Restaurant } from "@/lib/data";
+import { getOpenStatus } from "@/lib/openingHours";
 import SEOHead from "@/components/SEOHead";
 
 const typeColors: Record<string, string> = {
@@ -22,7 +23,7 @@ export default function MapPage() {
   const [filterType, setFilterType] = useState<"all" | "vegan" | "vegetarian" | "friendly">("all");
 
   const filtered = restaurants.filter(
-    (r) => filterType === "all" || r.type === filterType
+    (r) => r.type !== "fastfood" && (filterType === "all" || r.type === filterType)
   );
 
   const handleMapReady = (map: google.maps.Map) => {
@@ -51,7 +52,7 @@ export default function MapPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8FAF6]">
+    <div className="h-screen flex flex-col bg-[#F8FAF6] overflow-hidden">
       <SEOHead
         title="Mapa Veganských a Vegetariánských Restaurací v Praze"
         description="Interaktivní mapa všech veganských a vegetariánských restaurací v Praze. Najděte bezmasé restaurace v okolí."
@@ -88,7 +89,7 @@ export default function MapPage() {
       </div>
 
       {/* Map container */}
-      <div className="flex-1 relative" style={{ minHeight: "calc(100vh - 140px)" }}>
+      <div className="flex-1 relative min-h-0">
         <MapView onMapReady={handleMapReady} />
 
         {/* Legend */}
@@ -140,9 +141,14 @@ export default function MapPage() {
                     <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
                     <span className="text-xs text-gray-700 font-medium">{selectedRestaurant.rating.toFixed(1)}</span>
                     <span className="text-xs text-gray-400">({selectedRestaurant.reviewCount})</span>
-                    <span className={`text-xs ml-1 ${selectedRestaurant.isOpen ? "text-emerald-600" : "text-red-500"}`}>
-                      {selectedRestaurant.isOpen ? "● Otevřeno" : "● Zavřeno"}
-                    </span>
+                    {(() => {
+                      const mapStatus = getOpenStatus(selectedRestaurant.hours || "");
+                      return (
+                        <span className={`text-xs ml-1 ${mapStatus.isOpen ? "text-emerald-600" : "text-red-500"}`}>
+                          {mapStatus.isOpen ? "● Otevřeno" : `● ${mapStatus.statusText}`}
+                        </span>
+                      );
+                    })()}
                   </div>
                   <div className="flex items-center gap-1 mt-1">
                     <MapPin className="w-3 h-3 text-emerald-500" />

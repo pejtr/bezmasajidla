@@ -11,6 +11,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import RestaurantCard from "@/components/RestaurantCard";
 import { restaurants, districts, cuisineTags, dietaryOptionsConfig, RestaurantType, DietaryOption } from "@/lib/data";
+import { getOpenStatus } from "@/lib/openingHours";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import SEOHead from "@/components/SEOHead";
@@ -51,11 +52,13 @@ export default function Restaurants() {
 
   const filtered = useMemo(() => {
     let result = restaurants.filter((r) => {
+      // Exclude fast food from default "all" listing — only show when explicitly selected
+      if (selectedType === "all" && r.type === "fastfood") return false;
       if (searchQuery && !r.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
           !r.description.toLowerCase().includes(searchQuery.toLowerCase())) return false;
       if (selectedType !== "all" && r.type !== selectedType) return false;
       if (selectedDistrict !== "Všechny čtvrti" && r.district !== selectedDistrict) return false;
-      if (showOpenOnly && !r.isOpen) return false;
+      if (showOpenOnly && !getOpenStatus(r.hours || "").isOpen) return false;
       if (selectedTags.length > 0 && !selectedTags.some(t => r.tags.includes(t))) return false;
       if (selectedDietary.length > 0 && !selectedDietary.every(d => r.dietaryOptions.includes(d))) return false;
       if (selectedPriceLevels.length > 0 && !selectedPriceLevels.includes(r.priceLevel)) return false;
@@ -118,6 +121,7 @@ export default function Restaurants() {
     { value: "vegan", label: "Veganské", color: "bg-emerald-700 text-white hover:bg-emerald-600" },
     { value: "vegetarian", label: "Vegetariánské", color: "bg-emerald-500 text-white hover:bg-emerald-400" },
     { value: "friendly", label: "Vegan-friendly", color: "bg-amber-400 text-amber-900 hover:bg-amber-300" },
+    { value: "fastfood", label: "🍔 Fast Food", color: "bg-orange-500 text-white hover:bg-orange-400" },
   ];
 
   // Only show dietary options that exist in at least one restaurant

@@ -9,8 +9,9 @@ import { Clock, Users, ChefHat, ArrowLeft, Leaf, ChevronLeft, ChevronRight } fro
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { recipes } from "@/lib/data";
+import { recipes, type Recipe } from "@/lib/data";
 import SEOHead from "@/components/SEOHead";
+import OptimizedImage from "@/components/OptimizedImage";
 
 const sampleIngredients: Record<string, string[]> = {
   "veganska-svickova": [
@@ -537,6 +538,81 @@ const sampleSteps: Record<string, string[]> = {
   ],
 };
 
+// ── Similar Recipes Sidebar ────────────────────────────────
+function SimilarRecipesSidebar({ currentRecipe }: { currentRecipe: Recipe }) {
+  // Find similar recipes: same category first, then same vegan type, exclude current
+  const similar = recipes
+    .filter((r) => r.slug !== currentRecipe.slug)
+    .map((r) => {
+      let score = 0;
+      if (r.category === currentRecipe.category) score += 3;
+      if (r.isVegan === currentRecipe.isVegan) score += 1;
+      // Shared tags bonus
+      const sharedTags = r.tags.filter((t) => currentRecipe.tags.includes(t)).length;
+      score += sharedTags;
+      return { recipe: r, score };
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5)
+    .map((s) => s.recipe);
+
+  if (similar.length === 0) return null;
+
+  return (
+    <aside className="lg:w-80 flex-shrink-0">
+      <div className="lg:sticky lg:top-6">
+        <h2
+          className="text-lg font-bold text-gray-900 mb-4"
+          style={{ fontFamily: "'DM Serif Display', serif" }}
+        >
+          Podobné recepty
+        </h2>
+        <div className="space-y-3">
+          {similar.map((r) => (
+            <Link key={r.slug} href={`/recepty/${r.slug}`}>
+              <div className="bg-white rounded-xl border border-emerald-100 overflow-hidden group cursor-pointer hover:shadow-md transition-shadow">
+                <div className="flex gap-3 p-3">
+                  <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+                    <OptimizedImage
+                      src={r.images?.[0]?.url || r.image}
+                      alt={r.images?.[0]?.alt || r.title}
+                      className="w-full h-full group-hover:scale-105 transition-transform duration-300"
+                      placeholderColor="#d1fae5"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 mb-1">
+                      {r.isVegan && (
+                        <span className="bg-emerald-700 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded-full">
+                          Vegan
+                        </span>
+                      )}
+                      <span className="text-[10px] text-emerald-600 font-medium">{r.category}</span>
+                    </div>
+                    <h3 className="text-sm font-semibold text-gray-900 leading-snug group-hover:text-emerald-700 transition-colors line-clamp-2">
+                      {r.title}
+                    </h3>
+                    <div className="flex items-center gap-2 mt-1.5 text-[11px] text-gray-500">
+                      <span className="flex items-center gap-0.5">
+                        <Clock className="w-3 h-3" />
+                        {r.prepTime + r.cookTime} min
+                      </span>
+                      <span className="flex items-center gap-0.5">
+                        <ChefHat className="w-3 h-3" />
+                        {r.difficulty}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </aside>
+  );
+}
+
 // ── Image Gallery Component ─────────────────────────────────
 function ImageGallery({ images, title }: { images: { url: string; alt: string }[]; title: string }) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -673,121 +749,127 @@ export default function RecipeDetail() {
       </div>
 
       <div className="container py-8">
-        <div className="max-w-3xl mx-auto">
-          {/* Back */}
-          <Link href="/recepty" className="inline-flex items-center gap-1 text-sm text-emerald-600 hover:text-emerald-800 mb-4 transition-colors">
-            <ArrowLeft className="w-4 h-4" />
-            Zpět na recepty
-          </Link>
+        <div className="flex flex-col lg:flex-row gap-8 max-w-6xl mx-auto">
+          {/* Main content */}
+          <div className="flex-1 min-w-0">
+            {/* Back */}
+            <Link href="/recepty" className="inline-flex items-center gap-1 text-sm text-emerald-600 hover:text-emerald-800 mb-4 transition-colors">
+              <ArrowLeft className="w-4 h-4" />
+              Zpět na recepty
+            </Link>
 
-          {/* Image Gallery */}
-          {recipe.images && recipe.images.length > 0 ? (
-            <ImageGallery images={recipe.images} title={recipe.title} />
-          ) : (
-            <div className="relative rounded-2xl overflow-hidden mb-6 h-72">
-              <img
-                src={recipe.image}
-                alt={recipe.title}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+            {/* Image Gallery */}
+            {recipe.images && recipe.images.length > 0 ? (
+              <ImageGallery images={recipe.images} title={recipe.title} />
+            ) : (
+              <div className="relative rounded-2xl overflow-hidden mb-6 h-72">
+                <img
+                  src={recipe.image}
+                  alt={recipe.title}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              </div>
+            )}
+
+            {/* Vegan badge */}
+            {recipe.isVegan && (
+              <div className="inline-flex items-center gap-1 bg-emerald-700 text-white text-sm font-semibold px-3 py-1 rounded-full mb-4 shadow-md">
+                <Leaf className="w-3.5 h-3.5" />
+                Veganský recept
+              </div>
+            )}
+
+            {/* Header */}
+            <div className="bg-white rounded-xl border border-emerald-100 p-6 mb-6">
+              <p className="text-sm text-emerald-600 font-medium mb-1">{recipe.category}</p>
+              <h1
+                className="text-3xl font-bold text-gray-900 mb-3"
+                style={{ fontFamily: "'DM Serif Display', serif" }}
+              >
+                {recipe.title}
+              </h1>
+              <p className="text-gray-600 leading-relaxed mb-4">{recipe.description}</p>
+
+              {/* Meta */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-emerald-100">
+                <div className="text-center">
+                  <Clock className="w-5 h-5 text-emerald-600 mx-auto mb-1" />
+                  <p className="text-xs text-gray-500">Příprava</p>
+                  <p className="text-sm font-semibold text-gray-900">{recipe.prepTime} min</p>
+                </div>
+                <div className="text-center">
+                  <Clock className="w-5 h-5 text-amber-500 mx-auto mb-1" />
+                  <p className="text-xs text-gray-500">Vaření</p>
+                  <p className="text-sm font-semibold text-gray-900">{recipe.cookTime} min</p>
+                </div>
+                <div className="text-center">
+                  <Users className="w-5 h-5 text-emerald-600 mx-auto mb-1" />
+                  <p className="text-xs text-gray-500">Porce</p>
+                  <p className="text-sm font-semibold text-gray-900">{recipe.servings}</p>
+                </div>
+                <div className="text-center">
+                  <ChefHat className="w-5 h-5 text-emerald-600 mx-auto mb-1" />
+                  <p className="text-xs text-gray-500">Náročnost</p>
+                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${difficultyColor}`}>
+                    {recipe.difficulty}
+                  </span>
+                </div>
+              </div>
             </div>
-          )}
 
-          {/* Vegan badge */}
-          {recipe.isVegan && (
-            <div className="inline-flex items-center gap-1 bg-emerald-700 text-white text-sm font-semibold px-3 py-1 rounded-full mb-4 shadow-md">
-              <Leaf className="w-3.5 h-3.5" />
-              Veganský recept
+            {/* Ingredients */}
+            <div className="bg-white rounded-xl border border-emerald-100 p-6 mb-6">
+              <h2
+                className="text-xl font-bold text-gray-900 mb-4"
+                style={{ fontFamily: "'DM Serif Display', serif" }}
+              >
+                Ingredience
+              </h2>
+              <ul className="space-y-2">
+                {ingredients.map((ing, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <span className="w-5 h-5 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
+                      {i + 1}
+                    </span>
+                    <span className="text-sm text-gray-700">{ing}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
-          )}
 
-          {/* Header */}
-          <div className="bg-white rounded-xl border border-emerald-100 p-6 mb-6">
-            <p className="text-sm text-emerald-600 font-medium mb-1">{recipe.category}</p>
-            <h1
-              className="text-3xl font-bold text-gray-900 mb-3"
-              style={{ fontFamily: "'DM Serif Display', serif" }}
-            >
-              {recipe.title}
-            </h1>
-            <p className="text-gray-600 leading-relaxed mb-4">{recipe.description}</p>
+            {/* Steps */}
+            <div className="bg-white rounded-xl border border-emerald-100 p-6 mb-6">
+              <h2
+                className="text-xl font-bold text-gray-900 mb-4"
+                style={{ fontFamily: "'DM Serif Display', serif" }}
+              >
+                Postup přípravy
+              </h2>
+              <ol className="space-y-4">
+                {steps.map((step, i) => (
+                  <li key={i} className="flex gap-4">
+                    <span className="w-7 h-7 bg-emerald-700 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">
+                      {i + 1}
+                    </span>
+                    <p className="text-sm text-gray-700 leading-relaxed pt-1">{step}</p>
+                  </li>
+                ))}
+              </ol>
+            </div>
 
-            {/* Meta */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-emerald-100">
-              <div className="text-center">
-                <Clock className="w-5 h-5 text-emerald-600 mx-auto mb-1" />
-                <p className="text-xs text-gray-500">Příprava</p>
-                <p className="text-sm font-semibold text-gray-900">{recipe.prepTime} min</p>
-              </div>
-              <div className="text-center">
-                <Clock className="w-5 h-5 text-amber-500 mx-auto mb-1" />
-                <p className="text-xs text-gray-500">Vaření</p>
-                <p className="text-sm font-semibold text-gray-900">{recipe.cookTime} min</p>
-              </div>
-              <div className="text-center">
-                <Users className="w-5 h-5 text-emerald-600 mx-auto mb-1" />
-                <p className="text-xs text-gray-500">Porce</p>
-                <p className="text-sm font-semibold text-gray-900">{recipe.servings}</p>
-              </div>
-              <div className="text-center">
-                <ChefHat className="w-5 h-5 text-emerald-600 mx-auto mb-1" />
-                <p className="text-xs text-gray-500">Náročnost</p>
-                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${difficultyColor}`}>
-                  {recipe.difficulty}
+            {/* Tags */}
+            <div className="flex flex-wrap gap-2">
+              {recipe.tags.map((tag) => (
+                <span key={tag} className="text-sm bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full border border-emerald-100">
+                  #{tag}
                 </span>
-              </div>
+              ))}
             </div>
           </div>
 
-          {/* Ingredients */}
-          <div className="bg-white rounded-xl border border-emerald-100 p-6 mb-6">
-            <h2
-              className="text-xl font-bold text-gray-900 mb-4"
-              style={{ fontFamily: "'DM Serif Display', serif" }}
-            >
-              Ingredience
-            </h2>
-            <ul className="space-y-2">
-              {ingredients.map((ing, i) => (
-                <li key={i} className="flex items-start gap-3">
-                  <span className="w-5 h-5 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
-                    {i + 1}
-                  </span>
-                  <span className="text-sm text-gray-700">{ing}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Steps */}
-          <div className="bg-white rounded-xl border border-emerald-100 p-6 mb-6">
-            <h2
-              className="text-xl font-bold text-gray-900 mb-4"
-              style={{ fontFamily: "'DM Serif Display', serif" }}
-            >
-              Postup přípravy
-            </h2>
-            <ol className="space-y-4">
-              {steps.map((step, i) => (
-                <li key={i} className="flex gap-4">
-                  <span className="w-7 h-7 bg-emerald-700 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">
-                    {i + 1}
-                  </span>
-                  <p className="text-sm text-gray-700 leading-relaxed pt-1">{step}</p>
-                </li>
-              ))}
-            </ol>
-          </div>
-
-          {/* Tags */}
-          <div className="flex flex-wrap gap-2">
-            {recipe.tags.map((tag) => (
-              <span key={tag} className="text-sm bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full border border-emerald-100">
-                #{tag}
-              </span>
-            ))}
-          </div>
+          {/* Similar Recipes Sidebar */}
+          <SimilarRecipesSidebar currentRecipe={recipe} />
         </div>
       </div>
 

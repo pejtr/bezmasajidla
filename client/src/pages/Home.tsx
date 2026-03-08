@@ -36,11 +36,13 @@ const categories = [
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
-  // Curated top restaurants: sort by popularity score (rating × reviewCount), show top 6
+  // Curated top restaurants: exclude fast food, sort by popularity score (rating × reviewCount), show top 6
   const topRestaurants = [...restaurants]
+    .filter(r => r.type !== "fastfood")
     .sort((a, b) => (b.rating * b.reviewCount) - (a.rating * a.reviewCount))
     .slice(0, 6);
   const featuredRecipes = recipes.slice(0, 3);
+  const fastFoodChains = restaurants.filter(r => r.type === "fastfood");
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -251,6 +253,68 @@ export default function Home() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {featuredRecipes.map((r) => (
             <RecipeCard key={r.id} recipe={r} />
+          ))}
+        </div>
+      </section>
+
+      {/* ── FAST FOOD ── */}
+      <section className="py-8 container">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-base">🍔</span>
+              <span className="text-xs font-semibold text-orange-600 uppercase tracking-wide">Fast Food</span>
+            </div>
+            <h2
+              className="text-3xl font-bold text-gray-900"
+              style={{ fontFamily: "'DM Serif Display', serif" }}
+            >
+              Vegetariánské &amp; Veganské možnosti ve fastfoodových řetězcích
+            </h2>
+            <p className="text-sm text-gray-500 mt-1">Co si dát v běžných řetězcích, když nechcete maso</p>
+          </div>
+          <Link href="/restaurace?type=fastfood">
+            <Button variant="outline" className="hidden sm:flex items-center gap-1 border-orange-200 text-orange-700 hover:bg-orange-50">
+              Všechny řetězce <ArrowRight className="w-3.5 h-3.5" />
+            </Button>
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {fastFoodChains.map((chain) => (
+            <Link key={chain.id} href={`/restaurace/${chain.slug}`}>
+              <div className="bg-white rounded-xl border border-orange-100 overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
+                {/* Header strip */}
+                <div className="bg-gradient-to-r from-orange-500 to-amber-500 px-4 py-3 flex items-center justify-between">
+                  <span className="text-white font-bold text-sm">{chain.name}</span>
+                  <span className="text-orange-100 text-xs">{chain.priceLevel === 1 ? "Kč" : chain.priceLevel === 2 ? "KčKč" : "KčKčKč"}</span>
+                </div>
+                {/* Menu items */}
+                <div className="p-4">
+                  <p className="text-xs text-gray-500 mb-3 line-clamp-2">{chain.description}</p>
+                  <div className="flex flex-col gap-2">
+                    {(chain.fastFoodItems || []).slice(0, 3).map((item, idx) => (
+                      <div key={idx} className="flex items-center gap-2">
+                        <span className="text-xs flex-shrink-0">{item.isVegan ? '🌱' : '🥚'}</span>
+                        <div className="flex-1 min-w-0">
+                          <span className="text-xs font-semibold text-gray-800">{item.name}</span>
+                          {item.price && <span className="text-xs text-orange-600 font-bold ml-2">{item.price}</span>}
+                        </div>
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium flex-shrink-0 ${
+                          item.isVegan ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+                        }`}>
+                          {item.isVegan ? 'V' : 'VG'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-3 pt-3 border-t border-orange-50 flex items-center justify-between">
+                    <span className="text-xs text-gray-400">{chain.hours}</span>
+                    <span className="text-xs text-orange-600 font-medium hover:text-orange-800">Detail →</span>
+                  </div>
+                </div>
+              </div>
+            </Link>
           ))}
         </div>
       </section>

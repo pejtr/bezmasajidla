@@ -36,3 +36,26 @@
 - [x] Generate 3 AI images per new recipe with SEO-optimized filenames
 - [x] Add full ingredients and step-by-step instructions for each new recipe
 - [x] Add all Beas Dhaba branches in Prague to restaurant data (21 branches added)
+- [ ] Add restaurant branches in shopping centers (Palladium, Chodov, Nový Smíchov, etc.)
+- [ ] Create "Prémiový profil" page with "Připravujeme..." placeholder
+- [ ] Migrate recipes from static data to database with admin management
+- [ ] Add recipe search/filter by keywords functionality
+- [ ] Add nutritional info table per recipe (calories, protein, carbs, fat)
+- [ ] Add recipe rating and comments system (stars + text reviews)
+- [x] Add similar recipes sidebar on recipe detail page (desktop: right panel, mobile: below content)
+- [ ] Add 76 new viral/sexy vegan and vegetarian recipes to reach 100 total
+- [ ] Generate AI images for all 76 new recipes
+- [ ] Upload all new recipe images to CDN
+- [ ] Add full ingredients, steps, and nutritional info for each new recipe
+- [ ] Add "Nápoje" (drinks) category to recipe categories
+- [ ] Create Blog section with listing page, detail page, and routes
+- [ ] Write 10+ SEO blog articles (Průvodce po veganské Praze, Top restaurace, etc.)
+- [ ] Add Blog link to header navigation and footer
+- [x] Add Prague skyline silhouette (Pražský hrad/Karlův most) to top of newsletter sticky banner
+- [ ] Add "which restaurant opens next" feature when all are closed (like cajovny-praha.cz)
+- [ ] Add Dobrá čajovna as a vegetarian restaurant
+- [ ] Add link to Čajovny Praha (cajovny-praha.cz) in footer
+- [ ] Add "fastfood" restaurant type (hidden from default listing, visible only with Fast Food filter)
+- [ ] Add BurgerKing, KFC, McDonald's, Subway, Pizza Hut entries with veg/vegan menu items
+- [ ] Add Fast Food filter button to Restaurants page
+- [ ] Add Fast Food section to homepage with chain cards showing veg/vegan menu items

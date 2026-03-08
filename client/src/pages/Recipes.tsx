@@ -14,7 +14,7 @@ import SEOHead from "@/components/SEOHead";
 
 const RECIPE_HERO = "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/recipe-hero-kAEk42WS8auJkLKnU8C6NV.webp";
 
-const categories = ["Vše", "Hlavní jídla", "Polévky", "Saláty a misky", "Snídaně", "Dezerty"];
+const categories = ["Vše", "Hlavní jídla", "Polévky", "Saláty a misky", "Snídaně", "Dezerty", "Nápoje"];
 
 export default function Recipes() {
   const [searchQuery, setSearchQuery] = useState("");
