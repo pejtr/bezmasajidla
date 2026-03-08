@@ -196,7 +196,7 @@ export const restaurants: Restaurant[] = [
     slug: "strecha",
     type: "vegan",
     rating: 4.5,
-    reviewCount: 797,
+    reviewCount: 895,
     isOpen: true,
     isPremium: false,
     address: "Křemencova 7, Praha 1 — Nové Město",
