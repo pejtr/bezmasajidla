@@ -8,7 +8,7 @@ import { MapPin, Phone, Globe, Clock, Star, Crown, ArrowLeft, ExternalLink, Shar
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { restaurants, getTypeLabel, getTypeColor, renderStars } from "@/lib/data";
+import { restaurants, getTypeLabel, getTypeColor, renderStars, type Restaurant } from "@/lib/data";
 import { getOpenStatus } from "@/lib/openingHours";
 import { MapView } from "@/components/Map";
 import { useState, useMemo } from "react";
@@ -119,6 +119,57 @@ function NearbyRestaurantsSection({ slug }: { slug: string }) {
   );
 }
 
+function GallerySection({ restaurant, fallbackImg }: { restaurant: Restaurant; fallbackImg: string }) {
+  const allImages = [
+    restaurant.image || fallbackImg,
+    ...(restaurant.gallery || []),
+  ];
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  return (
+    <div className="mb-6">
+      {/* Main hero image */}
+      <div className="relative rounded-2xl overflow-hidden h-72 mb-2">
+        <img
+          src={allImages[activeIdx]}
+          alt={`${restaurant.name} — foto ${activeIdx + 1}`}
+          className="w-full h-full object-cover transition-all duration-300"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+        {restaurant.isPremium && (
+          <div className="absolute top-4 right-4 bg-amber-400 text-amber-900 text-sm font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-md">
+            <Crown className="w-3.5 h-3.5" />
+            Prémiový profil
+          </div>
+        )}
+        {allImages.length > 1 && (
+          <div className="absolute bottom-3 right-3 bg-black/50 text-white text-xs px-2 py-1 rounded-full">
+            {activeIdx + 1} / {allImages.length}
+          </div>
+        )}
+      </div>
+      {/* Thumbnail strip — only shown when gallery exists */}
+      {allImages.length > 1 && (
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          {allImages.map((src, i) => (
+            <button
+              key={i}
+              onClick={() => setActiveIdx(i)}
+              className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
+                i === activeIdx
+                  ? "border-emerald-500 ring-2 ring-emerald-300"
+                  : "border-transparent opacity-70 hover:opacity-100"
+              }`}
+            >
+              <img src={src} alt={`Foto ${i + 1}`} className="w-full h-full object-cover" />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function RestaurantDetail() {
   const params = useParams<{ slug: string }>();
   const restaurant = restaurants.find((r) => r.slug === params.slug);
@@ -199,21 +250,8 @@ export default function RestaurantDetail() {
               Zpět na seznam
             </Link>
 
-            {/* Hero image */}
-            <div className="relative rounded-2xl overflow-hidden mb-6 h-72">
-              <img
-                src={restaurant.image || RESTAURANT_IMG}
-                alt={restaurant.name}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-              {restaurant.isPremium && (
-                <div className="absolute top-4 right-4 bg-amber-400 text-amber-900 text-sm font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-md">
-                  <Crown className="w-3.5 h-3.5" />
-                  Prémiový profil
-                </div>
-              )}
-            </div>
+            {/* Hero image + gallery */}
+            <GallerySection restaurant={restaurant} fallbackImg={RESTAURANT_IMG} />
 
             {/* Restaurant header */}
             <div className="bg-white rounded-xl border border-emerald-100 p-6 mb-6">

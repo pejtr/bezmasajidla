@@ -33,6 +33,8 @@ export interface Restaurant {
   fastFoodItems?: FastFoodItem[];
   /** Direct Wolt delivery URL for this restaurant */
   woltUrl?: string;
+  /** Additional photo gallery images */
+  gallery?: string[];
 }
 
 export interface FastFoodItem {
@@ -213,6 +215,12 @@ export const restaurants: Restaurant[] = [
     tags: ["Mezinárodní", "Pivo/Víno", "Catering", "Česká"],
     dietaryOptions: ["whole-food"],
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strecha-restaurant_d68817c7.jpg",
+    gallery: [
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strecha-food-1_03d247fc.png",
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strecha-food-2_767bb434.png",
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strecha-food-3_dff7cfc6.png",
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strecha-food-4_a4641250.png",
+    ],
     lat: 50.0788,
     lng: 14.4181,
     priceLevel: 1,

@@ -99,3 +99,5 @@
 - [x] Přidat pole woltUrl do typu Restaurant a dat restaurací
 - [x] Přidat ikonu lupy do mobilního hamburger menu
 - [x] Aktualizovat náhledový obrázek restaurace Střecha z Facebooku
+- [x] Nahrát 4 fotky jídel ze Střechy na CDN
+- [x] Přidat pole gallery[] do Restaurant typu a implementovat fotogalerii na detailní stránce
