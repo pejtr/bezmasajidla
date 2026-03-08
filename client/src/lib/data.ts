@@ -512,7 +512,7 @@ export const restaurants: Restaurant[] = [
     slug: "kro-kitchen-karlin",
     type: "friendly" as const,
     rating: 4.5,
-    reviewCount: 890,
+    reviewCount: 770,
     isOpen: true,
     isPremium: false,
     address: "Křižíkova 34, Praha 8",
