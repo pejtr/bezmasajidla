@@ -490,7 +490,7 @@ export const restaurants: Restaurant[] = [
     slug: "beas-dhaba-vladislavova",
     type: "vegetarian",
     rating: 4.5,
-    reviewCount: 780,
+    reviewCount: 890,
     isOpen: true,
     isPremium: false,
     address: "Vladislavova 24, Praha 1 — Nové Město",
