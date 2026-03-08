@@ -3,7 +3,7 @@
 // "Zelená Metropole" — recipe grid with category filters
 // ============================================================
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Search } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -14,21 +14,56 @@ import SEOHead from "@/components/SEOHead";
 
 const RECIPE_HERO = "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/recipe-hero-kAEk42WS8auJkLKnU8C6NV.webp";
 
-const categories = ["Vše", "Hlavní jídla", "Polévky", "Saláty a misky", "Snídaně", "Dezerty", "Nápoje"];
+const categories = ["Vše", "Hlavní jídla", "Polévky", "Saláty a misky", "Snídáně", "Dezerty", "Nápoje"];
+
+const cuisines = [
+  { key: "", label: "Všechny kuchyně", flag: "🌍" },
+  { key: "česká", label: "Česká", flag: "🇨🇿" },
+  { key: "italská", label: "Italská", flag: "🇮🇹" },
+  { key: "gruzínská", label: "Gruzínská", flag: "🇬🇪" },
+  { key: "asijská", label: "Asijská", flag: "🇨🇳" },
+  { key: "maďarská", label: "Maďarská", flag: "🇭🇺" },
+  { key: "slovenská", label: "Slovenská", flag: "🇸🇰" },
+  { key: "mexická", label: "Mexická", flag: "🇲🇽" },
+  { key: "indická", label: "Indická", flag: "🇮🇳" },
+];
 
 export default function Recipes() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Vše");
   const [veganOnly, setVeganOnly] = useState(false);
+  const [cuisineFilter, setCuisineFilter] = useState("");
+
+  // Read URL params on mount and when URL changes
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get("q") || "";
+    const cuisine = params.get("cuisine") || "";
+    const type = params.get("type") || "";
+    const diet = params.get("diet") || "";
+
+    if (q) setSearchQuery(q);
+    if (cuisine) setCuisineFilter(cuisine.toLowerCase());
+    if (type === "vegan") setVeganOnly(true);
+    if (diet === "vegan") setVeganOnly(true);
+  }, []);
 
   const filtered = useMemo(() => {
     return recipes.filter((r) => {
-      if (searchQuery && !r.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+      if (searchQuery && !r.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
+          !r.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))) return false;
       if (selectedCategory !== "Vše" && r.category !== selectedCategory) return false;
       if (veganOnly && !r.isVegan) return false;
+      // Cuisine filter: match against recipe tags (e.g. "gruzínská" matches tag "Gruzínská kuchyně")
+      if (cuisineFilter) {
+        const cf = cuisineFilter.toLowerCase();
+        const matches = r.tags.some(t => t.toLowerCase().includes(cf)) ||
+                        r.title.toLowerCase().includes(cf);
+        if (!matches) return false;
+      }
       return true;
     });
-  }, [searchQuery, selectedCategory, veganOnly]);
+  }, [searchQuery, selectedCategory, veganOnly, cuisineFilter]);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAF6]">
@@ -88,7 +123,7 @@ export default function Recipes() {
         </div>
 
         {/* Category tabs */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
+        <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
           {categories.map((cat) => (
             <button
               key={cat}
@@ -102,6 +137,27 @@ export default function Recipes() {
               {cat}
             </button>
           ))}
+        </div>
+
+        {/* Cuisine filter row */}
+        <div className="mb-6">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Kuchyně světa</p>
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {cuisines.map((c) => (
+              <button
+                key={c.key}
+                onClick={() => setCuisineFilter(c.key)}
+                className={`whitespace-nowrap text-sm px-3 py-1.5 rounded-full font-medium transition-colors flex-shrink-0 flex items-center gap-1.5 ${
+                  cuisineFilter === c.key
+                    ? "bg-amber-500 text-white shadow-sm"
+                    : "bg-white text-gray-600 border border-amber-100 hover:border-amber-400 hover:text-amber-700"
+                }`}
+              >
+                <span>{c.flag}</span>
+                <span>{c.label}</span>
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Results */}

@@ -5,7 +5,7 @@
 
 import { useState } from "react";
 import { useParams, Link } from "wouter";
-import { Clock, Users, ChefHat, ArrowLeft, Leaf, ChevronLeft, ChevronRight, ShoppingCart, ExternalLink } from "lucide-react";
+import { Clock, Users, ChefHat, ArrowLeft, Leaf, ChevronLeft, ChevronRight, ShoppingCart, ExternalLink, BookOpen, Flame } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -716,9 +716,13 @@ function SimilarRecipesSidebar({ currentRecipe }: { currentRecipe: Recipe }) {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 mb-1">
-                      {r.isVegan && (
+                      {r.isVegan ? (
                         <span className="bg-emerald-700 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded-full">
                           Vegan
+                        </span>
+                      ) : (
+                        <span className="bg-green-100 text-green-700 text-[10px] font-semibold px-1.5 py-0.5 rounded-full">
+                          Vegetariánský
                         </span>
                       )}
                       <span className="text-[10px] text-emerald-600 font-medium">{r.category}</span>
@@ -951,6 +955,101 @@ export default function RecipeDetail() {
                 </div>
               </div>
             </div>
+
+            {/* ── MACRO NUTRIENTS PANEL ── */}
+            {recipe.macros && (
+              <div className="bg-white rounded-xl border border-emerald-100 p-6 mb-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Flame className="w-4 h-4 text-orange-500" />
+                  <h2 className="text-lg font-bold text-gray-900" style={{ fontFamily: "'DM Serif Display', serif" }}>
+                    Nutriční hodnoty <span className="text-sm font-normal text-gray-400">(na 1 porci)</span>
+                  </h2>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-6 items-center">
+                  {/* Donut chart SVG */}
+                  <div className="relative flex-shrink-0">
+                    <svg viewBox="0 0 120 120" className="w-32 h-32 -rotate-90">
+                      {(() => {
+                        const m = recipe.macros;
+                        const totalCals = m.protein * 4 + m.carbs * 4 + m.fat * 9;
+                        const proteinPct = totalCals > 0 ? (m.protein * 4 / totalCals) : 0.33;
+                        const carbsPct = totalCals > 0 ? (m.carbs * 4 / totalCals) : 0.34;
+                        const fatPct = totalCals > 0 ? (m.fat * 9 / totalCals) : 0.33;
+                        const r = 46; const cx = 60; const cy = 60;
+                        const circ = 2 * Math.PI * r;
+                        let offset = 0;
+                        const slices = [
+                          { pct: proteinPct, color: "#10b981" },
+                          { pct: carbsPct, color: "#f59e0b" },
+                          { pct: fatPct, color: "#6366f1" },
+                        ];
+                        return slices.map((s, i) => {
+                          const dash = s.pct * circ;
+                          const gap = circ - dash;
+                          const el = (
+                            <circle
+                              key={i}
+                              cx={cx} cy={cy} r={r}
+                              fill="none"
+                              stroke={s.color}
+                              strokeWidth="18"
+                              strokeDasharray={`${dash} ${gap}`}
+                              strokeDashoffset={-offset}
+                            />
+                          );
+                          offset += dash;
+                          return el;
+                        });
+                      })()}
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="text-2xl font-bold text-gray-900">{recipe.macros.calories}</span>
+                      <span className="text-[10px] text-gray-400 uppercase tracking-wide">kcal</span>
+                    </div>
+                  </div>
+                  {/* Macro bars */}
+                  <div className="flex-1 w-full space-y-3">
+                    {[
+                      { label: "Bílkoviny", value: recipe.macros.protein, unit: "g", color: "bg-emerald-500", max: 50 },
+                      { label: "Sacharidy", value: recipe.macros.carbs, unit: "g", color: "bg-amber-400", max: 100 },
+                      { label: "Tuky", value: recipe.macros.fat, unit: "g", color: "bg-indigo-400", max: 50 },
+                      { label: "Vláknina", value: recipe.macros.fiber, unit: "g", color: "bg-teal-400", max: 30 },
+                    ].map((macro) => (
+                      <div key={macro.label}>
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="text-gray-600 font-medium">{macro.label}</span>
+                          <span className="font-bold text-gray-900">{macro.value} {macro.unit}</span>
+                        </div>
+                        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full rounded-full ${macro.color}`}
+                            style={{ width: `${Math.min(100, (macro.value / macro.max) * 100)}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ── PŘÍBĚH RECEPTU ── */}
+            {recipe.storyTitle && recipe.story && recipe.story.length > 0 && (
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-100 p-6 mb-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <BookOpen className="w-4 h-4 text-amber-600" />
+                  <span className="text-xs font-bold text-amber-600 uppercase tracking-wider">Příběh receptu</span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-4" style={{ fontFamily: "'DM Serif Display', serif" }}>
+                  {recipe.storyTitle}
+                </h3>
+                <div className="space-y-3">
+                  {recipe.story.map((paragraph, i) => (
+                    <p key={i} className="text-sm text-gray-700 leading-relaxed">{paragraph}</p>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Ingredients */}
             <div className="bg-white rounded-xl border border-emerald-100 p-6 mb-6">

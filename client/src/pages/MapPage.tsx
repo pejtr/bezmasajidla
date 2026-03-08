@@ -6,7 +6,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Link } from "wouter";
-import { X, MapPin, Star } from "lucide-react";
+import { X, MapPin, Star, Navigation, Loader2 } from "lucide-react";
 import Header from "@/components/Header";
 import { MapView } from "@/components/Map";
 import { restaurants, getTypeColor, getTypeLabel, Restaurant } from "@/lib/data";
@@ -24,15 +24,118 @@ type FilterType = "all" | "vegan" | "vegetarian" | "friendly";
 export default function MapPage() {
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
   const [filterType, setFilterType] = useState<FilterType>("all");
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [gpsLoading, setGpsLoading] = useState(false);
+  const [gpsError, setGpsError] = useState<string | null>(null);
+  const [nearbyMode, setNearbyMode] = useState(false);
+  const userMarkerRef = useRef<google.maps.Marker | null>(null);
+  const userCircleRef = useRef<google.maps.Circle | null>(null);
 
   // Keep a ref to the map instance and all markers so we can show/hide them
   const mapRef = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<{ marker: google.maps.Marker; restaurant: Restaurant }[]>([]);
 
-  // Filter logic — exclude fastfood always
+  // Calculate distance in km between two coordinates
+  const getDistanceKm = (lat1: number, lng1: number, lat2: number, lng2: number) => {
+    const R = 6371;
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLng = ((lng2 - lng1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  };
+
+  // Handle GPS location request
+  const handleNearMe = useCallback(() => {
+    if (!navigator.geolocation) {
+      setGpsError("Váš prohlížeč nepodporuje geolokaci.");
+      return;
+    }
+    setGpsLoading(true);
+    setGpsError(null);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const loc = { lat: position.coords.latitude, lng: position.coords.longitude };
+        setUserLocation(loc);
+        setNearbyMode(true);
+        setGpsLoading(false);
+
+        const map = mapRef.current;
+        if (!map) return;
+
+        // Center map on user
+        map.setCenter(loc);
+        map.setZoom(14);
+
+        // Remove old user marker/circle
+        if (userMarkerRef.current) userMarkerRef.current.setMap(null);
+        if (userCircleRef.current) userCircleRef.current.setMap(null);
+
+        // Add user location marker (blue dot)
+        userMarkerRef.current = new google.maps.Marker({
+          position: loc,
+          map,
+          title: "Vaše poloha",
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 10,
+            fillColor: "#3B82F6",
+            fillOpacity: 1,
+            strokeColor: "#ffffff",
+            strokeWeight: 3,
+          },
+          zIndex: 1000,
+        });
+
+        // Add 1.5km radius circle
+        userCircleRef.current = new google.maps.Circle({
+          center: loc,
+          radius: 1500,
+          map,
+          fillColor: "#3B82F6",
+          fillOpacity: 0.08,
+          strokeColor: "#3B82F6",
+          strokeOpacity: 0.4,
+          strokeWeight: 1.5,
+        });
+      },
+      (err) => {
+        setGpsLoading(false);
+        if (err.code === 1) setGpsError("Přístup k poloze byl zamítnut. Povolte geolokaci v nastavení prohlížeče.");
+        else setGpsError("Nepodařilo se zjistit vaši polohu. Zkuste to znovu.");
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }, []);
+
+  // Reset nearby mode
+  const handleResetLocation = useCallback(() => {
+    setNearbyMode(false);
+    setUserLocation(null);
+    setGpsError(null);
+    if (userMarkerRef.current) { userMarkerRef.current.setMap(null); userMarkerRef.current = null; }
+    if (userCircleRef.current) { userCircleRef.current.setMap(null); userCircleRef.current = null; }
+    if (mapRef.current) {
+      mapRef.current.setCenter({ lat: 50.0755, lng: 14.4378 });
+      mapRef.current.setZoom(13);
+    }
+  }, []);
+
+  // In nearby mode, also filter by distance (1.5km)
   const isVisible = useCallback(
-    (r: Restaurant) => r.type !== "fastfood" && (filterType === "all" || r.type === filterType),
-    [filterType]
+    (r: Restaurant) => {
+      if (r.type === "fastfood") return false;
+      if (filterType !== "all" && r.type !== filterType) return false;
+      if (nearbyMode && userLocation) {
+        return getDistanceKm(userLocation.lat, userLocation.lng, r.lat, r.lng) <= 1.5;
+      }
+      return true;
+    },
+    [filterType, nearbyMode, userLocation]
   );
 
   const filteredCount = restaurants.filter(isVisible).length;
@@ -48,7 +151,7 @@ export default function MapPage() {
     }
   }, [filterType, isVisible, selectedRestaurant]);
 
-  // Called once when Google Maps is ready — create all markers
+  // Called once when Google Maps is ready — create all markerss
   const handleMapReady = useCallback((map: google.maps.Map) => {
     mapRef.current = map;
     map.setCenter({ lat: 50.0755, lng: 14.4378 });
@@ -111,15 +214,55 @@ export default function MapPage() {
               {opt.label}
             </button>
           ))}
-          <span className="text-xs text-gray-400 ml-auto whitespace-nowrap">
-            {filteredCount} restaurací
-          </span>
+          <div className="ml-auto flex items-center gap-2 flex-shrink-0">
+            {nearbyMode ? (
+              <button
+                onClick={handleResetLocation}
+                className="whitespace-nowrap text-sm px-3 py-1.5 rounded-full font-medium bg-blue-100 text-blue-700 hover:bg-blue-200 flex items-center gap-1.5 transition-all"
+              >
+                <X className="w-3.5 h-3.5" />
+                Zrušit okolí
+              </button>
+            ) : (
+              <button
+                onClick={handleNearMe}
+                disabled={gpsLoading}
+                className="whitespace-nowrap text-sm px-3 py-1.5 rounded-full font-medium bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-1.5 transition-all disabled:opacity-60"
+              >
+                {gpsLoading ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Navigation className="w-3.5 h-3.5" />
+                )}
+                V okolí
+              </button>
+            )}
+            <span className="text-xs text-gray-400 whitespace-nowrap">
+              {filteredCount} restaurací
+            </span>
+          </div>
         </div>
       </div>
 
       {/* Map container */}
       <div className="flex-1 relative min-h-0">
         <MapView onMapReady={handleMapReady} />
+
+        {/* GPS error notification */}
+        {gpsError && (
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-2.5 rounded-xl shadow-md flex items-center gap-2 max-w-sm">
+            <X className="w-4 h-4 flex-shrink-0" onClick={() => setGpsError(null)} />
+            {gpsError}
+          </div>
+        )}
+
+        {/* Nearby mode indicator */}
+        {nearbyMode && userLocation && (
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 bg-blue-50 border border-blue-200 text-blue-700 text-sm px-4 py-2 rounded-xl shadow-md flex items-center gap-2">
+            <Navigation className="w-3.5 h-3.5" />
+            Zobrazuji restaurace do 1,5 km od vás — <strong>{filteredCount}</strong> nalezeno
+          </div>
+        )}
 
         {/* Legend — only show relevant items based on active filter */}
         <div className="absolute top-4 right-4 bg-white rounded-xl shadow-lg border border-emerald-100 p-3 z-10">

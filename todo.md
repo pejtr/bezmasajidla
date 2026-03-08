@@ -132,3 +132,11 @@
 - [ ] Přidat hodnocení receptu (hvězdičky) na detailní stránce
 - [x] Mega menu pro VEG Recepty (kategorie, dietní filtry, featured recept)
 - [x] Mega menu pro Restaurace (typy, čtvrti, rychlé filtry, featured restaurace)
+- [ ] Zobrazit makro živiny (donut graf) na detailní stránce receptu
+- [ ] Zobrazit sekci "Příběh receptu" na detailní stránce receptu
+- [ ] Vytvořit sekci "Průvodci" — listing stránka + 3 SEO články + navigace
+- [ ] Opravit filtr kuchyně v mega menu (špatný URL parametr ?q= místo ?cuisine=)
+- [ ] Přidat "Vegetariánský" badge k receptům které nejsou veganské (sidebar + RecipeCard)
+- [x] Přidat filtr kuchyně na stránku receptů (řada tlačítek: Česká, Italská, Gruzínská, Asijská, Maďarská, Slovenská...)
+- [x] Přidat 9 nových receptů — Italské (risotto, spaghetti, tiramisu, pizza), Maďarské (guláš, lángos, palacsinky), Slovenské (bryndzové halušky, kapustnica)
+- [x] GPS geolokace v mapě — tlačítko "V okolí" zobrazí restaurace do 1,5 km od uživatele s modrým markerem a kruhem

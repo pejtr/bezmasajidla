@@ -42,9 +42,13 @@ export default function RecipeCard({ recipe }: Props) {
             placeholderColor="#d1fae5"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-          {recipe.isVegan && (
+          {recipe.isVegan ? (
             <span className="absolute top-3 left-3 bg-emerald-700 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
               Vegan
+            </span>
+          ) : (
+            <span className="absolute top-3 left-3 bg-green-100 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full">
+              Vegetariánský
             </span>
           )}
           <span className={`absolute top-3 right-3 text-xs font-semibold px-2 py-0.5 rounded-full ${difficultyColor}`}>
