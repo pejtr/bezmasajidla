@@ -212,7 +212,7 @@ export const restaurants: Restaurant[] = [
     description: "Sociální podnik veganská restaurace zaměstnávající lidi bez domova a lidi po propuštění z vězení. Nabízí obědová menu, českou veganskou kuchyni, fair-trade kávu a alkoholické nápoje.",
     tags: ["Mezinárodní", "Pivo/Víno", "Catering", "Česká"],
     dietaryOptions: ["whole-food"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strecha-veganska-restaurace-praha_729db866.webp",
+    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strecha-restaurant_d68817c7.jpg",
     lat: 50.0788,
     lng: 14.4181,
     priceLevel: 1,

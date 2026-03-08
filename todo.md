@@ -98,3 +98,4 @@
 - [x] Integrovat Mailchimp do newsletter banneru (sběr e-mailů)
 - [x] Přidat pole woltUrl do typu Restaurant a dat restaurací
 - [x] Přidat ikonu lupy do mobilního hamburger menu
+- [x] Aktualizovat náhledový obrázek restaurace Střecha z Facebooku
