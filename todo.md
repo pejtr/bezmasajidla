@@ -85,3 +85,9 @@
 - [ ] Přidat CDN URL miniatur do fastFoodItems Bageterie Boulevard a UGO
 - [x] Odfiltrovat Vegan-friendly restaurace z homepage sekce "Top restaurace" (zobrazovat jen vegan a vegetarian)
 - [x] Opravit filtrování na mapě: při výběru "Veganské" zobrazit pouze vegan, "Vegetariánské" pouze vegetarian (ne vegan-friendly)
+- [ ] Přejmenovat "Vegan-friendly" → "VEG-friendly" v celé aplikaci (data.ts, komponenty, filtry, labely)
+- [ ] Nahrát logo KRO Kitchen (černý kruh s KRO) na CDN a aktualizovat data.ts
+- [ ] Přesunout KRO Kitchen Karlín za Beas Dhaba - Vladislavova v pořadí restaurací
+- [ ] Změnit VEG-friendly zpět na Vegan-friendly v celé aplikaci
+- [ ] Nahrát logo UGO na CDN a aktualizovat data.ts
+- [ ] Nahrát logo Bageterie Boulevard na CDN a aktualizovat data.ts
