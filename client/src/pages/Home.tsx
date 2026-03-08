@@ -42,7 +42,7 @@ export default function Home() {
     .filter(r => r.type === "vegan" || r.type === "vegetarian" || r.type === "friendly")
     .sort((a, b) => (b.rating * b.reviewCount) - (a.rating * a.reviewCount))
     .slice(0, 6);
-  const featuredRecipes = recipes.slice(0, 3);
+  const featuredRecipes = recipes.slice(0, 6);
   const fastFoodChains = restaurants.filter(r => r.type === "fastfood");
 
   const handleSearch = (e: React.FormEvent) => {
@@ -289,7 +289,7 @@ export default function Home() {
                 <div className="bg-gradient-to-r from-orange-500 to-amber-500 px-4 py-3 flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2 min-w-0">
                     {chain.image && (
-                      <div className="w-8 h-8 rounded-md bg-white flex-shrink-0 overflow-hidden flex items-center justify-center p-0.5">
+                      <div className="w-12 h-12 rounded-lg bg-white flex-shrink-0 overflow-hidden flex items-center justify-center p-1 shadow-sm">
                         <img src={chain.image} alt={chain.name} className="w-full h-full object-contain" />
                       </div>
                     )}

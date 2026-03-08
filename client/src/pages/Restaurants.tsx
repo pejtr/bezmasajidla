@@ -35,7 +35,8 @@ const priceLevels = [
 
 export default function Restaurants() {
   const [location] = useLocation();
-  const params = new URLSearchParams(location.includes("?") ? location.split("?")[1] : "");
+  // Use window.location.search for query params since wouter only provides pathname
+  const params = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
 
   const [searchQuery, setSearchQuery] = useState(params.get("q") || "");
   const [selectedType, setSelectedType] = useState<RestaurantType | "all">(
