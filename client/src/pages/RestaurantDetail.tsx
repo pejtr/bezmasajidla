@@ -404,17 +404,31 @@ export default function RestaurantDetail() {
                     Navigovat
                   </Button>
                 </a>
-                <a
-                  href={getWoltLink((restaurant as any).woltUrl)}
-                  target="_blank"
-                  rel="noopener noreferrer sponsored"
-                  className="block"
-                >
-                  <Button className="w-full font-semibold text-white" style={{ backgroundColor: '#009DE0' }}>
-                    <ShoppingBag className="w-4 h-4 mr-2" />
-                    Objednat přes Wolt
-                  </Button>
-                </a>
+                {restaurant.woltUrl ? (
+                  <a
+                    href={getWoltLink(restaurant.woltUrl)}
+                    target="_blank"
+                    rel="noopener noreferrer sponsored"
+                    className="block"
+                  >
+                    <Button className="w-full font-semibold text-white" style={{ backgroundColor: '#009DE0' }}>
+                      <ShoppingBag className="w-4 h-4 mr-2" />
+                      Objednat přes Wolt
+                    </Button>
+                  </a>
+                ) : (
+                  <a
+                    href={getWoltLink()}
+                    target="_blank"
+                    rel="noopener noreferrer sponsored"
+                    className="block"
+                  >
+                    <Button variant="outline" className="w-full border-blue-200 text-blue-600 hover:bg-blue-50">
+                      <ShoppingBag className="w-4 h-4 mr-2" />
+                      Hledat na Woltu
+                    </Button>
+                  </a>
+                )}
               </div>
 
               {/* Price level */}

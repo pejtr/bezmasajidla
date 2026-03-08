@@ -96,3 +96,5 @@
 - [x] Vytvořit soubor affiliate konstant (snadno aktualizovatelné URL)
 - [x] Implementovat full-text vyhledávání přes lupu v headeru (overlay s live výsledky)
 - [x] Integrovat Mailchimp do newsletter banneru (sběr e-mailů)
+- [x] Přidat pole woltUrl do typu Restaurant a dat restaurací
+- [x] Přidat ikonu lupy do mobilního hamburger menu
