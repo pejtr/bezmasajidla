@@ -36,6 +36,7 @@ export default function Header() {
     { href: "/restaurace", label: "Restaurace" },
     { href: "/recepty", label: "Recepty" },
     { href: "/mapa", label: "Mapa" },
+    { href: "/blog", label: "Blog" },
     { href: "/o-nas", label: "O nás" },
   ];
 

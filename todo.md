@@ -48,9 +48,9 @@
 - [ ] Upload all new recipe images to CDN
 - [ ] Add full ingredients, steps, and nutritional info for each new recipe
 - [ ] Add "Nápoje" (drinks) category to recipe categories
-- [ ] Create Blog section with listing page, detail page, and routes
-- [ ] Write 10+ SEO blog articles (Průvodce po veganské Praze, Top restaurace, etc.)
-- [ ] Add Blog link to header navigation and footer
+- [x] Create Blog section with listing page, detail page, and routes
+- [x] Write 5 SEO blog articles (Top 10, čtvrti, rodiny, brunch, česká kuchyně)
+- [x] Add Blog link to header navigation and footer
 - [x] Add Prague skyline silhouette (Pražský hrad/Karlův most) to top of newsletter sticky banner
 - [ ] Add "which restaurant opens next" feature when all are closed (like cajovny-praha.cz)
 - [ ] Add Dobrá čajovna as a vegetarian restaurant
@@ -65,3 +65,7 @@
 - [x] Remove Nordsee from fast-food chains (only has side dishes, no plant-based protein)
 - [x] Add Havelská Koruna as vegan-friendly restaurant (traditional Czech vegetarian dishes)
 - [x] Optimalizovat miniatury fast-food produktů: zmenšit na 80×80 px WebP, nahrát na CDN, aktualizovat URL v data.ts
+- [x] Přidat lazy loading na obrázky restaurací (stránka /restaurace) — již implementováno v OptimizedImage
+- [x] Optimalizovat loga fast-food řetězců na 64×64 px WebP
+- [x] Vytvořit blogovou sekci s 5 SEO články o veganských restauracích v Praze
+- [x] Přidat blog do navigace (Header), footeru a homepage

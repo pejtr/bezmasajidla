@@ -13,6 +13,7 @@ import Footer from "@/components/Footer";
 import RestaurantCard from "@/components/RestaurantCard";
 import RecipeCard from "@/components/RecipeCard";
 import { restaurants, recipes } from "@/lib/data";
+import { blogPosts } from "@/lib/blogData";
 import NewsletterBanner from "@/components/NewsletterBanner";
 import { WebsiteJsonLd } from "@/components/JsonLd";
 import SEOHead from "@/components/SEOHead";
@@ -353,6 +354,73 @@ export default function Home() {
               Zjistit více o prémiu
             </Button>
           </div>
+        </div>
+      </section>
+
+      {/* ── BLOG SEKCE ── */}
+      <section className="py-10 container">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <BookOpen className="w-4 h-4 text-emerald-600" />
+              <span className="text-xs font-semibold text-emerald-600 uppercase tracking-wide">Blog</span>
+            </div>
+            <h2
+              className="text-3xl font-bold text-gray-900"
+              style={{ fontFamily: "'DM Serif Display', serif" }}
+            >
+              Průvodce veganským Prahou
+            </h2>
+          </div>
+          <Link href="/blog">
+            <Button variant="outline" className="hidden sm:flex items-center gap-1 border-emerald-200 text-emerald-700 hover:bg-emerald-50">
+              Všechny články <ArrowRight className="w-3.5 h-3.5" />
+            </Button>
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {blogPosts.slice(0, 3).map((post) => (
+            <Link key={post.id} href={`/blog/${post.slug}`}>
+              <div className="group bg-white rounded-xl overflow-hidden border border-emerald-100 shadow-sm hover:shadow-md transition-shadow cursor-pointer h-full flex flex-col">
+                <div className="relative overflow-hidden h-40 flex-shrink-0">
+                  <img
+                    src={post.coverImage}
+                    alt={post.coverImageAlt}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <span className="absolute top-2 left-2 text-xs font-semibold text-emerald-700 bg-white/90 px-2 py-0.5 rounded-full">
+                    {post.category}
+                  </span>
+                </div>
+                <div className="p-4 flex flex-col flex-1">
+                  <h3
+                    className="text-base font-bold text-gray-900 mb-1.5 group-hover:text-emerald-700 transition-colors line-clamp-2 leading-snug"
+                    style={{ fontFamily: "'DM Serif Display', serif" }}
+                  >
+                    {post.title}
+                  </h3>
+                  <p className="text-xs text-gray-500 leading-relaxed line-clamp-2 flex-1">
+                    {post.excerpt}
+                  </p>
+                  <div className="flex items-center justify-between mt-3 pt-3 border-t border-emerald-50 text-xs text-gray-400">
+                    <span>{new Date(post.publishedAt).toLocaleDateString('cs-CZ', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                    <span className="text-emerald-600 font-medium">{post.readingTimeMin} min</span>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        <div className="mt-5 text-center sm:hidden">
+          <Link href="/blog">
+            <Button variant="outline" className="border-emerald-200 text-emerald-700 hover:bg-emerald-50">
+              Všechny články <ArrowRight className="w-3.5 h-3.5 ml-1" />
+            </Button>
+          </Link>
         </div>
       </section>
 

@@ -22,6 +22,8 @@ import ProfilePage from "./pages/ProfilePage";
 import AboutPage from "./pages/AboutPage";
 import AddRecipe from "./pages/AddRecipe";
 import AdminPage from "./pages/AdminPage";
+import BlogPage from "./pages/BlogPage";
+import BlogDetail from "./pages/BlogDetail";
 function Router() {
   useScrollToTop();
   return (
@@ -36,6 +38,8 @@ function Router() {
       <Route path="/o-nas" component={AboutPage} />
       <Route path="/pridat-recept" component={AddRecipe} />
       <Route path="/admin" component={AdminPage} />
+      <Route path="/blog" component={BlogPage} />
+      <Route path="/blog/:slug" component={BlogDetail} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
