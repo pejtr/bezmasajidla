@@ -101,3 +101,4 @@
 - [x] Aktualizovat náhledový obrázek restaurace Střecha z Facebooku
 - [x] Nahrát 4 fotky jídel ze Střechy na CDN
 - [x] Přidat pole gallery[] do Restaurant typu a implementovat fotogalerii na detailní stránce
+- [x] Nahrát 3 fotky KRO Kitchen na CDN a přidat galerii ke všem pobočkám
