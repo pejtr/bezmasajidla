@@ -105,3 +105,6 @@
 - [x] Přidat "v Praze" k popisku článků v patičce
 - [x] Přidat ikonu srdíčka do headeru pro zobrazení oblíbených (FavoritesPanel overlay)
 - [x] Přidat sekci "Naše projekty" do patičky s 5 partnerskými weby
+- [x] Přidat recepty na slané štrůdly (s modrým sýrem, se zelím, se špenátem)
+- [x] Přidat gruzínské recepty (chačapuri, lobiani, pkhali)
+- [x] Analýza VisitChef.com a návrhy na zlepšení webu
