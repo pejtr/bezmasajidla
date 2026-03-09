@@ -25,6 +25,7 @@ import AdminPage from "./pages/AdminPage";
 import BlogPage from "./pages/BlogPage";
 import BlogDetail from "./pages/BlogDetail";
 import InzercePage from "./pages/InzercePage";
+import CookieConsent from "./components/CookieConsent";
 import PodminkyPage from "./pages/PodminkyPage";
 import OchranaPage from "./pages/OchranaPage";
 function Router() {
@@ -60,6 +61,7 @@ function App() {
           <TooltipProvider>
             <Toaster />
             <Router />
+            <CookieConsent />
           </TooltipProvider>
         </ThemeProvider>
       </FavoritesProvider>

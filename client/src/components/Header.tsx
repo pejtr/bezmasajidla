@@ -132,6 +132,7 @@ export default function Header() {
     { href: "/mapa", label: "Mapa" },
     { href: "/blog", label: "Blog" },
     { href: "/o-nas", label: "O nás" },
+    { href: "/inzerce", label: "Inzerce" },
   ];
 
   return (

@@ -160,3 +160,6 @@
 - [x] Vytvořit stránku /podminky (Podmínky použití)
 - [x] Vytvořit stránku /ochrana-soukromi (Ochrana soukromí)
 - [x] Tlačítko "Sdílet recept jako obrázek" na stránce detailu receptu
+- [x] Přidat odkaz "Inzerce" do hlavní navigace (Header)
+- [x] Vygenerovat sitemap.xml a aktualizovat robots.txt
+- [x] Přidat GDPR cookie consent banner pro první návštěvníky
