@@ -151,3 +151,5 @@
 - [x] Stránka výpisu Průvodci (/pruvodci) s hero, filtry, featured card
 - [x] Stránka detailu průvodce (/pruvodci/:slug) s ToC, sekcemi, related restaurants
 - [x] Integrovat Průvodci do navigace (Header, Footer, App.tsx routes)
+- [x] Vygenerovat AI obrázky pro průvodce "Jak začít s rostlinnou stravou"
+- [x] Napsat obsah průvodce (7+ sekcí) a přidat do guides.ts

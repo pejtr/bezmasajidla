@@ -194,13 +194,13 @@ Náš tým pravidelně aktualizuje databázi restaurací a přidává nové podn
       "Chcete omezit maso, ale nevíte jak začít? Tento průvodce vám ukáže praktické kroky, tipy na nákup a první recepty pro přechod na rostlinnou stravu.",
     category: "zacatecnici",
     categoryLabel: "Pro začátečníky",
-    readingTime: 8,
+    readingTime: 12,
     publishedAt: "2026-03-05",
     updatedAt: "2026-03-09",
     author: "Redakce Bezmasá Jídla",
-    heroImage: "",
-    heroImageAlt: "Barevné rostlinné jídlo — zelenina, luštěniny, ořechy",
-    thumbnailImage: "",
+    heroImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/guide-plant-based-hero-2ws7uLpoJDooM6xpuWUHyZ.webp",
+    heroImageAlt: "Barevné rostlinné jídlo — zelenina, luštěniny, ořechy na dřevěném stole",
+    thumbnailImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/guide-plant-based-hero-2ws7uLpoJDooM6xpuWUHyZ.webp",
     tags: [
       "začátečníci",
       "rostlinná strava",
@@ -208,6 +208,8 @@ Náš tým pravidelně aktualizuje databázi restaurací a přidává nové podn
       "vegetariánství",
       "jak začít",
       "tipy",
+      "výživa",
+      "zdraví",
     ],
     featured: true,
     sections: [
@@ -216,45 +218,127 @@ Náš tým pravidelně aktualizuje databázi restaurací a přidává nové podn
         title: "Proč přejít na rostlinnou stravu?",
         content: `Přechod na rostlinnou stravu je jedním z nejefektivnějších kroků, které může jednotlivec udělat pro své zdraví i pro planetu. Výzkumy ukazují, že rostlinná strava snižuje riziko kardiovaskulárních chorob, cukrovky 2. typu a některých typů rakoviny. Zároveň má výrazně nižší uhlíkovou stopu než strava bohatá na maso.
 
-Ale začít nemusí být těžké. Tento průvodce vám ukáže, jak postupovat krok za krokem — bez tlaku, bez dogmat a s důrazem na chuť a radost z jídla.`,
-        image: "",
-        imageAlt: "Zdravá rostlinná snídaně s ovocem a ořechy",
+Ale začít nemusí být těžké. Tento průvodce vám ukáže, jak postupovat krok za krokem — bez tlaku, bez dogmat a s důrazem na chuť a radost z jídla. Rostlinná strava není o odříkání — je o objevování nových chutí, textur a kulinářských tradic z celého světa.
+
+Česká kuchyně má přitom bohatou tradici bezmasých pokrmů — od čočkové polévky přes bramborové knedlíky až po svíčkovou ze sejtanu. Přechod na rostlinnou stravu neznamená vzdát se tradice, ale obohatit ji.`,
+        image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/guide-plant-based-hero-2ws7uLpoJDooM6xpuWUHyZ.webp",
+        imageAlt: "Hojnost čerstvé zeleniny, ovoce a luštěnin na dřevěném stole",
       },
       {
         id: "prvni-kroky",
-        title: "První kroky — začněte pomalu",
+        title: "První kroky — začněte pomalu a bez tlaku",
         content: `Nejčastější chybou začátečníků je snaha změnit vše najednou. Výzkumy ukazují, že postupná změna je udržitelnější než radikální přechod. Zkuste začít s jedním bezmasým dnem v týdnu — třeba "Meatless Monday" — a postupně přidávejte další.
 
 **Praktický plán na první měsíc:**
-- Týden 1: Jeden bezmasý den v týdnu
-- Týden 2: Dva bezmasé dny, zkuste nový recept
-- Týden 3: Tři bezmasé dny, navštivte veganskou restauraci
-- Týden 4: Zhodnoťte, co vám chutná, a plánujte dál
 
-Klíčové je zaměřit se na to, co přidáváte (nové chutě, nové suroviny), ne na to, co odebíráte.`,
+V prvním týdnu si vyberte jeden den v týdnu jako bezmasý. Uvařte jídlo, které již znáte, jen bez masa — například těstovinovou omáčku s houbami místo bolognese nebo zeleninovou polévku. Cílem je zjistit, že bezmasé vaření není složité.
+
+Ve druhém týdnu přidejte druhý bezmasý den a zkuste jeden nový recept — třeba čočkové curry nebo cizrnový salát. Navštivte obchod se zdravou výživou nebo bio sekci v supermarketu a prozkoumejte nové suroviny.
+
+Ve třetím týdnu navštivte veganskou restauraci v Praze. Nechte se inspirovat profesionálními kuchaři — jejich kreativita vám ukáže, co je s rostlinnou kuchyní možné. Beas Dhaba, KRO Kitchen nebo Maitrea jsou skvělé volby pro první zkušenost.
+
+Ve čtvrtém týdnu zhodnoťte, co vám chutná a co ne. Rostlinná strava je individuální — někdo miluje tofu, jiný preferuje luštěniny. Klíčové je najít suroviny a recepty, které vám skutečně chutnají, ne ty, které jsou "správné".`,
         recipeSlugs: ["buddha-bowl-s-pechenou-zeleninou", "cizrnove-curry-s-kokosovym-mlekem"],
         image: "",
         imageAlt: "Týdenní plán bezmasého stravování",
       },
       {
         id: "zakladni-suroviny",
-        title: "Základní suroviny rostlinné kuchyně",
-        content: `Rostlinná kuchyně stojí na několika základních skupinách surovin, které by měly být vždy po ruce:
+        title: "Zásobte spíž: základní suroviny rostlinné kuchyně",
+        content: `Dobře zásobená spíž je základem úspěšné rostlinné kuchyně. Když máte správné suroviny po ruce, uvařit zdravé a chutné jídlo trvá 20–30 minut. Investice do základního zásobení se vyplatí — tyto suroviny mají dlouhou trvanlivost a jsou základem desítek receptů.
 
-**Luštěniny** jsou základem bílkovin v rostlinné stravě. Čočka (červená, zelená, beluga), cizrna, fazole (černé, bílé, kidney) a hrách jsou levné, výživné a všestranné. Kupujte je v konzervách pro rychlou přípravu nebo sušené pro ekonomičtější variantu.
+**Luštěniny** jsou základem bílkovin v rostlinné stravě. Červená čočka se uvaří za 15 minut bez namáčení a je ideální pro polévky a dhal. Cizrna v konzervě je hotová okamžitě — přidejte ji do salátů, uvařte z ní hummus nebo ji opečte jako křupavou svačinu. Fazole (černé, bílé, kidney) jsou výborné do chilli, polévek a mexické kuchyně.
 
-**Obiloviny a pseudoobiloviny:** Quinoa, pohanka, jáhly a bulgur jsou výborné alternativy k rýži a těstovinám. Jsou bohaté na bílkoviny a minerály.
+**Obiloviny a pseudoobiloviny** tvoří základ každého jídla. Quinoa je kompletní bílkovina — obsahuje všechny esenciální aminokyseliny. Pohanka je bezlepková a výborná do kaší i salátů. Bulgur se připraví za 10 minut přelitím vroucí vodou. Celozrnná rýže a těstoviny jsou spolehlivou základnou.
 
-**Ořechy a semínka** dodávají zdravé tuky a bílkoviny. Kešu, mandle, vlašské ořechy, dýňová a slunečnicová semínka — přidávejte je do salátů, smoothie nebo jezte jako svačinu.
+**Ořechy a semínka** dodávají zdravé tuky, bílkoviny a minerály. Kešu rozmixované s vodou tvoří základ smetanových omáček. Tahini (sezamová pasta) je klíčová surovina pro hummus a dresinky. Dýňová a slunečnicová semínka jsou výborná jako topping na saláty a polévky.
 
-**Tofu a tempeh** jsou fermentované sójové produkty s vysokým obsahem bílkovin. Tofu je neutrální a přijímá chuť koření, tempeh má oříškovou chuť a pevnější texturu.
+**Konzervy a trvanlivé produkty:** Konzervovaná rajčata jsou základem omáček, polévek a dušených pokrmů. Kokosové mléko dodává krémovost asijským curry. Sójová omáčka nebo tamari přidávají umami chuť. Nutritional yeast (lahůdkové droždí) má sýrovou chuť a je bohaté na vitamín B12.`,
+        image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/guide-plant-based-pantry-acXKRtvzDRLNZFn3UEevXB.webp",
+        imageAlt: "Dobře zásobená rostlinná spíž s luštěninami, ořechy a obilovinami ve sklenicích",
+      },
+      {
+        id: "bílkoviny",
+        title: "Bílkoviny v rostlinné stravě — mýty a fakta",
+        content: `"Kde bereš bílkoviny?" — tato otázka provází každého, kdo přechází na rostlinnou stravu. Odpověď je jednoduchá: z luštěnin, tofu, tempehu, sejtanu, ořechů, semínek a obilovin. Průměrný dospělý potřebuje přibližně 0,8–1 g bílkovin na kilogram tělesné hmotnosti denně — a toto množství je na dobře sestavené rostlinné stravě naprosto dosažitelné.
 
-**Zelenina a ovoce:** Zaměřte se na sezónní a lokální produkci. Tmavá listová zelenina (špenát, kapusta, mangold) je bohatá na železo a vápník.`,
+**Nejlepší rostlinné zdroje bílkovin:**
+
+Tofu obsahuje přibližně 8 g bílkovin na 100 g a je neutrální chutí — přijímá chuť marinády a koření. Nejlépe chutná smažené, pečené nebo grilované. Tempeh má 19 g bílkovin na 100 g a pevnější texturu — výborný nakrájený na plátky a opečený s tamari a zázvorem.
+
+Sejtan (pšeničný gluten) je s 25 g bílkovin na 100 g nejbohatším rostlinným zdrojem bílkovin. Má masitou texturu a je výborný jako základ pro veganský guláš, steaky nebo kebab. Pozor — není vhodný pro lidi s celiakií nebo citlivostí na lepek.
+
+Luštěniny v kombinaci s obilovinami tvoří kompletní bílkovinu. Klasická kombinace rýže s fazolemi nebo hummus s pita chlebem je výživově vyvážená a chutná. Nemusíte je kombinovat v jednom jídle — stačí je jíst v průběhu dne.
+
+**Vitamín B12** je jediný nutrient, který v rostlinné stravě chybí — je produkován bakteriemi a nachází se téměř výhradně v živočišných produktech. Pokud jste vegan, doplňujte B12 ve formě suplementu (tablety nebo kapky). Vegetariáni, kteří konzumují vejce a mléčné výrobky, mají obvykle dostatečný příjem.`,
+        recipeSlugs: [],
         image: "",
-        imageAlt: "Základní suroviny rostlinné kuchyně — luštěniny, ořechy, zelenina",
+        imageAlt: "Rostlinné zdroje bílkovin — tofu, tempeh, luštěniny",
+      },
+      {
+        id: "meal-prep",
+        title: "Meal prep: uvařte jednou, jezte celý týden",
+        content: `Největší praktická výhoda rostlinné kuchyně je, že se skvěle hodí pro přípravu jídel dopředu. Luštěniny, obiloviny a pečená zelenina vydrží v lednici 4–5 dní a jsou základem rychlých jídel v průběhu týdne. Věnujte 2–3 hodiny v neděli přípravě základů a celý týden budete mít zdravé jídlo za 15 minut.
+
+**Základní meal prep plán:**
+
+Uvařte velkou dávku obilovin — quinoa, rýže nebo bulgur. Tyto základy jsou neutrální a lze je použít do salátů, Buddha bowlů, polévek nebo jako přílohu. Uložte je do vzduchotěsné nádoby v lednici.
+
+Uvařte nebo upečte luštěniny — velká dávka čočkového dhal, cizrnového curry nebo fazolového chilli vydrží v lednici 5 dní a v mrazáku 3 měsíce. Porce do mrazáku jsou záchranou pro dny, kdy nemáte čas vařit.
+
+Upečte zeleninu — nakrájejte sezónní zeleninu (batáty, brokolice, cuketa, paprika, červená řepa), polijte olivovým olejem, osolte a pečte při 200°C po dobu 25–30 minut. Pečená zelenina je výborná do salátů, wrap sendvičů nebo jako příloha.
+
+Připravte dresinky a omáčky — tahini dresink (tahini, citronová šťáva, česnek, voda), miso dresink nebo avokádová omáčka. Dresinky uložte do sklenic v lednici — vydrží 5–7 dní a promění jednoduchý salát v chutné jídlo.`,
+        image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/guide-plant-based-meal-prep-iqEDwWf3LsHpUuFRqiZeNp.webp",
+        imageAlt: "Týdenní meal prep — připravené nádoby s quinoou, zeleninou a luštěninami",
+      },
+      {
+        id: "nakupy",
+        title: "Kde nakupovat v Praze — obchody a trhy",
+        content: `Praha nabízí skvělé možnosti pro nákup rostlinných surovin — od supermarketů přes specializované obchody až po farmářské trhy. Znát správná místa vám ušetří čas i peníze.
+
+**Supermarkety:** Všechny velké řetězce (Albert, Billa, Tesco, Kaufland) mají bio sekce s rostlinnými alternativami. Hledejte tofu, tempeh, rostlinná mléka, veganské sýry a hotové rostlinné produkty. Ceny jsou vyšší než v asijských obchodech, ale dostupnost je skvělá.
+
+**Specializované obchody:** Country Life (Melantrichova 15, Jungmannova 1) je nejstarší a nejznámější bio obchod v Praze — výborný výběr luštěnin, obilovin, ořechů a veganských produktů. Sklizeno (více poboček) nabízí lokální a bio produkty s důrazem na sezónnost. Náš grunt v Holešovicích je výborný pro lokální zeleninu a farmářské produkty.
+
+**Asijské obchody:** Pro tofu, tempeh, miso, sójovou omáčku, rýžové nudle a exotické koření jsou nejlepší asijské obchody. Ty největší najdete v okolí Smíchova, Žižkova a Holešovic. Ceny jsou výrazně nižší než v bio obchodech.
+
+**Farmářské trhy:** Holešovická tržnice (sobota 8:00–14:00) je největší a nejlepší farmářský trh v Praze. Náměstí Jiřího z Poděbrad (středa a sobota) je výborný pro čerstvou zeleninu a lokální produkty. Manifesto Market (léto, různá místa) nabízí food trucky s veganskými možnostmi.
+
+**Online nákupy:** Rohlík.cz a Košík.cz mají výborný výběr bio a veganských produktů s doručením domů. Jsou ideální pro nákup základních surovin — luštěniny, obiloviny, ořechy a trvanlivé produkty.`,
+        recipeSlugs: [],
+        image: "",
+        imageAlt: "Farmářský trh s čerstvou zeleninou a ovocem",
+      },
+      {
+        id: "restaurace-pro-zacatecniky",
+        title: "Pražské restaurace pro první zkušenost",
+        content: `Navštívit veganskou restauraci je jedním z nejlepších způsobů, jak se inspirovat a překonat počáteční nejistotu. Profesionální kuchaři vám ukáží, co je s rostlinnou kuchyní možné — a možná vás překvapí, jak chutné a sytné bezmasé jídlo může být.
+
+**Pro úplné začátečníky** doporučujeme Beas Dhaba — autentická indická kuchyně za studentské ceny, kde si vyberete z bufetu. Žádné složité objednávání, žádné čekání. Ideální pro první zkušenost s veganskou kuchyní.
+
+**Pro ty, kdo chtějí zažít kvalitu** je skvělou volbou Maitrea nebo Lehká Hlava — elegantní restaurace s mezinárodní kuchyní, kde veganská a vegetariánská jídla jsou hlavní hvězdou, ne jen přílohou. Rezervujte si stůl dopředu.
+
+**Pro rychlé obědy** jsou KRO Kitchen (Vinohrady, Karlín, Libeň) ideální — moderní fast food s veganskými burgery, bowly a saláty. Rychlé, chutné a cenově dostupné.
+
+**Pro romantické večeře nebo speciální příležitosti** je Střecha na střeše Národního muzea nezapomenutelný zážitek — výhled na Prahu, sezónní menu a výborná kuchyně.`,
+        restaurantSlugs: ["beas-dhaba-vinohrady", "maitrea", "lehka-hlava", "kro-kitchen-vinohrady", "strecha"],
+        image: "",
+        imageAlt: "Veganský talíř v pražské restauraci",
+      },
+      {
+        id: "zaver",
+        title: "Začněte dnes — jeden krok stačí",
+        content: `Přechod na rostlinnou stravu je cesta, ne cíl. Každý bezmasý den je přínosem — pro vaše zdraví, pro zvířata i pro planetu. Nemusíte být dokonalí, nemusíte se vzdát všeho najednou. Stačí začít.
+
+Nejlepší první krok? Vyberte si jeden recept z naší databáze, nakupte suroviny a uvařte. Nebo navštivte jednu z pražských veganských restaurací a nechte se inspirovat. Komunita rostlinné stravy v Praze je přívětivá, různorodá a bez dogmat — vítáme každého, kdo chce jíst trochu méně masa.
+
+**Dobrou chuť a šťastné vaření!**`,
+        image: "",
+        imageAlt: "Šťastný člověk s barevným veganským jídlem",
       },
     ],
-    relatedGuides: ["veganska-praha-po-ctvrtich"],
+    relatedGuides: ["veganska-praha-po-ctvrtich", "sezonni-pruvodce-bezmase-kuchyne"],
   },
   {
     id: "g3",
