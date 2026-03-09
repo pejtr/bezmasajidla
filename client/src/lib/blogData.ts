@@ -32,7 +32,7 @@ export const blogPosts: BlogPost[] = [
     publishedAt: "2026-02-15",
     readingTimeMin: 7,
     coverImage:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hero-bg-8DsoJ9QpVxJTndww9Yv7SZ.webp",
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-top10-restauraci-2026-GG52nEiDEd32Ak7ZoMrq7b.webp",
     coverImageAlt: "Veganské jídlo v pražské restauraci — barevné misky se zeleninou",
     excerpt:
       "Praha se v posledních letech stala jedním z nejpřívětivějších měst pro vegany ve střední Evropě. Přinášíme vám přehled deseti restaurací, které v roce 2026 zaujímají přední příčky v hodnocení kvality, ceny a atmosféry.",
@@ -98,8 +98,8 @@ Při výběru veganské restaurace v Praze doporučujeme zohlednit několik fakt
     publishedAt: "2026-01-28",
     readingTimeMin: 6,
     coverImage:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/map-section-bg-Xt3deu7E3AeXh6WhYnAxDq.webp",
-    coverImageAlt: "Pohled na Prahu z ptačí perspektivy — střechy a parky",
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-pruvodce-prahou-ctvrti-CqPYeA7rpXcHnjTFsN6YB8.webp",
+    coverImageAlt: "Pohled na Prahu z ptáčí perspektivy — střechy a parky",
     excerpt:
       "Praha má přes 150 veganských a vegetariánských restaurací, ale jejich rozmístění po městě je nerovnoměrné. Vinohrady a Žižkov vévodí nabídce, zatímco některé okrajové čtvrti stále zaostávají. Přinášíme přehled čtvrtí, kde se vyplatí hledat bezmasé jídlo.",
     content: `## Veganská Praha: mapa příležitostí
@@ -154,7 +154,7 @@ Na naší platformě najdete interaktivní mapu všech veganských a vegetarián
     publishedAt: "2026-01-10",
     readingTimeMin: 5,
     coverImage:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hero-bg-8DsoJ9QpVxJTndww9Yv7SZ.webp",
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-restaurace-pro-deti-4R54tN9Pg8itEE4N5JASMG.webp",
     coverImageAlt: "Rodina u stolu s barevnými vegetariánskými jídly",
     excerpt:
       "Vzít děti do veganské restaurace může být výzva — ne každý podnik myslí na nejmenší hosty. Přinášíme přehled pražských restaurací, které nabízejí dětské menu, přátelský přístup a prostředí vhodné pro celou rodinu.",
@@ -204,7 +204,7 @@ Pro rychlé a dostupné stravování s dětmi jsou vhodné i fast food řetězce
     publishedAt: "2025-12-20",
     readingTimeMin: 5,
     coverImage:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hero-bg-8DsoJ9QpVxJTndww9Yv7SZ.webp",
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-veganske-brunche-CKfN9994upzJuaRbq9fq7J.webp",
     coverImageAlt: "Veganský brunch — avokádový toast, smoothie bowl a čerstvé ovoce",
     excerpt:
       "Víkendový brunch se stal jedním z nejoblíbenějších gastronomických rituálů Pražanů. Veganská a vegetariánská scéna nabízí stále více podniků, kde si lze dopřát vydatné dopolední jídlo bez živočišných produktů. Přinášíme přehled těch nejlepších.",
@@ -254,7 +254,7 @@ Brunch je ideální pro pozdní vstávání a delší posezení. Pokud hledáte 
     publishedAt: "2025-12-05",
     readingTimeMin: 6,
     coverImage:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hero-bg-8DsoJ9QpVxJTndww9Yv7SZ.webp",
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-ceska-veganska-kuchyne-Z3BaSWsmxY2tRDXFpLi6s4.webp",
     coverImageAlt: "Tradiční česká veganská jídla — svíčková z celeru, houbový guláš",
     excerpt:
       "Česká kuchyně je tradičně masová, ale v posledních letech se objevuje stále více podniků, které dokazují, že i svíčková, guláš nebo smažený sýr lze připravit bez živočišných produktů. Přinášíme přehled pražských restaurací, kde ochutnáte Česko v rostlinném provedení.",

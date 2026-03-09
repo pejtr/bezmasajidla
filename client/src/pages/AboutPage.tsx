@@ -5,7 +5,8 @@
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Heart, MapPin, Utensils, Users, Mail, Instagram, Globe, Leaf } from "lucide-react";
+import { Heart, MapPin, Utensils, Users, Mail, Instagram, Globe, Leaf, ChevronDown } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 import SEOHead from "@/components/SEOHead";
 import { OrganizationJsonLd, FAQPageJsonLd } from "@/components/JsonLd";
@@ -271,7 +272,88 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* ── FAQ ACCORDION ── */}
+      <section className="py-16 bg-[#F8FAF6]">
+        <div className="container max-w-3xl">
+          <div className="text-center mb-10">
+            <span className="text-xs font-semibold text-emerald-600 uppercase tracking-widest">Časté dotazy</span>
+            <h2 className="text-3xl font-bold text-gray-900 mt-2" style={{ fontFamily: "'DM Serif Display', serif" }}>
+              Máte otázky?
+            </h2>
+            <p className="text-gray-500 mt-2 text-sm">Nejčastější dotazy od návštěvníků a restauratérů.</p>
+          </div>
+          <FAQAccordion />
+        </div>
+      </section>
+
       <Footer />
+    </div>
+  );
+}
+
+const FAQ_ITEMS = [
+  {
+    question: "Jak přidat svou restauraci na bezmasajidla.cz?",
+    answer: "Kontaktujte nás na info@bezmasajidla.cz s názvem, adresou a popisem vaší restaurace. Základní profil je zdarma. Prémiový profil s rozšířenými funkcemi je k dispozici za měsíční poplatek.",
+  },
+  {
+    question: "Co znamená označení 'vegan-friendly'?",
+    answer: "Vegan-friendly restaurace nabízejí alespoň několik veganských pokrmů, i když nejsou výhradně veganské. Mohou podávat i masová jídla, ale vždy mají kvalitní bezmasé alternativy.",
+  },
+  {
+    question: "Jsou všechny restaurace v adresáři osobně ověřeny?",
+    answer: "Ano, každou restauraci v našem adresáři jsme osobně navštívili nebo ověřili na základě zpětné vazby komunity. Usilujeme o aktuální a přesné informace.",
+  },
+  {
+    question: "Jak funguje hodnocení restaurací?",
+    answer: "Celkové hodnocení (1–5 hvězdiček) vychází z uživatelských recenzí a naší editorské analýzy. Editorské skóre (1–10) hodnotí kuchyni, poměr ceny a kvality, atmosféru a obsluhu.",
+  },
+  {
+    question: "Mohu na webu najít i recepty?",
+    answer: "Ano, sekce VEG Recepty obsahuje desítky vegetariánských a veganských receptů s makro živinami, dobou přípravy a fotografiemi. Recepty lze filtrovat podle kategorie, obtížnosti a dietních preferencí.",
+  },
+  {
+    question: "Jak se mohu dostat do restaurace přes Wolt?",
+    answer: "U restaurací, které nabízejí rozvoz přes Wolt, najdete přímý odkaz na jejich Wolt stránku přímo na detailu restaurace.",
+  },
+  {
+    question: "Jsou na webu i fastfoodové řetězce?",
+    answer: "Ano, v sekci Fastfoodové řetězce najdete přehled vegetariánských a veganských možností v populárních fastfoodech jako McDonald's, KFC nebo Burger King.",
+  },
+  {
+    question: "Jak mohu inzerovat na bezmasajidla.cz?",
+    answer: "Nabízíme různé formáty inzerce — od bannerů přes sponzorované profily restaurací až po newsletter. Pro více informací navštivte stránku /inzerce nebo nás kontaktujte na info@bezmasajidla.cz.",
+  },
+];
+
+function FAQAccordion() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  return (
+    <div className="divide-y divide-gray-200 rounded-2xl border border-gray-200 overflow-hidden bg-white shadow-sm">
+      {FAQ_ITEMS.map((item, i) => (
+        <div key={i}>
+          <button
+            onClick={() => setOpenIndex(openIndex === i ? null : i)}
+            className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-emerald-50 transition-colors group"
+            aria-expanded={openIndex === i}
+          >
+            <span className="font-medium text-gray-900 group-hover:text-emerald-700 transition-colors pr-4">
+              {item.question}
+            </span>
+            <ChevronDown
+              className={`w-5 h-5 text-emerald-600 flex-shrink-0 transition-transform duration-200 ${
+                openIndex === i ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+          {openIndex === i && (
+            <div className="px-6 pb-5 text-gray-600 text-sm leading-relaxed border-t border-gray-100 bg-emerald-50/30">
+              {item.answer}
+            </div>
+          )}
+        </div>
+      ))}
     </div>
   );
 }

@@ -65,6 +65,25 @@ function setCanonical(url: string) {
   el.setAttribute("href", url);
 }
 
+/** Inject hreflang alternate links for Czech + x-default */
+function setHreflang(url: string) {
+  // Remove old hreflang links
+  document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(el => el.remove());
+
+  const hreflangs = [
+    { hreflang: "cs", href: url },
+    { hreflang: "x-default", href: url },
+  ];
+
+  hreflangs.forEach(({ hreflang, href }) => {
+    const el = document.createElement("link");
+    el.setAttribute("rel", "alternate");
+    el.setAttribute("hreflang", hreflang);
+    el.setAttribute("href", href);
+    document.head.appendChild(el);
+  });
+}
+
 const DEFAULT_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/logo-variant-a-dJFXR9MBPW8QsrZquQfzwN.png";
 const SITE_NAME = "Bezmasá Jídla";
 const BASE_URL = "https://www.bezmasajidla.cz";
@@ -171,6 +190,12 @@ export default function SEOHead({
       setCanonical(canonicalUrl);
     } else if (ogUrl) {
       setCanonical(ogUrl);
+    }
+
+    // Hreflang — always set cs + x-default pointing to canonical URL
+    const hreflangUrl = canonicalUrl || ogUrl;
+    if (hreflangUrl) {
+      setHreflang(hreflangUrl);
     }
 
     // Cleanup: restore defaults on unmount

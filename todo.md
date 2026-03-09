@@ -167,3 +167,7 @@
 - [x] Přidat dateModified do JSON-LD pro restaurace a recepty
 - [x] Implementovat FAQPage JSON-LD na stránce /o-nas
 - [x] Rozšířit OG a Twitter Card meta tagy pro stránky receptů
+- [x] Přidat hreflang tag pro českou lokalizaci do SEOHead
+- [x] Přidat vizuální FAQ accordion sekci na stránku /o-nas
+- [x] Vytvořit stránku /blog s přehledem článků, thumbnaily a daty
+- [x] Vygenerovat originální AI náhledové obrázky pro všech 5 blogových článků a aktualizovat URL
