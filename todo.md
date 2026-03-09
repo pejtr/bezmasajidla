@@ -147,3 +147,7 @@
 - [x] Přidat editorialReview pro Pastva, Linh, Palo Verde, Vegan's Prague
 - [x] Kalkulátor porcí s přepočtem makro živin na stránce detailu receptu
 - [x] Banner "Restaurace týdne" na homepage s editoriálním skóre a citátem
+- [ ] "Nejlepší pro..." filtry na stránce restaurací (Romantická večeře, Oběd s kolegy, Rodina s dětmi, Rychlý oběd)
+- [ ] Srovnávací tabulka restaurací — výběr 2-3 restaurací a porovnání vedle sebe
+- [ ] Sdílení receptu jako obrázek — tlačítko "Sdílet" generuje grafiku s makry a fotkou
+- [x] Přidat podtitulky pod odkazy v sekci "Naše další projekty" ve footeru

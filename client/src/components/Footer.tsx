@@ -106,12 +106,27 @@ export default function Footer() {
         {/* Partner Projects Row */}
         <div className="border-t border-emerald-800 mt-10 pt-6 pb-4 text-center">
           <p className="text-xs text-emerald-500 uppercase tracking-wider mb-3">Naše další projekty</p>
-          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-semibold text-emerald-200">
-            <a href="https://www.akcni-letenky.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Akční letenky</a>
-            <a href="https://www.do-italie.cz" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Do Itálie</a>
-            <a href="https://www.katastr-online.cz" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Katastr Online</a>
-            <a href="https://www.cajovny-praha.cz" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Čajovny Praha</a>
-            <a href="https://www.humandesignmapa.cz" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Human Design</a>
+          <div className="flex flex-wrap justify-center gap-x-8 gap-y-3">
+            <a href="https://www.akcni-letenky.com" target="_blank" rel="noopener noreferrer" className="text-center group">
+              <div className="text-sm font-semibold text-emerald-200 group-hover:text-white transition-colors">Akční letenky</div>
+              <div className="text-xs font-light text-emerald-500 group-hover:text-emerald-300 transition-colors">…už od 690 Kč</div>
+            </a>
+            <a href="https://www.do-italie.cz" target="_blank" rel="noopener noreferrer" className="text-center group">
+              <div className="text-sm font-semibold text-emerald-200 group-hover:text-white transition-colors">Do Itálie</div>
+              <div className="text-xs font-light text-emerald-500 group-hover:text-emerald-300 transition-colors">Průvodce italskou kulturou</div>
+            </a>
+            <a href="https://www.katastr-online.cz" target="_blank" rel="noopener noreferrer" className="text-center group">
+              <div className="text-sm font-semibold text-emerald-200 group-hover:text-white transition-colors">Katastr Online</div>
+              <div className="text-xs font-light text-emerald-500 group-hover:text-emerald-300 transition-colors">Katastr nemovitostí</div>
+            </a>
+            <a href="https://www.cajovny-praha.cz" target="_blank" rel="noopener noreferrer" className="text-center group">
+              <div className="text-sm font-semibold text-emerald-200 group-hover:text-white transition-colors">Čajovny Praha</div>
+              <div className="text-xs font-light text-emerald-500 group-hover:text-emerald-300 transition-colors">Průvodce čajovnami</div>
+            </a>
+            <a href="https://www.humandesignmapa.cz" target="_blank" rel="noopener noreferrer" className="text-center group">
+              <div className="text-sm font-semibold text-emerald-200 group-hover:text-white transition-colors">Human Design</div>
+              <div className="text-xs font-light text-emerald-500 group-hover:text-emerald-300 transition-colors">Mapa vašeho Já</div>
+            </a>
           </div>
         </div>
 

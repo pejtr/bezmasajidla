@@ -18,6 +18,15 @@ import SEOHead from "@/components/SEOHead";
 
 type SortOption = "popularity" | "rating" | "reviews" | "price-asc" | "price-desc" | "name";
 
+const BEST_FOR_FILTERS: { label: string; icon: string; keywords: string[] }[] = [
+  { label: "Romantická večeře", icon: "❤️", keywords: ["romantick", "klidn", "atmosfér", "výjičn", "speciální příležitost"] },
+  { label: "Oběd s kolegy", icon: "💼", keywords: ["pracovní", "oběd", "klidné místo", "pracovní oběd"] },
+  { label: "Rodina s dětmi", icon: "👨‍👩‍👧", keywords: ["rodina", "dětmi", "přátele"] },
+  { label: "Rychlý oběd", icon: "⚡", keywords: ["rychlý", "s sebou", "běžný oběd"] },
+  { label: "Turistické místo", icon: "📍", keywords: ["turisty", "turistick", "hrad", "památky"] },
+  { label: "Milovníci vína", icon: "🍷", keywords: ["víno", "organické víno", "vínotéka"] },
+];
+
 const sortOptions: { value: SortOption; label: string }[] = [
   { value: "popularity", label: "Popularita" },
   { value: "rating", label: "Nejlépe hodnocené" },
@@ -50,6 +59,17 @@ export default function Restaurants() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [sortBy, setSortBy] = useState<SortOption>("popularity");
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
+  const [selectedBestFor, setSelectedBestFor] = useState<string | null>(null);
+  const [compareIds, setCompareIds] = useState<string[]>([]);
+  const [showCompareModal, setShowCompareModal] = useState(false);
+
+  const toggleCompare = (id: string) => {
+    setCompareIds(prev =>
+      prev.includes(id)
+        ? prev.filter(x => x !== id)
+        : prev.length < 3 ? [...prev, id] : prev
+    );
+  };
 
   const filtered = useMemo(() => {
     let result = restaurants.filter((r) => {
@@ -63,6 +83,16 @@ export default function Restaurants() {
       if (selectedTags.length > 0 && !selectedTags.some(t => r.tags.includes(t))) return false;
       if (selectedDietary.length > 0 && !selectedDietary.every(d => r.dietaryOptions.includes(d))) return false;
       if (selectedPriceLevels.length > 0 && !selectedPriceLevels.includes(r.priceLevel)) return false;
+      // Best For filter: check if restaurant's editorialReview.bestFor contains any keyword
+      if (selectedBestFor) {
+        const filter = BEST_FOR_FILTERS.find(f => f.label === selectedBestFor);
+        if (filter) {
+          const bestForText = (r.editorialReview?.bestFor || "").toLowerCase();
+          const bodyText = (r.editorialReview?.body || "").toLowerCase();
+          const combined = bestForText + " " + bodyText;
+          if (!filter.keywords.some(kw => combined.includes(kw.toLowerCase()))) return false;
+        }
+      }
       return true;
     });
 
@@ -89,7 +119,7 @@ export default function Restaurants() {
     }
 
     return result;
-  }, [searchQuery, selectedType, selectedDistrict, showOpenOnly, selectedTags, selectedDietary, selectedPriceLevels, sortBy]);
+  }, [searchQuery, selectedType, selectedDistrict, showOpenOnly, selectedTags, selectedDietary, selectedPriceLevels, sortBy, selectedBestFor]);
 
   const toggleTag = (tag: string) => {
     setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
@@ -111,9 +141,10 @@ export default function Restaurants() {
     setSelectedTags([]);
     setSelectedDietary([]);
     setSelectedPriceLevels([]);
+    setSelectedBestFor(null);
   };
 
-  const hasFilters = selectedType !== "all" || selectedDistrict !== "Všechny čtvrti" || showOpenOnly || selectedTags.length > 0 || searchQuery || selectedDietary.length > 0 || selectedPriceLevels.length > 0;
+  const hasFilters = selectedType !== "all" || selectedDistrict !== "Všechny čtvrti" || showOpenOnly || selectedTags.length > 0 || searchQuery || selectedDietary.length > 0 || selectedPriceLevels.length > 0 || selectedBestFor !== null;
 
   const activeFilterCount = (selectedType !== "all" ? 1 : 0) + (selectedDistrict !== "Všechny čtvrti" ? 1 : 0) + (showOpenOnly ? 1 : 0) + selectedTags.length + selectedDietary.length + selectedPriceLevels.length;
 
@@ -195,6 +226,26 @@ export default function Restaurants() {
           </Link>
         </div>
 
+        {/* ── BEST FOR QUICK FILTERS ── */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide self-center mr-1">Nejlepší pro:</span>
+          {BEST_FOR_FILTERS.map(f => (
+            <button
+              key={f.label}
+              onClick={() => setSelectedBestFor(prev => prev === f.label ? null : f.label)}
+              className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border transition-all duration-150 ${
+                selectedBestFor === f.label
+                  ? "bg-emerald-700 text-white border-emerald-700 shadow-sm"
+                  : "bg-white text-gray-600 border-emerald-100 hover:border-emerald-400 hover:text-emerald-700"
+              }`}
+            >
+              <span>{f.icon}</span>
+              {f.label}
+              {selectedBestFor === f.label && <X className="w-3 h-3 ml-0.5" />}
+            </button>
+          ))}
+        </div>
+
         {/* Active filters bar (shown when filters are applied) */}
         {hasFilters && (
           <div className="flex flex-wrap items-center gap-2 mb-4">
@@ -246,6 +297,14 @@ export default function Restaurants() {
               <span className="inline-flex items-center gap-1 text-xs bg-green-100 text-green-800 px-2.5 py-1 rounded-full font-medium">
                 Otevřeno
                 <button onClick={() => setShowOpenOnly(false)} className="hover:text-green-950">
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            )}
+            {selectedBestFor && (
+              <span className="inline-flex items-center gap-1 text-xs bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full font-medium">
+                {BEST_FOR_FILTERS.find(f => f.label === selectedBestFor)?.icon} {selectedBestFor}
+                <button onClick={() => setSelectedBestFor(null)} className="hover:text-emerald-950">
                   <X className="w-3 h-3" />
                 </button>
               </span>
@@ -464,13 +523,179 @@ export default function Restaurants() {
             ) : (
               <div className="flex flex-col gap-4">
                 {filtered.map((r, i) => (
-                  <RestaurantCard key={r.id} restaurant={r} rank={i + 1} />
+                  <div key={r.id} className="relative group">
+                    <RestaurantCard restaurant={r} rank={i + 1} />
+                    {/* Compare toggle */}
+                    <button
+                      onClick={() => toggleCompare(r.id)}
+                      title={compareIds.includes(r.id) ? "Odebrat ze srovnání" : "Přidat ke srovnání"}
+                      className={`absolute top-3 right-3 z-10 flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full border transition-all ${
+                        compareIds.includes(r.id)
+                          ? "bg-emerald-700 text-white border-emerald-700 shadow"
+                          : "bg-white/90 text-gray-500 border-gray-200 opacity-0 group-hover:opacity-100 hover:border-emerald-400 hover:text-emerald-700"
+                      }`}
+                    >
+                      {compareIds.includes(r.id) ? "✓ Srovnat" : "+ Srovnat"}
+                    </button>
+                  </div>
                 ))}
               </div>
             )}
           </div>
         </div>
       </div>
+
+      {/* ── FLOATING COMPARE BAR ── */}
+      {compareIds.length > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-emerald-900 text-white rounded-2xl shadow-2xl px-5 py-3 flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            {compareIds.map(id => {
+              const r = restaurants.find(x => x.id === id);
+              return r ? (
+                <span key={id} className="flex items-center gap-1.5 bg-emerald-800 rounded-xl px-3 py-1 text-sm">
+                  {r.name}
+                  <button onClick={() => toggleCompare(id)} className="text-emerald-400 hover:text-white">
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              ) : null;
+            })}
+          </div>
+          <Button
+            onClick={() => setShowCompareModal(true)}
+            disabled={compareIds.length < 2}
+            className="bg-amber-400 hover:bg-amber-300 text-amber-900 font-bold text-sm px-4 py-1.5 rounded-xl disabled:opacity-50"
+          >
+            Porovnat ({compareIds.length})
+          </Button>
+          <button onClick={() => setCompareIds([])} className="text-emerald-400 hover:text-white">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {/* ── COMPARE MODAL ── */}
+      {showCompareModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-start justify-center overflow-y-auto py-8 px-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full">
+            <div className="flex items-center justify-between p-6 border-b border-emerald-100">
+              <h2 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "'DM Serif Display', serif" }}>
+                Srovnání restaurací
+              </h2>
+              <button onClick={() => setShowCompareModal(false)} className="text-gray-400 hover:text-gray-700">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-emerald-100">
+                    <td className="p-4 text-xs font-semibold text-gray-400 uppercase tracking-wide w-36">Kritérium</td>
+                    {compareIds.map(id => {
+                      const r = restaurants.find(x => x.id === id)!;
+                      return (
+                        <td key={id} className="p-4 text-center">
+                          <img src={r.image} alt={r.name} className="w-full h-28 object-cover rounded-xl mb-2" />
+                          <div className="font-bold text-gray-900 text-sm">{r.name}</div>
+                          <div className="text-xs text-gray-400">{r.address}</div>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    {
+                      label: "Naše skóre",
+                      render: (r: typeof restaurants[0]) => r.editorialReview
+                        ? <span className="text-2xl font-bold text-amber-500">{r.editorialReview.score.toFixed(1)}</span>
+                        : <span className="text-gray-300">N/A</span>
+                    },
+                    {
+                      label: "Kuchyně",
+                      render: (r: typeof restaurants[0]) => (
+                        <div className="flex flex-wrap gap-1 justify-center">
+                          {r.tags.slice(0, 3).map(t => (
+                            <span key={t} className="text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">{t}</span>
+                          ))}
+                        </div>
+                      )
+                    },
+                    {
+                      label: "Typ",
+                      render: (r: typeof restaurants[0]) => (
+                        <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                          r.type === 'vegan' ? 'bg-emerald-100 text-emerald-700' :
+                          r.type === 'vegetarian' ? 'bg-green-100 text-green-700' :
+                          'bg-amber-100 text-amber-700'
+                        }`}>
+                          {r.type === 'vegan' ? 'Veganská' : r.type === 'vegetarian' ? 'Vegetariánská' : 'Vegan-friendly'}
+                        </span>
+                      )
+                    },
+                    {
+                      label: "Cena",
+                      render: (r: typeof restaurants[0]) => (
+                        <span className="text-sm font-medium text-gray-700">
+                          {r.priceLevel === 1 ? 'Kč — do 200 Kč' : r.priceLevel === 2 ? 'Kč Kč — 200–400 Kč' : 'Kč Kč Kč — 400+ Kč'}
+                        </span>
+                      )
+                    },
+                    {
+                      label: "Hodnocení",
+                      render: (r: typeof restaurants[0]) => (
+                        <span className="text-sm font-bold text-gray-900">★ {r.rating} ({r.reviewCount.toLocaleString('cs')} recenzí)</span>
+                      )
+                    },
+                    {
+                      label: "Otevírací doba",
+                      render: (r: typeof restaurants[0]) => <span className="text-xs text-gray-600">{r.hours || '—'}</span>
+                    },
+                    {
+                      label: "Nejlepší pokrmy",
+                      render: (r: typeof restaurants[0]) => r.editorialReview ? (
+                        <ul className="text-xs text-gray-600 space-y-0.5">
+                          {r.editorialReview.mustOrder.slice(0, 3).map(item => (
+                            <li key={item} className="flex items-center gap-1">
+                              <span className="text-amber-400">•</span> {item}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : <span className="text-gray-300">N/A</span>
+                    },
+                    {
+                      label: "Ideální pro",
+                      render: (r: typeof restaurants[0]) => r.editorialReview
+                        ? <span className="text-xs text-gray-600">{r.editorialReview.bestFor}</span>
+                        : <span className="text-gray-300">N/A</span>
+                    },
+                  ].map(row => (
+                    <tr key={row.label} className="border-b border-gray-50 hover:bg-emerald-50/30">
+                      <td className="p-4 text-xs font-semibold text-gray-500">{row.label}</td>
+                      {compareIds.map(id => {
+                        const r = restaurants.find(x => x.id === id)!;
+                        return (
+                          <td key={id} className="p-4 text-center text-sm">
+                            {row.render(r)}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="p-4 flex justify-between items-center border-t border-emerald-100">
+              <button onClick={() => setCompareIds([])} className="text-sm text-red-500 hover:text-red-700">
+                Vymazat výber
+              </button>
+              <Button onClick={() => setShowCompareModal(false)} className="bg-emerald-700 hover:bg-emerald-600 text-white">
+                Zavřít
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>
