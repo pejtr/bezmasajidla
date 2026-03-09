@@ -4,7 +4,7 @@
 // ============================================================
 
 import { useParams, Link } from "wouter";
-import { MapPin, Phone, Globe, Clock, Star, Crown, ArrowLeft, ExternalLink, Share2, Navigation, Footprints, ShoppingBag, X, ChevronLeft, ChevronRight, Maximize2, Award, ThumbsUp, ThumbsDown, CheckCircle2 } from "lucide-react";
+import { MapPin, Phone, Globe, Clock, Star, Crown, ArrowLeft, ExternalLink, Share2, Navigation, Footprints, ShoppingBag, X, ChevronLeft, ChevronRight, Maximize2 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -131,9 +131,19 @@ function GalleryLightbox({
   onClose: () => void;
 }) {
   const [idx, setIdx] = useState(startIdx);
+  const [fading, setFading] = useState(false);
+  const touchStartX = useState<number | null>(null);
 
-  const prev = useCallback(() => setIdx((i) => (i - 1 + images.length) % images.length), [images.length]);
-  const next = useCallback(() => setIdx((i) => (i + 1) % images.length), [images.length]);
+  const goTo = useCallback((newIdx: number) => {
+    setFading(true);
+    setTimeout(() => {
+      setIdx(newIdx);
+      setFading(false);
+    }, 150);
+  }, []);
+
+  const prev = useCallback(() => goTo((idx - 1 + images.length) % images.length), [idx, images.length, goTo]);
+  const next = useCallback(() => goTo((idx + 1) % images.length), [idx, images.length, goTo]);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -151,43 +161,60 @@ function GalleryLightbox({
 
   return (
     <div
-      className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center"
+      className="fixed inset-0 z-[9999] bg-black/95 flex flex-col items-center justify-center"
       onClick={onClose}
+      onTouchStart={(e) => { (touchStartX as any)[1](e.touches[0].clientX); }}
+      onTouchEnd={(e) => {
+        const startX = (touchStartX as any)[0];
+        if (startX === null) return;
+        const diff = startX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 50) diff > 0 ? next() : prev();
+        (touchStartX as any)[1](null);
+      }}
     >
-      {/* Close button */}
-      <button
-        onClick={onClose}
-        className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center transition-colors"
-        aria-label="Zavřít"
+      {/* Top bar: close + counter + restaurant name */}
+      <div
+        className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 py-3 bg-gradient-to-b from-black/70 to-transparent z-10"
+        onClick={(e) => e.stopPropagation()}
       >
-        <X className="w-5 h-5" />
-      </button>
-
-      {/* Counter */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/50 text-white text-sm px-3 py-1 rounded-full">
-        {idx + 1} / {images.length}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onClose}
+            className="w-9 h-9 bg-white/10 hover:bg-white/25 text-white rounded-full flex items-center justify-center transition-colors"
+            aria-label="Zavřít"
+          >
+            <X className="w-4 h-4" />
+          </button>
+          <span className="text-white font-medium text-sm hidden sm:block">{restaurantName}</span>
+        </div>
+        <div className="bg-black/50 text-white text-sm px-3 py-1 rounded-full">
+          {idx + 1} / {images.length}
+        </div>
       </div>
 
       {/* Prev arrow */}
       {images.length > 1 && (
         <button
           onClick={(e) => { e.stopPropagation(); prev(); }}
-          className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/25 text-white rounded-full flex items-center justify-center transition-colors"
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/10 hover:bg-white/25 text-white rounded-full flex items-center justify-center transition-colors z-10"
           aria-label="Předchozí foto"
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
       )}
 
-      {/* Main image */}
+      {/* Main image with fade transition */}
       <div
-        className="max-w-5xl max-h-[85vh] w-full px-16 flex items-center justify-center"
+        className="flex-1 flex items-center justify-center w-full px-14 py-16"
         onClick={(e) => e.stopPropagation()}
       >
         <img
+          key={idx}
           src={images[idx]}
           alt={`${restaurantName} — foto ${idx + 1}`}
-          className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+          className={`max-w-full max-h-[75vh] object-contain rounded-xl shadow-2xl transition-opacity duration-150 ${
+            fading ? "opacity-0" : "opacity-100"
+          }`}
         />
       </div>
 
@@ -195,7 +222,7 @@ function GalleryLightbox({
       {images.length > 1 && (
         <button
           onClick={(e) => { e.stopPropagation(); next(); }}
-          className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/25 text-white rounded-full flex items-center justify-center transition-colors"
+          className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/10 hover:bg-white/25 text-white rounded-full flex items-center justify-center transition-colors z-10"
           aria-label="Další foto"
         >
           <ChevronRight className="w-6 h-6" />
@@ -205,20 +232,22 @@ function GalleryLightbox({
       {/* Thumbnail strip at bottom */}
       {images.length > 1 && (
         <div
-          className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 overflow-x-auto max-w-[90vw] pb-1"
+          className="absolute bottom-0 left-0 right-0 flex justify-center gap-2 px-4 py-3 bg-gradient-to-t from-black/70 to-transparent"
           onClick={(e) => e.stopPropagation()}
         >
-          {images.map((src, i) => (
-            <button
-              key={i}
-              onClick={() => setIdx(i)}
-              className={`flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden border-2 transition-all ${
-                i === idx ? "border-white" : "border-transparent opacity-50 hover:opacity-80"
-              }`}
-            >
-              <img src={src} alt={`Miniatura ${i + 1}`} className="w-full h-full object-cover" />
-            </button>
-          ))}
+          <div className="flex gap-2 overflow-x-auto max-w-[90vw] pb-1">
+            {images.map((src, i) => (
+              <button
+                key={i}
+                onClick={() => goTo(i)}
+                className={`flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden border-2 transition-all ${
+                  i === idx ? "border-white scale-110" : "border-transparent opacity-50 hover:opacity-80"
+                }`}
+              >
+                <img src={src} alt={`Miniatura ${i + 1}`} className="w-full h-full object-cover" />
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>
@@ -573,103 +602,6 @@ export default function RestaurantDetail() {
                       </div>
                     </div>
                   ))}
-                </div>
-              </div>
-            )}
-
-            {/* Editorial Review — "Naše hodnocení" */}
-            {restaurant.editorialReview && (
-              <div className="bg-white rounded-xl border border-emerald-200 overflow-hidden mb-6">
-                {/* Header */}
-                <div className="bg-gradient-to-r from-emerald-700 to-emerald-800 px-6 py-4 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Award className="w-5 h-5 text-amber-400" />
-                    <h3 className="text-base font-bold text-white" style={{ fontFamily: "'DM Serif Display', serif" }}>
-                      Naše hodnocení
-                    </h3>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-emerald-200">Celkové skóre</span>
-                    <span className="text-2xl font-bold text-amber-400" style={{ fontFamily: "'DM Serif Display', serif" }}>
-                      {restaurant.editorialReview.score.toFixed(1)}
-                    </span>
-                    <span className="text-emerald-300 text-sm">/10</span>
-                  </div>
-                </div>
-
-                <div className="p-6">
-                  {/* Summary */}
-                  <p className="text-gray-700 font-medium italic mb-5 text-base leading-relaxed border-l-4 border-emerald-400 pl-4">
-                    „{restaurant.editorialReview.summary}“
-                  </p>
-
-                  {/* Score bars */}
-                  <div className="grid grid-cols-2 gap-3 mb-6">
-                    {([
-                      { label: "Kuchyně", key: "food" as const, color: "bg-emerald-500" },
-                      { label: "Poměr C/K", key: "value" as const, color: "bg-amber-500" },
-                      { label: "Atmosféra", key: "atmosphere" as const, color: "bg-purple-500" },
-                      { label: "Obsluha", key: "service" as const, color: "bg-blue-500" },
-                    ] as const).map(({ label, key, color }) => (
-                      <div key={key}>
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="text-xs text-gray-500">{label}</span>
-                          <span className="text-xs font-bold text-gray-800">{restaurant.editorialReview!.scores[key]}/10</span>
-                        </div>
-                        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                          <div
-                            className={`h-full rounded-full ${color} transition-all duration-500`}
-                            style={{ width: `${restaurant.editorialReview!.scores[key] * 10}%` }}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Body text */}
-                  <div className="text-gray-600 text-sm leading-relaxed mb-5 space-y-3">
-                    {restaurant.editorialReview.body.split('\n\n').map((para, i) => (
-                      <p key={i}>{para}</p>
-                    ))}
-                  </div>
-
-                  {/* Best for + Must order */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                    <div className="bg-emerald-50 rounded-xl p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <ThumbsUp className="w-4 h-4 text-emerald-600" />
-                        <span className="text-xs font-bold text-emerald-700 uppercase tracking-wide">Ideální pro</span>
-                      </div>
-                      <p className="text-sm text-gray-700 leading-snug">{restaurant.editorialReview.bestFor}</p>
-                    </div>
-                    <div className="bg-amber-50 rounded-xl p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <CheckCircle2 className="w-4 h-4 text-amber-600" />
-                        <span className="text-xs font-bold text-amber-700 uppercase tracking-wide">Určitě objednejte</span>
-                      </div>
-                      <ul className="space-y-1">
-                        {restaurant.editorialReview.mustOrder.map((dish, i) => (
-                          <li key={i} className="text-sm text-gray-700 flex items-start gap-1.5">
-                            <span className="text-amber-500 mt-0.5 flex-shrink-0">•</span>
-                            {dish}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-
-                  {/* Skip */}
-                  {restaurant.editorialReview.skip && (
-                    <div className="bg-red-50 rounded-xl p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <ThumbsDown className="w-4 h-4 text-red-500" />
-                        <span className="text-xs font-bold text-red-600 uppercase tracking-wide">Mějte na paměti</span>
-                      </div>
-                      <p className="text-sm text-gray-700 leading-snug">{restaurant.editorialReview.skip}</p>
-                    </div>
-                  )}
-
-                  <p className="text-xs text-gray-400 mt-4 text-right">Hodnocení redakce Bezmasá Jídla</p>
                 </div>
               </div>
             )}

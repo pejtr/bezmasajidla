@@ -109,7 +109,7 @@
 - [x] Přidat gruzínské recepty (chačapuri, lobiani, pkhali)
 - [x] Analýza VisitChef.com a návrhy na zlepšení webu
 - [ ] Přidat ikonu srdíčka do mobilního hamburger menu
-- [ ] Implementovat fullscreen lightbox pro fotogalerie restaurací (Střecha, KRO Kitchen)
+- [x] Implementovat fullscreen lightbox pro fotogalerie restaurací (Střecha, KRO Kitchen)
 - [ ] Přidat pole instagramUrl a facebookUrl do datové struktury Restaurant
 - [ ] Zobrazit ikony sociálních sítí na detailní stránce restaurace
 - [ ] Přidat sekci "Příběh receptu" s kulturním kontextem na stránku detailu receptu
@@ -141,18 +141,6 @@
 - [x] Přidat 9 nových receptů — Italské (risotto, spaghetti, tiramisu, pizza), Maďarské (guláš, lángos, palacsinky), Slovenské (bryndzové halušky, kapustnica)
 - [x] GPS geolokace v mapě — tlačítko "V okolí" zobrazí restaurace do 1,5 km od uživatele s modrým markerem a kruhem
 - [x] Opravit KRO Kitchen typ z "vegetarian" na "vegan-friendly" (všechny pobočky)
-- [ ] Vytvořit datový soubor guides.ts s první článkem "Veganská Praha po čtvrtích"
-- [ ] Generovat hero obrázky pro sekci Průvodci
-- [ ] Stránka výpisu Průvodci (/pruvodci)
-- [ ] Stránka detailu průvodce (/pruvodci/:slug) s SEO markup
-- [ ] Integrovat Průvodci do navigace (Header mega menu + Footer + App.tsx)
-- [x] Vytvořit datový soubor guides.ts s první článkem "Veganská Praha po čtvrtích"
-- [x] Generovat hero obrázky pro sekci Průvodci (Praha, Vinohrady, Žižkov)
-- [x] Stránka výpisu Průvodci (/pruvodci) s hero, filtry, featured card
-- [x] Stránka detailu průvodce (/pruvodci/:slug) s ToC, sekcemi, related restaurants
-- [x] Integrovat Průvodci do navigace (Header, Footer, App.tsx routes)
-- [x] Vygenerovat AI obrázky pro průvodce "Jak začít s rostlinnou stravou"
-- [x] Napsat obsah průvodce (7+ sekcí) a přidat do guides.ts
-- [x] Přidat datovou strukturu editorialReview do Restaurant interface
-- [x] Napsat kritická hodnocení pro Střechu, KRO Kitchen a Beas Dhaba
-- [x] Implementovat sekci "Naše hodnocení" na stránce detailu restaurace
+- [x] Přidat editorialReview pro Maitrea, Lehká Hlava, Shromaždiště, Chutnej
+- [x] Implementovat donut graf makro živin na stránce detailu receptu
+- [x] Implementovat fullscreen lightbox pro fotogalerie restaurací
