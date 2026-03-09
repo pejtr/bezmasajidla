@@ -152,6 +152,18 @@ export default function RestaurantCard({ restaurant, rank }: Props) {
               ))}
             </div>
 
+            {/* Best For badge — shown when editorialReview.bestFor is set */}
+            {restaurant.editorialReview?.bestFor && (
+              <div className="flex items-center gap-1 mb-2">
+                <span className="inline-flex items-center gap-1 text-[11px] bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full font-medium">
+                  <span>★</span>
+                  {restaurant.editorialReview.bestFor.length > 40
+                    ? restaurant.editorialReview.bestFor.slice(0, 40) + "…"
+                    : restaurant.editorialReview.bestFor}
+                </span>
+              </div>
+            )}
+
             {/* Description — hidden on very small screens to save space */}
             <p className="hidden sm:block text-xs text-gray-500 leading-relaxed line-clamp-2 mb-2">
               {restaurant.description}

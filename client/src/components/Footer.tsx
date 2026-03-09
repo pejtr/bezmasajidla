@@ -113,7 +113,7 @@ export default function Footer() {
             </a>
             <a href="https://www.do-italie.cz" target="_blank" rel="noopener noreferrer" className="text-center group">
               <div className="text-sm font-semibold text-emerald-200 group-hover:text-white transition-colors">Do Itálie</div>
-              <div className="text-xs font-light text-emerald-500 group-hover:text-emerald-300 transition-colors">Průvodce italskou kulturou</div>
+              <div className="text-xs font-light text-emerald-500 group-hover:text-emerald-300 transition-colors">Průvodce Itálií</div>
             </a>
             <a href="https://www.katastr-online.cz" target="_blank" rel="noopener noreferrer" className="text-center group">
               <div className="text-sm font-semibold text-emerald-200 group-hover:text-white transition-colors">Katastr Online</div>
@@ -126,6 +126,29 @@ export default function Footer() {
             <a href="https://www.humandesignmapa.cz" target="_blank" rel="noopener noreferrer" className="text-center group">
               <div className="text-sm font-semibold text-emerald-200 group-hover:text-white transition-colors">Human Design</div>
               <div className="text-xs font-light text-emerald-500 group-hover:text-emerald-300 transition-colors">Mapa vašeho Já</div>
+            </a>
+          </div>
+        </div>
+
+        {/* Advertising Section */}
+        <div className="border-t border-emerald-800 mt-2 pt-6 pb-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <p className="text-xs text-emerald-500 uppercase tracking-wider mb-1">Reklama na našem webu</p>
+              <p className="text-sm text-emerald-300">
+                Oslovte tisíce návštěvníků hledajících veganské a vegetariánské restaurace v Praze.
+              </p>
+              <div className="flex flex-wrap gap-4 mt-2 text-xs text-emerald-400">
+                <span>Banner 728×90 — <strong className="text-emerald-200">od 990 Kč/měsíc</strong></span>
+                <span>Sponzorovaný profil restaurace — <strong className="text-emerald-200">od 490 Kč/měsíc</strong></span>
+                <span>Newsletter — <strong className="text-emerald-200">od 1 490 Kč/vydání</strong></span>
+              </div>
+            </div>
+            <a
+              href="mailto:inzerce@bezmasajidla.cz"
+              className="flex-shrink-0 inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-600 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
+            >
+              Napište nám
             </a>
           </div>
         </div>

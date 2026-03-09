@@ -151,3 +151,6 @@
 - [ ] Srovnávací tabulka restaurací — výběr 2-3 restaurací a porovnání vedle sebe
 - [ ] Sdílení receptu jako obrázek — tlačítko "Sdílet" generuje grafiku s makry a fotkou
 - [x] Přidat podtitulky pod odkazy v sekci "Naše další projekty" ve footeru
+- [ ] "Nejlepší pro..." badge na kartičkách restaurací v seznamu
+- [ ] Sekce "Reklama na našem webu" ve footeru s cenami a kontaktním formulářem
+- [ ] Tlačítko "Sdílet recept jako obrázek" na stránce detailu receptu
