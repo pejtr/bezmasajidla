@@ -3,9 +3,9 @@
 // "Zelená Metropole" — full recipe with gallery, ingredients, steps
 // ============================================================
 
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useParams, Link } from "wouter";
-import { Clock, Users, ChefHat, ArrowLeft, Leaf, ChevronLeft, ChevronRight, ShoppingCart, ExternalLink, BookOpen, Flame } from "lucide-react";
+import { Clock, Users, ChefHat, ArrowLeft, Leaf, ChevronLeft, ChevronRight, ShoppingCart, ExternalLink, BookOpen, Flame, Share2, Download, Instagram } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -891,6 +891,184 @@ function MacroPanel({ macros, defaultServings }: { macros: NonNullable<import('@
 }
 
 
+// ── Share Recipe Card ─────────────────────────────────────────────────────────
+function ShareRecipeCard({ recipe }: { recipe: import('@/lib/data').Recipe }) {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [generatedUrl, setGeneratedUrl] = useState<string | null>(null);
+
+  const generateCard = useCallback(async () => {
+    setIsGenerating(true);
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1080;
+      canvas.height = 1080;
+      const ctx = canvas.getContext('2d')!;
+
+      // Background gradient
+      const grad = ctx.createLinearGradient(0, 0, 0, 1080);
+      grad.addColorStop(0, '#064e3b');
+      grad.addColorStop(1, '#065f46');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 1080, 1080);
+
+      // Load recipe image
+      const imgSrc = recipe.images?.[0]?.url || recipe.image;
+      if (imgSrc) {
+        await new Promise<void>((resolve) => {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => {
+            // Draw image in top 60% with cover
+            const targetH = 648;
+            const scale = Math.max(1080 / img.width, targetH / img.height);
+            const sw = img.width * scale;
+            const sh = img.height * scale;
+            const sx = (1080 - sw) / 2;
+            const sy = 0;
+            ctx.drawImage(img, sx, sy, sw, sh);
+            // Dark overlay on image
+            const overlay = ctx.createLinearGradient(0, 300, 0, 648);
+            overlay.addColorStop(0, 'rgba(0,0,0,0)');
+            overlay.addColorStop(1, 'rgba(6,78,59,0.95)');
+            ctx.fillStyle = overlay;
+            ctx.fillRect(0, 0, 1080, 648);
+            resolve();
+          };
+          img.onerror = () => resolve();
+          img.src = imgSrc;
+        });
+      }
+
+      // Category chip
+      ctx.fillStyle = '#f59e0b';
+      ctx.beginPath();
+      ctx.roundRect(54, 580, ctx.measureText(recipe.category).width + 36, 44, 22);
+      ctx.fill();
+      ctx.fillStyle = '#78350f';
+      ctx.font = 'bold 22px sans-serif';
+      ctx.fillText(recipe.category.toUpperCase(), 72, 609);
+
+      // Title
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 72px Georgia, serif';
+      const words = recipe.title.split(' ');
+      let line = '';
+      let y = 700;
+      for (const word of words) {
+        const test = line + (line ? ' ' : '') + word;
+        if (ctx.measureText(test).width > 972 && line) {
+          ctx.fillText(line, 54, y);
+          line = word;
+          y += 84;
+        } else {
+          line = test;
+        }
+      }
+      ctx.fillText(line, 54, y);
+      y += 60;
+
+      // Macros row (if available)
+      if (recipe.macros) {
+        const macroItems = [
+          { label: 'kcal', value: String(recipe.macros.calories) },
+          { label: 'bílk.', value: recipe.macros.protein + 'g' },
+          { label: 'sachar.', value: recipe.macros.carbs + 'g' },
+          { label: 'tuky', value: recipe.macros.fat + 'g' },
+        ];
+        let mx = 54;
+        for (const item of macroItems) {
+          ctx.fillStyle = 'rgba(255,255,255,0.12)';
+          ctx.beginPath();
+          ctx.roundRect(mx, y, 200, 72, 12);
+          ctx.fill();
+          ctx.fillStyle = '#6ee7b7';
+          ctx.font = 'bold 30px sans-serif';
+          ctx.fillText(item.value, mx + 16, y + 36);
+          ctx.fillStyle = 'rgba(255,255,255,0.6)';
+          ctx.font = '20px sans-serif';
+          ctx.fillText(item.label, mx + 16, y + 62);
+          mx += 216;
+        }
+        y += 96;
+      }
+
+      // Meta row
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.font = '26px sans-serif';
+      ctx.fillText(`⏱ ${recipe.prepTime + recipe.cookTime} min  ·  👤 ${recipe.servings} porcí  ·  bezmasajidla.cz`, 54, y + 30);
+
+      // Leaf watermark
+      ctx.fillStyle = 'rgba(255,255,255,0.08)';
+      ctx.font = 'bold 200px sans-serif';
+      ctx.fillText('🌿', 800, 1000);
+
+      const url = canvas.toDataURL('image/jpeg', 0.92);
+      setGeneratedUrl(url);
+      setShowModal(true);
+    } finally {
+      setIsGenerating(false);
+    }
+  }, [recipe]);
+
+  const handleDownload = () => {
+    if (!generatedUrl) return;
+    const a = document.createElement('a');
+    a.href = generatedUrl;
+    a.download = `${recipe.slug}-bezmasajidla.jpg`;
+    a.click();
+  };
+
+  return (
+    <>
+      <button
+        onClick={generateCard}
+        disabled={isGenerating}
+        className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 hover:text-emerald-800 border border-emerald-200 hover:border-emerald-400 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+      >
+        {isGenerating ? (
+          <span className="w-3.5 h-3.5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+        ) : (
+          <Share2 className="w-3.5 h-3.5" />
+        )}
+        {isGenerating ? 'Generuji...' : 'Sdílet jako obrázek'}
+      </button>
+
+      {showModal && generatedUrl && (
+        <div
+          className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowModal(false)}
+        >
+          <div
+            className="bg-white rounded-2xl overflow-hidden max-w-sm w-full shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img src={generatedUrl} alt="Sdílecí karta receptu" className="w-full" />
+            <div className="p-4 space-y-3">
+              <p className="text-sm text-gray-500 text-center">Stáhněte obrázek a sdílejte na Instagramu nebo Facebooku</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleDownload}
+                  className="flex-1 flex items-center justify-center gap-2 bg-emerald-700 hover:bg-emerald-600 text-white text-sm font-semibold py-2.5 rounded-xl transition-colors"
+                >
+                  <Download className="w-4 h-4" />
+                  Stáhnout
+                </button>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="flex-1 flex items-center justify-center gap-2 border border-gray-200 text-gray-600 text-sm font-semibold py-2.5 rounded-xl hover:bg-gray-50 transition-colors"
+                >
+                  Zavřít
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 // ── Image Gallery Component ─────────────────────────────────
 function ImageGallery({ images, title }: { images: { url: string; alt: string }[]; title: string }) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -1068,6 +1246,11 @@ export default function RecipeDetail() {
                 {recipe.title}
               </h1>
               <p className="text-gray-600 leading-relaxed mb-4">{recipe.description}</p>
+
+              {/* Actions row */}
+              <div className="flex items-center gap-2 mb-4">
+                <ShareRecipeCard recipe={recipe} />
+              </div>
 
               {/* Meta */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-emerald-100">

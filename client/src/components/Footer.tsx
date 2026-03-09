@@ -160,6 +160,7 @@ export default function Footer() {
           <div className="flex gap-4">
             <Link href="/ochrana-soukromi" className="hover:text-emerald-200 transition-colors">Ochrana soukromí</Link>
             <Link href="/podminky" className="hover:text-emerald-200 transition-colors">Podmínky použití</Link>
+            <Link href="/inzerce" className="hover:text-emerald-200 transition-colors font-semibold text-emerald-300">Inzerce</Link>
           </div>
         </div>
       </div>
