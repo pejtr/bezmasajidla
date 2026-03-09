@@ -154,3 +154,5 @@
 - [ ] "Nejlepší pro..." badge na kartičkách restaurací v seznamu
 - [ ] Sekce "Reklama na našem webu" ve footeru s cenami a kontaktním formulářem
 - [ ] Tlačítko "Sdílet recept jako obrázek" na stránce detailu receptu
+- [x] Odstranit ceny z footeru sekce Reklama, nahradit "ceny na vyzádání" + odkaz na /inzerce
+- [x] Vytvořit stránku /inzerce s detailními informacemi o možnostech reklamy

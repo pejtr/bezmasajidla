@@ -24,6 +24,7 @@ import AddRecipe from "./pages/AddRecipe";
 import AdminPage from "./pages/AdminPage";
 import BlogPage from "./pages/BlogPage";
 import BlogDetail from "./pages/BlogDetail";
+import InzercePage from "./pages/InzercePage";
 function Router() {
   useScrollToTop();
   return (
@@ -40,6 +41,7 @@ function Router() {
       <Route path="/admin" component={AdminPage} />
       <Route path="/blog" component={BlogPage} />
       <Route path="/blog/:slug" component={BlogDetail} />
+      <Route path="/inzerce" component={InzercePage} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

@@ -138,11 +138,13 @@ export default function Footer() {
               <p className="text-sm text-emerald-300">
                 Oslovte tisíce návštěvníků hledajících veganské a vegetariánské restaurace v Praze.
               </p>
-              <div className="flex flex-wrap gap-4 mt-2 text-xs text-emerald-400">
-                <span>Banner 728×90 — <strong className="text-emerald-200">od 990 Kč/měsíc</strong></span>
-                <span>Sponzorovaný profil restaurace — <strong className="text-emerald-200">od 490 Kč/měsíc</strong></span>
-                <span>Newsletter — <strong className="text-emerald-200">od 1 490 Kč/vydání</strong></span>
+              <div className="flex flex-wrap gap-3 mt-2 text-xs text-emerald-400">
+                <span className="inline-flex items-center gap-1">✓ Banner 728×90</span>
+                <span className="inline-flex items-center gap-1">✓ Sponzorovaný profil restaurace</span>
+                <span className="inline-flex items-center gap-1">✓ Newsletter</span>
+                <span className="inline-flex items-center gap-1">✓ Sociální sítě</span>
               </div>
+              <p className="text-xs text-emerald-500 mt-1">Ceny na vyžádání — <a href="/inzerce" className="text-emerald-300 hover:text-white underline transition-colors">více informací</a></p>
             </div>
             <a
               href="mailto:inzerce@bezmasajidla.cz"
