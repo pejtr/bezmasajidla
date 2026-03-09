@@ -141,3 +141,13 @@
 - [x] Přidat 9 nových receptů — Italské (risotto, spaghetti, tiramisu, pizza), Maďarské (guláš, lángos, palacsinky), Slovenské (bryndzové halušky, kapustnica)
 - [x] GPS geolokace v mapě — tlačítko "V okolí" zobrazí restaurace do 1,5 km od uživatele s modrým markerem a kruhem
 - [x] Opravit KRO Kitchen typ z "vegetarian" na "vegan-friendly" (všechny pobočky)
+- [ ] Vytvořit datový soubor guides.ts s první článkem "Veganská Praha po čtvrtích"
+- [ ] Generovat hero obrázky pro sekci Průvodci
+- [ ] Stránka výpisu Průvodci (/pruvodci)
+- [ ] Stránka detailu průvodce (/pruvodci/:slug) s SEO markup
+- [ ] Integrovat Průvodci do navigace (Header mega menu + Footer + App.tsx)
+- [x] Vytvořit datový soubor guides.ts s první článkem "Veganská Praha po čtvrtích"
+- [x] Generovat hero obrázky pro sekci Průvodci (Praha, Vinohrady, Žižkov)
+- [x] Stránka výpisu Průvodci (/pruvodci) s hero, filtry, featured card
+- [x] Stránka detailu průvodce (/pruvodci/:slug) s ToC, sekcemi, related restaurants
+- [x] Integrovat Průvodci do navigace (Header, Footer, App.tsx routes)

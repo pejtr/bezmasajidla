@@ -130,6 +130,7 @@ export default function Header() {
 
   const navLinks = [
     { href: "/mapa", label: "Mapa" },
+    { href: "/pruvodci", label: "Průvodci" },
     { href: "/blog", label: "Blog" },
     { href: "/o-nas", label: "O nás" },
   ];

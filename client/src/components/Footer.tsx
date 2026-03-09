@@ -77,8 +77,17 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* O nás */}
+          {/* Průvodci + Blog */}
           <div>
+            <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">
+              Průvodci
+            </h4>
+            <ul className="space-y-2 text-sm text-emerald-300 mb-6">
+              <li><Link href="/pruvodci" className="hover:text-white transition-colors">Všechny průvodce</Link></li>
+              <li><Link href="/pruvodci/veganska-praha-po-ctvrtich" className="hover:text-white transition-colors">Veganská Praha po čtvrtích</Link></li>
+              <li><Link href="/pruvodci" className="hover:text-white transition-colors">Jak začít s rostlinnou stravou</Link></li>
+              <li><Link href="/pruvodci" className="hover:text-white transition-colors">Sezonní bezmasá kuchyně</Link></li>
+            </ul>
             <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">
               Blog
             </h4>
