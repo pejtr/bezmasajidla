@@ -163,3 +163,4 @@
 - [x] Přidat odkaz "Inzerce" do hlavní navigace (Header)
 - [x] Vygenerovat sitemap.xml a aktualizovat robots.txt
 - [x] Přidat GDPR cookie consent banner pro první návštěvníky
+- [x] Implementovat JSON-LD structured data (Restaurant schema) na stránkách detailu restaurací

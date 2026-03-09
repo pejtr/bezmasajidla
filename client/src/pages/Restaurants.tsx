@@ -15,6 +15,7 @@ import { getOpenStatus } from "@/lib/openingHours";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import SEOHead from "@/components/SEOHead";
+import { RestaurantListJsonLd, BreadcrumbJsonLd } from "@/components/JsonLd";
 
 type SortOption = "popularity" | "rating" | "reviews" | "price-asc" | "price-desc" | "name";
 
@@ -166,10 +167,15 @@ export default function Restaurants() {
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAF6]">
       <SEOHead
-        title="Veganské a Vegetariánské Restaurace v Praze"
-        description="Kompletní přehled veganských, vegetariánských a vegan-friendly restaurací v Praze. Filtrujte podle čtvrti, kuchyně, cenové hladiny a dietních preferencí."
+        title="Veganšké a Vegetariánské Restaurace v Praze"
+        description="Kompletní přehled veganškých, vegetariánských a vegan-friendly restaurací v Praze. Filtrujte podle čtvrti, kuchyňé, cenové hladiny a dietních preferencí."
         ogUrl="https://www.bezmasajidla.cz/restaurace"
       />
+      <RestaurantListJsonLd restaurants={restaurants} />
+      <BreadcrumbJsonLd items={[
+        { name: "Domů", url: "/" },
+        { name: "Restaurace", url: "/restaurace" },
+      ]} />
       <Header />
 
       {/* Page header */}

@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import { Heart, MapPin, Utensils, Users, Mail, Instagram, Globe, Leaf } from "lucide-react";
 import { toast } from "sonner";
 import SEOHead from "@/components/SEOHead";
+import { OrganizationJsonLd } from "@/components/JsonLd";
 
 const values = [
   {
@@ -44,9 +45,10 @@ export default function AboutPage() {
     <div className="min-h-screen flex flex-col bg-white">
       <SEOHead
         title="O nás — Bezmasá Jídla"
-        description="Jsme největší český adresář veganských a vegetariánských restaurací v Praze. Naším cílem je usnadnit lidem cestu k bezmasému stravování."
+        description="Jsme největší český adresář veganškých a vegetariánských restaurací v Praze. Naším cílem je usnadnit lidem cestu k bezmasému stravování."
         ogUrl="https://www.bezmasajidla.cz/o-nas"
       />
+      <OrganizationJsonLd />
       <Header />
 
       {/* Hero */}
