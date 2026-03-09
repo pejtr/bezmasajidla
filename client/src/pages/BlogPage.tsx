@@ -79,12 +79,12 @@ export default function BlogPage() {
                         {featured.category}
                       </span>
                     </div>
-                    <h2
+                    <h3
                       className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-emerald-700 transition-colors leading-snug"
                       style={{ fontFamily: "'DM Serif Display', serif" }}
                     >
                       {featured.title}
-                    </h2>
+                    </h3>
                     <p className="text-gray-500 text-sm leading-relaxed line-clamp-3 mb-4">
                       {featured.excerpt}
                     </p>
@@ -130,12 +130,12 @@ export default function BlogPage() {
                 </div>
                 {/* Content */}
                 <div className="p-5 flex flex-col flex-1">
-                  <h2
+                  <h3
                     className="text-lg font-bold text-gray-900 mb-2 group-hover:text-emerald-700 transition-colors leading-snug line-clamp-2"
                     style={{ fontFamily: "'DM Serif Display', serif" }}
                   >
                     {post.title}
-                  </h2>
+                  </h3>
                   <p className="text-gray-500 text-sm leading-relaxed line-clamp-2 mb-4 flex-1">
                     {post.excerpt}
                   </p>

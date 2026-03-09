@@ -360,9 +360,9 @@ export default function RestaurantDetail() {
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="text-5xl mb-4">🌿</div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2" style={{ fontFamily: "'DM Serif Display', serif" }}>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2" style={{ fontFamily: "'DM Serif Display', serif" }}>
               Restaurace nenalezena
-            </h2>
+            </h1>
             <Link href="/restaurace">
               <Button className="bg-emerald-700 hover:bg-emerald-600 text-white mt-4">
                 Zpět na seznam

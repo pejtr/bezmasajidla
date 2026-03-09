@@ -176,3 +176,4 @@
 - [ ] Přidat Kontakt do navigace (Header) a footeru
 - [x] Opravit chybějící mezery v H1 nadpisu na homepage
 - [x] Opravit nesprávný H2 nadpis "Maitrea" (zobrazuje se název restaurace místo nadpisu sekce)
+- [x] Audit a oprava hierarchie nadpisů na všech stránkách (H1/H2/H3 — žádné entity jako H2)

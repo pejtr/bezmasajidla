@@ -585,9 +585,9 @@ export default function Restaurants() {
         <div className="fixed inset-0 z-50 bg-black/60 flex items-start justify-center overflow-y-auto py-8 px-4">
           <div className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full">
             <div className="flex items-center justify-between p-6 border-b border-emerald-100">
-              <h2 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "'DM Serif Display', serif" }}>
+              <h3 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "'DM Serif Display', serif" }}>
                 Srovnání restaurací
-              </h2>
+              </h3>
               <button onClick={() => setShowCompareModal(false)} className="text-gray-400 hover:text-gray-700">
                 <X className="w-6 h-6" />
               </button>

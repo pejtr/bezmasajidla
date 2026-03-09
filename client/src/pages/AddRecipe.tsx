@@ -146,12 +146,12 @@ export default function AddRecipe() {
         <div className="flex-1 flex items-center justify-center">
           <div className="bg-white rounded-2xl border border-emerald-100 p-12 text-center max-w-md mx-auto">
             <ChefHat className="w-10 h-10 text-emerald-300 mx-auto mb-4" />
-            <h2
+            <h3
               className="text-xl font-bold text-gray-900 mb-2"
               style={{ fontFamily: "'DM Serif Display', serif" }}
             >
               Přihlaste se
-            </h2>
+            </h3>
             <p className="text-sm text-gray-500 mb-6">
               Pro přidání receptu se prosím přihlaste.
             </p>
@@ -197,9 +197,9 @@ export default function AddRecipe() {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* ── Basic info ── */}
           <div className="bg-white rounded-xl border border-emerald-100 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4" style={{ fontFamily: "'DM Serif Display', serif" }}>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4" style={{ fontFamily: "'DM Serif Display', serif" }}>
               Základní informace
-            </h2>
+            </h3>
 
             <div className="space-y-4">
               <div>
@@ -338,9 +338,9 @@ export default function AddRecipe() {
           <div className="bg-white rounded-xl border border-emerald-100 p-6">
             <div className="flex items-center gap-2 mb-4">
               <Utensils className="w-5 h-5 text-emerald-600" />
-              <h2 className="text-lg font-semibold text-gray-900" style={{ fontFamily: "'DM Serif Display', serif" }}>
+              <h3 className="text-lg font-semibold text-gray-900" style={{ fontFamily: "'DM Serif Display', serif" }}>
                 Ingredience <span className="text-red-500">*</span>
-              </h2>
+              </h3>
             </div>
             <p className="text-xs text-gray-400 mb-4">
               Zadejte množství a název každé ingredience zvlášť pro lepší přehlednost.
@@ -393,9 +393,9 @@ export default function AddRecipe() {
           <div className="bg-white rounded-xl border border-emerald-100 p-6">
             <div className="flex items-center gap-2 mb-4">
               <ListOrdered className="w-5 h-5 text-emerald-600" />
-              <h2 className="text-lg font-semibold text-gray-900" style={{ fontFamily: "'DM Serif Display', serif" }}>
+              <h3 className="text-lg font-semibold text-gray-900" style={{ fontFamily: "'DM Serif Display', serif" }}>
                 Postup přípravy <span className="text-red-500">*</span>
-              </h2>
+              </h3>
             </div>
             <p className="text-xs text-gray-400 mb-4">
               Popište jednotlivé kroky přípravy. Pomocí šipek můžete měnit pořadí kroků.
@@ -464,9 +464,9 @@ export default function AddRecipe() {
           {/* ── Preview summary ── */}
           {(title.trim() || ingredients.some((i) => i.name.trim()) || steps.some((s) => s.trim())) && (
             <div className="bg-emerald-50 rounded-xl border border-emerald-200 p-6">
-              <h2 className="text-lg font-semibold text-emerald-900 mb-3" style={{ fontFamily: "'DM Serif Display', serif" }}>
+              <h3 className="text-lg font-semibold text-emerald-900 mb-3" style={{ fontFamily: "'DM Serif Display', serif" }}>
                 Náhled receptu
-              </h2>
+              </h3>
               {title.trim() && (
                 <h3 className="text-base font-bold text-gray-900 mb-2">{title}</h3>
               )}

@@ -36,9 +36,9 @@ export default function FavoritesPanel({ open, onClose }: FavoritesPanelProps) {
         <div className="flex items-center justify-between px-5 py-4 border-b border-emerald-100">
           <div className="flex items-center gap-2">
             <Heart className="w-5 h-5 text-red-500 fill-red-500" />
-            <h2 className="text-lg font-semibold text-gray-900" style={{ fontFamily: "'DM Serif Display', serif" }}>
+            <h3 className="text-lg font-semibold text-gray-900" style={{ fontFamily: "'DM Serif Display', serif" }}>
               Oblíbené
-            </h2>
+            </h3>
             {total > 0 && (
               <span className="bg-red-100 text-red-600 text-xs font-bold px-2 py-0.5 rounded-full">
                 {total}

@@ -1156,9 +1156,9 @@ export default function RecipeDetail() {
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="text-5xl mb-4">🥦</div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2" style={{ fontFamily: "'DM Serif Display', serif" }}>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2" style={{ fontFamily: "'DM Serif Display', serif" }}>
               Recept nenalezen
-            </h2>
+            </h1>
             <Link href="/recepty">
               <Button className="bg-emerald-700 hover:bg-emerald-600 text-white mt-4">
                 Zpět na recepty
@@ -1301,9 +1301,9 @@ export default function RecipeDetail() {
                   <BookOpen className="w-4 h-4 text-amber-600" />
                   <span className="text-xs font-bold text-amber-600 uppercase tracking-wider">Příběh receptu</span>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4" style={{ fontFamily: "'DM Serif Display', serif" }}>
+                <p className="text-xl font-bold text-gray-900 mb-4" style={{ fontFamily: "'DM Serif Display', serif" }}>
                   {recipe.storyTitle}
-                </h3>
+                </p>
                 <div className="space-y-3">
                   {recipe.story.map((paragraph, i) => (
                     <p key={i} className="text-sm text-gray-700 leading-relaxed">{paragraph}</p>
