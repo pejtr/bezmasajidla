@@ -28,6 +28,7 @@ import InzercePage from "./pages/InzercePage";
 import CookieConsent from "./components/CookieConsent";
 import PodminkyPage from "./pages/PodminkyPage";
 import OchranaPage from "./pages/OchranaPage";
+import KontaktPage from "./pages/KontaktPage";
 function Router() {
   useScrollToTop();
   return (
@@ -47,6 +48,7 @@ function Router() {
       <Route path="/inzerce" component={InzercePage} />
       <Route path="/podminky" component={PodminkyPage} />
       <Route path="/ochrana-soukromi" component={OchranaPage} />
+      <Route path="/kontakt" component={KontaktPage} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

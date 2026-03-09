@@ -171,3 +171,8 @@
 - [x] Přidat vizuální FAQ accordion sekci na stránku /o-nas
 - [x] Vytvořit stránku /blog s přehledem článků, thumbnaily a daty
 - [x] Vygenerovat originální AI náhledové obrázky pro všech 5 blogových článků a aktualizovat URL
+- [ ] Vytvořit tRPC endpoint pro odesílání kontaktního formuláře na petr.matej@gmail.com
+- [ ] Vytvořit stránku /kontakt s formulářem (jméno, e-mail, zpráva)
+- [ ] Přidat Kontakt do navigace (Header) a footeru
+- [x] Opravit chybějící mezery v H1 nadpisu na homepage
+- [x] Opravit nesprávný H2 nadpis "Maitrea" (zobrazuje se název restaurace místo nadpisu sekce)

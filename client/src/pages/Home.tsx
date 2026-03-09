@@ -85,9 +85,9 @@ export default function Home() {
               className="text-5xl md:text-6xl font-bold text-white leading-tight mb-4"
               style={{ fontFamily: "'DM Serif Display', serif" }}
             >
-              Najdi nejlepší
+              Najdi nejlepší{" "}
               <br />
-              <span className="text-amber-400">bezmasá jídla</span>
+              <span className="text-amber-400">bezmasá jídla</span>{" "}
               <br />
               v Praze
             </h1>
@@ -194,12 +194,12 @@ export default function Home() {
                         {restaurantOfWeek.type === 'vegan' ? 'Veganská' : restaurantOfWeek.type === 'vegetarian' ? 'Vegetariánská' : 'Vegan-friendly'}
                       </span>
                     </div>
-                    <h2
+                    <p
                       className="text-2xl sm:text-3xl font-bold text-white mb-2"
                       style={{ fontFamily: "'DM Serif Display', serif" }}
                     >
                       {restaurantOfWeek.name}
-                    </h2>
+                    </p>
                     <p className="text-emerald-200 text-sm mb-3 max-w-lg leading-relaxed">
                       &ldquo;{rev.summary}&rdquo;
                     </p>
