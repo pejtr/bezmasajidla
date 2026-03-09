@@ -153,3 +153,6 @@
 - [x] Integrovat Průvodci do navigace (Header, Footer, App.tsx routes)
 - [x] Vygenerovat AI obrázky pro průvodce "Jak začít s rostlinnou stravou"
 - [x] Napsat obsah průvodce (7+ sekcí) a přidat do guides.ts
+- [x] Přidat datovou strukturu editorialReview do Restaurant interface
+- [x] Napsat kritická hodnocení pro Střechu, KRO Kitchen a Beas Dhaba
+- [x] Implementovat sekci "Naše hodnocení" na stránce detailu restaurace

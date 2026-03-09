@@ -39,6 +39,28 @@ export interface Restaurant {
   instagramUrl?: string;
   /** Facebook page URL */
   facebookUrl?: string;
+  /** Editorial review by the Bezmasá Jídla team */
+  editorialReview?: {
+    /** Overall editorial score out of 10 */
+    score: number;
+    /** One-sentence summary of the restaurant */
+    summary: string;
+    /** Who is this restaurant best suited for */
+    bestFor: string;
+    /** The must-order dishes */
+    mustOrder: string[];
+    /** What to skip or be cautious about */
+    skip?: string;
+    /** Full editorial text (2-3 paragraphs) */
+    body: string;
+    /** Specific category scores (1-10) */
+    scores: {
+      food: number;
+      value: number;
+      atmosphere: number;
+      service: number;
+    };
+  };
 }
 
 export interface FastFoodItem {
@@ -263,6 +285,19 @@ export const restaurants: Restaurant[] = [
     hours: "Po–Pá 11:00–21:00",
     instagramUrl: "https://www.instagram.com/strecha_restaurant/",
     facebookUrl: "https://www.facebook.com/strechapraha/",
+    editorialReview: {
+      score: 8.5,
+      summary: "Sociální podnik s duvěryhodnou kuchyní a příběhem, který stojí za to podřídit.",
+      bestFor: "Pracovní obědy, vědomé stravování, návštěvníky, kteří chtějí jíst dobře a zároveň podporovat dobrou věc.",
+      mustOrder: ["Dení menu (polévka + hlavní jídlo)", "Veganská svíčková se knedlíky", "Domácí dezért dne"],
+      skip: "Večery — restaurace je otevřená jen do 21:00 a víkendy nemá vůbec. Pokud hledáte romantické místo na sobotu večer, toto není správná volba.",
+      body: `Střecha je jedním z nejzajímavějších gastro projektů v Praze — nejen pro svůj veganský jadřílk, ale především pro svůj sociální rozměr. Restaurace zaměstnává lidi bez domova a lidi po propouštění z vězení a dává jim šanci na důstojný život. Tato mise se odrazí i v atmosféře — Střecha nemá hipsterský lesk ani instagramový décor, ale má něco cennějšího: autenticitu.
+
+Kuchyně je překvapivě zděbná. Dení menu nabízí českou veganskou kuchyni — svíčková ze sejtanu, čočkové knedlíky, vegansky upravené tradiční recepty. Porce jsou vydatné, ceny jsou nejnižší v kategorii — polevá + hlavní jídlo za cenu, která v Praze 1 nemá konkurenci. Fair-trade káva je výborná a obsluha je přívětivá, i když občas trochu pomalejší — což je daní konceptu.
+
+Největší slabinou je omezená otevírací doba — jen pracovní dny do 21:00. Pro ty, kdo hledají víkendový brunch nebo večeři v sobotu, Střecha není možnost. Ale pro pravidelný pracovní oběd s dobře svedomím? Těžko něco lepšího v Praze 1 najít.`,
+      scores: { food: 8, value: 10, atmosphere: 7, service: 8 },
+    },
   },
   {
     id: "8",
@@ -565,6 +600,19 @@ export const restaurants: Restaurant[] = [
     lng: 14.4227,
     priceLevel: 1,
     hours: "Po–Pá 11:00–21:00, So–Ne 12:00–20:00",
+    editorialReview: {
+      score: 8.0,
+      summary: "Nejlepší poměr cena/kvalita v pražské veganské scéně — autentická indická kuchyně bez kompromisů.",
+      bestFor: "Začátečníky v rostlinné stravě, studenty, turisty, každodenní obědy za rozumné peníze.",
+      mustOrder: ["Dal (smazená čočka s kořením)", "Saag (kari ze špenátu)", "Chana masala (cizrna v rajské omáčce)", "Svěží chapati"],
+      skip: "Pokud očekáváte fine dining atmosféru nebo tiché prostředí — Beas Dhaba je různé, hlučné a vždy plné. To je součást jeho kouzla, ale ne každému to vyhovuje.",
+      body: `Beas Dhaba je fenominém pražské veganské scény. Tento indický bufetový řetězec má v Praze přes 20 poboček a každá z nich funguje na stejném principu: vyberte si z bufetu, zaplateť podle váhy, jezte. Jednoduchošší a efektivnější systém v Praze nenajdete.
+
+Kuchyně je autenticky indická — žádné kompromisy pro české patro. Dhal, saag, chana masala, basmati rýže, čerstvé chapati — každý den jiné kombinace, vždy čerstvé a vždy chutné. Ceny jsou nejnižší v kategorii — sytný oběd za 150–200 Kč je v Praze 1 skoro zzázrak. Vladislavovská pobočka je jedná z nejlepších — větší prostor, lepší atmosféra a déle otevřeno než většina ostatních poboček.
+
+Beas Dhaba není místo pro romantické večeře ani pro obchodní schůzky. Je to místo pro lidi, kteří chtějí jíst dobře, rychle a levně. A v tom je nepřekonatelné. Pokud jste v Praze poprvé a chcete ochutnat veganskou kuchyni bez rizika, Beas Dhaba je vaše nejbezpečnější sazba.`,
+      scores: { food: 8, value: 10, atmosphere: 6, service: 7 },
+    },
   },
   {
     id: "kro2",
@@ -1526,6 +1574,19 @@ export const restaurants: Restaurant[] = [
     hours: "Po–Pá 11:00–22:00, So–Ne 11:00–22:00",
     instagramUrl: "https://www.instagram.com/kro_kitchen/",
     facebookUrl: "https://www.facebook.com/krokitchen/",
+    editorialReview: {
+      score: 8.8,
+      summary: "Nejlepší vegan-friendly bistro v Praze — domácí tempeh a sezónní kuchyně na skutečně vysoké úrovni.",
+      bestFor: "Foodie, kteří chtějí více než jen salát, přátele s míchanými stravovacími preferencemi, vědomé obědy a večeře.",
+      mustOrder: ["Tempeh combo (domácí čočkový tempeh, jasmaniná rýže, kimchi)", "Sezónní veganský salát", "Pecřené mrkve s kale chimichurri"],
+      skip: "Pokud hledáte čistě veganskou restauraci — KRO Kitchen je vegan-friendly, ne veganské. Menu vždy obsahuje i masové položky. Vegetariánské a veganské možnosti jsou však vždy jasně označené.",
+      body: `KRO Kitchen je důkazem, že vegan-friendly restaurace může být stejně vzrušující jako čistě veganské místo — nebo dokonce vzrušující více. Jejich domácí tempeh z čočky a hrachu je jedním z nejlepších veganských produktů, které v Praze ochutnaté. Fermentovaný, oříškový, s hlubokou chutí — tempeh combo je jídlo, které vás přesvědčí, že rostlinná strava není kompromis.
+
+Kuchyně je sezónní a kreativní. Menu se mění každdý týden a vždy obsahuje více než jen "veganské možnosti" — veganské a vegetariánské pokrmy jsou plnohodnotné hlavní jídla, ne přílohy. Atmosféra je moderní a příjemná, obsluha znalá a ochotná poradit. Ceny jsou vyšší než v Beas Dhaba, ale odpovídají kvalitě surovin a kreativitě kuchyně.
+
+Jedinou výhradou je, že KRO Kitchen není čistě veganská restaurace — menu vždy obsahuje i masové položky. Pro některé vegany může být nepříjemné jíst v restauraci, kde se maso připravuje ve stejné kuchyni. Pro většinu však KRO Kitchen představuje ideální místo pro oběd s kolegy nebo přáteli s různými stravovacími preferencemi.`,
+      scores: { food: 9, value: 7, atmosphere: 9, service: 9 },
+    },
     fastFoodItems: [
       { name: "Tempeh combo", description: "Domácí čočkový tempeh, jasmanová rýže, kimchi, míchaný salát, vegetable demi glace. 100% veganské.", isVegan: true, price: "265 Kč" },
       { name: "Chickpea & lentil tempeh", description: "Pečené mrkve, kale chimichurri, labneh. Vegetariánské.", isVegan: false, price: "265 Kč" },

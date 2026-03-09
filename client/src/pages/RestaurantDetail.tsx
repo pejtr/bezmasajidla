@@ -4,7 +4,7 @@
 // ============================================================
 
 import { useParams, Link } from "wouter";
-import { MapPin, Phone, Globe, Clock, Star, Crown, ArrowLeft, ExternalLink, Share2, Navigation, Footprints, ShoppingBag, X, ChevronLeft, ChevronRight, Maximize2 } from "lucide-react";
+import { MapPin, Phone, Globe, Clock, Star, Crown, ArrowLeft, ExternalLink, Share2, Navigation, Footprints, ShoppingBag, X, ChevronLeft, ChevronRight, Maximize2, Award, ThumbsUp, ThumbsDown, CheckCircle2 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -573,6 +573,103 @@ export default function RestaurantDetail() {
                       </div>
                     </div>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* Editorial Review — "Naše hodnocení" */}
+            {restaurant.editorialReview && (
+              <div className="bg-white rounded-xl border border-emerald-200 overflow-hidden mb-6">
+                {/* Header */}
+                <div className="bg-gradient-to-r from-emerald-700 to-emerald-800 px-6 py-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Award className="w-5 h-5 text-amber-400" />
+                    <h3 className="text-base font-bold text-white" style={{ fontFamily: "'DM Serif Display', serif" }}>
+                      Naše hodnocení
+                    </h3>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-emerald-200">Celkové skóre</span>
+                    <span className="text-2xl font-bold text-amber-400" style={{ fontFamily: "'DM Serif Display', serif" }}>
+                      {restaurant.editorialReview.score.toFixed(1)}
+                    </span>
+                    <span className="text-emerald-300 text-sm">/10</span>
+                  </div>
+                </div>
+
+                <div className="p-6">
+                  {/* Summary */}
+                  <p className="text-gray-700 font-medium italic mb-5 text-base leading-relaxed border-l-4 border-emerald-400 pl-4">
+                    „{restaurant.editorialReview.summary}“
+                  </p>
+
+                  {/* Score bars */}
+                  <div className="grid grid-cols-2 gap-3 mb-6">
+                    {([
+                      { label: "Kuchyně", key: "food" as const, color: "bg-emerald-500" },
+                      { label: "Poměr C/K", key: "value" as const, color: "bg-amber-500" },
+                      { label: "Atmosféra", key: "atmosphere" as const, color: "bg-purple-500" },
+                      { label: "Obsluha", key: "service" as const, color: "bg-blue-500" },
+                    ] as const).map(({ label, key, color }) => (
+                      <div key={key}>
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-xs text-gray-500">{label}</span>
+                          <span className="text-xs font-bold text-gray-800">{restaurant.editorialReview!.scores[key]}/10</span>
+                        </div>
+                        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full rounded-full ${color} transition-all duration-500`}
+                            style={{ width: `${restaurant.editorialReview!.scores[key] * 10}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Body text */}
+                  <div className="text-gray-600 text-sm leading-relaxed mb-5 space-y-3">
+                    {restaurant.editorialReview.body.split('\n\n').map((para, i) => (
+                      <p key={i}>{para}</p>
+                    ))}
+                  </div>
+
+                  {/* Best for + Must order */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                    <div className="bg-emerald-50 rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <ThumbsUp className="w-4 h-4 text-emerald-600" />
+                        <span className="text-xs font-bold text-emerald-700 uppercase tracking-wide">Ideální pro</span>
+                      </div>
+                      <p className="text-sm text-gray-700 leading-snug">{restaurant.editorialReview.bestFor}</p>
+                    </div>
+                    <div className="bg-amber-50 rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <CheckCircle2 className="w-4 h-4 text-amber-600" />
+                        <span className="text-xs font-bold text-amber-700 uppercase tracking-wide">Určitě objednejte</span>
+                      </div>
+                      <ul className="space-y-1">
+                        {restaurant.editorialReview.mustOrder.map((dish, i) => (
+                          <li key={i} className="text-sm text-gray-700 flex items-start gap-1.5">
+                            <span className="text-amber-500 mt-0.5 flex-shrink-0">•</span>
+                            {dish}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* Skip */}
+                  {restaurant.editorialReview.skip && (
+                    <div className="bg-red-50 rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <ThumbsDown className="w-4 h-4 text-red-500" />
+                        <span className="text-xs font-bold text-red-600 uppercase tracking-wide">Mějte na paměti</span>
+                      </div>
+                      <p className="text-sm text-gray-700 leading-snug">{restaurant.editorialReview.skip}</p>
+                    </div>
+                  )}
+
+                  <p className="text-xs text-gray-400 mt-4 text-right">Hodnocení redakce Bezmasá Jídla</p>
                 </div>
               </div>
             )}
