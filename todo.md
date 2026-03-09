@@ -164,3 +164,6 @@
 - [x] Vygenerovat sitemap.xml a aktualizovat robots.txt
 - [x] Přidat GDPR cookie consent banner pro první návštěvníky
 - [x] Implementovat JSON-LD structured data (Restaurant schema) na stránkách detailu restaurací
+- [x] Přidat dateModified do JSON-LD pro restaurace a recepty
+- [x] Implementovat FAQPage JSON-LD na stránce /o-nas
+- [x] Rozšířit OG a Twitter Card meta tagy pro stránky receptů

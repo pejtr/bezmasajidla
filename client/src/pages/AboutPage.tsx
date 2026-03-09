@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 import { Heart, MapPin, Utensils, Users, Mail, Instagram, Globe, Leaf } from "lucide-react";
 import { toast } from "sonner";
 import SEOHead from "@/components/SEOHead";
-import { OrganizationJsonLd } from "@/components/JsonLd";
+import { OrganizationJsonLd, FAQPageJsonLd } from "@/components/JsonLd";
 
 const values = [
   {
@@ -49,6 +49,16 @@ export default function AboutPage() {
         ogUrl="https://www.bezmasajidla.cz/o-nas"
       />
       <OrganizationJsonLd />
+      <FAQPageJsonLd faqs={[
+        { question: "Jak přidat svou restauraci na bezmasajidla.cz?", answer: "Kontaktujte nás na info@bezmasajidla.cz s názvem, adresou a popisem vaší restaurace. Základní profil je zdarma. Prémiový profil s rozšířenými funkcemi je k dispozici za měsíční poplatek." },
+        { question: "Co znamená označení 'vegan-friendly'?", answer: "Vegan-friendly restaurace nabízejí alespoň několik veganských pokrmů, i když nejsou výhradně veganské. Mohou podávat i masová jídla, ale vždy mají kvalitní bezmasé alternativy." },
+        { question: "Jsou všechny restaurace v adresáři osobně ověřeny?", answer: "Ano, každou restauraci v našem adresáři jsme osobně navštívili nebo ověřili na základě zpětné vazby komunity. Usilujeme o aktuální a přesné informace." },
+        { question: "Jak funguje hodnocení restaurací?", answer: "Celkové hodnocení (1–5 hvězdiček) vychází z uživatelských recenzí a naší editorské analýzy. Editorské skóre (1–10) hodnotí kuchyni, poměr ceny a kvality, atmosféru a obsluhu." },
+        { question: "Mohu na webu najít i recepty?", answer: "Ano, sekce VEG Recepty obsahuje desítky vegetariánských a veganských receptů s makro živinami, dobou přípravy a fotografiemi. Recepty lze filtrovat podle kategorie, obtížnosti a dietních preferencí." },
+        { question: "Jak se mohu dostat do restaurace přes Wolt?", answer: "U restaurací, které nabízejí rozvoz přes Wolt, najdete přímý odkaz na jejich Wolt stránku přímo na detailu restaurace." },
+        { question: "Jsou na webu i fastfoodové řetězce?", answer: "Ano, v sekci Fastfoodové řetězce najdete přehled vegetariánských a veganských možností v populárních fastfoodech jako McDonald's, KFC nebo Burger King." },
+        { question: "Jak mohu inzerovat na bezmasajidla.cz?", answer: "Nabízíme různé formáty inzerce — od bannerů přes sponzorované profily restaurací až po newsletter. Pro více informací a ceník navštivte stránku /inzerce nebo nás kontaktujte na info@bezmasajidla.cz." },
+      ]} />
       <Header />
 
       {/* Hero */}

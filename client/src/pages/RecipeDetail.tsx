@@ -1184,10 +1184,20 @@ export default function RecipeDetail() {
     <div className="min-h-screen flex flex-col bg-[#F8FAF6]">
       <SEOHead
         title={`${recipe.title} — Bezmasý recept`}
-        description={`${recipe.description.slice(0, 150)}. ${recipe.isVegan ? "Veganský" : "Vegetariánský"} recept, doba přípravy ${recipe.prepTime + recipe.cookTime} min, ${recipe.servings} porce.`}
+        description={`${recipe.description.slice(0, 150)}. ${recipe.isVegan ? "Veganšký" : "Vegetariánský"} recept, doba přípravy ${recipe.prepTime + recipe.cookTime} min, ${recipe.servings} porce.`}
         ogImage={recipe.images?.[0]?.url || recipe.image}
-        ogType="article"
+        ogType="recipe"
         ogUrl={`https://www.bezmasajidla.cz/recepty/${recipe.slug}`}
+        recipeMeta={{
+          prepTime: `PT${recipe.prepTime}M`,
+          cookTime: `PT${recipe.cookTime}M`,
+          recipeYield: `${recipe.servings} porcí`,
+          recipeCategory: recipe.category,
+          calories: recipe.macros ? `${recipe.macros.calories} calories` : undefined,
+          tags: [recipe.category, recipe.isVegan ? "vegan" : "vegetariánský", "bezmasý recept", ...recipe.tags.slice(0, 3)],
+          datePublished: "2025-01-01",
+          dateModified: new Date().toISOString().split("T")[0],
+        }}
       />
       <Header />
 
