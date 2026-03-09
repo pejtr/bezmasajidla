@@ -144,3 +144,6 @@
 - [x] Přidat editorialReview pro Maitrea, Lehká Hlava, Shromaždiště, Chutnej
 - [x] Implementovat donut graf makro živin na stránce detailu receptu
 - [x] Implementovat fullscreen lightbox pro fotogalerie restaurací
+- [x] Přidat editorialReview pro Pastva, Linh, Palo Verde, Vegan's Prague
+- [x] Kalkulátor porcí s přepočtem makro živin na stránce detailu receptu
+- [x] Banner "Restaurace týdne" na homepage s editoriálním skóre a citátem

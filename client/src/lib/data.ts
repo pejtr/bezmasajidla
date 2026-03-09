@@ -281,6 +281,19 @@ Chutnej je místo pro speciální příležitosti i pro pravidelné brunchové v
     lng: 14.4261,
     priceLevel: 2,
     hours: "Po–Pá 8:00–22:00, So–Ne 9:00–22:00",
+    editorialReview: {
+      score: 8.8,
+      summary: "Nejlepší veganské bistro v Novém Městě — organická vína, domácí těstoviny a croissanty, které vás přesvědčí, že veganské snídě může být skutečný luxus.",
+      bestFor: "Brunch a snídě nadšence, milovníky organických vín, přátele hledající klidné místo pro pracovní oběd.",
+      mustOrder: ["Domácí croissant", "Houbové ravioli", "Organické víno dne", "Fusion miska s quinoou"],
+      skip: "Palo Verde je primárně bistro, ne restaurace — portály jsou menší a místo může být přeplnené v čas oběda. Rezervace se nedoplňuje, ale přičňte se včas.",
+      body: `Palo Verde je jednou z nejkrásnějších veganských kavaren v Praze. Světlý interieur s betonými stěnami, velké okna a policičky plné organických vín — toto je místo, kde se chcete zastavit na déle, ne jen na rychlý oběd. Domácí croissanty a pekivo jsou jedny z nejlepších v Praze.
+
+Kuchyně je fusion — kombinace španělských tapas, italských těstovin a asijských fusion misek. Houbové ravioli jsou jednou z nejlepších past v Praze — čerstvě vyrobené, s bohatou omáčkou. Beyond burger je kvalitní a dobrě připravený. Organické víno je vynikající a výběr je jeden z nejlepších veganských vínoték v Praze.
+
+Palo Verde je ideální pro pracovní obědy, brunch o víkendu nebo klidný večer s dobrym vínem. Ceny jsou přiměřené pro kvalitu, která se nabídí.`,
+      scores: { food: 9, value: 8, atmosphere: 9, service: 8 },
+    },
   },
   {
     id: "7",
@@ -353,6 +366,19 @@ Chutnej je místo pro speciální příležitosti i pro pravidelné brunchové v
     lng: 14.4401,
     priceLevel: 2,
     hours: "Po–Ne 11:00–22:00",
+    editorialReview: {
+      score: 8.7,
+      summary: "Pohadčkový interieur a veganská vietnamská kuchyně — Linh je místo, které vás přesvědčí, že veganské pho může být stejně dobré jako to tradilní.",
+      bestFor: "Milovníky asijské kuchyně, přátele hledající něco neobyčejného, rodiny s dětmi, turisty hledající veganské pho.",
+      mustOrder: ["Veganské pho", "Banh mi s tofu", "Raw čokoladóvý dort", "Pad thai s tempeh"],
+      skip: "Linh je velmi populární a o víkendu může být čekací doba delší. Rezervujte si stůl předem, zejména pro větší skupiny.",
+      body: `Linh je jednou z nejkrásnějších veganských restaurací v Praze — pohadčkový interieur s růzovými květinami, svícínky a jemným osvětlením vás přenese do jiného světa. Toto je místo pro speciální příležitosti i pro běžný oběd — atmosféra je vždy výjičná.
+
+Kuchyně je veganská vietnamská — a to znamená pho, banh mi, pad thai a burgery, vše bez masa. Veganské pho je jednou z nejlepších v Praze — bohatý vývar, čerstvé bylinky a dokonale připravené nudle. Raw dorty jsou jedny z nejlepších v Praze — čokoladóvý dort je absolutní must-try.
+
+Linh je místo, které dokazuje, že veganská kuchyně může být stejně dobrá jako ta tradilní — nebo lepší. Ceny jsou přiměřené a obsluha je příjemná. Pokud jste v Praze a hledáte veganské pho, Linh je vaší volbou.`,
+      scores: { food: 9, value: 8, atmosphere: 10, service: 8 },
+    },
   },
   {
     id: "10",
@@ -375,6 +401,19 @@ Chutnej je místo pro speciální příležitosti i pro pravidelné brunchové v
     lng: 14.4001,
     priceLevel: 2,
     hours: "Po–Ne 11:00–21:00",
+    editorialReview: {
+      score: 8.5,
+      summary: "Veganská restaurace v budově z 16. století s terasou a výhledy na Pražský hrad — nejlepší veganské místo na Malé Straně.",
+      bestFor: "Turisty hledající veganské jídlo blízko Pražského hradu, milovníky raw dezertů, přátele s mixenými preferencemi.",
+      mustOrder: ["Veganský guláš", "Raw čokoladóvý dort", "Cuketové lasagne", "Sójové latte"],
+      skip: "Turistická poloha značně zvyšuje ceny. Pokud hledáte nejlepší poměr cena/kvalita, existují lepší volby. Ale za výhledy a atmosféru to stojí.",
+      body: `Vegan's Prague je jednou z nejstarších veganských restaurací v Praze — od roku 2016. Budova z 16. století na Nerudově ulici, terasa s výhledy na Pražský hrad a interieur, který kombinuje historické prvky s moderním veganským konceptem. Toto je místo, kde se turistická Praha setkává s veganským životním stylem.
+
+Kuchyně je česká a mezinárodní — veganský guláš, cuketové lasagne, bruschetta a raw dezerty. Veganský guláš je jednou z nejlepších veganských verzí tohoto klasického českého pokrmu v Praze. Raw čokoladóvý dort je absolutní must-try — bohatý, kremový a bez kompromisů.
+
+Vegan's Prague je ideální pro turisty, kteří hledají veganské jídlo blízko Pražského hradu. Ceny jsou vyšší než jinde, ale za výhledy a atmosféru to stojí. Pokud máte jen jeden den v Praze a hledáte veganské jídlo s výhledy, Vegan's Prague je vaší volbou.`,
+      scores: { food: 8, value: 7, atmosphere: 10, service: 8 },
+    },
   },
   {
     id: "11",
@@ -437,6 +476,19 @@ Chutnej je místo pro speciální příležitosti i pro pravidelné brunchové v
     lng: 14.4461,
     priceLevel: 2,
     hours: "Út–Ne 12:00–22:00",
+    editorialReview: {
+      score: 8.6,
+      summary: "Nejlepší veganská restaurace na Vinohradech — sezónní kuchyně z lokálních farm a klidná atmosféra, která vás přiměje vrátit se znovu.",
+      bestFor: "Milovníky lokální a sezónní kuchyně, přátele hledající klidný oběd nebo večeři, veganské nadšence hledající autentické místo.",
+      mustOrder: ["Sezónní rizoto", "Polevá dne z lokálních surovin", "Domácí dezert", "Veganský burger dne"],
+      skip: "Pastva je zavřená v pondělí — nezapomeňte zkontrolovat otevírací dobu před návštěvou. Menu se mění často, takže konkrétní pokrmy nemusí být vždy k dispozici.",
+      body: `Pastva je jednou z nejlepších veganských restaurací na Vinohradech — a to je vysoká laťka, protože Vinohrady jsou domovem několika výjičných veganských podniků. Interieur je jednoduchý a čistý, atmosféra klidná a příjemná. Toto je místo, kde se jídlo vychutnává, ne konzumuje.
+
+Kuchyně je sezónní a lokální — suroviny pocházejí z lokálních farm a menu se mění podle ročního období. Rizoto je jednou z nejlepších veganských verzí tohoto pokrmu v Praze — kremové, bohaté a s dokonalou texturou. Polevá dne je vždy čerstvá a plnohodnotná.
+
+Pastva je místo, které se vrací k základům — dobře připravené jídlo z kvalitních surovin v příjemném prostředí. Ceny jsou přiměřené a obsluha příjemná. Pokud jste na Vinohradech a hledáte veganské jídlo bez zbytečného hlupu, Pastva je vaší volbou.`,
+      scores: { food: 9, value: 8, atmosphere: 8, service: 8 },
+    },
   },
   {
     id: "14",

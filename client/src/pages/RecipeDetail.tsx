@@ -751,6 +751,146 @@ function SimilarRecipesSidebar({ currentRecipe }: { currentRecipe: Recipe }) {
   );
 }
 
+// ── MacroPanel with Serving Calculator ───────────────────────────────────────────────────
+function MacroPanel({ macros, defaultServings }: { macros: NonNullable<import('@/lib/data').Recipe['macros']>; defaultServings: number }) {
+  const [servings, setServings] = useState(defaultServings);
+  const ratio = servings / defaultServings;
+
+  const scale = (v: number) => Math.round(v * ratio * 10) / 10;
+
+  const m = {
+    calories: Math.round(macros.calories * ratio),
+    protein: scale(macros.protein),
+    carbs: scale(macros.carbs),
+    fat: scale(macros.fat),
+    fiber: scale(macros.fiber),
+  };
+
+  const totalCals = m.protein * 4 + m.carbs * 4 + m.fat * 9;
+  const proteinPct = totalCals > 0 ? (m.protein * 4 / totalCals) : 0.33;
+  const carbsPct = totalCals > 0 ? (m.carbs * 4 / totalCals) : 0.34;
+  const fatPct = totalCals > 0 ? (m.fat * 9 / totalCals) : 0.33;
+
+  const r = 46; const cx = 60; const cy = 60;
+  const circ = 2 * Math.PI * r;
+  let offset = 0;
+  const slices = [
+    { pct: proteinPct, color: "#10b981" },
+    { pct: carbsPct, color: "#f59e0b" },
+    { pct: fatPct, color: "#6366f1" },
+  ];
+
+  return (
+    <div className="bg-white rounded-xl border border-emerald-100 p-6 mb-6">
+      {/* Header row */}
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
+        <div className="flex items-center gap-2">
+          <Flame className="w-4 h-4 text-orange-500" />
+          <h2 className="text-lg font-bold text-gray-900" style={{ fontFamily: "'DM Serif Display', serif" }}>
+            Nutriční hodnoty
+          </h2>
+        </div>
+        {/* Serving size picker */}
+        <div className="flex items-center gap-2">
+          <Users className="w-4 h-4 text-emerald-600" />
+          <span className="text-sm text-gray-500">Počet porcí:</span>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setServings(s => Math.max(1, s - 1))}
+              className="w-7 h-7 rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold text-sm flex items-center justify-center transition-colors"
+              aria-label="Méně porcí"
+            >−</button>
+            <span className="w-8 text-center font-bold text-gray-900 text-sm">{servings}</span>
+            <button
+              onClick={() => setServings(s => Math.min(20, s + 1))}
+              className="w-7 h-7 rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold text-sm flex items-center justify-center transition-colors"
+              aria-label="Více porcí"
+            >+</button>
+          </div>
+          {/* Quick select buttons */}
+          <div className="hidden sm:flex gap-1 ml-1">
+            {[1, 2, 3, 4, 6, 8].filter(o => o !== servings).slice(0, 4).map(o => (
+              <button
+                key={o}
+                onClick={() => setServings(o)}
+                className="text-xs px-2 py-0.5 rounded-full border border-emerald-200 text-emerald-600 hover:bg-emerald-50 transition-colors"
+              >{o}x</button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {servings !== defaultServings && (
+        <div className="mb-4 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 flex items-center gap-2">
+          <span className="font-semibold">⚠️</span>
+          Hodnoty jsou přepočteny pro {servings} {servings === 1 ? "porci" : servings < 5 ? "porce" : "porcí"}
+          {" — "}
+          <button onClick={() => setServings(defaultServings)} className="underline hover:no-underline">
+            Obnovit na {defaultServings} {defaultServings === 1 ? "porci" : defaultServings < 5 ? "porce" : "porcí"}
+          </button>
+        </div>
+      )}
+
+      <div className="flex flex-col sm:flex-row gap-6 items-center">
+        {/* Donut chart SVG */}
+        <div className="relative flex-shrink-0">
+          <svg viewBox="0 0 120 120" className="w-32 h-32 -rotate-90">
+            {slices.map((s, i) => {
+              const dash = s.pct * circ;
+              const gap = circ - dash;
+              const el = (
+                <circle
+                  key={i}
+                  cx={cx} cy={cy} r={r}
+                  fill="none"
+                  stroke={s.color}
+                  strokeWidth="18"
+                  strokeDasharray={`${dash} ${gap}`}
+                  strokeDashoffset={-offset}
+                  style={{ transition: "stroke-dasharray 0.4s ease" }}
+                />
+              );
+              offset += dash;
+              return el;
+            })}
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className="text-2xl font-bold text-gray-900">{m.calories}</span>
+            <span className="text-[10px] text-gray-400 uppercase tracking-wide">kcal</span>
+          </div>
+        </div>
+
+        {/* Macro bars */}
+        <div className="flex-1 w-full space-y-3">
+          {[
+            { label: "Bílkoviny", value: m.protein, unit: "g", color: "bg-emerald-500", dotColor: "bg-emerald-500", max: Math.max(m.protein * 1.5, 10) },
+            { label: "Sacharidy", value: m.carbs, unit: "g", color: "bg-amber-400", dotColor: "bg-amber-400", max: Math.max(m.carbs * 1.5, 10) },
+            { label: "Tuky", value: m.fat, unit: "g", color: "bg-indigo-400", dotColor: "bg-indigo-400", max: Math.max(m.fat * 1.5, 10) },
+            { label: "Vláknina", value: m.fiber, unit: "g", color: "bg-teal-400", dotColor: "bg-teal-400", max: Math.max(m.fiber * 1.5, 5) },
+          ].map((macro) => (
+            <div key={macro.label}>
+              <div className="flex justify-between text-xs mb-1">
+                <span className="flex items-center gap-1.5 text-gray-600 font-medium">
+                  <span className={`w-2 h-2 rounded-full ${macro.dotColor}`} />
+                  {macro.label}
+                </span>
+                <span className="font-bold text-gray-900">{macro.value} {macro.unit}</span>
+              </div>
+              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div
+                  className={`h-full rounded-full ${macro.color} transition-all duration-300`}
+                  style={{ width: `${Math.min(100, (macro.value / macro.max) * 100)}%` }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 // ── Image Gallery Component ─────────────────────────────────
 function ImageGallery({ images, title }: { images: { url: string; alt: string }[]; title: string }) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -956,81 +1096,9 @@ export default function RecipeDetail() {
               </div>
             </div>
 
-            {/* ── MACRO NUTRIENTS PANEL ── */}
+            {/* ── MACRO NUTRIENTS PANEL WITH SERVING CALCULATOR ── */}
             {recipe.macros && (
-              <div className="bg-white rounded-xl border border-emerald-100 p-6 mb-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <Flame className="w-4 h-4 text-orange-500" />
-                  <h2 className="text-lg font-bold text-gray-900" style={{ fontFamily: "'DM Serif Display', serif" }}>
-                    Nutriční hodnoty <span className="text-sm font-normal text-gray-400">(na 1 porci)</span>
-                  </h2>
-                </div>
-                <div className="flex flex-col sm:flex-row gap-6 items-center">
-                  {/* Donut chart SVG */}
-                  <div className="relative flex-shrink-0">
-                    <svg viewBox="0 0 120 120" className="w-32 h-32 -rotate-90">
-                      {(() => {
-                        const m = recipe.macros;
-                        const totalCals = m.protein * 4 + m.carbs * 4 + m.fat * 9;
-                        const proteinPct = totalCals > 0 ? (m.protein * 4 / totalCals) : 0.33;
-                        const carbsPct = totalCals > 0 ? (m.carbs * 4 / totalCals) : 0.34;
-                        const fatPct = totalCals > 0 ? (m.fat * 9 / totalCals) : 0.33;
-                        const r = 46; const cx = 60; const cy = 60;
-                        const circ = 2 * Math.PI * r;
-                        let offset = 0;
-                        const slices = [
-                          { pct: proteinPct, color: "#10b981" },
-                          { pct: carbsPct, color: "#f59e0b" },
-                          { pct: fatPct, color: "#6366f1" },
-                        ];
-                        return slices.map((s, i) => {
-                          const dash = s.pct * circ;
-                          const gap = circ - dash;
-                          const el = (
-                            <circle
-                              key={i}
-                              cx={cx} cy={cy} r={r}
-                              fill="none"
-                              stroke={s.color}
-                              strokeWidth="18"
-                              strokeDasharray={`${dash} ${gap}`}
-                              strokeDashoffset={-offset}
-                            />
-                          );
-                          offset += dash;
-                          return el;
-                        });
-                      })()}
-                    </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-2xl font-bold text-gray-900">{recipe.macros.calories}</span>
-                      <span className="text-[10px] text-gray-400 uppercase tracking-wide">kcal</span>
-                    </div>
-                  </div>
-                  {/* Macro bars */}
-                  <div className="flex-1 w-full space-y-3">
-                    {[
-                      { label: "Bílkoviny", value: recipe.macros.protein, unit: "g", color: "bg-emerald-500", max: 50 },
-                      { label: "Sacharidy", value: recipe.macros.carbs, unit: "g", color: "bg-amber-400", max: 100 },
-                      { label: "Tuky", value: recipe.macros.fat, unit: "g", color: "bg-indigo-400", max: 50 },
-                      { label: "Vláknina", value: recipe.macros.fiber, unit: "g", color: "bg-teal-400", max: 30 },
-                    ].map((macro) => (
-                      <div key={macro.label}>
-                        <div className="flex justify-between text-xs mb-1">
-                          <span className="text-gray-600 font-medium">{macro.label}</span>
-                          <span className="font-bold text-gray-900">{macro.value} {macro.unit}</span>
-                        </div>
-                        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                          <div
-                            className={`h-full rounded-full ${macro.color}`}
-                            style={{ width: `${Math.min(100, (macro.value / macro.max) * 100)}%` }}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              <MacroPanel macros={recipe.macros} defaultServings={recipe.servings} />
             )}
 
             {/* ── PŘÍBĚH RECEPTU ── */}

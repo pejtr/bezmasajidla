@@ -163,6 +163,91 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── RESTAURACE TÝDNE ── */}
+      {(() => {
+        // Pick the restaurant with the highest editorial score
+        const restaurantOfWeek = [...restaurants]
+          .filter(r => r.editorialReview)
+          .sort((a, b) => (b.editorialReview!.score - a.editorialReview!.score))[0];
+        if (!restaurantOfWeek || !restaurantOfWeek.editorialReview) return null;
+        const rev = restaurantOfWeek.editorialReview;
+        return (
+          <section className="py-6 container">
+            <Link href={`/restaurace/${restaurantOfWeek.slug}`}>
+              <div className="relative rounded-2xl overflow-hidden group cursor-pointer shadow-lg hover:shadow-xl transition-shadow duration-300">
+                {/* Background image */}
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                  style={{ backgroundImage: `url(${restaurantOfWeek.image})` }}
+                />
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-950/90 via-emerald-900/70 to-transparent" />
+
+                <div className="relative flex flex-col sm:flex-row items-start sm:items-center gap-4 p-6 sm:p-8">
+                  {/* Left: badge + content */}
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="bg-amber-400 text-amber-900 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                        ★ Restaurace týdne
+                      </span>
+                      <span className="text-emerald-300 text-xs">
+                        {restaurantOfWeek.type === 'vegan' ? 'Veganská' : restaurantOfWeek.type === 'vegetarian' ? 'Vegetariánská' : 'Vegan-friendly'}
+                      </span>
+                    </div>
+                    <h2
+                      className="text-2xl sm:text-3xl font-bold text-white mb-2"
+                      style={{ fontFamily: "'DM Serif Display', serif" }}
+                    >
+                      {restaurantOfWeek.name}
+                    </h2>
+                    <p className="text-emerald-200 text-sm mb-3 max-w-lg leading-relaxed">
+                      &ldquo;{rev.summary}&rdquo;
+                    </p>
+                    <div className="flex items-center gap-3 text-xs text-emerald-300">
+                      <span>{restaurantOfWeek.address}</span>
+                      <span>·</span>
+                      <span>{restaurantOfWeek.hours}</span>
+                    </div>
+                  </div>
+
+                  {/* Right: score badge */}
+                  <div className="flex-shrink-0 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 text-center min-w-[80px]">
+                    <div
+                      className="text-4xl font-bold text-amber-400"
+                      style={{ fontFamily: "'DM Serif Display', serif" }}
+                    >
+                      {rev.score.toFixed(1)}
+                    </div>
+                    <div className="text-[10px] text-emerald-300 uppercase tracking-wider mt-1">Naše skore</div>
+                    <div className="flex justify-center gap-0.5 mt-2">
+                      {[1,2,3,4,5].map(i => (
+                        <Star
+                          key={i}
+                          className={`w-3 h-3 ${i <= Math.round(rev.score / 2) ? 'text-amber-400 fill-amber-400' : 'text-emerald-600'}`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Must-order pills */}
+                <div className="relative px-6 sm:px-8 pb-5 flex flex-wrap gap-2">
+                  <span className="text-xs text-emerald-400 font-medium mr-1">Určitě objednejte:</span>
+                  {rev.mustOrder.slice(0, 3).map(item => (
+                    <span key={item} className="text-xs bg-white/10 text-white px-2.5 py-1 rounded-full border border-white/20">
+                      {item}
+                    </span>
+                  ))}
+                  <span className="text-xs text-emerald-300 self-center ml-auto flex items-center gap-1">
+                    Zobrazit recenzi <ArrowRight className="w-3 h-3" />
+                  </span>
+                </div>
+              </div>
+            </Link>
+          </section>
+        );
+      })()}
+
       {/* ── TOP RESTAURANTS ── */}
       <section className="py-8 container">
         <div className="flex items-center justify-between mb-6">
