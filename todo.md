@@ -177,3 +177,7 @@
 - [x] Opravit chybějící mezery v H1 nadpisu na homepage
 - [x] Opravit nesprávný H2 nadpis "Maitrea" (zobrazuje se název restaurace místo nadpisu sekce)
 - [x] Audit a oprava hierarchie nadpisů na všech stránkách (H1/H2/H3 — žádné entity jako H2)
+- [x] Přidat pole instagramUrl a facebookUrl do datové struktury Restaurant a zobrazit ikony na detailní stránce (již bylo implementováno, přidány URL pro 9 restaurací)
+- [x] Napsat 5 nových SEO blogovych článků (veganský fast food, bezlepkové, zdravé obědy, veganské pizzerie, vánoční trh)
+- [x] Vygenerovat AI náhledové obrázky pro nových 5 blogovych článků
+- [x] Nahrát blog obrázky na CDN a aktualizovat URL v blogData.ts

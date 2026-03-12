@@ -297,6 +297,285 @@ Tradiční houskové knedlíky jsou ve své základní formě veganské — obsa
 
 Pokud vás česká veganská kuchyně zaujala natolik, že ji chcete vyzkoušet doma, na naší platformě najdete desítky ověřených receptů. Naši uživatelé sdílejí vlastní verze tradičních pokrmů a hodnotí je — takže vždy víte, které recepty skutečně fungují.`,
   },
+  {
+    id: "6",
+    slug: "vegansky-fast-food-praha-kde-jist-rychle-a-dobre",
+    title: "Veganský fast food v Praze: kde jíst rychle a dobře v roce 2026",
+    metaDescription: "Veganský fast food v Praze 2026 — přehled nejlepších míst pro rychlé veganské jídlo: burgery, wrap, falafel, sushi a indické bufety. Ceny od 90 Kč.",
+    category: "Fast Food",
+    tags: ["vegan", "fast food", "Praha", "rychlé jídlo", "burger", "falafel", "bufet"],
+    author: "Bezmasájídla.cz",
+    publishedAt: "2026-03-10",
+    readingTimeMin: 6,
+    coverImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-fast-food-vegan-VDP4UHZkDjJMTyxjf2vJfv.webp",
+    coverImageAlt: "Veganský burger a hranolky na dřevěném prkně",
+    excerpt: "Veganský fast food už není oxymorón. Praha nabízejí deseti míst, kde se najdete rychle, levně a bez masa — od indických bujetů po veganské burgery.",
+    content: `## Veganský fast food v Praze: rychle, levně, bez masa
+
+Ještě před pěti lety bylo veganské rychlé občerstveni v Praze prakticky neexistující kategorií. Dnes je situace radikálně jiná — město nabízejí deseti míst, kde se najdete za méně než 200 Kč, rychle a bez žiivočičných produktů. Tento přehled mapuje nejlepší možnosti pro rok 2026.
+
+## Beas Dhaba — indický bufet podle váhy
+
+Beas Dhaba je pravděpodobně nejlepší veganský fast food v Praze z hlediska poměru cena/kvalita. Samoobslužný systém, kde platíte za gramme, znamená, že si každý složí talíř přesně podle chuti a rozpočtu. Výběr zahrnuje vždy minimálně 15 různých pokrmů — dál, kari, roti, rýže, samosy a dezerty. Průměrný talíř vyjde na 120–160 Kč. Beas Dhaba má v Praze přes 20 poboček, takže je prakticky vždy některá v dosahu.
+
+## Country Life — bio bufet v srdci Praze
+
+Country Life na Melantrychově ulici je průkopníkem biopotravin v ČR od roku 1991. Teplou i studenou veganskou stravu nabízejí formou bufetu, kde si vyberete, co chcete. Ceny jsou přiměřené, kvalita surovin vysoká. Ideální pro rychlý oběd v centru Prahy.
+
+## Loving Hut — asijská veganská kuchyně
+
+Mezinárodní síť Loving Hut má v Praze dvě pobočky. Nabízejí asijsky inspirovanou veganskou kuchyni — pho, pad thai, kari, správné burgery. Ceny začínají od 120 Kč za hlavní jídlo. Rychlá obsluha a příjemné prostředí.
+
+## Sandokan Vegan Bistro — bufet na Vinohradech
+
+Sandokan na Vinohradech je samoobslužný bufet s výběrem veganských a bezlepkových jídel. Systém je jednoduchý: vyberete si z teplych jídel a salátů, zaplatite a jíte. Ceny jsou nízké, jídlo kvalitní.
+
+## Veganské možnosti v klasických fast food řetězcích
+
+I klasické fast food řetězce rozšiřují veganské nabídky. Burger King nabízejí Rebel Whopper, McDonald's má McVegan (v některých pobočkách), KFC nabízejí veganské kusé a Subway má veganské sendviče. Tyto možnosti jsou praktické, když jste v čase tlaču a nemáte jinou možnost.
+
+## Srovnání nejlepších veganských fast food míst v Praze
+
+| Restaurace | Typ | Cena | Počet poboček |
+|---|---|---|---|
+| Beas Dhaba | Indický bufet | 100–180 Kč | 20+ |
+| Country Life | Bio bufet | 120–200 Kč | 1 |
+| Loving Hut | Asijská kuchyně | 120–200 Kč | 2 |
+| Sandokan | Veganský bufet | 90–160 Kč | 1 |
+| Burger King | Rebel Whopper | 150–200 Kč | 10+ |
+
+## Tip: jak najít veganský fast food v blízkosti
+
+Naše interaktivní mapa umožňuje najít veganské restaurace v okolí vaší polohy. Stačí kliknout na "V okolí" a zobrazí se všechna veganská místa do 1,5 km. Ideální, když jste v neznámé části města a potřebujete rychle najíst.`,
+  },
+  {
+    id: "7",
+    slug: "bezlepkove-veganske-restaurace-praha",
+    title: "Bezlepkové veganské restaurace v Praze: kompletni průvodce 2026",
+    metaDescription: "Bezlepkové veganské restaurace v Praze 2026 — kde jíst bez lepku a bez masa? Přehled podniků s bezlepkovou nabídkou, tipy na jídla a praktické rady.",
+    category: "Průvodce",
+    tags: ["bezlepkove", "vegan", "Praha", "celiakálie", "gluten-free", "restaurace"],
+    author: "Bezmasájídla.cz",
+    publishedAt: "2026-03-10",
+    readingTimeMin: 7,
+    coverImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-bezlepkove-vegan-SefXVKQybptc8Ls93vCwzz.webp",
+    coverImageAlt: "Bezlepkové veganské jídlo — barevné misky se zeleninou a quinoou",
+    excerpt: "Kombinace veganské stravy a bezlepkové diety může být výzva — ale Praha nabízejí řadu podniků, které obě potřeby zvládají na jedničku.",
+    content: `## Bezlepkové veganské jídlo v Praze: kde jíst bez kompromisů
+
+Kombinace veganské stravy a bezlepkové diety může působit jako extremální omezení — ale Praha nabízejí překvapivuíce širokou nabídku podniků, které obě potřeby zvládají. Tento průvodce je určen jak pro lidi s celiakálií, tak pro ty, kteří se lepku vyhybají z jiných důvodů.
+
+## Proč je kombinace vegan + bezlepkove náročná
+
+Veganská strava se často opírá o obiloviny — pečivo, těstoviny, seitan (který je čistý lepek). Bezlepková veganská kuchyně proto musí najít jiné zdroje sacharidů a bílkovin: quinoa, pohanka, čočka, cizrna, rýže, bataty.
+
+## Nejlepší bezlepkové veganské restaurace v Praze
+
+### Maitrea (Staré Město)
+Maitrea nabízejí širokou bezlepkovou nabídku a obsluha je schopna poradit s výběrem. Jejich sezónní menu vždy obsahuje několik bezlepkových možností. Restaurace je označena jako bezlepkove přátelská a používá oddělené kuchyské náčiní.
+
+### Lehká Hlava (Staré Město)
+Lehká Hlava má v menu vždy několik bezlepkových jídel a na žádost dokáže přizpůsobit většinu pokrmů. Jejich bezlepkové dezerty jsou obzvláště oblíbené.
+
+### Natureza (Malá Strana)
+Natureza je jedním z mála podniků v Praze, které má bezlepkovou nabídku jako standardní součást menu, nikoli jako výjimku. Jejich raw dezerty jsou přirozeně bezlepkové.
+
+### Sandokan Vegan Bistro (Vinohrady)
+Sandokan nabízejí řadu bezlepkových jídel v rámci svého bufetu. Systém samoobsluhy umožňuje snadno identifikovat bezlepkové možnosti.
+
+### Beas Dhaba
+Indická kuchyně je přirozeně často bezlepková — rýže, čočkové pokrmy a většina kari jsou bez lepku. Beas Dhaba vždy označuje bezlepkové položky.
+
+## Praktické tipy pro bezlepkové vegany v Praze
+
+**Před návštěvou:** Zavolejte nebo napište předem a zeptáte se na bezlepkovou nabídku. Většina podniků je ochotná přizpůsobit pokrmy.
+
+**Při objednávání:** Vyhledejte symbol GF nebo se zeptáte obsluhy. Upozorněte na celiakálii, ne pouze na preferenci.
+
+**Bezpečné možnosti:** Indická a asijská kuchyně jsou často přirozeně bezlepkové. Vyhybejte se seitanů, který je čistý lepek.
+
+## Srovnání bezlepkových veganských možností
+
+| Restaurace | Bezlepková nabídka | Certifikace | Cena |
+|---|---|---|---|
+| Maitrea | Rozsahlá | ✔️ | 200–350 Kč |
+| Lehká Hlava | Střední | ✔️ | 180–300 Kč |
+| Natureza | Rozsahlá | ✔️ | 150–250 Kč |
+| Sandokan | Střední | ✔️ | 90–160 Kč |
+| Beas Dhaba | Střední | ❌ | 100–180 Kč |
+
+## Bezlepkové veganské recepty doma
+
+Pokud chcete vařit bezlepkově a veganské doma, naše platforma nabízejí řadu receptů označených jako bezlepkové. Quinoové saláty, pohankove krupice, čočkové polévky a bataty jsou základem bezlepkové veganské kuchyně.`,
+  },
+  {
+    id: "8",
+    slug: "zdrave-obedy-do-200-kc-vegan-praha",
+    title: "Zdravé veganské obědy do 200 Kč v Praze: kde jíst levně a dobře",
+    metaDescription: "Veganské obědy do 200 Kč v Praze 2026 — přehled nejlepších míst pro zdravé a levné veganské jídlo. Bufety, denní menu, sámé jídla od 90 Kč.",
+    category: "Tipy",
+    tags: ["vegan", "Praha", "levné jídlo", "oběd", "rozpočet", "bufet", "denní menu"],
+    author: "Bezmasájídla.cz",
+    publishedAt: "2026-03-10",
+    readingTimeMin: 5,
+    coverImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-levne-obedy-vegan-ijQXPMPHrYYAdU5T2q6Sbw.webp",
+    coverImageAlt: "Zdravý veganský oběd — barevný talíř se zeleninou a lugtěninami",
+    excerpt: "Veganské jídlo nemusí být drahé. Praha nabízejí řadu míst, kde se najdete za méně než 200 Kč — a jídlo bude zdravé, chtné a syté.",
+    content: `## Veganské obědy do 200 Kč v Praze: průvodce pro rozpočtově vědomé
+
+Veganské jídlo má pověst drahé záležitosti — ale to je mylá představa. Praha nabízejí řadu míst, kde se najdete za méně než 200 Kč a jídlo bude zdravé, syté a chtné. Klíčem je vědět, kde hledat.
+
+## Nejlepší místa pro levné veganské obědy
+
+### Beas Dhaba (20+ poboček)
+Beas Dhaba je absolutní šampion v kategorii cena/kvalita. Samoobslužný systém, kde platíte za gramme, znamená, že si každý složí talíř přesně podle chuti a rozpočtu. Průměrný oběd vyjde na 120–160 Kč. Výběr zahrnuje vždy minimálně 15 různých pokrmů.
+
+### Country Life (Staré Město)
+Country Life nabízejí bufet s bio surovinami. Ceny jsou vyšší než v Beas Dhaba, ale stále v rozumném rozsahu — oběd vyjde na 150–200 Kč. Kválita surovin je výborná.
+
+### Sandokan Vegan Bistro (Vinohrady)
+Sandokan je samoobslužný bufet s veganskými a bezlepkovými jídly. Ceny začínají od 90 Kč za malý talíř. Ideální pro rychlý oběd bez čekní.
+
+### Loving Hut (Na Poříčí)
+Loving Hut nabízejí denní menu za 130–170 Kč — polévka + hlavní jídlo. Asijská kuchyně, rychlá obsluha.
+
+### Denní menu v běžných restauracích
+Mnohé veganské restaurace nabízejí denní menu za výhodné ceny — typicky polévka + hlavní jídlo za 150–200 Kč. Pastva, Natureza a Sandokan mají denní menu pravidelně.
+
+## Jak ušetřit na veganském jídě v Praze
+
+**Bufetový systém:** Beas Dhaba a Sandokan nabízejí bufet, kde platíte za gramme. Stačí si dát menší talíř a ušetříte.
+
+**Denní menu:** Většina veganských restaurací nabízejí denní menu za výhodné ceny. Typicky polévka + hlavní jídlo za 150–200 Kč.
+
+**Obed vs. večeře:** Oběd je vždy levnější než večeře. Pokud chcete jíst v kvalitní restauraci, jděte na oběd.
+
+**Lokace:** Restaurace mimo centrum jsou vždy levnější. Vinohrady, Žižkov a Holšovice nabízejí dobré veganské jídlo za nižší ceny než centrum.
+
+## Srovnání cen veganských obědů v Praze
+
+| Restaurace | Typ | Průměrná cena oběda | Čtvrť |
+|---|---|---|---|
+| Beas Dhaba | Indický bufet | 120–160 Kč | Centrum + |
+| Sandokan | Veganský bufet | 90–160 Kč | Vinohrady |
+| Loving Hut | Asijská kuchyně | 130–170 Kč | Na Poříčí |
+| Country Life | Bio bufet | 150–200 Kč | Staré Město |
+| Pastva | Sezónní kuchyně | 160–220 Kč | Vinohrady |
+
+## Veganské jídlo doma: ještě levnější
+
+Pokud chcete ušetřit ještě více, vařte doma. Naše platforma nabízejí stovky veganských receptů od jednoduchých po složité. Lugtěniny, zelenina a obiloviny jsou nejlevnější a nejzdravější základ veganské kuchyně.`,
+  },
+  {
+    id: "9",
+    slug: "veganske-pizzerie-praha-nejlepsi-pizza-bez-masa",
+    title: "Veganské pizzerie v Praze: nejlepší pizza bez masa a sýra 2026",
+    metaDescription: "Veganské pizzerie v Praze 2026 — kde dát nejlepší veganskou pizzu? Přehled podniků s veganským sýrem, toppingy a bezlepkovou móžné těstem.",
+    category: "Průvodce",
+    tags: ["vegan", "pizza", "Praha", "pizzerie", "veganský sýr", "bezlepkové"],
+    author: "Bezmasájídla.cz",
+    publishedAt: "2026-03-10",
+    readingTimeMin: 6,
+    coverImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-veganska-pizza-9ZMbWEbZpUc5ABmuG3mxrY.webp",
+    coverImageAlt: "Veganská pizza s barevnými toppingy na dřevěném prkně",
+    excerpt: "Veganská pizza už není kompromis. Praha nabízejí řadu pizzerií, kde si dáte skutečnou italskou pizzu s veganským sýrem a čerstvými toppingy.",
+    content: `## Veganská pizza v Praze: kde si dát skutečnou italskou pizzu bez sýra
+
+Veganská pizza je jednou z nejrychleji rostoucich kategorií v pražské gastronomii. Ještě před pěti lety bylo těžké najít pizzu s veganským sýrem — dnes ji nabízejí desítky podniků. Klíčem je vědět, kde hledat a co očekávat.
+
+## Co dělá dobrou veganskou pizzu
+
+Dobrá veganská pizza stojí na třech pilirích: kvalitním těstu, chtné omce a dobrém veganském sýru. Veganský sýr prošel v posledních letech velkým vývojem — moderní cashew a kokosové sýry se táhnou a chtní podobně jako tradiční mozzarella.
+
+## Nejlepší veganské pizzerie v Praze
+
+### Pizzerie s veganským sýrem
+V Praze existuje několik specializovaných veganských pizzerií a řada tradičních pizzerií, které nabízejí veganskou variantu. Při výběru se zaměřte na: zda používají kvalitní veganský sýr (ne jen vynechání sýra), zda nabízejí bezlepkove těsto a zda mají široký výběr veganských toppings.
+
+### Tipy na toppingy
+Nejlepší veganské pizzy v Praze kombinují: grilovanou zeleninu (cuketa, paprika, liščka), karamelizovanou cibuli, olivy, kapary, cherry rajská jablka, čerstvé bylinky a veganský sýr. Vyhybejte se pizzám, které pouze vynechávají sýr — to není veganská pizza, to je pizza bez sýra.
+
+## Bezlepkové veganské těsto
+
+Řada pizzerií v Praze nabízejí bezlepkove těsto jako příplatek (typicky 30–50 Kč). Bezlepkove těsto je často přirozeně veganské, protože neobsahuje vejce. Zeptáte se předem, zda je těsto veganské.
+
+## Veganská pizza doma: recepty
+
+Pokud chcete veganskou pizzu připravit doma, naše platforma nabízejí několik receptů. Cashew sýr je překvapivě jednoduchý na přípravu — stačí namocit cashew, rozmixovat s citronovou šťávou, droždovými vločkami a solí. Výsledek je kremový, chtný a táhne se podobně jako mozzarella.
+
+## Praktické tipy pro veganské pizzomily
+
+**Při objednávání:** Zeptáte se, zda je veganský sýr cashew nebo kokosový — cashew má lepší chutný profil. Zeptáte se také, zda je těsto veganské (některá těsta obsahují vejce).
+
+**Toppingy:** Vyberte si pizzu s bohatými toppingy — grilovaná zelenina, olivy, kapary a čerstvé bylinky nahradí chutně maso.
+
+**Bezlepkove těsto:** Pokud máte celiakálii, vždy upozorněte obsluhu — bezlepkove těsto musí být připraveno na odděleném povrchu.
+
+## Veganská pizza vs. tradiční pizza: srovnání
+
+| Aspekt | Tradiční pizza | Veganská pizza |
+|---|---|---|
+| Sýr | Mozzarella | Cashew/kokosový sýr |
+| Těsto | často s vejci | Veganské těsto |
+| Toppingy | Maso, sýr | Zelenina, houby, olivy |
+| Kalorie | Vyšší | Nižší |
+| Cena | Nižší | Vyšší (+30–50 Kč za veganský sýr) |`,
+  },
+  {
+    id: "10",
+    slug: "veganske-vanoce-trhy-advent-praha-co-jist",
+    title: "Veganské Vánoce v Praze: co jíst na adventních trzich a kde",
+    metaDescription: "Veganské jídlo na adventních trzich v Praze — co jíst, kde hledat veganské stánky a jak si užít Vánoce bez masa. Tipy na veganské vánoční jídlo.",
+    category: "Sezónní",
+    tags: ["vegan", "Vánoce", "adventní trhy", "Praha", "sezónní", "trhy"],
+    author: "Bezmasájídla.cz",
+    publishedAt: "2026-03-10",
+    readingTimeMin: 5,
+    coverImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-veganske-vanoce-QxpuKksnQFmbBZtpuJJukm.webp",
+    coverImageAlt: "Veganské jídlo na adventním trhu — teplou polevá a pečené kaštany",
+    excerpt: "Adventní trhy v Praze jsou krásné, ale pro vegany může být těžké najít něco k jídlu. Tento průvodce vám pomůže navigovat vánoční trhy bez kompromisů.",
+    content: `## Veganské jídlo na adventních trzich v Praze
+
+Adventní trhy v Praze jsou jednou z nejkrásnějších tradic — Staroměstské náměstí, Václavské náměstí a Havelští trh jsou každý rok plné návštěvníků. Pro vegany však může být náročné najít něco k jídlu — většina stánků nabízejí klobasy, sváteční pečivo s máslem a svařené víno. Tento průvodce vám pomůže navigovat vánoční trhy bez kompromisů.
+
+## Přirozeně veganské vánoční jídlo
+
+Některá tradiční vánoční jídla jsou přirozeně veganská:
+
+**Pečené kaštany** jsou jednou z nejlepších veganských možností na adventních trzich. Vonné, teplou a přirozeně veganské. Hledejte stánky s pečenými kaštany — bývají na většině trhů.
+
+**Svařené víno** je veganské — pokud neobsahuje med. Většina svařeného vína na trzich je veganská.
+
+**Teplou polevá** — některé stánky nabízejí zeleninové polévky, které jsou veganské. Zeptáte se předem.
+
+**Teplou čaj** — vždy veganský, pokud neobsahuje med.
+
+## Veganské stánky na adventních trzich
+
+V posledních letech se na pražských adventních trzich objevívají specializované veganské stánky. Nabízejí veganské trdlo, veganské paláčinky, veganské horá čokolady a veganské pečivo. Tyto stánky jsou označeny symbolem listu nebo nápisem "veganské".
+
+## Veganské vánoční restaurace v Praze
+
+Pokud chcete vánoční atmosféru a veganské jídlo, některé pražské veganské restaurace nabízejí v adventním období sezónní menu:
+
+**Maitrea** nabízejí v prosinci sezónní vánoční menu s tradičními českými jídly v veganském provedení.
+
+**Lehká Hlava** má v adventním období sezónní menu s vánočními dezerty a teplou jídly.
+
+**Shromaždiště** nabízejí v zimě veganské české jídlo — veganský svítkový burger, veganské knedle a teplou polévky.
+
+## Veganské vánoční pečivo doma
+
+Pokud chcete připravit veganské vánoční pečivo doma, naše platforma nabízejí řadu receptů. Veganské vanilkové rohlicky, veganské pernik a veganské linecké jsou překvapivě jednoduché na přípravu.
+
+## Praktické tipy pro veganské Vánoce v Praze
+
+**Před návštěvou trhů:** Snězte něco doma nebo v restauraci, aby jste nebyli hladoví na trhu. Možnosti pro vegany jsou omezené.
+
+**Na trzich:** Hledejte pečené kaštany, svařené víno a teplou čaj. Zeptáte se na veganské stánky u informací.
+
+**V restauraci:** Rezervujte si stůl v jednom z veganských podniků předem — adventní období je nejrušnější čas v roce pro pražské restaurace.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {

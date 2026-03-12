@@ -148,6 +148,8 @@ export const restaurants: Restaurant[] = [
     lng: 14.4501,
     priceLevel: 2,
     hours: "Po–Pá 11:00–22:00, So–Ne 12:00–22:00",
+    instagramUrl: "https://www.instagram.com/shromazdistepraha/",
+    facebookUrl: "https://www.facebook.com/shromazdistepraha/",
     editorialReview: {
       score: 9.0,
       summary: "Nejlepší veganizace české kuchyně v Praze — gastropub, který dokazuje, že veganá jdou ruku v ruce s pivem a českými klasikami.",
@@ -401,6 +403,8 @@ Linh je místo, které dokazuje, že veganská kuchyně může být stejně dobr
     lng: 14.4001,
     priceLevel: 2,
     hours: "Po–Ne 11:00–21:00",
+    instagramUrl: "https://www.instagram.com/vegansprague/",
+    facebookUrl: "https://www.facebook.com/vegansprague/",
     editorialReview: {
       score: 8.5,
       summary: "Veganská restaurace v budově z 16. století s terasou a výhledy na Pražský hrad — nejlepší veganské místo na Malé Straně.",
@@ -476,6 +480,8 @@ Vegan's Prague je ideální pro turisty, kteří hledají veganské jídlo blíz
     lng: 14.4461,
     priceLevel: 2,
     hours: "Út–Ne 12:00–22:00",
+    instagramUrl: "https://www.instagram.com/pastva.restaurant/",
+    facebookUrl: "https://www.facebook.com/pastva.restaurant/",
     editorialReview: {
       score: 8.6,
       summary: "Nejlepší veganská restaurace na Vinohradech — sezónní kuchyně z lokálních farm a klidná atmosféra, která vás přiměje vrátit se znovu.",
@@ -553,6 +559,8 @@ Pastva je místo, které se vrací k základům — dobře připravené jídlo z
     lng: 14.4241,
     priceLevel: 3,
     hours: "Po–Ne 11:30–22:30",
+    instagramUrl: "https://www.instagram.com/maitrea.restaurant/",
+    facebookUrl: "https://www.facebook.com/restauracemaitrea/",
     editorialReview: {
       score: 9.5,
       summary: "Ikona pražské vegetariánské scény — Feng Shui interieur, magická atmosféra a kuchyně, která patří k nejlepším v Praze.",
@@ -589,6 +597,8 @@ Maitrea je jednou z mála restaurací v Praze, kde se vegetariánské jídlo cí
     lng: 14.4138,
     priceLevel: 2,
     hours: "Po–Čt 11:30–22:30, Pá 11:30–23:00, So 12:00–23:00, Ne 12:00–22:30",
+    instagramUrl: "https://www.instagram.com/lehkahlava/",
+    facebookUrl: "https://www.facebook.com/lehkahlava/",
     editorialReview: {
       score: 9.0,
       summary: "Kouzelné prostředí, kreativní kuchyně a skvost několik kroků od Karlova mostu — vegetariánská klasika od roku 2005.",
@@ -691,6 +701,8 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     lng: 14.4227,
     priceLevel: 1,
     hours: "Po–Pá 11:00–21:00, So–Ne 12:00–20:00",
+    instagramUrl: "https://www.instagram.com/dhababeas/",
+    facebookUrl: "https://www.facebook.com/dhababeas/",
   },
   {
     id: "kro2",
