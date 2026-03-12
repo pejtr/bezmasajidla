@@ -181,3 +181,7 @@
 - [x] Napsat 5 nových SEO blogovych článků (veganský fast food, bezlepkové, zdravé obědy, veganské pizzerie, vánoční trh)
 - [x] Vygenerovat AI náhledové obrázky pro nových 5 blogovych článků
 - [x] Nahrát blog obrázky na CDN a aktualizovat URL v blogData.ts
+- [x] Přidat pole bestFor[] do Restaurant interface (Romantická večeře, Rodina s dětmi, Rychlý oběd, Pracovní oběd, Levné jídlo, Rande, Brunch, Zdravé jídlo, Turistické místo, Milovníci vína, Večerní posezení)
+- [x] Přidat bestFor hodnoty do dat klíčových restaurací (Shromaždiště, Chutnej, Eaternia, Palo Verde, Střecha, Koko Organic, Linh, Vegan's Prague, Belzepub, Herbivore, Pastva, Onigirazu, Loving Hut, Maitrea, Lehká Hlava, Natureza, Sandokan, Country Life, Beas Dhaba)
+- [x] Implementovat "Nejlepší pro..." filtry na stránce restaurací (12 filtrů v řadě tlačítek)
+- [x] Přidat bestFor badge na RestaurantCard (zobrazuje max. 2 tagy)

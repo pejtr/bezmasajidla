@@ -39,6 +39,8 @@ export interface Restaurant {
   instagramUrl?: string;
   /** Facebook page URL */
   facebookUrl?: string;
+  /** Best-for category tags for quick filtering */
+  bestFor?: string[];
   /** Editorial review by the Bezmasá Jídla team */
   editorialReview?: {
     /** Overall editorial score out of 10 */
@@ -148,6 +150,7 @@ export const restaurants: Restaurant[] = [
     lng: 14.4501,
     priceLevel: 2,
     hours: "Po–Pá 11:00–22:00, So–Ne 12:00–22:00",
+    bestFor: ["Pivo a jídlo", "Přátelé s různými preferencemi", "Večerní posezení"],
     instagramUrl: "https://www.instagram.com/shromazdistepraha/",
     facebookUrl: "https://www.facebook.com/shromazdistepraha/",
     editorialReview: {
@@ -185,6 +188,7 @@ Jedinou výhradou je popularita — Shromaždiště je vždy plné a bez rezerva
     lng: 14.4033,
     priceLevel: 2,
     hours: "Po–Ne 10:00–21:00",
+    bestFor: ["Rodina s dětmi", "Brunch", "Turistické místo"],
   },
   {
     id: "3",
@@ -206,6 +210,7 @@ Jedinou výhradou je popularita — Shromaždiště je vždy plné a bez rezerva
     lng: 14.4282,
     priceLevel: 1,
     hours: "Po–Pá 8:00–18:00, So 9:00–17:00",
+    bestFor: ["Brunch", "Rychlý oběd", "Levné jídlo"],
   },
   {
     id: "4",
@@ -228,6 +233,7 @@ Jedinou výhradou je popularita — Shromaždiště je vždy plné a bez rezerva
     lng: 14.4201,
     priceLevel: 2,
     hours: "Po–Pá 9:00–22:00, So–Ne 10:00–22:00",
+    bestFor: ["Romantická večeře", "Rande", "Večerní posezení", "Přátelé s různými preferencemi"],
     editorialReview: {
       score: 9.2,
       summary: "Nejlepší veganská restaurace v Holešovicích — sezónní kuchyně, která vás přesvědčí, že rostlinná strava může být skutečné kulinářské dobrodružství.",
@@ -261,6 +267,7 @@ Chutnej je místo pro speciální příležitosti i pro pravidelné brunchové v
     lng: 14.4052,
     priceLevel: 2,
     hours: "Út–Ne 12:00–21:00",
+    bestFor: ["Romantická večeře", "Rande", "Brunch"],
   },
   {
     id: "6",
@@ -283,6 +290,7 @@ Chutnej je místo pro speciální příležitosti i pro pravidelné brunchové v
     lng: 14.4261,
     priceLevel: 2,
     hours: "Po–Pá 8:00–22:00, So–Ne 9:00–22:00",
+    bestFor: ["Brunch", "Pracovní oběd", "Rodina s dětmi", "Levné jídlo"],
     editorialReview: {
       score: 8.8,
       summary: "Nejlepší veganské bistro v Novém Městě — organická vína, domácí těstoviny a croissanty, které vás přesvědčí, že veganské snídě může být skutečný luxus.",
@@ -324,6 +332,7 @@ Palo Verde je ideální pro pracovní obědy, brunch o víkendu nebo klidný ve�
     lng: 14.4181,
     priceLevel: 1,
     hours: "Po–Pá 11:00–21:00",
+    bestFor: ["Levné jídlo", "Pracovní oběd", "Rychlý oběd"],
     instagramUrl: "https://www.instagram.com/strecha_restaurant/",
     facebookUrl: "https://www.facebook.com/strechapraha/",
   },
@@ -347,6 +356,7 @@ Palo Verde je ideální pro pracovní obědy, brunch o víkendu nebo klidný ve�
     lng: 14.4361,
     priceLevel: 1,
     hours: "Po–So 11:00–20:00",
+    bestFor: ["Levné jídlo", "Rychlý oběd", "Zdravé jídlo"],
   },
   {
     id: "9",
@@ -368,6 +378,7 @@ Palo Verde je ideální pro pracovní obědy, brunch o víkendu nebo klidný ve�
     lng: 14.4401,
     priceLevel: 2,
     hours: "Po–Ne 11:00–22:00",
+    bestFor: ["Romantická večeře", "Rande", "Večerní posezení", "Turistické místo"],
     editorialReview: {
       score: 8.7,
       summary: "Pohadčkový interieur a veganská vietnamská kuchyně — Linh je místo, které vás přesvědčí, že veganské pho může být stejně dobré jako to tradilní.",
@@ -403,6 +414,7 @@ Linh je místo, které dokazuje, že veganská kuchyně může být stejně dobr
     lng: 14.4001,
     priceLevel: 2,
     hours: "Po–Ne 11:00–21:00",
+    bestFor: ["Turistické místo", "Rodina s dětmi", "Přátelé s různými preferencemi"],
     instagramUrl: "https://www.instagram.com/vegansprague/",
     facebookUrl: "https://www.facebook.com/vegansprague/",
     editorialReview: {
@@ -438,6 +450,7 @@ Vegan's Prague je ideální pro turisty, kteří hledají veganské jídlo blíz
     lng: 14.4421,
     priceLevel: 2,
     hours: "Po–Ne 16:00–01:00",
+    bestFor: ["Večerní posezení", "Pivo a jídlo", "Přátelé s různými preferencemi"],
   },
   {
     id: "12",
@@ -459,6 +472,7 @@ Vegan's Prague je ideální pro turisty, kteří hledají veganské jídlo blíz
     lng: 14.4441,
     priceLevel: 1,
     hours: "Po–Pá 8:00–18:00, So–Ne 9:00–17:00",
+    bestFor: ["Brunch", "Rychlý oběd", "Levné jídlo", "Zdravé jídlo"],
   },
   {
     id: "13",
@@ -480,6 +494,7 @@ Vegan's Prague je ideální pro turisty, kteří hledají veganské jídlo blíz
     lng: 14.4461,
     priceLevel: 2,
     hours: "Út–Ne 12:00–22:00",
+    bestFor: ["Romantická večeře", "Rande", "Turistické místo", "Milovníci vína"],
     instagramUrl: "https://www.instagram.com/pastva.restaurant/",
     facebookUrl: "https://www.facebook.com/pastva.restaurant/",
     editorialReview: {
@@ -515,6 +530,7 @@ Pastva je místo, které se vrací k základům — dobře připravené jídlo z
     lng: 14.4381,
     priceLevel: 1,
     hours: "Po–So 11:00–19:00",
+    bestFor: ["Rychlý oběd", "Levné jídlo", "Turistické místo"],
   },
   {
     id: "15",
@@ -559,6 +575,7 @@ Pastva je místo, které se vrací k základům — dobře připravené jídlo z
     lng: 14.4241,
     priceLevel: 3,
     hours: "Po–Ne 11:30–22:30",
+    bestFor: ["Romantická večeře", "Pracovní oběd", "Turistické místo", "Rande"],
     instagramUrl: "https://www.instagram.com/maitrea.restaurant/",
     facebookUrl: "https://www.facebook.com/restauracemaitrea/",
     editorialReview: {
@@ -597,6 +614,7 @@ Maitrea je jednou z mála restaurací v Praze, kde se vegetariánské jídlo cí
     lng: 14.4138,
     priceLevel: 2,
     hours: "Po–Čt 11:30–22:30, Pá 11:30–23:00, So 12:00–23:00, Ne 12:00–22:30",
+    bestFor: ["Romantická večeře", "Rande", "Milovníci vína", "Turistické místo"],
     instagramUrl: "https://www.instagram.com/lehkahlava/",
     facebookUrl: "https://www.facebook.com/lehkahlava/",
     editorialReview: {
@@ -657,9 +675,10 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     lng: 14.4412,
     priceLevel: 1,
     hours: "Po–Pá 11:00–20:00, So 12:00–18:00",
+    bestFor: ["Levné jídlo", "Rychlý oběd", "Zdravé jídlo"],
   },
   {
-    id: "20",
+    id: "19",
     name: "Country Life",
     slug: "country-life",
     type: "vegan",
@@ -699,10 +718,11 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
     lat: 50.0795,
     lng: 14.4227,
-    priceLevel: 1,
-    hours: "Po–Pá 11:00–21:00, So–Ne 12:00–20:00",
-    instagramUrl: "https://www.instagram.com/dhababeas/",
-    facebookUrl: "https://www.facebook.com/dhababeas/",
+    priceLevel: 2,
+    hours: "Po–Pá 11:00–21:00, So 12:00–21:00",
+    bestFor: ["Pracovní oběd", "Zdravé jídlo", "Rodina s dětmi"],
+    instagramUrl: "https://www.instagram.com/natureza.cz/",
+    facebookUrl: "https://www.facebook.com/natureza.cz/",
   },
   {
     id: "kro2",
@@ -1478,9 +1498,10 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     lng: 14.4490,
     priceLevel: 1,
     hours: "Po–Pá 10:00–20:00, So 11:00–19:00",
+    bestFor: ["Rychlý oběd", "Levné jídlo"],
   },
   {
-    id: "55",
+    id: "vegemama-chodov",
     name: "Vegemama — OC Westfield Chodov",
     slug: "vegemama-oc-chodov",
     type: "vegan",
@@ -1695,10 +1716,10 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     ],
     lat: 50.1012,
     lng: 14.4678,
-    priceLevel: 2,
-    hours: "Po–Pá 11:00–22:00, So–Ne 10:00–22:00",
-    instagramUrl: "https://www.instagram.com/kro_kitchen/",
-    facebookUrl: "https://www.facebook.com/krokitchen/",
+    priceLevel: 1,
+    hours: "Po–Pá 9:00–20:00, So 10:00–18:00",
+    bestFor: ["Levné jídlo", "Zdravé jídlo", "Turistické místo"],
+    instagramUrl: "https://www.instagram.com/countrylifepraha/",    facebookUrl: "https://www.facebook.com/krokitchen/",
   },
   // ── BAGETERIE BOULEVARD ──
   {

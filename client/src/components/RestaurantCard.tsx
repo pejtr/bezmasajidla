@@ -152,15 +152,14 @@ export default function RestaurantCard({ restaurant, rank }: Props) {
               ))}
             </div>
 
-            {/* Best For badge — shown when editorialReview.bestFor is set */}
-            {restaurant.editorialReview?.bestFor && (
-              <div className="flex items-center gap-1 mb-2">
-                <span className="inline-flex items-center gap-1 text-[11px] bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full font-medium">
-                  <span>★</span>
-                  {restaurant.editorialReview.bestFor.length > 40
-                    ? restaurant.editorialReview.bestFor.slice(0, 40) + "…"
-                    : restaurant.editorialReview.bestFor}
-                </span>
+            {/* Best For badges — shown when bestFor[] is set, show up to 2 tags */}
+            {restaurant.bestFor && restaurant.bestFor.length > 0 && (
+              <div className="flex flex-wrap items-center gap-1 mb-2">
+                {restaurant.bestFor.slice(0, 2).map((tag) => (
+                  <span key={tag} className="inline-flex items-center gap-1 text-[11px] bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full font-medium">
+                    ★ {tag}
+                  </span>
+                ))}
               </div>
             )}
 

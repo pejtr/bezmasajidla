@@ -19,13 +19,19 @@ import { RestaurantListJsonLd, BreadcrumbJsonLd } from "@/components/JsonLd";
 
 type SortOption = "popularity" | "rating" | "reviews" | "price-asc" | "price-desc" | "name";
 
-const BEST_FOR_FILTERS: { label: string; icon: string; keywords: string[] }[] = [
-  { label: "Romantická večeře", icon: "❤️", keywords: ["romantick", "klidn", "atmosfér", "výjičn", "speciální příležitost"] },
-  { label: "Oběd s kolegy", icon: "💼", keywords: ["pracovní", "oběd", "klidné místo", "pracovní oběd"] },
-  { label: "Rodina s dětmi", icon: "👨‍👩‍👧", keywords: ["rodina", "dětmi", "přátele"] },
-  { label: "Rychlý oběd", icon: "⚡", keywords: ["rychlý", "s sebou", "běžný oběd"] },
-  { label: "Turistické místo", icon: "📍", keywords: ["turisty", "turistick", "hrad", "památky"] },
-  { label: "Milovníci vína", icon: "🍷", keywords: ["víno", "organické víno", "vínotéka"] },
+const BEST_FOR_FILTERS: { label: string; icon: string; tag: string }[] = [
+  { label: "Romantická večeře", icon: "❤️", tag: "Romantická večeře" },
+  { label: "Rande", icon: "💋", tag: "Rande" },
+  { label: "Pracovní oběd", icon: "💼", tag: "Pracovní oběd" },
+  { label: "Rodina s dětmi", icon: "👨‍👩‍👧", tag: "Rodina s dětmi" },
+  { label: "Rychlý oběd", icon: "⚡", tag: "Rychlý oběd" },
+  { label: "Levné jídlo", icon: "💰", tag: "Levné jídlo" },
+  { label: "Zdravé jídlo", icon: "🥗", tag: "Zdravé jídlo" },
+  { label: "Brunch", icon: "☕", tag: "Brunch" },
+  { label: "Turistické místo", icon: "📍", tag: "Turistické místo" },
+  { label: "Milovníci vína", icon: "🍷", tag: "Milovníci vína" },
+  { label: "Večerní posezení", icon: "🌙", tag: "Večerní posezení" },
+  { label: "Přátelé s různými preferencemi", icon: "👥", tag: "Přátelé s různými preferencemi" },
 ];
 
 const sortOptions: { value: SortOption; label: string }[] = [
@@ -84,14 +90,11 @@ export default function Restaurants() {
       if (selectedTags.length > 0 && !selectedTags.some(t => r.tags.includes(t))) return false;
       if (selectedDietary.length > 0 && !selectedDietary.every(d => r.dietaryOptions.includes(d))) return false;
       if (selectedPriceLevels.length > 0 && !selectedPriceLevels.includes(r.priceLevel)) return false;
-      // Best For filter: check if restaurant's editorialReview.bestFor contains any keyword
+      // Best For filter: check if restaurant's bestFor[] array contains the selected tag
       if (selectedBestFor) {
         const filter = BEST_FOR_FILTERS.find(f => f.label === selectedBestFor);
         if (filter) {
-          const bestForText = (r.editorialReview?.bestFor || "").toLowerCase();
-          const bodyText = (r.editorialReview?.body || "").toLowerCase();
-          const combined = bestForText + " " + bodyText;
-          if (!filter.keywords.some(kw => combined.includes(kw.toLowerCase()))) return false;
+          if (!r.bestFor || !r.bestFor.includes(filter.tag)) return false;
         }
       }
       return true;
@@ -147,7 +150,7 @@ export default function Restaurants() {
 
   const hasFilters = selectedType !== "all" || selectedDistrict !== "Všechny čtvrti" || showOpenOnly || selectedTags.length > 0 || searchQuery || selectedDietary.length > 0 || selectedPriceLevels.length > 0 || selectedBestFor !== null;
 
-  const activeFilterCount = (selectedType !== "all" ? 1 : 0) + (selectedDistrict !== "Všechny čtvrti" ? 1 : 0) + (showOpenOnly ? 1 : 0) + selectedTags.length + selectedDietary.length + selectedPriceLevels.length;
+  const activeFilterCount = (selectedType !== "all" ? 1 : 0) + (selectedDistrict !== "Všechny čtvrti" ? 1 : 0) + (showOpenOnly ? 1 : 0) + selectedTags.length + selectedDietary.length + selectedPriceLevels.length + (selectedBestFor ? 1 : 0);
 
   const typeOptions: { value: RestaurantType | "all"; label: string; color: string }[] = [
     { value: "all", label: "Vše", color: "bg-gray-100 text-gray-700 hover:bg-gray-200" },
