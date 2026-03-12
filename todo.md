@@ -185,3 +185,9 @@
 - [x] Přidat bestFor hodnoty do dat klíčových restaurací (Shromaždiště, Chutnej, Eaternia, Palo Verde, Střecha, Koko Organic, Linh, Vegan's Prague, Belzepub, Herbivore, Pastva, Onigirazu, Loving Hut, Maitrea, Lehká Hlava, Natureza, Sandokan, Country Life, Beas Dhaba)
 - [x] Implementovat "Nejlepší pro..." filtry na stránce restaurací (12 filtrů v řadě tlačítek)
 - [x] Přidat bestFor badge na RestaurantCard (zobrazuje max. 2 tagy)
+- [x] Opravit chybějící náhledový obrázek v "Recept týdne" kartě v dropdown menu VEG Recepty
+- [x] Implementovat Recipe Schema (JSON-LD) na stránkách receptů
+- [x] Aktualizovat sitemap.xml (celkem 136 URL, přidáno 5 nových blogů + /kontakt)
+- [x] Vylepšit SEO meta tagy pro recepty (Recipe structured data)
+- [x] Vytvořit admin stránku pro obsahový kalendář (Instagram plánování)
+- [x] Vygenerovat 30denní obsahový kalendář s virálními hooky (8 ankety, 4 reels, 30 příspěvků)

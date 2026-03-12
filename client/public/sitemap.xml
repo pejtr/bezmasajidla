@@ -124,5 +124,13 @@
   <url><loc>https://www.bezmasajidla.cz/blog/veganske-restaurace-pro-deti-praha</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.bezmasajidla.cz/blog/nejlepsi-veganske-brunche-praha</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.bezmasajidla.cz/blog/ceska-veganska-kuchyne-tradicni-jidla-bez-masa</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bezmasajidla.cz/blog/vegansky-fast-food-praha-kde-jist-rychle-a-dobre</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bezmasajidla.cz/blog/bezlepkove-veganske-restaurace-praha</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bezmasajidla.cz/blog/zdrave-obedy-do-200-kc-vegan-praha</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bezmasajidla.cz/blog/veganske-pizzerie-praha-nejlepsi-pizza-bez-masa</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.bezmasajidla.cz/blog/veganske-vanoce-trhy-advent-praha-co-jist</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
+  <!-- Kontakt -->
+  <url><loc>https://www.bezmasajidla.cz/kontakt</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>
 
 </urlset>

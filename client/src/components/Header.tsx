@@ -77,6 +77,7 @@ const receptyMegaMenu = {
     desc: "Gruzínský chlebový člun se sýrem a žloutkem — trendy recept roku 2026",
     href: "/recepty/adzarsky-khachapuri",
     badge: "🔥 Trending",
+    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/khachapuri-adjarsky-1-NvBcPLYARE4yt6W5ZF6pmt.webp",
   },
 };
 
@@ -364,16 +365,25 @@ export default function Header() {
                           onClick={() => setActiveMega(null)}
                           className="block group"
                         >
-                          <div className="bg-white rounded-xl p-4 border border-amber-100 shadow-sm hover:shadow-md transition-shadow">
-                            <span className="inline-block text-xs font-bold bg-red-100 text-red-600 px-2 py-0.5 rounded-full mb-2">
-                              {receptyMegaMenu.featured.badge}
-                            </span>
-                            <h4 className="text-sm font-bold text-gray-900 group-hover:text-emerald-700 transition-colors mb-1">
-                              {receptyMegaMenu.featured.name}
-                            </h4>
-                            <p className="text-xs text-gray-500 leading-relaxed">
-                              {receptyMegaMenu.featured.desc}
-                            </p>
+                          <div className="bg-white rounded-xl border border-amber-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                            {receptyMegaMenu.featured.image && (
+                              <img
+                                src={receptyMegaMenu.featured.image}
+                                alt={receptyMegaMenu.featured.name}
+                                className="w-full h-28 object-cover"
+                              />
+                            )}
+                            <div className="p-3">
+                              <span className="inline-block text-xs font-bold bg-red-100 text-red-600 px-2 py-0.5 rounded-full mb-2">
+                                {receptyMegaMenu.featured.badge}
+                              </span>
+                              <h4 className="text-sm font-bold text-gray-900 group-hover:text-emerald-700 transition-colors mb-1">
+                                {receptyMegaMenu.featured.name}
+                              </h4>
+                              <p className="text-xs text-gray-500 leading-relaxed">
+                                {receptyMegaMenu.featured.desc}
+                              </p>
+                            </div>
                           </div>
                         </Link>
                         <div className="mt-4 space-y-2">

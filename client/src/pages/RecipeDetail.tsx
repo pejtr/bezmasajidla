@@ -13,6 +13,7 @@ import { recipes, type Recipe } from "@/lib/data";
 import SEOHead from "@/components/SEOHead";
 import OptimizedImage from "@/components/OptimizedImage";
 import { getRohlikLink, getKosikLink } from "@/lib/affiliates";
+import { RecipeJsonLd, BreadcrumbJsonLd } from "@/components/JsonLd";
 
 const sampleIngredients: Record<string, string[]> = {
   "veganska-svickova": [
@@ -1199,6 +1200,16 @@ export default function RecipeDetail() {
           dateModified: new Date().toISOString().split("T")[0],
         }}
       />
+      <RecipeJsonLd
+        recipe={recipe}
+        ingredients={sampleIngredients[recipe.slug] || sampleIngredients.default}
+        steps={sampleSteps[recipe.slug] || sampleSteps.default}
+      />
+      <BreadcrumbJsonLd items={[
+        { name: "Domů", url: "/" },
+        { name: "Recepty", url: "/recepty" },
+        { name: recipe.title, url: `/recepty/${recipe.slug}` },
+      ]} />
       <Header />
 
       {/* Breadcrumb */}
