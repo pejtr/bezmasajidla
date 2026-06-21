@@ -5,6 +5,7 @@ import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { notifyOwner } from "./_core/notification";
+import { distributeToSocialMedia } from "./_core/social-media";
 import {
   getReviewsByRestaurant,
   getReviewsByUser,
@@ -25,6 +26,7 @@ import {
   rejectUserRecipe,
   getAllReviews,
   adminDeleteReview,
+  getUserRecipeById,
 } from "./db";
 
 // Admin-only procedure middleware
@@ -175,7 +177,14 @@ export const appRouter = router({
     // Approve a pending recipe
     approveRecipe: adminProcedure
       .input(z.object({ recipeId: z.number() }))
-      .mutation(({ input }) => approveUserRecipe(input.recipeId)),
+      .mutation(async ({ input }) => {
+        const recipe = await getUserRecipeById(input.recipeId);
+        if (recipe) {
+          await approveUserRecipe(input.recipeId);
+          // Fire and forget social media distribution!
+          distributeToSocialMedia(recipe.id, recipe.slug).catch(console.error);
+        }
+      }),
 
     // Reject (delete) a recipe
     rejectRecipe: adminProcedure

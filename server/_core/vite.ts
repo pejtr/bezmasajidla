@@ -5,6 +5,7 @@ import { nanoid } from "nanoid";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import viteConfig from "../../vite.config";
+import { injectMetaTags } from "./seo";
 
 export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
@@ -39,7 +40,8 @@ export async function setupVite(app: Express, server: Server) {
         `src="/src/main.tsx?v=${nanoid()}"`
       );
       const page = await vite.transformIndexHtml(url, template);
-      res.status(200).set({ "Content-Type": "text/html" }).end(page);
+      const injectedPage = await injectMetaTags(page, url);
+      res.status(200).set({ "Content-Type": "text/html" }).end(injectedPage);
     } catch (e) {
       vite.ssrFixStacktrace(e as Error);
       next(e);
@@ -60,8 +62,18 @@ export function serveStatic(app: Express) {
 
   app.use(express.static(distPath));
 
+  let cachedIndexHtml: string | null = null;
   // fall through to index.html if the file doesn't exist
-  app.use("*", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
+  app.use("*", async (req, res) => {
+    try {
+      if (!cachedIndexHtml) {
+        cachedIndexHtml = fs.readFileSync(path.resolve(distPath, "index.html"), "utf-8");
+      }
+      const injectedPage = await injectMetaTags(cachedIndexHtml, req.originalUrl);
+      res.status(200).set({ "Content-Type": "text/html" }).end(injectedPage);
+    } catch (err) {
+      console.error(err);
+      res.sendFile(path.resolve(distPath, "index.html"));
+    }
   });
 }

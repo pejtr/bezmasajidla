@@ -389,6 +389,19 @@ const sampleIngredients: Record<string, string[]> = {
     "1/2 granátového jablka (semínka na ozdobu)",
     "Sůl dle chuti",
   ],
+  "prava-krkonosska-kulajda": [
+    "2 středně velké brambory",
+    "svazek čerstvého kopru",
+    "3 celé tvrdé čerstvé houby nebo hrst mražených / sušených",
+    "1 kelímek smetany na vaření",
+    "1 litr kvalitního vývaru – zeleninového nebo kuřecího",
+    "1 lžíce másla",
+    "bobkový list",
+    "celé nové koření",
+    "Na jíšku: 1 lžíce másla, 1 lžíce hladké mouky",
+    "K dochucení a servírování: ocet, cukr, citron",
+    "4 čerstvá vejce a octová voda"
+  ],
   default: [
     "Ingredience budou brzy doplňeny.",
   ],
@@ -667,6 +680,15 @@ const sampleSteps: Record<string, string[]> = {
     "Z hmoty tvarujte malé kuličky (průměr cca 3 cm). Vložte do lednice na 30 minut.",
     "Před podáváním ozdobte každou kuličku 3–4 semínky granátového jablka.",
     "Podávejte jako předkrm nebo součást gruzínského mezze.",
+  ],
+  "prava-krkonosska-kulajda": [
+    "Nejprve si připravte světlou jíšku: v malém rendlíku rozehřejte máslo, a jakmile pění, nasypte mouku. Míchejte do hladka.",
+    "Brambory oloupejte a nakrájejte na kostičky. Stonky kopru zavažte gumičkou.",
+    "Do hrnce dejte vývar, brambory a svazek kopru. Vařte do měkka, poté kopr vyjměte.",
+    "Přidejte bobkový list, nové koření a podlijte dalším vývarem, pokud se odpařil.",
+    "Na pánvi vedle orestujte na másle houby. Až pustí šťávu, přidejte je do polévky.",
+    "Vlijte smetanu a povařte. Zahustěte předem připravenou jíškou (kterou si můžete rozmíchat s trochou vývaru) a nechte důkladně probublat.",
+    "Dochuťte octem, cukrem nebo citronem podle chuti a podávejte posypané čerstvým koprem se zastřeným vejcem."
   ],
   default: [
     "Postup přípravy bude brzy doplňen.",
@@ -1125,11 +1147,10 @@ function ImageGallery({ images, title }: { images: { url: string; alt: string }[
             <button
               key={i}
               onClick={() => setActiveIndex(i)}
-              className={`relative rounded-lg overflow-hidden h-16 w-24 flex-shrink-0 transition-all duration-200 ${
-                i === activeIndex
+              className={`relative rounded-lg overflow-hidden h-16 w-24 flex-shrink-0 transition-all duration-200 ${i === activeIndex
                   ? "ring-2 ring-emerald-600 ring-offset-2 opacity-100"
                   : "opacity-60 hover:opacity-90"
-              }`}
+                }`}
               aria-label={img.alt}
             >
               <img

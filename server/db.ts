@@ -303,6 +303,17 @@ export async function getUserRecipeBySlug(slug: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
+export async function getUserRecipeById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db
+    .select()
+    .from(userRecipes)
+    .where(eq(userRecipes.id, id))
+    .limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
 export async function createUserRecipe(data: InsertUserRecipe) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");

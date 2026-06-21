@@ -111,6 +111,10 @@ export interface Recipe {
   isGlutenFree?: boolean;
   /** Whether the recipe is keto-friendly */
   isKeto?: boolean;
+  /** Regional or world cuisine category (e.g. "Česká bezmasá", "Indická") */
+  cuisine?: string;
+  /** Specific dietary options like "bezlepkové", "bio", etc. */
+  dietaryOptions?: DietaryOption[];
   /** Short title for the cultural story section */
   storyTitle?: string;
   /** Cultural/historical context paragraphs (2-3 paragraphs) */
@@ -1719,7 +1723,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     priceLevel: 1,
     hours: "Po–Pá 9:00–20:00, So 10:00–18:00",
     bestFor: ["Levné jídlo", "Zdravé jídlo", "Turistické místo"],
-    instagramUrl: "https://www.instagram.com/countrylifepraha/",    facebookUrl: "https://www.facebook.com/krokitchen/",
+    instagramUrl: "https://www.instagram.com/countrylifepraha/", facebookUrl: "https://www.facebook.com/krokitchen/",
   },
   // ── BAGETERIE BOULEVARD ──
   {
@@ -1906,6 +1910,36 @@ const RECIPE_PLACEHOLDER = "https://d2xsxph8kpxj0f.cloudfront.net/31041966303229
 
 export const recipes: Recipe[] = [
   {
+    id: "r_kulajda_01",
+    title: "Pravá Krkonošská Kulajda s Houbami a Vejcem",
+    slug: "prava-krkonosska-kulajda",
+    category: "Polévky",
+    cuisine: "Česká bezmasá",
+    prepTime: 10,
+    cookTime: 20,
+    servings: 4,
+    difficulty: "střední",
+    isVegan: false,
+    isGlutenFree: false,
+    dietaryOptions: [],
+    tags: ["Brambory", "Máslo", "Pšeničná mouka", "Smetana", "Vejce", "Polévky", "Česká bezmasá jídla", "Vegetariánské Recepty"],
+    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/prava-krkonosska-kulajda_example.jpg", // TBD: replaced with a properly generated AI image or placeholder
+    images: [],
+    description: "Pravá krkonošská kulajda s houbami a vejcem je tradiční polévka, která pochází z českého pohoří Krkonoše a je oblíbená pro svou sytou chuť a výživný charakter. Tato polévka je ideálním způsobem, jak si pochutnat na sezónních houbách a vytvořit bohatou a zahřívající večeři.",
+    storyTitle: "Chuť, která vás přenese do krkonošských chalup",
+    story: [
+      "Krkonošská kulajda je mnohem víc než jen polévka. Je to symbol pohostinnosti, tradice a lásky k přírodě. Její kořeny sahají hluboko do historie Krkonoš, kde byla po staletí připravována v chalupách z čerstvých surovin. Tato houbová polévka je nejen chutná, ale také výživná a zahřeje vás i v těch nejchladnějších dnech.",
+      "Základem pravé krkonošské kulajdy jsou čerstvé houby, nejlépe sbírané přímo v Krkonoších. Brambory dodávají hustotu a zasytí, zatímco kopr dodává svěží vůni. Zakysaná smetana polévku zjemní a dodá jí krémovou konzistenci. A na závěr vejce, uvařené zastřeně, které přidává bohatost.",
+      "Krkonošská kulajda má bohatou historii, která sahá až do středověku. Původně byla připravována jako jednoduchá polévka pro chudé horaly, kteří využívali suroviny, které měli k dispozici. Postupem času se stala oblíbenou pochoutkou všech společenských vrstev."
+    ],
+    editorialReview: {
+      summary: "Nejúspěšnější tradiční recept z původního VegRecepty.cz! Poctivá krkonošská kulajda vás provoní smetanou, hříbky a čerstvým koprem.",
+      bestFor: "Rodinné obědy, zahřátí v zimních měsících a pro milovníky tradiční české kuchyně bez masa.",
+      highlight: "Orestované houby a dokonalé zastřené vejce.",
+      rating: 10.0
+    }
+  },
+  {
     id: "r1",
     title: "Veganská svíčková na smetaně",
     slug: "veganska-svickova",
@@ -1965,7 +1999,7 @@ export const recipes: Recipe[] = [
     tags: ["Bowl", "Quinoa", "Zdravé"],
     isVegan: true,
     isGlutenFree: true,
-        macros: { calories: 380, protein: 14, carbs: 52, fiber: 10, fat: 13, sugars: 8 },
+    macros: { calories: 380, protein: 14, carbs: 52, fiber: 10, fat: 13, sugars: 8 },
   },
   {
     id: "r4",
@@ -2072,7 +2106,7 @@ export const recipes: Recipe[] = [
     tags: ["Salát", "Brambory", "Česká kuchyně", "Sváteční"],
     isVegan: false,
     isGlutenFree: true,
-        macros: { calories: 290, protein: 8, carbs: 38, fiber: 4, fat: 12, sugars: 5 },
+    macros: { calories: 290, protein: 8, carbs: 38, fiber: 4, fat: 12, sugars: 5 },
   },
   {
     id: "r9",
@@ -2093,7 +2127,7 @@ export const recipes: Recipe[] = [
     tags: ["Dezert", "Čokoláda", "Brownies", "Pečení"],
     isVegan: true,
     isGlutenFree: true,
-        macros: { calories: 310, protein: 5, carbs: 40, fiber: 4, fat: 16, sugars: 28 },
+    macros: { calories: 310, protein: 5, carbs: 40, fiber: 4, fat: 16, sugars: 28 },
   },
   {
     id: "r10",
@@ -2194,7 +2228,7 @@ export const recipes: Recipe[] = [
     tags: ["Dezert", "Cheesecake", "Raw", "Borůvky"],
     isVegan: true,
     isGlutenFree: true,
-        macros: { calories: 380, protein: 8, carbs: 32, fiber: 3, fat: 26, sugars: 22 },
+    macros: { calories: 380, protein: 8, carbs: 32, fiber: 3, fat: 26, sugars: 22 },
   },
   {
     id: "r15",
@@ -2255,7 +2289,7 @@ export const recipes: Recipe[] = [
     tags: ["Snídaně", "Smoothie", "Ovoce", "Zdravé"],
     isVegan: true,
     isGlutenFree: true,
-        macros: { calories: 320, protein: 9, carbs: 58, fiber: 8, fat: 7, sugars: 32 },
+    macros: { calories: 320, protein: 9, carbs: 58, fiber: 8, fat: 7, sugars: 32 },
   },
   {
     id: "r18",
@@ -2276,7 +2310,7 @@ export const recipes: Recipe[] = [
     tags: ["Polévka", "Špenát", "Brambory", "Česká kuchyně"],
     isVegan: false,
     isGlutenFree: true,
-        macros: { calories: 180, protein: 7, carbs: 24, fiber: 4, fat: 6, sugars: 4 },
+    macros: { calories: 180, protein: 7, carbs: 24, fiber: 4, fat: 6, sugars: 4 },
   },
   {
     id: "r19",
@@ -2297,7 +2331,7 @@ export const recipes: Recipe[] = [
     tags: ["Polévka", "Květák", "Zázvor", "Zdravé"],
     isVegan: true,
     isGlutenFree: true,
-        macros: { calories: 160, protein: 4, carbs: 18, fiber: 5, fat: 8, sugars: 6 },
+    macros: { calories: 160, protein: 4, carbs: 18, fiber: 5, fat: 8, sugars: 6 },
   },
   {
     id: "r20",
@@ -2318,7 +2352,7 @@ export const recipes: Recipe[] = [
     tags: ["Indická", "Curry", "Cizrna", "Kokos"],
     isVegan: true,
     isGlutenFree: true,
-        macros: { calories: 390, protein: 14, carbs: 44, fiber: 10, fat: 18, sugars: 7 },
+    macros: { calories: 390, protein: 14, carbs: 44, fiber: 10, fat: 18, sugars: 7 },
   },
   {
     id: "r21",
@@ -2339,8 +2373,8 @@ export const recipes: Recipe[] = [
     tags: ["Asijská", "Tofu", "Wok", "Rychlé"],
     isVegan: true,
     isGlutenFree: true,
-        isKeto: true,
-        macros: { calories: 280, protein: 18, carbs: 16, fiber: 6, fat: 16, sugars: 5 },
+    isKeto: true,
+    macros: { calories: 280, protein: 18, carbs: 16, fiber: 6, fat: 16, sugars: 5 },
   },
   {
     id: "r22",
@@ -2361,7 +2395,7 @@ export const recipes: Recipe[] = [
     tags: ["Mexická", "Fazole", "Rýže", "Pikantní"],
     isVegan: true,
     isGlutenFree: true,
-        macros: { calories: 360, protein: 15, carbs: 58, fiber: 12, fat: 6, sugars: 5 },
+    macros: { calories: 360, protein: 15, carbs: 58, fiber: 12, fat: 6, sugars: 5 },
   },
   {
     id: "r23",
@@ -2402,7 +2436,7 @@ export const recipes: Recipe[] = [
     tags: ["Polévka", "Hrášek", "Máta", "Zdravé"],
     isVegan: true,
     isGlutenFree: true,
-        macros: { calories: 170, protein: 9, carbs: 26, fiber: 7, fat: 3, sugars: 8 },
+    macros: { calories: 170, protein: 9, carbs: 26, fiber: 7, fat: 3, sugars: 8 },
   },
   {
     id: "r25",
@@ -2424,7 +2458,7 @@ export const recipes: Recipe[] = [
     story: [
       "Štrůdl má kořeny v osmanské kuchyni, odkud se přes Madarsko a Rakůusko rozšířil do celé střední Evropy. V habsburské říši se stal symbolem důmyslnosti domácí kuchyně — umění natáhnout těsto tak tenké, aby skrze něj bylo vidět noviny, bylo známkou skutečné zručnosti. Sladná verze s jablky a skřicemi je dnes nejznámější, ale slané štrůdly měly vždy své místo na středoevropských stolech.",
       "Kombinace modrého sýra a karamelizované cibule je klasická francouzská dvojice, která v listovém těstě získává nový rozměr. Modré sýry jako Roquefort, Gorgonzola nebo český Niva mají díky plešňové kultivě intenzivní, lehce kořeněnou chuť, která se krásně vyvazuje se sladkostí karamelizované cibule. Všechno zabaleno do křupavého listového těsta vytváří dokonalou texturní hru.",
-        "V Praze se slané štrůdly začínají objevovat na menu moderních bistro restaurací jako alternativa k tradičním quiche nebo tartěm. Je to jedno z těch jídel, které překlenívá propast mezi domácí kuchyní a restaurační úrovní — přitom ho zvládne každý, kdo pracuje s kupovaným listovým těstem.",
+      "V Praze se slané štrůdly začínají objevovat na menu moderních bistro restaurací jako alternativa k tradičním quiche nebo tartěm. Je to jedno z těch jídel, které překlenívá propast mezi domácí kuchyní a restaurační úrovní — přitom ho zvládne každý, kdo pracuje s kupovaným listovým těstem.",
     ],
     macros: { calories: 480, protein: 14, carbs: 38, fiber: 3, fat: 30, sugars: 8 },
   },
@@ -2475,7 +2509,7 @@ export const recipes: Recipe[] = [
       "Zabalit tuto kombinaci do listového těsta je moderní přístup, který dává jídlu křupavost a vizulání efekt. Zelená náplň prosvitající skrze zlatavé těsto je opticky působivá — ideální jídlo pro přátelské večeře nebo brunch.",
     ],
     macros: { calories: 390, protein: 13, carbs: 36, fiber: 4, fat: 22, sugars: 5 },
-  },  {
+  }, {
     id: "r28",
     title: "Adžarský chačapuri (gruzínský chlebový člun se sýrem)",
     slug: "adzarsky-khachapuri",

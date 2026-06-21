@@ -28,11 +28,44 @@ const cuisines = [
   { key: "indická", label: "Indická", flag: "🇮🇳" },
 ];
 
+const categorySEO: Record<string, { title: string, desc: string }> = {
+  "Vše": {
+    title: "Bezmasé Recepty — Veganské a Vegetariánské Recepty",
+    desc: "Sbírka ověřených veganských a vegetariánských receptů. Inspirujte se a objevte nejlepší bezmasá jídla od snídaně po dezert."
+  },
+  "Hlavní jídla": {
+    title: "Hlavní Bezmasá Jídla — Veganské a Vegetariánské Recepty",
+    desc: "Vynikající recepty na vegetariánská a veganská hlavní jídla. Bohaté a výživné obědy a večeře plné zeleniny a rostlinných proteinů."
+  },
+  "Polévky": {
+    title: "Veganské a Vegetariánské Polévky — Zahřejí a Zasytí",
+    desc: "Od tradiční bramboračky nebo kulajdy až po asijské vývary. Nejlepší recepty na bezmasé polévky, které zvládnete do 30 i 60 minut."
+  },
+  "Saláty a misky": {
+    title: "Svěží Saláty a Poke Misky — Bezmasá Sezóna",
+    desc: "Osvěžující a výživné veganské saláty a moderní buddha bowls. Recepty vhodné ke zdravému obědu i lehké večeři."
+  },
+  "Snídáně": {
+    title: "Veganské Snídaně — Skvělý Start do Nového Dne",
+    desc: "Bezmasé recepty na sladké i slané snídaně. Dopřejte si energií nabité lívance, ovesné kaše, zdravé tousty nebo veganské palačinky."
+  },
+  "Dezerty": {
+    title: "Zdravé a Lahodné Dezerty Bez Masa a Živočišných Tuků",
+    desc: "Nejlepší vegetariánské a veganské sladkosti, raw dorty a veganské pečení, které potěší i náročné gurmány."
+  },
+  "Nápoje": {
+    title: "Zdravé Nápoje a Smoothie - Veganské Osvěžení",
+    desc: "Smoothie plné vitamínů, čerstvé džusy a hřejivé nápoje pro podporu imunity."
+  }
+};
+
 export default function Recipes() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Vše");
   const [veganOnly, setVeganOnly] = useState(false);
   const [cuisineFilter, setCuisineFilter] = useState("");
+  const [difficultyFilter, setDifficultyFilter] = useState("");
+  const [prepTimeFilter, setPrepTimeFilter] = useState<number | null>(null);
 
   // Read URL params on mount and when URL changes
   useEffect(() => {
@@ -51,26 +84,41 @@ export default function Recipes() {
   const filtered = useMemo(() => {
     return recipes.filter((r) => {
       if (searchQuery && !r.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
-          !r.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))) return false;
+        !r.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))) return false;
       if (selectedCategory !== "Vše" && r.category !== selectedCategory) return false;
       if (veganOnly && !r.isVegan) return false;
-      // Cuisine filter: match against recipe tags (e.g. "gruzínská" matches tag "Gruzínská kuchyně")
+      // Cuisine filter: match against recipe tags (e.g. "gruzínská" matches tag "Gruzínská kuchyně") or exact cuisine string
       if (cuisineFilter) {
         const cf = cuisineFilter.toLowerCase();
-        const matches = r.tags.some(t => t.toLowerCase().includes(cf)) ||
-                        r.title.toLowerCase().includes(cf);
+        const matches = r.cuisine?.toLowerCase().includes(cf) ||
+          r.tags.some(t => t.toLowerCase().includes(cf)) ||
+          r.title.toLowerCase().includes(cf);
         if (!matches) return false;
+      }
+      // Difficulty
+      if (difficultyFilter && r.difficulty !== difficultyFilter) return false;
+      // Prep Time
+      if (prepTimeFilter !== null) {
+        const total = r.prepTime + r.cookTime;
+        if (prepTimeFilter === 15 && total > 15) return false;
+        if (prepTimeFilter === 30 && (total <= 15 || total > 30)) return false;
+        if (prepTimeFilter === 60 && (total <= 30 || total > 60)) return false;
+        if (prepTimeFilter === 61 && total <= 60) return false;
       }
       return true;
     });
-  }, [searchQuery, selectedCategory, veganOnly, cuisineFilter]);
+  }, [searchQuery, selectedCategory, veganOnly, cuisineFilter, difficultyFilter, prepTimeFilter]);
+
+  const currentSEOParams = categorySEO[selectedCategory] || categorySEO["Vše"];
+  const dynamicTitle = cuisineFilter ? `${cuisines.find(c => c.key === cuisineFilter)?.label} Kuchyně | ${currentSEOParams.title}` : currentSEOParams.title;
+  const dynamicDesc = cuisineFilter ? `Objevte ty nejlepší bezmasé recepty orientované na ${cuisineFilter} kuchyni. ${currentSEOParams.desc}` : currentSEOParams.desc;
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAF6]">
       <SEOHead
-        title="Bezmasé Recepty — Veganské a Vegetariánské Recepty"
-        description="Sbírka ověřených veganských a vegetariánských receptů. Hlavní jídla, polévky, saláty, dezerty a snídaně bez masa."
-        ogUrl="https://www.bezmasajidla.cz/recepty"
+        title={dynamicTitle}
+        description={dynamicDesc}
+        ogUrl={`https://www.bezmasajidla.cz/recepty${selectedCategory !== "Vše" ? `?category=${selectedCategory}` : ""}`}
       />
       <Header />
 
@@ -128,11 +176,10 @@ export default function Recipes() {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`whitespace-nowrap text-sm px-4 py-2 rounded-full font-medium transition-colors flex-shrink-0 ${
-                selectedCategory === cat
-                  ? "bg-emerald-700 text-white shadow-sm"
-                  : "bg-white text-gray-600 border border-emerald-100 hover:border-emerald-400 hover:text-emerald-700"
-              }`}
+              className={`whitespace-nowrap text-sm px-4 py-2 rounded-full font-medium transition-colors flex-shrink-0 ${selectedCategory === cat
+                ? "bg-emerald-700 text-white shadow-sm"
+                : "bg-white text-gray-600 border border-emerald-100 hover:border-emerald-400 hover:text-emerald-700"
+                }`}
             >
               {cat}
             </button>
@@ -147,16 +194,58 @@ export default function Recipes() {
               <button
                 key={c.key}
                 onClick={() => setCuisineFilter(c.key)}
-                className={`whitespace-nowrap text-sm px-3 py-1.5 rounded-full font-medium transition-colors flex-shrink-0 flex items-center gap-1.5 ${
-                  cuisineFilter === c.key
-                    ? "bg-amber-500 text-white shadow-sm"
-                    : "bg-white text-gray-600 border border-amber-100 hover:border-amber-400 hover:text-amber-700"
-                }`}
+                className={`whitespace-nowrap text-sm px-3 py-1.5 rounded-full font-medium transition-colors flex-shrink-0 flex items-center gap-1.5 ${cuisineFilter === c.key
+                  ? "bg-amber-500 text-white shadow-sm"
+                  : "bg-white text-gray-600 border border-amber-100 hover:border-amber-400 hover:text-amber-700"
+                  }`}
               >
                 <span>{c.flag}</span>
                 <span>{c.label}</span>
               </button>
             ))}
+          </div>
+        </div>
+
+        {/* Difficulty and Prep time row */}
+        <div className="flex gap-6 mb-6 overflow-x-auto pb-1">
+          <div>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Náročnost</p>
+            <div className="flex gap-2">
+              {[
+                { val: "", label: "Nerozhoduje" },
+                { val: "snadný", label: "Snadná příprava" },
+                { val: "střední", label: "Střední náročnost" },
+                { val: "náročný", label: "Náročná" }
+              ].map(d => (
+                <button
+                  key={d.val}
+                  onClick={() => setDifficultyFilter(d.val)}
+                  className={`text-xs px-3 py-1.5 rounded-full font-medium flex-shrink-0 ${difficultyFilter === d.val ? 'bg-indigo-500 text-white' : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100'}`}
+                >
+                  {d.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Doba přípravy</p>
+            <div className="flex gap-2">
+              {[
+                { val: null, label: "Nerozhoduje" },
+                { val: 15, label: "Do 15 min" },
+                { val: 30, label: "Do 30 min" },
+                { val: 60, label: "Do 60 min" },
+                { val: 61, label: "Nad hodinu" }
+              ].map(p => (
+                <button
+                  key={p.val === null ? 'null' : p.val}
+                  onClick={() => setPrepTimeFilter(p.val)}
+                  className={`text-xs px-3 py-1.5 rounded-full font-medium flex-shrink-0 ${prepTimeFilter === p.val ? 'bg-rose-500 text-white' : 'bg-rose-50 text-rose-700 hover:bg-rose-100'}`}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
