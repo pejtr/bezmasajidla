@@ -1,5 +1,5 @@
 import { db } from "../db";
-import { userRecipes, type InsertUserRecipe } from "../../../drizzle/schema";
+import { userRecipes, type InsertUserRecipe } from "../../drizzle/schema";
 import { nanoid } from "nanoid";
 
 /**
