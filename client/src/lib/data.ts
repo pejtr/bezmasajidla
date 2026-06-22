@@ -1923,8 +1923,8 @@ export const recipes: Recipe[] = [
     isGlutenFree: false,
     dietaryOptions: [],
     tags: ["Brambory", "Máslo", "Pšeničná mouka", "Smetana", "Vejce", "Polévky", "Česká bezmasá jídla", "Vegetariánské Recepty"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/prava-krkonosska-kulajda_example.jpg", // TBD: replaced with a properly generated AI image or placeholder
-    images: [],
+    image: RECIPE_PLACEHOLDER,
+    images: [{ url: RECIPE_PLACEHOLDER, alt: "Pravá Krkonošská Kulajda v misce" }],
     description: "Pravá krkonošská kulajda s houbami a vejcem je tradiční polévka, která pochází z českého pohoří Krkonoše a je oblíbená pro svou sytou chuť a výživný charakter. Tato polévka je ideálním způsobem, jak si pochutnat na sezónních houbách a vytvořit bohatou a zahřívající večeři.",
     storyTitle: "Chuť, která vás přenese do krkonošských chalup",
     story: [
