@@ -1,4 +1,4 @@
-import { db } from "../db";
+import { getDb } from "../db";
 import { userRecipes, type InsertUserRecipe } from "../../drizzle/schema";
 import { nanoid } from "nanoid";
 
@@ -10,6 +10,11 @@ export async function generateDailyAIRecipe() {
     console.log("[AI Recipe] Starting daily AI recipe generation...");
 
     try {
+        const db = await getDb();
+        if (!db) {
+            console.warn("[AI Recipe] Database not available, skipping generation.");
+            return;
+        }
         // TBD: use real OpenAI fetch here using fetch() to api.openai.com
         // Mocked AI output
         const mockGeneratedRecipe: InsertUserRecipe = {
