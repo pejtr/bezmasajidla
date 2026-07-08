@@ -83,7 +83,7 @@ export default function Restaurants() {
       // Exclude fast food from default "all" listing — only show when explicitly selected
       if (selectedType === "all" && r.type === "fastfood") return false;
       if (searchQuery && !r.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-          !r.description.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+        !r.description.toLowerCase().includes(searchQuery.toLowerCase())) return false;
       if (selectedType !== "all" && r.type !== selectedType) return false;
       if (selectedDistrict !== "Všechny čtvrti" && r.district !== selectedDistrict) return false;
       if (showOpenOnly && !getOpenStatus(r.hours || "").isOpen) return false;
@@ -170,8 +170,8 @@ export default function Restaurants() {
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAF6]">
       <SEOHead
-        title="Veganšké a Vegetariánské Restaurace v Praze"
-        description="Kompletní přehled veganškých, vegetariánských a vegan-friendly restaurací v Praze. Filtrujte podle čtvrti, kuchyňé, cenové hladiny a dietních preferencí."
+        title="Veganské a vegetariánské restaurace v Praze | Bezmasé jídlo"
+        description="Kompletní přehled pro veganské jídlo a bezmasé jídlo v Praze. Najděte ty nejlepší veganské, vegetariánské a vegan-friendly restaurace v Praze."
         ogUrl="https://www.bezmasajidla.cz/restaurace"
       />
       <RestaurantListJsonLd restaurants={restaurants} />
@@ -242,11 +242,10 @@ export default function Restaurants() {
             <button
               key={f.label}
               onClick={() => setSelectedBestFor(prev => prev === f.label ? null : f.label)}
-              className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border transition-all duration-150 ${
-                selectedBestFor === f.label
-                  ? "bg-emerald-700 text-white border-emerald-700 shadow-sm"
-                  : "bg-white text-gray-600 border-emerald-100 hover:border-emerald-400 hover:text-emerald-700"
-              }`}
+              className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border transition-all duration-150 ${selectedBestFor === f.label
+                ? "bg-emerald-700 text-white border-emerald-700 shadow-sm"
+                : "bg-white text-gray-600 border-emerald-100 hover:border-emerald-400 hover:text-emerald-700"
+                }`}
             >
               <span>{f.icon}</span>
               {f.label}
@@ -345,9 +344,8 @@ export default function Restaurants() {
                     <button
                       key={opt.value}
                       onClick={() => setSelectedType(opt.value)}
-                      className={`text-left text-sm px-3 py-2 rounded-lg font-medium transition-colors ${
-                        selectedType === opt.value ? opt.color : "text-gray-600 hover:bg-emerald-50"
-                      }`}
+                      className={`text-left text-sm px-3 py-2 rounded-lg font-medium transition-colors ${selectedType === opt.value ? opt.color : "text-gray-600 hover:bg-emerald-50"
+                        }`}
                     >
                       {opt.label}
                     </button>
@@ -365,16 +363,14 @@ export default function Restaurants() {
                     <button
                       key={level.value}
                       onClick={() => togglePriceLevel(level.value)}
-                      className={`flex items-center gap-2.5 py-2 px-3 rounded-lg border transition-all duration-200 text-left ${
-                        selectedPriceLevels.includes(level.value)
-                          ? "bg-amber-50 border-amber-400 text-amber-800 shadow-sm"
-                          : "bg-white border-emerald-100 text-gray-500 hover:border-amber-300 hover:text-amber-700 hover:bg-amber-50/50"
-                      }`}
+                      className={`flex items-center gap-2.5 py-2 px-3 rounded-lg border transition-all duration-200 text-left ${selectedPriceLevels.includes(level.value)
+                        ? "bg-amber-50 border-amber-400 text-amber-800 shadow-sm"
+                        : "bg-white border-emerald-100 text-gray-500 hover:border-amber-300 hover:text-amber-700 hover:bg-amber-50/50"
+                        }`}
                       title={level.description}
                     >
-                      <span className={`text-sm font-bold whitespace-nowrap ${
-                        selectedPriceLevels.includes(level.value) ? "text-amber-600" : "text-gray-400"
-                      }`}>
+                      <span className={`text-sm font-bold whitespace-nowrap ${selectedPriceLevels.includes(level.value) ? "text-amber-600" : "text-gray-400"
+                        }`}>
                         {Array.from({ length: level.value }).map((_, i) => (
                           <span key={i} className="inline-block">Kč</span>
                         ))}
@@ -398,11 +394,10 @@ export default function Restaurants() {
                     <button
                       key={opt.value}
                       onClick={() => toggleDietary(opt.value)}
-                      className={`text-xs px-2.5 py-1.5 rounded-full border transition-all duration-200 flex items-center gap-1 ${
-                        selectedDietary.includes(opt.value)
-                          ? "bg-teal-600 text-white border-teal-600 shadow-sm"
-                          : "bg-white text-gray-600 border-emerald-100 hover:border-teal-400 hover:text-teal-700 hover:bg-teal-50"
-                      }`}
+                      className={`text-xs px-2.5 py-1.5 rounded-full border transition-all duration-200 flex items-center gap-1 ${selectedDietary.includes(opt.value)
+                        ? "bg-teal-600 text-white border-teal-600 shadow-sm"
+                        : "bg-white text-gray-600 border-emerald-100 hover:border-teal-400 hover:text-teal-700 hover:bg-teal-50"
+                        }`}
                     >
                       <span className="text-sm leading-none">{opt.icon}</span>
                       {opt.label}
@@ -424,11 +419,10 @@ export default function Restaurants() {
                     <button
                       key={d}
                       onClick={() => setSelectedDistrict(d)}
-                      className={`text-left text-sm px-3 py-1.5 rounded-lg transition-colors ${
-                        selectedDistrict === d
-                          ? "bg-emerald-50 text-emerald-700 font-medium"
-                          : "text-gray-600 hover:bg-emerald-50"
-                      }`}
+                      className={`text-left text-sm px-3 py-1.5 rounded-lg transition-colors ${selectedDistrict === d
+                        ? "bg-emerald-50 text-emerald-700 font-medium"
+                        : "text-gray-600 hover:bg-emerald-50"
+                        }`}
                     >
                       {d}
                     </button>
@@ -457,11 +451,10 @@ export default function Restaurants() {
                     <button
                       key={tag}
                       onClick={() => toggleTag(tag)}
-                      className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
-                        selectedTags.includes(tag)
-                          ? "bg-emerald-700 text-white border-emerald-700"
-                          : "bg-white text-gray-600 border-emerald-100 hover:border-emerald-400 hover:text-emerald-700"
-                      }`}
+                      className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${selectedTags.includes(tag)
+                        ? "bg-emerald-700 text-white border-emerald-700"
+                        : "bg-white text-gray-600 border-emerald-100 hover:border-emerald-400 hover:text-emerald-700"
+                        }`}
                     >
                       {tag}
                     </button>
@@ -502,11 +495,10 @@ export default function Restaurants() {
                           <button
                             key={opt.value}
                             onClick={() => { setSortBy(opt.value); setSortDropdownOpen(false); }}
-                            className={`w-full text-left text-sm px-4 py-2 transition-colors ${
-                              sortBy === opt.value
-                                ? "bg-emerald-50 text-emerald-700 font-medium"
-                                : "text-gray-600 hover:bg-emerald-50 hover:text-emerald-700"
-                            }`}
+                            className={`w-full text-left text-sm px-4 py-2 transition-colors ${sortBy === opt.value
+                              ? "bg-emerald-50 text-emerald-700 font-medium"
+                              : "text-gray-600 hover:bg-emerald-50 hover:text-emerald-700"
+                              }`}
                           >
                             {opt.label}
                           </button>
@@ -538,11 +530,10 @@ export default function Restaurants() {
                     <button
                       onClick={() => toggleCompare(r.id)}
                       title={compareIds.includes(r.id) ? "Odebrat ze srovnání" : "Přidat ke srovnání"}
-                      className={`absolute top-3 right-3 z-10 flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full border transition-all ${
-                        compareIds.includes(r.id)
-                          ? "bg-emerald-700 text-white border-emerald-700 shadow"
-                          : "bg-white/90 text-gray-500 border-gray-200 opacity-0 group-hover:opacity-100 hover:border-emerald-400 hover:text-emerald-700"
-                      }`}
+                      className={`absolute top-3 right-3 z-10 flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full border transition-all ${compareIds.includes(r.id)
+                        ? "bg-emerald-700 text-white border-emerald-700 shadow"
+                        : "bg-white/90 text-gray-500 border-gray-200 opacity-0 group-hover:opacity-100 hover:border-emerald-400 hover:text-emerald-700"
+                        }`}
                     >
                       {compareIds.includes(r.id) ? "✓ Srovnat" : "+ Srovnat"}
                     </button>
@@ -633,11 +624,10 @@ export default function Restaurants() {
                     {
                       label: "Typ",
                       render: (r: typeof restaurants[0]) => (
-                        <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                          r.type === 'vegan' ? 'bg-emerald-100 text-emerald-700' :
+                        <span className={`text-xs font-semibold px-2 py-1 rounded-full ${r.type === 'vegan' ? 'bg-emerald-100 text-emerald-700' :
                           r.type === 'vegetarian' ? 'bg-green-100 text-green-700' :
-                          'bg-amber-100 text-amber-700'
-                        }`}>
+                            'bg-amber-100 text-amber-700'
+                          }`}>
                           {r.type === 'vegan' ? 'Veganská' : r.type === 'vegetarian' ? 'Vegetariánská' : 'Vegan-friendly'}
                         </span>
                       )

@@ -76,7 +76,7 @@
 
 /// <reference types="@types/google.maps" />
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePersistFn } from "@/hooks/usePersistFn";
 import { cn } from "@/lib/utils";
 
@@ -91,6 +91,7 @@ const FORGE_BASE_URL =
   import.meta.env.VITE_FRONTEND_FORGE_API_URL ||
   "https://forge.butterfly-effect.dev";
 const MAPS_PROXY_URL = `${FORGE_BASE_URL}/v1/maps/proxy`;
+const MAP_SCRIPT_ID = "google-maps-proxy-script";
 
 let mapsLoadPromise: Promise<unknown> | null = null;
 
@@ -102,8 +103,35 @@ function loadMapScript() {
   if (mapsLoadPromise) {
     return mapsLoadPromise;
   }
+
+  if (!API_KEY) {
+    return Promise.reject(
+      new Error("Missing VITE_FRONTEND_FORGE_API_KEY for Google Maps")
+    );
+  }
+
   mapsLoadPromise = new Promise((resolve, reject) => {
+    const existingScript = document.getElementById(
+      MAP_SCRIPT_ID
+    ) as HTMLScriptElement | null;
+
+    if (existingScript) {
+      existingScript.addEventListener("load", () => resolve(null), {
+        once: true,
+      });
+      existingScript.addEventListener(
+        "error",
+        () => {
+          mapsLoadPromise = null;
+          reject(new Error("Failed to load Google Maps"));
+        },
+        { once: true }
+      );
+      return;
+    }
+
     const script = document.createElement("script");
+    script.id = MAP_SCRIPT_ID;
     script.src = `${MAPS_PROXY_URL}/maps/api/js?key=${API_KEY}&v=weekly&libraries=marker,places,geocoding,geometry`;
     script.async = true;
     script.crossOrigin = "anonymous";
@@ -113,6 +141,7 @@ function loadMapScript() {
     script.onerror = () => {
       mapsLoadPromise = null; // Allow retry on error
       console.error("Failed to load Google Maps script");
+      script.remove();
       reject(new Error("Failed to load Google Maps"));
     };
     document.head.appendChild(script);
@@ -135,13 +164,30 @@ export function MapView({
 }: MapViewProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<google.maps.Map | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const init = usePersistFn(async () => {
-    await loadMapScript();
+    if (map.current) return;
+
+    try {
+      await loadMapScript();
+    } catch (err) {
+      console.error("[Map] Unable to load Google Maps", err);
+      setError(
+        "Mapu se nepodařilo načíst. Zkontrolujte prosím konfiguraci Google Maps."
+      );
+      return;
+    }
+
     if (!mapContainer.current) {
       console.error("Map container not found");
       return;
     }
+    if (!window.google?.maps) {
+      setError("Mapu se nepodařilo inicializovat.");
+      return;
+    }
+
     map.current = new window.google.maps.Map(mapContainer.current, {
       zoom: initialZoom,
       center: initialCenter,
@@ -161,6 +207,13 @@ export function MapView({
   }, [init]);
 
   return (
-    <div ref={mapContainer} className={cn("w-full h-full", className)} />
+    <div className={cn("relative w-full h-full", className)}>
+      <div ref={mapContainer} className="w-full h-full" />
+      {error && (
+        <div className="absolute inset-0 flex items-center justify-center bg-emerald-50 text-sm text-emerald-900 px-4 text-center">
+          {error}
+        </div>
+      )}
+    </div>
   );
 }

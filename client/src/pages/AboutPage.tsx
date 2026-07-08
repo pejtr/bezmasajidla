@@ -46,7 +46,7 @@ export default function AboutPage() {
     <div className="min-h-screen flex flex-col bg-white">
       <SEOHead
         title="O nás — Bezmasá Jídla"
-        description="Jsme největší český adresář veganškých a vegetariánských restaurací v Praze. Naším cílem je usnadnit lidem cestu k bezmasému stravování."
+        description="Jsme největší český adresář veganských a vegetariánských restaurací v Praze. Naším cílem je usnadnit lidem cestu k bezmasému stravování."
         ogUrl="https://www.bezmasajidla.cz/o-nas"
       />
       <OrganizationJsonLd />
@@ -114,7 +114,7 @@ export default function AboutPage() {
               </p>
               <p>
                 Naším cílem je zmapovat <strong>každou veganskou a vegetariánskou restauraci
-                v Praze</strong> — od zavedených podniků jako Lehká Hlava a Maitrea, přes
+                  v Praze</strong> — od zavedených podniků jako Lehká Hlava a Maitrea, přes
                 moderní bistro koncepty jako Palo Verde a Chutnej, až po skryté poklady,
                 o kterých ví jen místní.
               </p>
@@ -342,9 +342,8 @@ function FAQAccordion() {
               {item.question}
             </span>
             <ChevronDown
-              className={`w-5 h-5 text-emerald-600 flex-shrink-0 transition-transform duration-200 ${
-                openIndex === i ? "rotate-180" : ""
-              }`}
+              className={`w-5 h-5 text-emerald-600 flex-shrink-0 transition-transform duration-200 ${openIndex === i ? "rotate-180" : ""
+                }`}
             />
           </button>
           {openIndex === i && (

@@ -30,8 +30,8 @@ const cuisines = [
 
 const categorySEO: Record<string, { title: string, desc: string }> = {
   "Vše": {
-    title: "Bezmasé Recepty — Veganské a Vegetariánské Recepty",
-    desc: "Sbírka ověřených veganských a vegetariánských receptů. Inspirujte se a objevte nejlepší bezmasá jídla od snídaně po dezert."
+    title: "Bezmasé a vegetariánské recepty, veganské jídlo | Bezmasajidla.cz",
+    desc: "Objevte skvělé bezmasé recepty a vegetariánské recepty. Od rychlého oběda bez masa pro vegan krabičkovou dietu až po českou klasiku a veganské jídlo."
   },
   "Hlavní jídla": {
     title: "Hlavní Bezmasá Jídla — Veganské a Vegetariánské Recepty",

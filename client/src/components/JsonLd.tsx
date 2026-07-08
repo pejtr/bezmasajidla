@@ -186,13 +186,30 @@ export function RecipeJsonLd({
   ingredients?: string[];
   steps?: string[];
 }) {
+  const keywords = [
+    recipe.category,
+    recipe.cuisine,
+    recipe.isVegan ? "vegan" : "vegetariánský",
+    recipe.isVegan ? "veganský recept" : "vegetariánský recept",
+    "bezmasý recept",
+    "recept bez masa",
+    ...(recipe.isGlutenFree ? ["bezlepkovy recept", "bez lepku"] : []),
+    ...(recipe.isKeto ? ["low carb", "keto"] : []),
+    ...recipe.tags,
+  ].filter(Boolean) as string[];
+
   const schema = {
     "@context": "https://schema.org",
     "@type": "Recipe",
     "@id": `https://www.bezmasajidla.cz/recepty/${recipe.slug}`,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `https://www.bezmasajidla.cz/recepty/${recipe.slug}`,
+    },
+    inLanguage: "cs-CZ",
     name: recipe.title,
     description: recipe.description,
-    image: recipe.image,
+    image: [recipe.image, ...(recipe.images || []).map((image) => image.url)].filter(Boolean),
     author: {
       "@type": "Organization",
       name: "Bezmasá Jídla",
@@ -213,8 +230,16 @@ export function RecipeJsonLd({
     cookTime: `PT${recipe.cookTime}M`,
     totalTime: `PT${recipe.prepTime + recipe.cookTime}M`,
     recipeCategory: recipe.category,
-    recipeCuisine: "Czech",
-    keywords: [recipe.category, recipe.isVegan ? "vegan" : "vegetariánský", "vegetariánský recept", "veganý recept", "bezmasý recept"].filter(Boolean).join(", "),
+    recipeCuisine: recipe.cuisine || recipe.tags.find((tag) => tag.toLowerCase().includes("kuchyn")) || "Vegetarian",
+    keywords: keywords.join(", "),
+    about: keywords.slice(0, 8).map((keyword) => ({
+      "@type": "Thing",
+      name: keyword,
+    })),
+    mentions: (ingredients || []).slice(0, 8).map((ingredient) => ({
+      "@type": "Thing",
+      name: ingredient,
+    })),
     recipeYield: recipe.servings ? `${recipe.servings} porce` : undefined,
     recipeIngredient: ingredients || [],
     recipeInstructions: (steps || []).map((step: string, i: number) => ({
@@ -384,6 +409,34 @@ export function RestaurantListJsonLd({
       name: r.name,
       image: r.image,
       description: r.description,
+    })),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema, null, 0) }}
+    />
+  );
+}
+
+/** ItemList schema for the recipe listing page. */
+export function RecipeListJsonLd({ recipes }: { recipes: Recipe[] }) {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Veganské a vegetariánské recepty",
+    description:
+      "Přehled ověřených bezmasých receptů pro českou domácí kuchyni, včetně veganských a vegetariánských jídel.",
+    url: "https://www.bezmasajidla.cz/recepty",
+    numberOfItems: recipes.length,
+    itemListElement: recipes.slice(0, 50).map((recipe, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `https://www.bezmasajidla.cz/recepty/${recipe.slug}`,
+      name: recipe.title,
+      image: recipe.image,
+      description: recipe.description,
     })),
   };
 
