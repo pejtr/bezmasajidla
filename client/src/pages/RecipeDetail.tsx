@@ -13,10 +13,10 @@ import { recipes, type Recipe } from "@/lib/data";
 import SEOHead from "@/components/SEOHead";
 import OptimizedImage from "@/components/OptimizedImage";
 import { getRohlikLink, getKosikLink } from "@/lib/affiliates";
-import { RecipeJsonLd, BreadcrumbJsonLd } from "@/components/JsonLd";
+import { RecipeJsonLd, BreadcrumbJsonLd, FAQPageJsonLd } from "@/components/JsonLd";
 
 const sampleIngredients: Record<string, string[]> = {
-  "veganska-svickova": [
+  "svickova-bez-masa": [
     "500 g seitanu (nebo seitan z pšeničného lepku)",
     "2 mrkve",
     "1 petržel",
@@ -55,7 +55,7 @@ const sampleIngredients: Record<string, string[]> = {
     "Sůl, pepř, kmín, česnek",
     "Sezamová semínka na posypání",
   ],
-  "vegansky-gulas-knedliky": [
+  "gulas-bez-masa": [
     "300 g směsi hub (žampiony, hlívy, portobello)",
     "200 g seitanu",
     "2 velké cibule",
@@ -696,6 +696,117 @@ const sampleSteps: Record<string, string[]> = {
 };
 
 // ── Similar Recipes Sidebar ────────────────────────────────
+type RecipeSeoContent = {
+  seoTitle: string;
+  seoDescription: string;
+  intentKeywords: string[];
+  authorityParagraphs: string[];
+  practicalTips: string[];
+  servingIdeas: string[];
+};
+
+function getDietLabel(recipe: Recipe) {
+  return recipe.isVegan ? "veganský" : "vegetariánský";
+}
+
+function getCuisineLabel(recipe: Recipe) {
+  const cuisine = recipe.cuisine || recipe.tags.find((tag) => tag.toLowerCase().includes("kuchyn"));
+  return cuisine ? cuisine.replace(" kuchyně", "").replace("Kuchyně", "").trim() : "bezmasé";
+}
+
+function cleanIngredientName(item: string) {
+  return item
+    .replace(/^\d+\s*(g|ml|l|ks)?\s*/i, "")
+    .replace(/\([^)]*\)/g, "")
+    .trim()
+    .toLowerCase();
+}
+
+function buildRecipeSeoContent(recipe: Recipe, ingredients: string[]): RecipeSeoContent {
+  const totalTime = recipe.prepTime + recipe.cookTime;
+  const diet = getDietLabel(recipe);
+  const cuisine = getCuisineLabel(recipe);
+  const primaryIngredients = ingredients
+    .slice(0, 5)
+    .map(cleanIngredientName)
+    .filter((item) => item && !item.includes("brzy"));
+  const macroText = recipe.macros
+    ? `Na jednu porci vychází přibližně ${recipe.macros.calories} kcal, ${recipe.macros.protein} g bílkovin, ${recipe.macros.carbs} g sacharidů, ${recipe.macros.fat} g tuků a ${recipe.macros.fiber} g vlákniny.`
+    : "U receptu sledujeme sytost, poměr rostlinných surovin a praktickou použitelnost pro běžné domácí vaření.";
+  const dietaryClaims = [
+    recipe.isVegan ? "bez živočišných surovin" : "bez masa",
+    recipe.isGlutenFree ? "bez lepku" : null,
+    recipe.isKeto ? "vhodné pro low-carb styl" : null,
+    recipe.macros && recipe.macros.protein >= 14 ? "s vyšším obsahem bílkovin" : null,
+  ].filter(Boolean) as string[];
+
+  return {
+    seoTitle: `${recipe.title}: ${diet} recept krok za krokem`,
+    seoDescription: `${recipe.title} je ${diet} ${recipe.category.toLowerCase()} ${cuisine !== "bezmasé" ? `inspirované kuchyní ${cuisine}` : "pro každodenní bezmasé vaření"}. Recept obsahuje přesný postup, suroviny, čas přípravy, nutriční hodnoty a praktické tipy, aby se povedl i doma.`,
+    intentKeywords: [
+      recipe.title,
+      `${diet} recept`,
+      "bezmasý recept",
+      recipe.category,
+      `${recipe.category} bez masa`,
+      cuisine,
+      ...recipe.tags,
+      ...primaryIngredients,
+    ].filter(Boolean),
+    authorityParagraphs: [
+      `${recipe.title} patří mezi recepty, které řeší konkrétní kuchařský záměr: připravit chutné ${recipe.category.toLowerCase()} bez masa, s dostupnými surovinami a jasným postupem. Důraz je na rovnováhu chuti, textury a sytosti, takže recept funguje jako rychlá inspirace i jako plnohodnotné domácí jídlo.`,
+      `Z pohledu výživy dává tento ${diet} recept smysl hlavně díky kombinaci surovin jako ${primaryIngredients.slice(0, 3).join(", ") || "zelenina, luštěniny a kvalitní tuky"}. ${macroText} To pomáhá čtenářům porovnat recept nejen podle chuti, ale i podle praktičnosti, energetické hodnoty a vhodnosti pro běžný jídelníček.`,
+      `Recept je psaný pro českou domácí kuchyni: počítá s běžně dostupnými surovinami, realistickým časem přípravy ${totalTime} minut a porcemi pro ${recipe.servings} osoby. Díky tomu je vhodný pro hledání typu "${recipe.title} recept", "${diet} ${recipe.category.toLowerCase()}" i "rychlé bezmasé jídlo".`,
+    ],
+    practicalTips: [
+      "Suroviny si připravte předem a krájejte je na podobně velké kusy, aby se tepelně upravily rovnoměrně.",
+      "Chuť dolaďujte postupně: nejdřív sůl a kyselost, potom tuk nebo sladkost. U bezmasých receptů právě tato rovnováha rozhoduje, jestli jídlo působí plně.",
+      "Pokud vaříte dopředu, uchovejte omáčku nebo dresink zvlášť. Recept si tak udrží lepší texturu i při ohřívání.",
+      recipe.isVegan
+        ? "Pro ještě výraznější rostlinnou chuť se hodí uzená paprika, lahůdkové droždí, sójová omáčka nebo kvalitní zeleninový vývar."
+        : "U vegetariánské verze pomůže kvalitní sýr, vejce nebo smetana, ale vždy je dobré držet je jako doplněk, ne jako jediný zdroj chuti.",
+    ],
+    servingIdeas: [
+      `${recipe.title} podávejte jako hlavní jídlo pro ${recipe.servings} porce, případně připravte menší porce jako součást většího bezmasého menu.`,
+      dietaryClaims.length > 0
+        ? `Hodí se pro čtenáře, kteří hledají recept ${dietaryClaims.join(", ")}.`
+        : "Hodí se pro každého, kdo chce omezit maso a přitom zachovat plnou chuť jídla.",
+      `Pro lepší interní propojení zkuste také podobné recepty v kategorii ${recipe.category} nebo další recepty se štítky ${recipe.tags.slice(0, 3).join(", ")}.`,
+    ],
+  };
+}
+
+function buildRecipeFaq(recipe: Recipe, ingredients: string[], steps: string[]) {
+  const totalTime = recipe.prepTime + recipe.cookTime;
+  const diet = getDietLabel(recipe);
+  const firstIngredient = ingredients.find((item) => !item.includes("brzy")) || "hlavní suroviny";
+
+  return [
+    {
+      question: `Je ${recipe.title} veganský recept?`,
+      answer: recipe.isVegan
+        ? `Ano, ${recipe.title} je veganský recept bez masa, mléka, vajec a dalších živočišných surovin.`
+        : `${recipe.title} je vegetariánský recept bez masa. Pokud chcete veganskou verzi, nahraďte mléčné výrobky, vejce nebo sýr rostlinnou alternativou podle typu receptu.`,
+    },
+    {
+      question: `Jak dlouho trvá příprava receptu ${recipe.title}?`,
+      answer: `Celkový čas je přibližně ${totalTime} minut: ${recipe.prepTime} minut příprava a ${recipe.cookTime} minut vaření nebo pečení.`,
+    },
+    {
+      question: `Pro kolik porcí je recept ${recipe.title}?`,
+      answer: `Recept je počítaný na ${recipe.servings} porce. Množství surovin můžete jednoduše násobit podle počtu lidí.`,
+    },
+    {
+      question: `Co je u receptu ${recipe.title} nejdůležitější?`,
+      answer: `Nejdůležitější je správně připravit ${cleanIngredientName(firstIngredient)} a postupovat podle kroků v uvedeném pořadí. Recept má ${steps.length} kroků a je označený jako ${recipe.difficulty}.`,
+    },
+    {
+      question: `Na jaká klíčová slova recept odpovídá?`,
+      answer: `Recept odpovídá záměrům jako ${diet} recept, bezmasý recept, ${recipe.category.toLowerCase()} bez masa a ${recipe.tags.slice(0, 4).join(", ")}.`,
+    },
+  ];
+}
+
 function SimilarRecipesSidebar({ currentRecipe }: { currentRecipe: Recipe }) {
   // Find similar recipes: same category first, then same vegan type, exclude current
   const similar = recipes
@@ -1148,8 +1259,8 @@ function ImageGallery({ images, title }: { images: { url: string; alt: string }[
               key={i}
               onClick={() => setActiveIndex(i)}
               className={`relative rounded-lg overflow-hidden h-16 w-24 flex-shrink-0 transition-all duration-200 ${i === activeIndex
-                  ? "ring-2 ring-emerald-600 ring-offset-2 opacity-100"
-                  : "opacity-60 hover:opacity-90"
+                ? "ring-2 ring-emerald-600 ring-offset-2 opacity-100"
+                : "opacity-60 hover:opacity-90"
                 }`}
               aria-label={img.alt}
             >
@@ -1195,6 +1306,8 @@ export default function RecipeDetail() {
 
   const ingredients = sampleIngredients[recipe.slug] || sampleIngredients.default;
   const steps = sampleSteps[recipe.slug] || sampleSteps.default;
+  const seoContent = buildRecipeSeoContent(recipe, ingredients);
+  const recipeFaqs = buildRecipeFaq(recipe, ingredients, steps);
 
   const difficultyColor = {
     snadný: "bg-emerald-100 text-emerald-700",
@@ -1205,8 +1318,8 @@ export default function RecipeDetail() {
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAF6]">
       <SEOHead
-        title={`${recipe.title} — Bezmasý recept`}
-        description={`${recipe.description.slice(0, 150)}. ${recipe.isVegan ? "Veganšký" : "Vegetariánský"} recept, doba přípravy ${recipe.prepTime + recipe.cookTime} min, ${recipe.servings} porce.`}
+        title={seoContent.seoTitle}
+        description={seoContent.seoDescription}
         ogImage={recipe.images?.[0]?.url || recipe.image}
         ogType="recipe"
         ogUrl={`https://www.bezmasajidla.cz/recepty/${recipe.slug}`}
@@ -1216,7 +1329,7 @@ export default function RecipeDetail() {
           recipeYield: `${recipe.servings} porcí`,
           recipeCategory: recipe.category,
           calories: recipe.macros ? `${recipe.macros.calories} calories` : undefined,
-          tags: [recipe.category, recipe.isVegan ? "vegan" : "vegetariánský", "bezmasý recept", ...recipe.tags.slice(0, 3)],
+          tags: seoContent.intentKeywords.slice(0, 12),
           datePublished: "2025-01-01",
           dateModified: new Date().toISOString().split("T")[0],
         }}
@@ -1226,6 +1339,7 @@ export default function RecipeDetail() {
         ingredients={sampleIngredients[recipe.slug] || sampleIngredients.default}
         steps={sampleSteps[recipe.slug] || sampleSteps.default}
       />
+      <FAQPageJsonLd faqs={recipeFaqs} />
       <BreadcrumbJsonLd items={[
         { name: "Domů", url: "/" },
         { name: "Recepty", url: "/recepty" },
@@ -1320,6 +1434,35 @@ export default function RecipeDetail() {
                 </div>
               </div>
             </div>
+            {/* Editorial SEO content */}
+            <section className="bg-white rounded-xl border border-emerald-100 p-6 mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <BookOpen className="w-4 h-4 text-emerald-700" />
+                <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider">Praktický průvodce receptem</span>
+              </div>
+              <h2
+                className="text-xl font-bold text-gray-900 mb-4"
+                style={{ fontFamily: "'DM Serif Display', serif" }}
+              >
+                Proč tento recept funguje
+              </h2>
+              <div className="space-y-3">
+                {seoContent.authorityParagraphs.map((paragraph, i) => (
+                  <p key={i} className="text-sm text-gray-700 leading-relaxed">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {seoContent.intentKeywords.slice(0, 10).map((keyword) => (
+                  <span key={keyword} className="text-xs bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full border border-emerald-100">
+                    {keyword}
+                  </span>
+                ))}
+              </div>
+            </section>
+
+
 
             {/* ── MACRO NUTRIENTS PANEL WITH SERVING CALCULATOR ── */}
             {recipe.macros && (
@@ -1343,6 +1486,41 @@ export default function RecipeDetail() {
                 </div>
               </div>
             )}
+
+            <section className="grid gap-4 md:grid-cols-2 mb-6">
+              <div className="bg-white rounded-xl border border-emerald-100 p-5">
+                <h2
+                  className="text-lg font-bold text-gray-900 mb-3"
+                  style={{ fontFamily: "'DM Serif Display', serif" }}
+                >
+                  Tipy pro nejlepší výsledek
+                </h2>
+                <ul className="space-y-2">
+                  {seoContent.practicalTips.map((tip, i) => (
+                    <li key={i} className="flex gap-2 text-sm text-gray-700 leading-relaxed">
+                      <span className="text-emerald-600 font-bold">{i + 1}.</span>
+                      <span>{tip}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-emerald-50 rounded-xl border border-emerald-100 p-5">
+                <h2
+                  className="text-lg font-bold text-gray-900 mb-3"
+                  style={{ fontFamily: "'DM Serif Display', serif" }}
+                >
+                  Jak recept podávat a upravit
+                </h2>
+                <ul className="space-y-2">
+                  {seoContent.servingIdeas.map((idea, i) => (
+                    <li key={i} className="flex gap-2 text-sm text-gray-700 leading-relaxed">
+                      <span className="text-emerald-700 font-bold">•</span>
+                      <span>{idea}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </section>
 
             {/* Ingredients */}
             <div className="bg-white rounded-xl border border-emerald-100 p-6 mb-6">
@@ -1418,6 +1596,23 @@ export default function RecipeDetail() {
                 ))}
               </ol>
             </div>
+
+            <section className="bg-white rounded-xl border border-emerald-100 p-6 mb-6">
+              <h2
+                className="text-xl font-bold text-gray-900 mb-4"
+                style={{ fontFamily: "'DM Serif Display', serif" }}
+              >
+                Často hledané otázky k receptu
+              </h2>
+              <div className="space-y-4">
+                {recipeFaqs.map((faq) => (
+                  <div key={faq.question} className="border-b border-emerald-50 last:border-0 pb-4 last:pb-0">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-1">{faq.question}</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">{faq.answer}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
 
             {/* Tags */}
             <div className="flex flex-wrap gap-2">

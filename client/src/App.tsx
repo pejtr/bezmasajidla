@@ -23,6 +23,9 @@ import AboutPage from "./pages/AboutPage";
 import AddRecipe from "./pages/AddRecipe";
 import AdminPage from "./pages/AdminPage";
 import BlogPage from "./pages/BlogPage";
+import RecipePillarPage from "./pages/RecipePillarPage";
+import RestaurantPillarPage from "./pages/RestaurantPillarPage";
+import VeganRestaurantPillarPage from "./pages/VeganRestaurantPillarPage";
 import BlogDetail from "./pages/BlogDetail";
 import InzercePage from "./pages/InzercePage";
 import CookieConsent from "./components/CookieConsent";
@@ -35,8 +38,11 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/restaurace" component={Restaurants} />
+      <Route path="/restaurace/vegetarianske-restaurace-praha" component={RestaurantPillarPage} />
+      <Route path="/restaurace/veganske-restaurace-praha" component={VeganRestaurantPillarPage} />
       <Route path="/restaurace/:slug" component={RestaurantDetail} />
       <Route path="/recepty" component={Recipes} />
+      <Route path="/recepty/ceska-klasika-bez-masa" component={RecipePillarPage} />
       <Route path="/recepty/:slug" component={RecipeDetail} />
       <Route path="/mapa" component={MapPage} />
       <Route path="/profil" component={ProfilePage} />

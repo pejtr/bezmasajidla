@@ -17,8 +17,14 @@ export async function generateSitemap(): Promise<string> {
 
     // Static Pages
     addUrl("/", "1.0", "daily");
+    addUrl("/restaurace", "0.9", "daily");
     addUrl("/recepty", "0.9", "daily");
     addUrl("/mapa", "0.8", "weekly");
+
+    // Pillar Pages
+    addUrl("/restaurace/vegetarianske-restaurace-praha", "0.9", "monthly");
+    addUrl("/restaurace/veganske-restaurace-praha", "0.9", "monthly");
+    addUrl("/recepty/ceska-klasika-bez-masa", "0.9", "monthly");
 
     // Core Categories
     const categories = ["Hlavní jídla", "Polévky", "Saláty a misky", "Snídáně", "Dezerty", "Nápoje"];
