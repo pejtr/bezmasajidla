@@ -4,12 +4,12 @@ import { getApprovedUserRecipes } from "../db";
 const BASE_URL = "https://www.bezmasajidla.cz";
 
 export async function generateSitemap(): Promise<string> {
-    const urls: { loc: string; lastmod: string; changefreq: string; priority: string }[] = [];
+    const urls: { loc: string; lastmod?: string; changefreq: string; priority: string }[] = [];
 
-    const addUrl = (path: string, priority = "0.5", changefreq = "weekly") => {
+    const addUrl = (path: string, priority = "0.5", changefreq = "weekly", lastmod?: Date | string) => {
         urls.push({
             loc: `${BASE_URL}${path}`,
-            lastmod: new Date().toISOString(),
+            ...(lastmod ? { lastmod: lastmod instanceof Date ? lastmod.toISOString() : lastmod } : {}),
             changefreq,
             priority,
         });
@@ -46,7 +46,7 @@ export async function generateSitemap(): Promise<string> {
     try {
         const dbRecipes = await getApprovedUserRecipes();
         for (const recipe of dbRecipes) {
-            addUrl(`/recepty/${recipe.slug}`, "0.7", "monthly");
+            addUrl(`/recepty/${recipe.slug}`, "0.7", "monthly", recipe.updatedAt || recipe.createdAt);
         }
     } catch (err) {
         console.error("[Sitemap] Failed to fetch DB recipes", err);
@@ -54,12 +54,11 @@ export async function generateSitemap(): Promise<string> {
 
     const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  ${urls
+    ${urls
             .map(
                 (url) => `
   <url>
-    <loc>${url.loc}</loc>
-    <lastmod>${url.lastmod}</lastmod>
+    <loc>${url.loc}</loc>${url.lastmod ? `\n    <lastmod>${url.lastmod}</lastmod>` : ""}
     <changefreq>${url.changefreq}</changefreq>
     <priority>${url.priority}</priority>
   </url>`

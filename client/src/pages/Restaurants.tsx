@@ -4,7 +4,7 @@
 // Includes dietary options filter, price filter, and sorting
 // ============================================================
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Search, SlidersHorizontal, X, MapPin, Filter, ArrowUpDown, ChevronDown } from "lucide-react";
 import Header from "@/components/Header";
@@ -60,7 +60,12 @@ export default function Restaurants() {
   );
   const [selectedDistrict, setSelectedDistrict] = useState(params.get("district") || "Všechny čtvrti");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [selectedDietary, setSelectedDietary] = useState<DietaryOption[]>([]);
+
+  const initialDietaryParam = params.get("dietary") as DietaryOption | null;
+  const [selectedDietary, setSelectedDietary] = useState<DietaryOption[]>(
+    initialDietaryParam ? [initialDietaryParam] : []
+  );
+
   const [selectedPriceLevels, setSelectedPriceLevels] = useState<number[]>([]);
   const [showOpenOnly, setShowOpenOnly] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -77,6 +82,21 @@ export default function Restaurants() {
         : prev.length < 3 ? [...prev, id] : prev
     );
   };
+
+  useEffect(() => {
+    const qParams = new URLSearchParams(window.location.search);
+    const q = qParams.get("q");
+    const type = qParams.get("type") as RestaurantType;
+    const district = qParams.get("district");
+    const dietary = qParams.get("dietary") as DietaryOption;
+    const sort = qParams.get("sort") as SortOption;
+
+    if (q) setSearchQuery(q);
+    if (type) setSelectedType(type);
+    if (district) setSelectedDistrict(district);
+    if (dietary) setSelectedDietary([dietary]);
+    if (sort) setSortBy(sort);
+  }, [location]);
 
   const filtered = useMemo(() => {
     let result = restaurants.filter((r) => {

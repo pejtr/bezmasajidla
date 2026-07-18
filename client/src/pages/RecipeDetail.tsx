@@ -801,8 +801,8 @@ function buildRecipeFaq(recipe: Recipe, ingredients: string[], steps: string[]) 
       answer: `Nejdůležitější je správně připravit ${cleanIngredientName(firstIngredient)} a postupovat podle kroků v uvedeném pořadí. Recept má ${steps.length} kroků a je označený jako ${recipe.difficulty}.`,
     },
     {
-      question: `Na jaká klíčová slova recept odpovídá?`,
-      answer: `Recept odpovídá záměrům jako ${diet} recept, bezmasý recept, ${recipe.category.toLowerCase()} bez masa a ${recipe.tags.slice(0, 4).join(", ")}.`,
+      question: `Jak recept upravit podle dostupných surovin?`,
+      answer: `Základ receptu tvoří ${firstIngredient}. Podle sezóny můžete obměnit zeleninu a bylinky, ale zachovejte hlavní zdroj chuti a postup uvedený u receptu.`,
     },
   ];
 }
@@ -1220,6 +1220,9 @@ function ImageGallery({ images, title }: { images: { url: string; alt: string }[
           src={images[activeIndex].url}
           alt={images[activeIndex].alt}
           className="w-full h-full object-cover transition-opacity duration-300"
+          loading={activeIndex === 0 ? "eager" : "lazy"}
+          fetchPriority={activeIndex === 0 ? "high" : "auto"}
+          decoding="async"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
 
@@ -1330,8 +1333,6 @@ export default function RecipeDetail() {
           recipeCategory: recipe.category,
           calories: recipe.macros ? `${recipe.macros.calories} calories` : undefined,
           tags: seoContent.intentKeywords.slice(0, 12),
-          datePublished: "2025-01-01",
-          dateModified: new Date().toISOString().split("T")[0],
         }}
       />
       <RecipeJsonLd
@@ -1379,6 +1380,8 @@ export default function RecipeDetail() {
                   src={recipe.image}
                   alt={recipe.title}
                   className="w-full h-full object-cover"
+                  fetchPriority="high"
+                  decoding="async"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
               </div>

@@ -6,36 +6,44 @@
 
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import NotFound from "@/pages/NotFound";
+import { lazy, Suspense } from "react";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { FavoritesProvider } from "./contexts/FavoritesContext";
-import Home from "./pages/Home";
 import { useScrollToTop } from "./hooks/useScrollToTop";
-import Restaurants from "./pages/Restaurants";
-import RestaurantDetail from "./pages/RestaurantDetail";
-import Recipes from "./pages/Recipes";
-import RecipeDetail from "./pages/RecipeDetail";
-import MapPage from "./pages/MapPage";
-import ProfilePage from "./pages/ProfilePage";
-import AboutPage from "./pages/AboutPage";
-import AddRecipe from "./pages/AddRecipe";
-import AdminPage from "./pages/AdminPage";
-import BlogPage from "./pages/BlogPage";
-import RecipePillarPage from "./pages/RecipePillarPage";
-import RestaurantPillarPage from "./pages/RestaurantPillarPage";
-import VeganRestaurantPillarPage from "./pages/VeganRestaurantPillarPage";
-import BlogDetail from "./pages/BlogDetail";
-import InzercePage from "./pages/InzercePage";
 import CookieConsent from "./components/CookieConsent";
-import PodminkyPage from "./pages/PodminkyPage";
-import OchranaPage from "./pages/OchranaPage";
-import KontaktPage from "./pages/KontaktPage";
+
+const NotFound = lazy(() => import("@/pages/NotFound"));
+const Home = lazy(() => import("./pages/Home"));
+const Restaurants = lazy(() => import("./pages/Restaurants"));
+const RestaurantDetail = lazy(() => import("./pages/RestaurantDetail"));
+const Recipes = lazy(() => import("./pages/Recipes"));
+const RecipeDetail = lazy(() => import("./pages/RecipeDetail"));
+const MapPage = lazy(() => import("./pages/MapPage"));
+const ProfilePage = lazy(() => import("./pages/ProfilePage"));
+const AboutPage = lazy(() => import("./pages/AboutPage"));
+const AddRecipe = lazy(() => import("./pages/AddRecipe"));
+const AdminPage = lazy(() => import("./pages/AdminPage"));
+const BlogPage = lazy(() => import("./pages/BlogPage"));
+const RecipePillarPage = lazy(() => import("./pages/RecipePillarPage"));
+const RestaurantPillarPage = lazy(() => import("./pages/RestaurantPillarPage"));
+const VeganRestaurantPillarPage = lazy(() => import("./pages/VeganRestaurantPillarPage"));
+const BlogDetail = lazy(() => import("./pages/BlogDetail"));
+const InzercePage = lazy(() => import("./pages/InzercePage"));
+const PodminkyPage = lazy(() => import("./pages/PodminkyPage"));
+const OchranaPage = lazy(() => import("./pages/OchranaPage"));
+const KontaktPage = lazy(() => import("./pages/KontaktPage"));
+
+function PageFallback() {
+  return <div className="min-h-screen bg-[#F8FAF6]" aria-busy="true" />;
+}
+
 function Router() {
   useScrollToTop();
   return (
-    <Switch>
+    <Suspense fallback={<PageFallback />}>
+      <Switch>
       <Route path="/" component={Home} />
       <Route path="/restaurace" component={Restaurants} />
       <Route path="/restaurace/vegetarianske-restaurace-praha" component={RestaurantPillarPage} />
@@ -57,7 +65,8 @@ function Router() {
       <Route path="/kontakt" component={KontaktPage} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
-    </Switch>
+      </Switch>
+    </Suspense>
   );
 }
 

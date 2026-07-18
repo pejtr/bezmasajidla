@@ -9,7 +9,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import RecipeCard from "@/components/RecipeCard";
 import { recipes } from "@/lib/data";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import SEOHead from "@/components/SEOHead";
 
 const RECIPE_HERO = "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/recipe-hero-kAEk42WS8auJkLKnU8C6NV.webp";
@@ -60,12 +60,14 @@ const categorySEO: Record<string, { title: string, desc: string }> = {
 };
 
 export default function Recipes() {
+  const [location] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Vše");
   const [veganOnly, setVeganOnly] = useState(false);
   const [cuisineFilter, setCuisineFilter] = useState("");
   const [difficultyFilter, setDifficultyFilter] = useState("");
   const [prepTimeFilter, setPrepTimeFilter] = useState<number | null>(null);
+  const [dietaryFilter, setDietaryFilter] = useState("");
 
   // Read URL params on mount and when URL changes
   useEffect(() => {
@@ -74,12 +76,15 @@ export default function Recipes() {
     const cuisine = params.get("cuisine") || "";
     const type = params.get("type") || "";
     const diet = params.get("diet") || "";
+    const dietary = params.get("dietary") || "";
+    const cat = params.get("cat") || "";
 
     if (q) setSearchQuery(q);
     if (cuisine) setCuisineFilter(cuisine.toLowerCase());
-    if (type === "vegan") setVeganOnly(true);
-    if (diet === "vegan") setVeganOnly(true);
-  }, []);
+    if (type === "vegan" || diet === "vegan" || dietary === "vegan") setVeganOnly(true);
+    if (dietary) setDietaryFilter(dietary.toLowerCase());
+    if (cat) setSelectedCategory(cat);
+  }, [location]);
 
   const filtered = useMemo(() => {
     return recipes.filter((r) => {
@@ -87,6 +92,17 @@ export default function Recipes() {
         !r.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))) return false;
       if (selectedCategory !== "Vše" && r.category !== selectedCategory) return false;
       if (veganOnly && !r.isVegan) return false;
+
+      // Dietary filter processing (bezlepkove, keto, vegetarian)
+      if (dietaryFilter) {
+        if (dietaryFilter === "bezlepkove") {
+          if (!r.isGlutenFree && !r.dietaryOptions?.includes("bezlepkové")) return false;
+        }
+        if (dietaryFilter === "keto") {
+          if (!r.isKeto) return false;
+        }
+      }
+
       // Cuisine filter: match against recipe tags (e.g. "gruzínská" matches tag "Gruzínská kuchyně") or exact cuisine string
       if (cuisineFilter) {
         const cf = cuisineFilter.toLowerCase();
@@ -107,7 +123,7 @@ export default function Recipes() {
       }
       return true;
     });
-  }, [searchQuery, selectedCategory, veganOnly, cuisineFilter, difficultyFilter, prepTimeFilter]);
+  }, [searchQuery, selectedCategory, veganOnly, cuisineFilter, difficultyFilter, prepTimeFilter, dietaryFilter]);
 
   const currentSEOParams = categorySEO[selectedCategory] || categorySEO["Vše"];
   const dynamicTitle = cuisineFilter ? `${cuisines.find(c => c.key === cuisineFilter)?.label} Kuchyně | ${currentSEOParams.title}` : currentSEOParams.title;
@@ -184,6 +200,40 @@ export default function Recipes() {
               {cat}
             </button>
           ))}
+        </div>
+
+        {/* Dietary Options row */}
+        <div className="mb-4">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Dietní preference</p>
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            <button
+              onClick={() => setDietaryFilter("")}
+              className={`whitespace-nowrap text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex-shrink-0 ${!dietaryFilter
+                ? "bg-gray-800 text-white shadow-sm"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+            >
+              Vše
+            </button>
+            <button
+              onClick={() => setDietaryFilter(dietaryFilter === "bezlepkove" ? "" : "bezlepkove")}
+              className={`whitespace-nowrap text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex-shrink-0 ${dietaryFilter === "bezlepkove"
+                ? "bg-amber-100 text-amber-700 ring-1 ring-amber-400 shadow-sm"
+                : "bg-white text-gray-600 border border-amber-100 hover:bg-amber-50"
+                }`}
+            >
+              Bezlepkové
+            </button>
+            <button
+              onClick={() => setDietaryFilter(dietaryFilter === "keto" ? "" : "keto")}
+              className={`whitespace-nowrap text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex-shrink-0 ${dietaryFilter === "keto"
+                ? "bg-purple-100 text-purple-700 ring-1 ring-purple-400 shadow-sm"
+                : "bg-white text-gray-600 border border-purple-100 hover:bg-purple-50"
+                }`}
+            >
+              Keto
+            </button>
+          </div>
         </div>
 
         {/* Cuisine filter row */}

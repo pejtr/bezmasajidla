@@ -95,9 +95,6 @@ export function RestaurantJsonLd({ restaurant }: { restaurant: Restaurant }) {
       }
     : undefined;
 
-  // Use current date as dateModified (refreshed on each deploy/build)
-  const today = new Date().toISOString().split("T")[0];
-
   const schema: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Restaurant",
@@ -106,7 +103,6 @@ export function RestaurantJsonLd({ restaurant }: { restaurant: Restaurant }) {
     description: restaurant.description,
     image: [restaurant.image, ...(restaurant.gallery || [])].filter(Boolean),
     url: `https://www.bezmasajidla.cz/restaurace/${restaurant.slug}`,
-    dateModified: today,
     address: {
       "@type": "PostalAddress",
       streetAddress: restaurant.address.split(",")[0]?.trim() || restaurant.address,
@@ -224,8 +220,6 @@ export function RecipeJsonLd({
         url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/logo-cropped_d7cd6ecf.png",
       },
     },
-    datePublished: "2025-01-01",
-    dateModified: new Date().toISOString().split("T")[0],
     prepTime: `PT${recipe.prepTime}M`,
     cookTime: `PT${recipe.cookTime}M`,
     totalTime: `PT${recipe.prepTime + recipe.cookTime}M`,

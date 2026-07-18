@@ -16,6 +16,7 @@ vi.mock("./db", () => ({
   getUserRecipes: vi.fn(),
   getApprovedUserRecipes: vi.fn(),
   getUserRecipeBySlug: vi.fn(),
+  getUserRecipeById: vi.fn(),
   createUserRecipe: vi.fn(),
   deleteUserRecipe: vi.fn(),
   syncFavorites: vi.fn(),
@@ -24,6 +25,10 @@ vi.mock("./db", () => ({
   rejectUserRecipe: vi.fn(),
   getAllReviews: vi.fn(),
   adminDeleteReview: vi.fn(),
+}));
+
+vi.mock("./_core/social-media", () => ({
+  distributeToSocialMedia: vi.fn().mockResolvedValue(undefined),
 }));
 
 import {
@@ -38,6 +43,7 @@ import {
   getUserRecipes,
   getApprovedUserRecipes,
   getUserRecipeBySlug,
+  getUserRecipeById,
   createUserRecipe,
   deleteUserRecipe,
   syncFavorites,
@@ -458,6 +464,11 @@ describe("admin", () => {
     });
 
     it("approves a recipe", async () => {
+      vi.mocked(getUserRecipeById).mockResolvedValue(
+        { id: 5, slug: "pending-recipe" } as Awaited<ReturnType<
+          typeof getUserRecipeById
+        >>
+      );
       vi.mocked(approveUserRecipe).mockResolvedValue(undefined);
 
       await adminCaller().admin.approveRecipe({ recipeId: 5 });
