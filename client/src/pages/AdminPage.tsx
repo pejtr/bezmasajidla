@@ -32,8 +32,9 @@ import {
 } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import { restaurants } from "@/lib/data";
+import SocialPublisher from "@/components/admin/SocialPublisher";
 
-type Tab = "recipes" | "reviews" | "instagram";
+type Tab = "recipes" | "reviews" | "social";
 
 export default function AdminPage() {
   const { user, loading, isAuthenticated } = useAuth();
@@ -151,23 +152,23 @@ export default function AdminPage() {
             Správa recenzí
           </Button>
           <Button
-            variant={activeTab === "instagram" ? "default" : "outline"}
-            onClick={() => setActiveTab("instagram")}
+            variant={activeTab === "social" ? "default" : "outline"}
+            onClick={() => setActiveTab("social")}
             className={
-              activeTab === "instagram"
+              activeTab === "social"
                 ? "bg-pink-600 hover:bg-pink-500 text-white"
                 : "border-pink-200 text-pink-700 hover:bg-pink-50"
             }
           >
             <Instagram className="w-4 h-4 mr-2" />
-            Instagram Kalendář
+            Facebook a Instagram
           </Button>
         </div>
 
         {/* Content */}
         {activeTab === "recipes" && <RecipeApproval />}
         {activeTab === "reviews" && <ReviewManagement />}
-        {activeTab === "instagram" && <InstagramCalendar />}
+        {activeTab === "social" && <SocialPublisher />}
       </div>
 
       <Footer />

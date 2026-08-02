@@ -1,11 +1,18 @@
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_core/trpc";
+import { rateLimitMiddleware } from "./_core/rateLimit";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { notifyOwner } from "./_core/notification";
-import { distributeToSocialMedia } from "./_core/social-media";
+import {
+  getSocialPublisherStatus,
+  listSocialPosts,
+  retrySocialPost,
+  runSocialPublisherOnce,
+  scheduleRecipeForSocialMedia,
+} from "./_core/social-media";
 import {
   getReviewsByRestaurant,
   getReviewsByUser,
@@ -28,14 +35,6 @@ import {
   adminDeleteReview,
   getUserRecipeById,
 } from "./db";
-
-// Admin-only procedure middleware
-const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
-  if (ctx.user.role !== "admin") {
-    throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
-  }
-  return next({ ctx });
-});
 
 export const appRouter = router({
   system: systemRouter,
@@ -129,15 +128,22 @@ export const appRouter = router({
     create: protectedProcedure
       .input(z.object({
         title: z.string().min(3).max(256),
-        description: z.string().optional(),
-        category: z.string().optional(),
-        difficulty: z.string().optional(),
-        prepTime: z.string().optional(),
-        servings: z.number().optional(),
-        image: z.string().optional(),
-        ingredients: z.string(), // JSON array string
-        steps: z.string(), // JSON array string
-        tags: z.string().optional(), // JSON array string
+        description: z.string().max(2000).optional(),
+        category: z.string().max(64).optional(),
+        difficulty: z.string().max(32).optional(),
+        prepTime: z.string().max(32).optional(),
+        servings: z.number().max(100).optional(),
+        image: z.string().max(2000).optional(),
+        ingredients: z.string().max(10000).refine((val) => {
+          try { const arr = JSON.parse(val); return Array.isArray(arr); } catch { return false; }
+        }, "Musí být JSON pole"),
+        steps: z.string().max(10000).refine((val) => {
+          try { const arr = JSON.parse(val); return Array.isArray(arr); } catch { return false; }
+        }, "Musí být JSON pole"),
+        tags: z.string().max(2000).optional().refine((val) => {
+          if (!val) return true;
+          try { const arr = JSON.parse(val); return Array.isArray(arr); } catch { return false; }
+        }, "Musí být JSON pole"),
       }))
       .mutation(({ ctx, input }) => {
         const slug = input.title
@@ -181,8 +187,7 @@ export const appRouter = router({
         const recipe = await getUserRecipeById(input.recipeId);
         if (recipe) {
           await approveUserRecipe(input.recipeId);
-          // Fire and forget social media distribution!
-          distributeToSocialMedia(recipe.id, recipe.slug).catch(console.error);
+          await scheduleRecipeForSocialMedia(recipe.id);
         }
       }),
 
@@ -199,11 +204,37 @@ export const appRouter = router({
     deleteReview: adminProcedure
       .input(z.object({ reviewId: z.number() }))
       .mutation(({ input }) => adminDeleteReview(input.reviewId)),
+
+    socialPublisherStatus: adminProcedure.query(() =>
+      getSocialPublisherStatus(),
+    ),
+
+    socialPosts: adminProcedure.query(() => listSocialPosts()),
+
+    scheduleRecipeSocial: adminProcedure
+      .input(
+        z.object({
+          recipeId: z.number(),
+          scheduledFor: z.date().optional(),
+        }),
+      )
+      .mutation(({ input }) =>
+        scheduleRecipeForSocialMedia(input.recipeId, input.scheduledFor),
+      ),
+
+    retrySocialPost: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(({ input }) => retrySocialPost(input.id)),
+
+    runSocialPublisher: adminProcedure.mutation(() =>
+      runSocialPublisherOnce(),
+    ),
   }),
   // ── Newsletter ───────────────────────────────────────────
   newsletter: router({
     subscribe: publicProcedure
-      .input(z.object({ email: z.string().email("Neplatný e-mail") }))
+      .use(rateLimitMiddleware({ windowMs: 60_000, max: 5 }))
+      .input(z.object({ email: z.string().email("Neplatný e-mail").max(320) }))
       .mutation(async ({ input }) => {
         const { email } = input;
 
@@ -249,12 +280,13 @@ export const appRouter = router({
   // ── Contact ───────────────────────────────────────────────────────
   contact: router({
     send: publicProcedure
+      .use(rateLimitMiddleware({ windowMs: 60_000, max: 3 }))
       .input(
         z.object({
-          name: z.string().min(2, "Jméno musí mít alespoň 2 znaky"),
-          email: z.string().email("Neplatná e-mailová adresa"),
-          subject: z.string().min(3, "Předmět musí mít alespoň 3 znaky"),
-          message: z.string().min(10, "Zpráva musí mít alespoň 10 znaků"),
+          name: z.string().min(2, "Jméno musí mít alespoň 2 znaky").max(100),
+          email: z.string().email("Neplatná e-mailová adresa").max(320),
+          subject: z.string().min(3, "Předmět musí mít alespoň 3 znaky").max(200),
+          message: z.string().min(10, "Zpráva musí mít alespoň 10 znaků").max(5000),
         })
       )
       .mutation(async ({ input }) => {

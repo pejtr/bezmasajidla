@@ -8,7 +8,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { Link } from "wouter";
 import { X, MapPin, Star, Navigation, Loader2 } from "lucide-react";
 import Header from "@/components/Header";
-import { MapView } from "@/components/Map";
+import { MapView, MapHandle, MapMarker, MapCircle } from "@/components/Map";
 import { restaurants, getTypeColor, getTypeLabel, Restaurant } from "@/lib/data";
 import { getOpenStatus } from "@/lib/openingHours";
 import SEOHead from "@/components/SEOHead";
@@ -28,12 +28,12 @@ export default function MapPage() {
   const [gpsLoading, setGpsLoading] = useState(false);
   const [gpsError, setGpsError] = useState<string | null>(null);
   const [nearbyMode, setNearbyMode] = useState(false);
-  const userMarkerRef = useRef<google.maps.Marker | null>(null);
-  const userCircleRef = useRef<google.maps.Circle | null>(null);
+  const userMarkerRef = useRef<MapMarker | null>(null);
+  const userCircleRef = useRef<MapCircle | null>(null);
 
   // Keep a ref to the map instance and all markers so we can show/hide them
-  const mapRef = useRef<google.maps.Map | null>(null);
-  const markersRef = useRef<{ marker: google.maps.Marker; restaurant: Restaurant }[]>([]);
+  const mapRef = useRef<MapHandle | null>(null);
+  const markersRef = useRef<{ marker: MapMarker; restaurant: Restaurant }[]>([]);
 
   // Calculate distance in km between two coordinates
   const getDistanceKm = (lat1: number, lng1: number, lat2: number, lng2: number) => {
@@ -72,36 +72,14 @@ export default function MapPage() {
         map.setZoom(14);
 
         // Remove old user marker/circle
-        if (userMarkerRef.current) userMarkerRef.current.setMap(null);
-        if (userCircleRef.current) userCircleRef.current.setMap(null);
+        if (userMarkerRef.current) userMarkerRef.current.remove();
+        if (userCircleRef.current) userCircleRef.current.remove();
 
         // Add user location marker (blue dot)
-        userMarkerRef.current = new google.maps.Marker({
-          position: loc,
-          map,
-          title: "Vaše poloha",
-          icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 10,
-            fillColor: "#3B82F6",
-            fillOpacity: 1,
-            strokeColor: "#ffffff",
-            strokeWeight: 3,
-          },
-          zIndex: 1000,
-        });
+        userMarkerRef.current = map.addMarker({ position: loc, title: "Vaše poloha", color: "#3B82F6" });
 
         // Add 1.5km radius circle
-        userCircleRef.current = new google.maps.Circle({
-          center: loc,
-          radius: 1500,
-          map,
-          fillColor: "#3B82F6",
-          fillOpacity: 0.08,
-          strokeColor: "#3B82F6",
-          strokeOpacity: 0.4,
-          strokeWeight: 1.5,
-        });
+        userCircleRef.current = map.addCircle({ center: loc, radius: 1500, color: "#3B82F6" });
       },
       (err) => {
         setGpsLoading(false);
@@ -117,8 +95,8 @@ export default function MapPage() {
     setNearbyMode(false);
     setUserLocation(null);
     setGpsError(null);
-    if (userMarkerRef.current) { userMarkerRef.current.setMap(null); userMarkerRef.current = null; }
-    if (userCircleRef.current) { userCircleRef.current.setMap(null); userCircleRef.current = null; }
+    if (userMarkerRef.current) { userMarkerRef.current.remove(); userMarkerRef.current = null; }
+    if (userCircleRef.current) { userCircleRef.current.remove(); userCircleRef.current = null; }
     if (mapRef.current) {
       mapRef.current.setCenter({ lat: 50.0755, lng: 14.4378 });
       mapRef.current.setZoom(13);
@@ -152,7 +130,7 @@ export default function MapPage() {
   }, [filterType, isVisible, selectedRestaurant]);
 
   // Called once when Google Maps is ready — create all markerss
-  const handleMapReady = useCallback((map: google.maps.Map) => {
+  const handleMapReady = useCallback((map: MapHandle) => {
     mapRef.current = map;
     map.setCenter({ lat: 50.0755, lng: 14.4378 });
     map.setZoom(13);
@@ -160,23 +138,11 @@ export default function MapPage() {
     // Create a marker for every non-fastfood restaurant
     const allRestaurants = restaurants.filter((r) => r.type !== "fastfood");
     allRestaurants.forEach((restaurant) => {
-      const marker = new google.maps.Marker({
+      const marker = map.addMarker({
         position: { lat: restaurant.lat, lng: restaurant.lng },
-        map,
         title: restaurant.name,
-        visible: true, // all visible initially (filterType starts as "all")
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 10,
-          fillColor: typeColors[restaurant.type] ?? "#888",
-          fillOpacity: 1,
-          strokeColor: "#ffffff",
-          strokeWeight: 2,
-        },
-      });
-
-      marker.addListener("click", () => {
-        setSelectedRestaurant(restaurant);
+        color: typeColors[restaurant.type] ?? "#888",
+        onClick: () => setSelectedRestaurant(restaurant),
       });
 
       markersRef.current.push({ marker, restaurant });

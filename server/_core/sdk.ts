@@ -40,6 +40,17 @@ class OAuthService {
 
   private decodeState(state: string): string {
     const redirectUri = atob(state);
+    // Validate the redirect URI is a relative path or same-origin to prevent open redirect
+    if (!redirectUri.startsWith("/") && !redirectUri.startsWith("http")) {
+      throw new Error("Invalid redirect URI in state");
+    }
+    if (redirectUri.startsWith("http")) {
+      const url = new URL(redirectUri);
+      const allowedHosts = ["www.bezmasajidla.cz", "bezmasajidla.cz", "localhost", "127.0.0.1"];
+      if (!allowedHosts.includes(url.hostname)) {
+        throw new Error("Redirect URI host not allowed");
+      }
+    }
     return redirectUri;
   }
 

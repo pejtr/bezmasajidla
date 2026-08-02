@@ -9,7 +9,7 @@ import { Link, useLocation } from "wouter";
 import {
   Menu, X, Search, Heart, User, LogOut, ChefHat, BookOpen,
   Star, Shield, ChevronDown, Leaf, MapPin, Utensils, Coffee,
-  Salad, Flame, Wheat, Sprout, Globe, Clock, TrendingUp
+  Salad, Flame, Wheat, Sprout, Globe, Clock, TrendingUp, Calendar
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFavorites } from "@/contexts/FavoritesContext";
@@ -52,11 +52,11 @@ const restauraceMegaMenu = {
 const receptyMegaMenu = {
   categories: [
     { href: "/recepty?cat=Hlavní jídla", label: "Hlavní jídla", icon: Utensils, desc: "Svíčková, guláš, rizoto..." },
+    { href: "/tydenni-planovac-receptu", label: "Týdenní plánovač", icon: Calendar, desc: "Jídelníček & nákupní košík..." },
     { href: "/recepty?cat=Polévky", label: "Polévky", icon: Coffee, desc: "Čočková, špenátová, květáková..." },
     { href: "/recepty?cat=Saláty a misky", label: "Saláty & misky", icon: Salad, desc: "Buddha bowl, saláty..." },
     { href: "/recepty?cat=Dezerty", label: "Dezerty", icon: Star, desc: "Brownies, cheesecake, bábovka..." },
     { href: "/recepty?cat=Snídaně", label: "Snídaně", icon: Clock, desc: "Smoothie bowl, palačinky..." },
-    { href: "/recepty?cat=Pečení", label: "Pečení", icon: Flame, desc: "Chačapuri, lobiani, štrůdl..." },
   ],
   dietary: [
     { href: "/recepty?dietary=vegan", label: "Veganské", color: "bg-emerald-100 text-emerald-700" },

@@ -16,7 +16,16 @@ interface SearchOverlayProps {
 
 export default function SearchOverlay({ open, onClose }: SearchOverlayProps) {
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Debounce search input
+  useEffect(() => {
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(() => setDebouncedQuery(query), 200);
+    return () => { if (debounceTimer.current) clearTimeout(debounceTimer.current); };
+  }, [query]);
 
   // Focus input when overlay opens
   useEffect(() => {
@@ -24,6 +33,7 @@ export default function SearchOverlay({ open, onClose }: SearchOverlayProps) {
       setTimeout(() => inputRef.current?.focus(), 80);
     } else {
       setQuery("");
+      setDebouncedQuery("");
     }
   }, [open]);
 
@@ -46,7 +56,7 @@ export default function SearchOverlay({ open, onClose }: SearchOverlayProps) {
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
-  const q = query.toLowerCase().trim();
+  const q = debouncedQuery.toLowerCase().trim();
 
   const matchedRestaurants = q.length >= 2
     ? restaurants

@@ -159,22 +159,27 @@ export async function toggleFavorite(userId: number, itemType: "restaurant" | "r
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
-  const existing = await db
-    .select()
-    .from(favorites)
-    .where(and(
-      eq(favorites.userId, userId),
-      eq(favorites.itemType, itemType),
-      eq(favorites.itemSlug, itemSlug),
-    ))
-    .limit(1);
-
-  if (existing.length > 0) {
-    await db.delete(favorites).where(eq(favorites.id, existing[0].id));
-    return { added: false };
-  } else {
+  try {
     await db.insert(favorites).values({ userId, itemType, itemSlug });
     return { added: true };
+  } catch (error: unknown) {
+    if (error && typeof error === "object" && "code" in error && (error as { code: string }).code === "ER_DUP_ENTRY") {
+      // Favorite already exists — remove it (toggle off)
+      const existing = await db
+        .select({ id: favorites.id })
+        .from(favorites)
+        .where(and(
+          eq(favorites.userId, userId),
+          eq(favorites.itemType, itemType),
+          eq(favorites.itemSlug, itemSlug),
+        ))
+        .limit(1);
+      if (existing.length > 0) {
+        await db.delete(favorites).where(eq(favorites.id, existing[0].id));
+      }
+      return { added: false };
+    }
+    throw error;
   }
 }
 

@@ -57,19 +57,6 @@ export function useAuth(options?: UseAuthOptions) {
   ]);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    try {
-      localStorage.setItem(
-        "manus-runtime-user-info",
-        JSON.stringify(meQuery.data ?? null)
-      );
-    } catch {
-      // localStorage can be unavailable in private browsing or embedded contexts.
-    }
-  }, [meQuery.data]);
-
-  useEffect(() => {
     if (!redirectOnUnauthenticated) return;
     if (meQuery.isLoading || logoutMutation.isPending) return;
     if (state.user) return;

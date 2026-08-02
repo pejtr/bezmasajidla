@@ -617,9 +617,8 @@ export default function RestaurantDetail() {
                     setMapReady(true);
                     map.setCenter({ lat: restaurant.lat, lng: restaurant.lng });
                     map.setZoom(16);
-                    new google.maps.Marker({
+                    map.addMarker({
                       position: { lat: restaurant.lat, lng: restaurant.lng },
-                      map,
                       title: restaurant.name,
                     });
                   }}

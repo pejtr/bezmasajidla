@@ -8,13 +8,22 @@ import { Search } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import RecipeCard from "@/components/RecipeCard";
-import { recipes } from "@/lib/data";
+import { hasRecipeDietaryOption, recipes } from "@/lib/data";
 import { Link, useLocation } from "wouter";
 import SEOHead from "@/components/SEOHead";
 
-const RECIPE_HERO = "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/recipe-hero-kAEk42WS8auJkLKnU8C6NV.webp";
+const RECIPE_HERO =
+  "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/recipe-hero-kAEk42WS8auJkLKnU8C6NV.webp";
 
-const categories = ["Vše", "Hlavní jídla", "Polévky", "Saláty a misky", "Snídáně", "Dezerty", "Nápoje"];
+const categories = [
+  "Vše",
+  "Hlavní jídla",
+  "Polévky",
+  "Saláty a misky",
+  "Snídáně",
+  "Dezerty",
+  "Nápoje",
+];
 
 const cuisines = [
   { key: "", label: "Všechny kuchyně", flag: "🌍" },
@@ -28,35 +37,35 @@ const cuisines = [
   { key: "indická", label: "Indická", flag: "🇮🇳" },
 ];
 
-const categorySEO: Record<string, { title: string, desc: string }> = {
-  "Vše": {
+const categorySEO: Record<string, { title: string; desc: string }> = {
+  Vše: {
     title: "Bezmasé a vegetariánské recepty, veganské jídlo | Bezmasajidla.cz",
-    desc: "Objevte skvělé bezmasé recepty a vegetariánské recepty. Od rychlého oběda bez masa pro vegan krabičkovou dietu až po českou klasiku a veganské jídlo."
+    desc: "Objevte skvělé bezmasé recepty a vegetariánské recepty. Od rychlého oběda bez masa pro vegan krabičkovou dietu až po českou klasiku a veganské jídlo.",
   },
   "Hlavní jídla": {
     title: "Hlavní Bezmasá Jídla — Veganské a Vegetariánské Recepty",
-    desc: "Vynikající recepty na vegetariánská a veganská hlavní jídla. Bohaté a výživné obědy a večeře plné zeleniny a rostlinných proteinů."
+    desc: "Vynikající recepty na vegetariánská a veganská hlavní jídla. Bohaté a výživné obědy a večeře plné zeleniny a rostlinných proteinů.",
   },
-  "Polévky": {
+  Polévky: {
     title: "Veganské a Vegetariánské Polévky — Zahřejí a Zasytí",
-    desc: "Od tradiční bramboračky nebo kulajdy až po asijské vývary. Nejlepší recepty na bezmasé polévky, které zvládnete do 30 i 60 minut."
+    desc: "Od tradiční bramboračky nebo kulajdy až po asijské vývary. Nejlepší recepty na bezmasé polévky, které zvládnete do 30 i 60 minut.",
   },
   "Saláty a misky": {
     title: "Svěží Saláty a Poke Misky — Bezmasá Sezóna",
-    desc: "Osvěžující a výživné veganské saláty a moderní buddha bowls. Recepty vhodné ke zdravému obědu i lehké večeři."
+    desc: "Osvěžující a výživné veganské saláty a moderní buddha bowls. Recepty vhodné ke zdravému obědu i lehké večeři.",
   },
-  "Snídáně": {
+  Snídáně: {
     title: "Veganské Snídaně — Skvělý Start do Nového Dne",
-    desc: "Bezmasé recepty na sladké i slané snídaně. Dopřejte si energií nabité lívance, ovesné kaše, zdravé tousty nebo veganské palačinky."
+    desc: "Bezmasé recepty na sladké i slané snídaně. Dopřejte si energií nabité lívance, ovesné kaše, zdravé tousty nebo veganské palačinky.",
   },
-  "Dezerty": {
+  Dezerty: {
     title: "Zdravé a Lahodné Dezerty Bez Masa a Živočišných Tuků",
-    desc: "Nejlepší vegetariánské a veganské sladkosti, raw dorty a veganské pečení, které potěší i náročné gurmány."
+    desc: "Nejlepší vegetariánské a veganské sladkosti, raw dorty a veganské pečení, které potěší i náročné gurmány.",
   },
-  "Nápoje": {
+  Nápoje: {
     title: "Zdravé Nápoje a Smoothie - Veganské Osvěžení",
-    desc: "Smoothie plné vitamínů, čerstvé džusy a hřejivé nápoje pro podporu imunity."
-  }
+    desc: "Smoothie plné vitamínů, čerstvé džusy a hřejivé nápoje pro podporu imunity.",
+  },
 };
 
 export default function Recipes() {
@@ -77,36 +86,74 @@ export default function Recipes() {
     const type = params.get("type") || "";
     const diet = params.get("diet") || "";
     const dietary = params.get("dietary") || "";
-    const cat = params.get("cat") || "";
+    const cat = params.get("category") || params.get("cat") || "";
 
-    if (q) setSearchQuery(q);
-    if (cuisine) setCuisineFilter(cuisine.toLowerCase());
-    if (type === "vegan" || diet === "vegan" || dietary === "vegan") setVeganOnly(true);
-    if (dietary) setDietaryFilter(dietary.toLowerCase());
-    if (cat) setSelectedCategory(cat);
+    setSearchQuery(q);
+    setCuisineFilter(cuisine.toLowerCase());
+    setVeganOnly(type === "vegan" || diet === "vegan" || dietary === "vegan");
+    setDietaryFilter(dietary.toLowerCase());
+    setSelectedCategory(cat || "Vše");
   }, [location]);
 
+  const setDietaryFilterAndUrl = (value: string) => {
+    setDietaryFilter(value);
+    const params = new URLSearchParams(window.location.search);
+    if (value) params.set("dietary", value);
+    else params.delete("dietary");
+    window.history.replaceState(
+      {},
+      "",
+      `${window.location.pathname}${params.toString() ? `?${params}` : ""}`
+    );
+  };
+
+  const setCategoryAndUrl = (value: string) => {
+    setSelectedCategory(value);
+    const params = new URLSearchParams(window.location.search);
+    params.delete("cat");
+    if (value === "Vše") params.delete("category");
+    else params.set("category", value);
+    window.history.replaceState(
+      {},
+      "",
+      `${window.location.pathname}${params.toString() ? `?${params}` : ""}`
+    );
+  };
+
   const filtered = useMemo(() => {
-    return recipes.filter((r) => {
-      if (searchQuery && !r.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        !r.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))) return false;
-      if (selectedCategory !== "Vše" && r.category !== selectedCategory) return false;
+    return recipes.filter(r => {
+      if (
+        searchQuery &&
+        !r.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        !r.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))
+      )
+        return false;
+      if (selectedCategory !== "Vše" && r.category !== selectedCategory)
+        return false;
       if (veganOnly && !r.isVegan) return false;
 
-      // Dietary filter processing (bezlepkove, keto, vegetarian)
+      // Dietary filters are normalized so URL values work with or without accents.
       if (dietaryFilter) {
-        if (dietaryFilter === "bezlepkove") {
-          if (!r.isGlutenFree && !r.dietaryOptions?.includes("bezlepkové")) return false;
-        }
-        if (dietaryFilter === "keto") {
-          if (!r.isKeto) return false;
-        }
+        if (dietaryFilter === "vegan" && !r.isVegan) return false;
+        if (dietaryFilter === "vegetarian" && r.isVegan) return false;
+        if (
+          dietaryFilter === "bezlepkove" &&
+          !hasRecipeDietaryOption(r, "bezlepkove")
+        )
+          return false;
+        if (
+          dietaryFilter === "keto" &&
+          !r.isKeto &&
+          !hasRecipeDietaryOption(r, "low-carb")
+        )
+          return false;
       }
 
       // Cuisine filter: match against recipe tags (e.g. "gruzínská" matches tag "Gruzínská kuchyně") or exact cuisine string
       if (cuisineFilter) {
         const cf = cuisineFilter.toLowerCase();
-        const matches = r.cuisine?.toLowerCase().includes(cf) ||
+        const matches =
+          r.cuisine?.toLowerCase().includes(cf) ||
           r.tags.some(t => t.toLowerCase().includes(cf)) ||
           r.title.toLowerCase().includes(cf);
         if (!matches) return false;
@@ -123,18 +170,42 @@ export default function Recipes() {
       }
       return true;
     });
-  }, [searchQuery, selectedCategory, veganOnly, cuisineFilter, difficultyFilter, prepTimeFilter, dietaryFilter]);
+  }, [
+    searchQuery,
+    selectedCategory,
+    veganOnly,
+    cuisineFilter,
+    difficultyFilter,
+    prepTimeFilter,
+    dietaryFilter,
+  ]);
 
   const currentSEOParams = categorySEO[selectedCategory] || categorySEO["Vše"];
-  const dynamicTitle = cuisineFilter ? `${cuisines.find(c => c.key === cuisineFilter)?.label} Kuchyně | ${currentSEOParams.title}` : currentSEOParams.title;
-  const dynamicDesc = cuisineFilter ? `Objevte ty nejlepší bezmasé recepty orientované na ${cuisineFilter} kuchyni. ${currentSEOParams.desc}` : currentSEOParams.desc;
+  const dynamicTitle = cuisineFilter
+    ? `${cuisines.find(c => c.key === cuisineFilter)?.label} Kuchyně | ${currentSEOParams.title}`
+    : currentSEOParams.title;
+  const dynamicDesc = cuisineFilter
+    ? `Objevte ty nejlepší bezmasé recepty orientované na ${cuisineFilter} kuchyni. ${currentSEOParams.desc}`
+    : currentSEOParams.desc;
+  const activeUrlParams = new URLSearchParams(
+    typeof window !== "undefined" ? window.location.search : ""
+  );
+  const hasNonCategoryFilters = Array.from(activeUrlParams.keys()).some(
+    key => key !== "category" && key !== "cat"
+  );
+  const canonicalRecipeUrl =
+    selectedCategory !== "Vše" && !hasNonCategoryFilters
+      ? `https://www.bezmasajidla.cz/recepty?category=${encodeURIComponent(selectedCategory)}`
+      : "https://www.bezmasajidla.cz/recepty";
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAF6]">
       <SEOHead
         title={dynamicTitle}
         description={dynamicDesc}
-        ogUrl={`https://www.bezmasajidla.cz/recepty${selectedCategory !== "Vše" ? `?category=${selectedCategory}` : ""}`}
+        ogUrl={canonicalRecipeUrl}
+        canonicalUrl={canonicalRecipeUrl}
+        noIndex={hasNonCategoryFilters}
       />
       <Header />
 
@@ -146,7 +217,9 @@ export default function Recipes() {
         />
         <div className="relative container">
           <nav className="text-xs text-emerald-300 mb-3 flex items-center gap-1">
-            <Link href="/" className="hover:text-white transition-colors">Domů</Link>
+            <Link href="/" className="hover:text-white transition-colors">
+              Domů
+            </Link>
             <span>/</span>
             <span className="text-white">Recepty</span>
           </nav>
@@ -171,7 +244,7 @@ export default function Recipes() {
               type="text"
               placeholder="Hledat recept..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={e => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-emerald-100 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm"
             />
           </div>
@@ -179,23 +252,26 @@ export default function Recipes() {
             <input
               type="checkbox"
               checked={veganOnly}
-              onChange={(e) => setVeganOnly(e.target.checked)}
+              onChange={e => setVeganOnly(e.target.checked)}
               className="rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500"
             />
-            <span className="text-sm text-gray-700 whitespace-nowrap">Pouze veganské</span>
+            <span className="text-sm text-gray-700 whitespace-nowrap">
+              Pouze veganské
+            </span>
           </label>
         </div>
 
         {/* Category tabs */}
         <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
-          {categories.map((cat) => (
+          {categories.map(cat => (
             <button
               key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`whitespace-nowrap text-sm px-4 py-2 rounded-full font-medium transition-colors flex-shrink-0 ${selectedCategory === cat
-                ? "bg-emerald-700 text-white shadow-sm"
-                : "bg-white text-gray-600 border border-emerald-100 hover:border-emerald-400 hover:text-emerald-700"
-                }`}
+              onClick={() => setCategoryAndUrl(cat)}
+              className={`whitespace-nowrap text-sm px-4 py-2 rounded-full font-medium transition-colors flex-shrink-0 ${
+                selectedCategory === cat
+                  ? "bg-emerald-700 text-white shadow-sm"
+                  : "bg-white text-gray-600 border border-emerald-100 hover:border-emerald-400 hover:text-emerald-700"
+              }`}
             >
               {cat}
             </button>
@@ -204,32 +280,43 @@ export default function Recipes() {
 
         {/* Dietary Options row */}
         <div className="mb-4">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Dietní preference</p>
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">
+            Dietní preference
+          </p>
           <div className="flex gap-2 overflow-x-auto pb-1">
             <button
-              onClick={() => setDietaryFilter("")}
-              className={`whitespace-nowrap text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex-shrink-0 ${!dietaryFilter
-                ? "bg-gray-800 text-white shadow-sm"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
+              onClick={() => setDietaryFilterAndUrl("")}
+              className={`whitespace-nowrap text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex-shrink-0 ${
+                !dietaryFilter
+                  ? "bg-gray-800 text-white shadow-sm"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
             >
               Vše
             </button>
             <button
-              onClick={() => setDietaryFilter(dietaryFilter === "bezlepkove" ? "" : "bezlepkove")}
-              className={`whitespace-nowrap text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex-shrink-0 ${dietaryFilter === "bezlepkove"
-                ? "bg-amber-100 text-amber-700 ring-1 ring-amber-400 shadow-sm"
-                : "bg-white text-gray-600 border border-amber-100 hover:bg-amber-50"
-                }`}
+              onClick={() =>
+                setDietaryFilterAndUrl(
+                  dietaryFilter === "bezlepkove" ? "" : "bezlepkove"
+                )
+              }
+              className={`whitespace-nowrap text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex-shrink-0 ${
+                dietaryFilter === "bezlepkove"
+                  ? "bg-amber-100 text-amber-700 ring-1 ring-amber-400 shadow-sm"
+                  : "bg-white text-gray-600 border border-amber-100 hover:bg-amber-50"
+              }`}
             >
               Bezlepkové
             </button>
             <button
-              onClick={() => setDietaryFilter(dietaryFilter === "keto" ? "" : "keto")}
-              className={`whitespace-nowrap text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex-shrink-0 ${dietaryFilter === "keto"
-                ? "bg-purple-100 text-purple-700 ring-1 ring-purple-400 shadow-sm"
-                : "bg-white text-gray-600 border border-purple-100 hover:bg-purple-50"
-                }`}
+              onClick={() =>
+                setDietaryFilterAndUrl(dietaryFilter === "keto" ? "" : "keto")
+              }
+              className={`whitespace-nowrap text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex-shrink-0 ${
+                dietaryFilter === "keto"
+                  ? "bg-purple-100 text-purple-700 ring-1 ring-purple-400 shadow-sm"
+                  : "bg-white text-gray-600 border border-purple-100 hover:bg-purple-50"
+              }`}
             >
               Keto
             </button>
@@ -238,16 +325,19 @@ export default function Recipes() {
 
         {/* Cuisine filter row */}
         <div className="mb-6">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Kuchyně světa</p>
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">
+            Kuchyně světa
+          </p>
           <div className="flex gap-2 overflow-x-auto pb-1">
-            {cuisines.map((c) => (
+            {cuisines.map(c => (
               <button
                 key={c.key}
                 onClick={() => setCuisineFilter(c.key)}
-                className={`whitespace-nowrap text-sm px-3 py-1.5 rounded-full font-medium transition-colors flex-shrink-0 flex items-center gap-1.5 ${cuisineFilter === c.key
-                  ? "bg-amber-500 text-white shadow-sm"
-                  : "bg-white text-gray-600 border border-amber-100 hover:border-amber-400 hover:text-amber-700"
-                  }`}
+                className={`whitespace-nowrap text-sm px-3 py-1.5 rounded-full font-medium transition-colors flex-shrink-0 flex items-center gap-1.5 ${
+                  cuisineFilter === c.key
+                    ? "bg-amber-500 text-white shadow-sm"
+                    : "bg-white text-gray-600 border border-amber-100 hover:border-amber-400 hover:text-amber-700"
+                }`}
               >
                 <span>{c.flag}</span>
                 <span>{c.label}</span>
@@ -259,18 +349,20 @@ export default function Recipes() {
         {/* Difficulty and Prep time row */}
         <div className="flex gap-6 mb-6 overflow-x-auto pb-1">
           <div>
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Náročnost</p>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">
+              Náročnost
+            </p>
             <div className="flex gap-2">
               {[
                 { val: "", label: "Nerozhoduje" },
                 { val: "snadný", label: "Snadná příprava" },
                 { val: "střední", label: "Střední náročnost" },
-                { val: "náročný", label: "Náročná" }
+                { val: "náročný", label: "Náročná" },
               ].map(d => (
                 <button
                   key={d.val}
                   onClick={() => setDifficultyFilter(d.val)}
-                  className={`text-xs px-3 py-1.5 rounded-full font-medium flex-shrink-0 ${difficultyFilter === d.val ? 'bg-indigo-500 text-white' : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100'}`}
+                  className={`text-xs px-3 py-1.5 rounded-full font-medium flex-shrink-0 ${difficultyFilter === d.val ? "bg-indigo-500 text-white" : "bg-indigo-50 text-indigo-700 hover:bg-indigo-100"}`}
                 >
                   {d.label}
                 </button>
@@ -278,19 +370,21 @@ export default function Recipes() {
             </div>
           </div>
           <div>
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Doba přípravy</p>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">
+              Doba přípravy
+            </p>
             <div className="flex gap-2">
               {[
                 { val: null, label: "Nerozhoduje" },
                 { val: 15, label: "Do 15 min" },
                 { val: 30, label: "Do 30 min" },
                 { val: 60, label: "Do 60 min" },
-                { val: 61, label: "Nad hodinu" }
+                { val: 61, label: "Nad hodinu" },
               ].map(p => (
                 <button
-                  key={p.val === null ? 'null' : p.val}
+                  key={p.val === null ? "null" : p.val}
                   onClick={() => setPrepTimeFilter(p.val)}
-                  className={`text-xs px-3 py-1.5 rounded-full font-medium flex-shrink-0 ${prepTimeFilter === p.val ? 'bg-rose-500 text-white' : 'bg-rose-50 text-rose-700 hover:bg-rose-100'}`}
+                  className={`text-xs px-3 py-1.5 rounded-full font-medium flex-shrink-0 ${prepTimeFilter === p.val ? "bg-rose-500 text-white" : "bg-rose-50 text-rose-700 hover:bg-rose-100"}`}
                 >
                   {p.label}
                 </button>
@@ -301,20 +395,27 @@ export default function Recipes() {
 
         {/* Results */}
         <p className="text-sm text-gray-500 mb-4">
-          Nalezeno <span className="font-semibold text-gray-900">{filtered.length}</span> receptů
+          Nalezeno{" "}
+          <span className="font-semibold text-gray-900">{filtered.length}</span>{" "}
+          receptů
         </p>
 
         {filtered.length === 0 ? (
           <div className="bg-white rounded-xl border border-emerald-100 p-12 text-center">
             <div className="text-4xl mb-3">🥦</div>
-            <h3 className="font-semibold text-gray-900 mb-2" style={{ fontFamily: "'DM Serif Display', serif" }}>
+            <h3
+              className="font-semibold text-gray-900 mb-2"
+              style={{ fontFamily: "'DM Serif Display', serif" }}
+            >
               Žádné recepty nenalezeny
             </h3>
-            <p className="text-sm text-gray-500">Zkus upravit vyhledávání nebo filtr.</p>
+            <p className="text-sm text-gray-500">
+              Zkus upravit vyhledávání nebo filtr.
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((r) => (
+            {filtered.map(r => (
               <RecipeCard key={r.id} recipe={r} />
             ))}
           </div>

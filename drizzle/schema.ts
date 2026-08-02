@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean, uniqueIndex, index } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -30,7 +30,10 @@ export const reviews = mysqlTable("reviews", {
   comment: text("comment"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (table) => ({
+  userIdIdx: index("reviews_userId_idx").on(table.userId),
+  restaurantSlugIdx: index("reviews_restaurantSlug_idx").on(table.restaurantSlug),
+}));
 
 export type Review = typeof reviews.$inferSelect;
 export type InsertReview = typeof reviews.$inferInsert;
@@ -46,7 +49,11 @@ export const favorites = mysqlTable("favorites", {
   itemType: mysqlEnum("itemType", ["restaurant", "recipe"]).notNull(),
   itemSlug: varchar("itemSlug", { length: 128 }).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
+}, (table) => ({
+  userIdIdx: index("favorites_userId_idx").on(table.userId),
+  itemSlugIdx: index("favorites_itemSlug_idx").on(table.itemSlug),
+  uniqueUserItem: uniqueIndex("favorites_userId_itemType_itemSlug_uidx").on(table.userId, table.itemType, table.itemSlug),
+}));
 
 export type Favorite = typeof favorites.$inferSelect;
 export type InsertFavorite = typeof favorites.$inferInsert;
@@ -75,3 +82,46 @@ export const userRecipes = mysqlTable("userRecipes", {
 
 export type UserRecipe = typeof userRecipes.$inferSelect;
 export type InsertUserRecipe = typeof userRecipes.$inferInsert;
+
+/**
+ * Durable publishing queue for Meta social networks.
+ * One recipe can have one independently retryable job per platform.
+ */
+export const socialPosts = mysqlTable(
+  "socialPosts",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    recipeId: int("recipeId").notNull(),
+    platform: mysqlEnum("platform", ["facebook", "instagram"]).notNull(),
+    status: mysqlEnum("status", [
+      "scheduled",
+      "publishing",
+      "published",
+      "failed",
+    ])
+      .default("scheduled")
+      .notNull(),
+    caption: text("caption").notNull(),
+    imageUrl: text("imageUrl"),
+    linkUrl: text("linkUrl").notNull(),
+    scheduledFor: timestamp("scheduledFor").notNull(),
+    publishedAt: timestamp("publishedAt"),
+    externalPostId: varchar("externalPostId", { length: 255 }),
+    attempts: int("attempts").default(0).notNull(),
+    lastError: text("lastError"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  table => ({
+    uniqueRecipePlatform: uniqueIndex(
+      "socialPosts_recipeId_platform_uidx",
+    ).on(table.recipeId, table.platform),
+    duePostsIdx: index("socialPosts_status_scheduledFor_idx").on(
+      table.status,
+      table.scheduledFor,
+    ),
+  }),
+);
+
+export type SocialPost = typeof socialPosts.$inferSelect;
+export type InsertSocialPost = typeof socialPosts.$inferInsert;

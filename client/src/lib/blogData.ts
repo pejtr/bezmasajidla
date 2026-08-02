@@ -21,6 +21,83 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
   {
+    id: "11",
+    slug: "bezmasa-budapest-veganske-restaurace-ceny",
+    title:
+      "Kam na bezmasé jídlo v Budapešti? Ceny od street foodu po večeři s výhledem",
+    metaDescription:
+      "Ověřený průvodce bezmasým jídlem v Budapešti: veganské restaurace, street food, maďarská klasika, aktuální ceny a večeře s výhledem.",
+    category: "Cestování",
+    tags: ["Budapešť", "Maďarsko", "vegan", "restaurace", "ceny", "cestování"],
+    author: "Bezmasájídla.cz",
+    publishedAt: "2026-07-28",
+    readingTimeMin: 8,
+    coverImage: "/images/blog/bezmasa-budapest.webp",
+    coverImageAlt:
+      "Veganské maďarské jídlo s výhledem na Budínský hrad a Řetězový most",
+    excerpt:
+      "Budapešť není jen guláš a langoš. Porovnali jsme cenově dostupný street food, čistě veganské podniky i večeři s panoramatem a ověřili aktuální menu i ceny.",
+    content: `## Budapešť bez masa: co čekat a kolik si připravit
+
+Maďarská kuchyně má pověst země guláše, klobás a sádla, Budapešť ale dnes nabízí překvapivě pestrý výběr pro vegetariány i vegany. Najdete tu rychlý street food, rostlinné verze maďarské klasiky i reprezentativní večeři s výhledem na město.
+
+**Ceny a nabídky jsme ověřovali 28. července 2026.** Menu se mění a převod na koruny kolísá, proto uvádíme především částky v maďarských forintech. Před cestou vždy otevřete aktuální menu podniku.
+
+| Podnik | Styl | Orientační cena bezmasého jídla |
+|---|---|---:|
+| Karaván | street food | zveřejněné sezonní položky přibližně 1 800–2 400 Ft |
+| Napfényes | čistě veganská maďarská kuchyně | polévky 1 400–1 500 Ft, hlavní jídla 4 400–5 700 Ft |
+| Aranybástya | večeře s panoramatem | veganská polévka 2 750 Ft, hlavní chod 4 500 Ft |
+| VIRTU | fine dining ve 28. patře | bezmasé menu je nutné ověřit před rezervací |
+
+## Aranybástya: ověřená veganská večeře s výhledem
+
+[Aranybástya](https://en.aranybastya.com/dinner-menu) sídlí v Budínském hradním areálu a kombinuje panoramatickou terasu s menu, na kterém jsou rostlinné položky označené přímo.
+
+V aktuálním večerním menu najdete krémovou polévku ze zeleného hrášku s medvědím česnekem a rostlinnou smetanou za **2 750 Ft**, superfood salát za **3 200 Ft** s možností přidat grilované tofu nebo květák za **1 490 Ft** a veganské plněné zelí s čočkovým ragú a quinoou za **4 500 Ft**. Rostlinnou tečkou je malinové crème brûlée za **3 200 Ft**.
+
+K účtu se připočítává **15% servisní poplatek**. Restaurace je v ulici Csónak 1 a podle oficiálního webu otevírá denně od 12:00 do 22:00. Na večeři se západem slunce je rozumné rezervovat stůl předem.
+
+## VIRTU: výjimečné místo, ale bezmasé menu potvrďte předem
+
+[VIRTU Restaurant](https://virturestaurant.com/) se nachází ve 28. patře MOL Campus a je doporučený průvodcem Michelin. Panoramatem patří k nejvýraznějším gastronomickým zážitkům ve městě.
+
+Aktuálně zveřejněná nabídka šéfkuchaře však není sestavená jako vegetariánské nebo veganské menu. Proto zde neuvádíme dříve publikované ceny plněných paprik ani slib úpravy každého chodu — současné podklady je nepotvrzují. Pokud vás láká právě VIRTU, napište restauraci ještě před rezervací, popište své stravovací požadavky a nechte si potvrdit konkrétní skladbu i cenu menu.
+
+## Napfényes: maďarská klasika v čistě veganské podobě
+
+[Napfényes Étterem](https://napfenyesetterem.hu/) je plně veganská restaurace v centru, vhodná pro každého, kdo chce ochutnat sytější domácí kuchyni bez složitého vysvětlování obsluze.
+
+Podle aktuálního sezonního menu stojí polévky **1 400–1 500 Ft**, carbonara **4 400 Ft**, plněné zelí **5 500 Ft** a sezonní rizoto **5 700 Ft**. Nabídka se mění, ale podnik dlouhodobě pracuje s tofu, seitanem, luštěninami a rostlinnými verzemi maďarských jídel. Najdete ho na adrese Curia u. 2; zveřejněná otevírací doba je 11:30–21:00.
+
+## Karaván: rychlý oběd v židovské čtvrti
+
+[Street Food Karaván](https://street-food-karavan-budapest.hu/menu) je venkovní food court v Kazinczy utca 18, hned vedle Szimpla Kert. Jednotlivé stánky se obměňují, takže nejde o čistě veganský areál, bezmasé varianty tu ale bývají běžnou součástí nabídky.
+
+Na oficiálním menu jsou zveřejněné sezonní položky přibližně za **1 800–2 400 Ft**; ceny burgerů, langošů a dalších jídel se liší podle stánku. U smažených jídel se ptejte nejen na těsto a topping, ale také na společný olej, pokud je to pro vás důležité.
+
+## Kozmosz: neformální čistě veganské bistro
+
+Kozmosz Vegán Étterem je komornější podnik se sklepní atmosférou, burgery, tortillami, těstovinami a seitanem. Hodí se pro nenáročný oběd nebo večeři mimo turistický ruch.
+
+Protože se nám nepodařilo dohledat spolehlivý aktuální oficiální ceník, starší cenové rozpětí zde záměrně neopakujeme. Před návštěvou ověřte aktuální menu a otevírací dobu přímo u podniku.
+
+## Sladká tečka: sorbet a pozor na trdelník
+
+[Gelarto Rosa](https://gelartorosa.com/en/) u Baziliky svatého Štěpána nabízí ovocné sorbety bez mléka a také varianty s rostlinným mlékem. Aktuální cenu provozovatel na webu neuvádí, proto s ní v rozpočtu zacházejte jako s proměnlivou.
+
+U kürtőskalácse neplatí, že je automaticky veganský. Těsto nebo posyp mohou obsahovat mléko, máslo či vejce. Hledejte výslovné označení vegan a raději si složení potvrďte u obsluhy.
+
+## Jak si vybrat podle rozpočtu
+
+- **Rychle a levněji:** projděte aktuální stánky v Karavánu.
+- **Jistota čistě rostlinné kuchyně:** zvolte Napfényes nebo Kozmosz.
+- **Večeře s výhledem a jasně označeným veganským jídlem:** rezervujte Aranybástyu.
+- **Fine dining ve 28. patře:** VIRTU volte pouze po předchozím potvrzení bezmasého menu.
+
+Budapešť otevírá naši novou rubriku **Cestování**. V dalších průvodcích se zaměříme především na **Krakov a Varšavu**, následovat budou vybraná města v Itálii a Francii. Stejně jako zde budeme odlišovat ověřené aktuální ceny od starších nebo nedoložených údajů.`,
+  },
+  {
     id: "1",
     slug: "top-10-veganskych-restauraci-praha-2026",
     title: "Top 10 veganských restaurací v Praze 2026",
@@ -33,7 +110,8 @@ export const blogPosts: BlogPost[] = [
     readingTimeMin: 7,
     coverImage:
       "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-top10-restauraci-2026-GG52nEiDEd32Ak7ZoMrq7b.webp",
-    coverImageAlt: "Veganské jídlo v pražské restauraci — barevné misky se zeleninou",
+    coverImageAlt:
+      "Veganské jídlo v pražské restauraci — barevné misky se zeleninou",
     excerpt:
       "Praha se v posledních letech stala jedním z nejpřívětivějších měst pro vegany ve střední Evropě. Přinášíme vám přehled deseti restaurací, které v roce 2026 zaujímají přední příčky v hodnocení kvality, ceny a atmosféry.",
     content: `## Praha — veganská metropole střední Evropy
@@ -205,7 +283,8 @@ Pro rychlé a dostupné stravování s dětmi jsou vhodné i fast food řetězce
     readingTimeMin: 5,
     coverImage:
       "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-veganske-brunche-CKfN9994upzJuaRbq9fq7J.webp",
-    coverImageAlt: "Veganský brunch — avokádový toast, smoothie bowl a čerstvé ovoce",
+    coverImageAlt:
+      "Veganský brunch — avokádový toast, smoothie bowl a čerstvé ovoce",
     excerpt:
       "Víkendový brunch se stal jedním z nejoblíbenějších gastronomických rituálů Pražanů. Veganská a vegetariánská scéna nabízí stále více podniků, kde si lze dopřát vydatné dopolední jídlo bez živočišných produktů. Přinášíme přehled těch nejlepších.",
     content: `## Veganský brunch v Praze — rostoucí trend
@@ -255,7 +334,8 @@ Brunch je ideální pro pozdní vstávání a delší posezení. Pokud hledáte 
     readingTimeMin: 6,
     coverImage:
       "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-ceska-veganska-kuchyne-Z3BaSWsmxY2tRDXFpLi6s4.webp",
-    coverImageAlt: "Tradiční česká veganská jídla — svíčková z celeru, houbový guláš",
+    coverImageAlt:
+      "Tradiční česká veganská jídla — svíčková z celeru, houbový guláš",
     excerpt:
       "Česká kuchyně je tradičně masová, ale v posledních letech se objevuje stále více podniků, které dokazují, že i svíčková, guláš nebo smažený sýr lze připravit bez živočišných produktů. Přinášíme přehled pražských restaurací, kde ochutnáte Česko v rostlinném provedení.",
     content: `## Česká veganská kuchyně — tradice v novém kabátě
@@ -301,15 +381,26 @@ Pokud vás česká veganská kuchyně zaujala natolik, že ji chcete vyzkoušet 
     id: "6",
     slug: "vegansky-fast-food-praha-kde-jist-rychle-a-dobre",
     title: "Veganský fast food v Praze: kde jíst rychle a dobře v roce 2026",
-    metaDescription: "Veganský fast food v Praze 2026 — přehled nejlepších míst pro rychlé veganské jídlo: burgery, wrap, falafel, sushi a indické bufety. Ceny od 90 Kč.",
+    metaDescription:
+      "Veganský fast food v Praze 2026 — přehled nejlepších míst pro rychlé veganské jídlo: burgery, wrap, falafel, sushi a indické bufety. Ceny od 90 Kč.",
     category: "Fast Food",
-    tags: ["vegan", "fast food", "Praha", "rychlé jídlo", "burger", "falafel", "bufet"],
+    tags: [
+      "vegan",
+      "fast food",
+      "Praha",
+      "rychlé jídlo",
+      "burger",
+      "falafel",
+      "bufet",
+    ],
     author: "Bezmasájídla.cz",
     publishedAt: "2026-03-10",
     readingTimeMin: 6,
-    coverImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-fast-food-vegan-VDP4UHZkDjJMTyxjf2vJfv.webp",
+    coverImage:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-fast-food-vegan-VDP4UHZkDjJMTyxjf2vJfv.webp",
     coverImageAlt: "Veganský burger a hranolky na dřevěném prkně",
-    excerpt: "Veganský fast food už není oxymorón. Praha nabízejí deseti míst, kde se najdete rychle, levně a bez masa — od indických bujetů po veganské burgery.",
+    excerpt:
+      "Veganský fast food už není oxymorón. Praha nabízejí deseti míst, kde se najdete rychle, levně a bez masa — od indických bujetů po veganské burgery.",
     content: `## Veganský fast food v Praze: rychle, levně, bez masa
 
 Ještě před pěti lety bylo veganské rychlé občerstveni v Praze prakticky neexistující kategorií. Dnes je situace radikálně jiná — město nabízejí deseti míst, kde se najdete za méně než 200 Kč, rychle a bez žiivočičných produktů. Tento přehled mapuje nejlepší možnosti pro rok 2026.
@@ -352,15 +443,26 @@ Naše interaktivní mapa umožňuje najít veganské restaurace v okolí vaší 
     id: "7",
     slug: "bezlepkove-veganske-restaurace-praha",
     title: "Bezlepkové veganské restaurace v Praze: kompletni průvodce 2026",
-    metaDescription: "Bezlepkové veganské restaurace v Praze 2026 — kde jíst bez lepku a bez masa? Přehled podniků s bezlepkovou nabídkou, tipy na jídla a praktické rady.",
+    metaDescription:
+      "Bezlepkové veganské restaurace v Praze 2026 — kde jíst bez lepku a bez masa? Přehled podniků s bezlepkovou nabídkou, tipy na jídla a praktické rady.",
     category: "Průvodce",
-    tags: ["bezlepkove", "vegan", "Praha", "celiakálie", "gluten-free", "restaurace"],
+    tags: [
+      "bezlepkove",
+      "vegan",
+      "Praha",
+      "celiakálie",
+      "gluten-free",
+      "restaurace",
+    ],
     author: "Bezmasájídla.cz",
     publishedAt: "2026-03-10",
     readingTimeMin: 7,
-    coverImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-bezlepkove-vegan-SefXVKQybptc8Ls93vCwzz.webp",
-    coverImageAlt: "Bezlepkové veganské jídlo — barevné misky se zeleninou a quinoou",
-    excerpt: "Kombinace veganské stravy a bezlepkové diety může být výzva — ale Praha nabízejí řadu podniků, které obě potřeby zvládají na jedničku.",
+    coverImage:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-bezlepkove-vegan-SefXVKQybptc8Ls93vCwzz.webp",
+    coverImageAlt:
+      "Bezlepkové veganské jídlo — barevné misky se zeleninou a quinoou",
+    excerpt:
+      "Kombinace veganské stravy a bezlepkové diety může být výzva — ale Praha nabízejí řadu podniků, které obě potřeby zvládají na jedničku.",
     content: `## Bezlepkové veganské jídlo v Praze: kde jíst bez kompromisů
 
 Kombinace veganské stravy a bezlepkové diety může působit jako extremální omezení — ale Praha nabízejí překvapivuíce širokou nabídku podniků, které obě potřeby zvládají. Tento průvodce je určen jak pro lidi s celiakálií, tak pro ty, kteří se lepku vyhybají z jiných důvodů.
@@ -412,15 +514,27 @@ Pokud chcete vařit bezlepkově a veganské doma, naše platforma nabízejí řa
     id: "8",
     slug: "zdrave-obedy-do-200-kc-vegan-praha",
     title: "Zdravé veganské obědy do 200 Kč v Praze: kde jíst levně a dobře",
-    metaDescription: "Veganské obědy do 200 Kč v Praze 2026 — přehled nejlepších míst pro zdravé a levné veganské jídlo. Bufety, denní menu, sámé jídla od 90 Kč.",
+    metaDescription:
+      "Veganské obědy do 200 Kč v Praze 2026 — přehled nejlepších míst pro zdravé a levné veganské jídlo. Bufety, denní menu, sámé jídla od 90 Kč.",
     category: "Tipy",
-    tags: ["vegan", "Praha", "levné jídlo", "oběd", "rozpočet", "bufet", "denní menu"],
+    tags: [
+      "vegan",
+      "Praha",
+      "levné jídlo",
+      "oběd",
+      "rozpočet",
+      "bufet",
+      "denní menu",
+    ],
     author: "Bezmasájídla.cz",
     publishedAt: "2026-03-10",
     readingTimeMin: 5,
-    coverImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-levne-obedy-vegan-ijQXPMPHrYYAdU5T2q6Sbw.webp",
-    coverImageAlt: "Zdravý veganský oběd — barevný talíř se zeleninou a lugtěninami",
-    excerpt: "Veganské jídlo nemusí být drahé. Praha nabízejí řadu míst, kde se najdete za méně než 200 Kč — a jídlo bude zdravé, chtné a syté.",
+    coverImage:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-levne-obedy-vegan-ijQXPMPHrYYAdU5T2q6Sbw.webp",
+    coverImageAlt:
+      "Zdravý veganský oběd — barevný talíř se zeleninou a lugtěninami",
+    excerpt:
+      "Veganské jídlo nemusí být drahé. Praha nabízejí řadu míst, kde se najdete za méně než 200 Kč — a jídlo bude zdravé, chtné a syté.",
     content: `## Veganské obědy do 200 Kč v Praze: průvodce pro rozpočtově vědomé
 
 Veganské jídlo má pověst drahé záležitosti — ale to je mylá představa. Praha nabízejí řadu míst, kde se najdete za méně než 200 Kč a jídlo bude zdravé, syté a chtné. Klíčem je vědět, kde hledat.
@@ -470,15 +584,18 @@ Pokud chcete ušetřit ještě více, vařte doma. Naše platforma nabízejí st
     id: "9",
     slug: "veganske-pizzerie-praha-nejlepsi-pizza-bez-masa",
     title: "Veganské pizzerie v Praze: nejlepší pizza bez masa a sýra 2026",
-    metaDescription: "Veganské pizzerie v Praze 2026 — kde dát nejlepší veganskou pizzu? Přehled podniků s veganským sýrem, toppingy a bezlepkovou móžné těstem.",
+    metaDescription:
+      "Veganské pizzerie v Praze 2026 — kde dát nejlepší veganskou pizzu? Přehled podniků s veganským sýrem, toppingy a bezlepkovou móžné těstem.",
     category: "Průvodce",
     tags: ["vegan", "pizza", "Praha", "pizzerie", "veganský sýr", "bezlepkové"],
     author: "Bezmasájídla.cz",
     publishedAt: "2026-03-10",
     readingTimeMin: 6,
-    coverImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-veganska-pizza-9ZMbWEbZpUc5ABmuG3mxrY.webp",
+    coverImage:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-veganska-pizza-9ZMbWEbZpUc5ABmuG3mxrY.webp",
     coverImageAlt: "Veganská pizza s barevnými toppingy na dřevěném prkně",
-    excerpt: "Veganská pizza už není kompromis. Praha nabízejí řadu pizzerií, kde si dáte skutečnou italskou pizzu s veganským sýrem a čerstvými toppingy.",
+    excerpt:
+      "Veganská pizza už není kompromis. Praha nabízejí řadu pizzerií, kde si dáte skutečnou italskou pizzu s veganským sýrem a čerstvými toppingy.",
     content: `## Veganská pizza v Praze: kde si dát skutečnou italskou pizzu bez sýra
 
 Veganská pizza je jednou z nejrychleji rostoucich kategorií v pražské gastronomii. Ještě před pěti lety bylo těžké najít pizzu s veganským sýrem — dnes ji nabízejí desítky podniků. Klíčem je vědět, kde hledat a co očekávat.
@@ -525,15 +642,19 @@ Pokud chcete veganskou pizzu připravit doma, naše platforma nabízejí několi
     id: "10",
     slug: "veganske-vanoce-trhy-advent-praha-co-jist",
     title: "Veganské Vánoce v Praze: co jíst na adventních trzich a kde",
-    metaDescription: "Veganské jídlo na adventních trzich v Praze — co jíst, kde hledat veganské stánky a jak si užít Vánoce bez masa. Tipy na veganské vánoční jídlo.",
+    metaDescription:
+      "Veganské jídlo na adventních trzich v Praze — co jíst, kde hledat veganské stánky a jak si užít Vánoce bez masa. Tipy na veganské vánoční jídlo.",
     category: "Sezónní",
     tags: ["vegan", "Vánoce", "adventní trhy", "Praha", "sezónní", "trhy"],
     author: "Bezmasájídla.cz",
     publishedAt: "2026-03-10",
     readingTimeMin: 5,
-    coverImage: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-veganske-vanoce-QxpuKksnQFmbBZtpuJJukm.webp",
-    coverImageAlt: "Veganské jídlo na adventním trhu — teplou polevá a pečené kaštany",
-    excerpt: "Adventní trhy v Praze jsou krásné, ale pro vegany může být těžké najít něco k jídlu. Tento průvodce vám pomůže navigovat vánoční trhy bez kompromisů.",
+    coverImage:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-veganske-vanoce-QxpuKksnQFmbBZtpuJJukm.webp",
+    coverImageAlt:
+      "Veganské jídlo na adventním trhu — teplou polevá a pečené kaštany",
+    excerpt:
+      "Adventní trhy v Praze jsou krásné, ale pro vegany může být těžké najít něco k jídlu. Tento průvodce vám pomůže navigovat vánoční trhy bez kompromisů.",
     content: `## Veganské jídlo na adventních trzich v Praze
 
 Adventní trhy v Praze jsou jednou z nejkrásnějších tradic — Staroměstské náměstí, Václavské náměstí a Havelští trh jsou každý rok plné návštěvníků. Pro vegany však může být náročné najít něco k jídlu — většina stánků nabízejí klobasy, sváteční pečivo s máslem a svařené víno. Tento průvodce vám pomůže navigovat vánoční trhy bez kompromisů.
@@ -576,16 +697,138 @@ Pokud chcete připravit veganské vánoční pečivo doma, naše platforma nabí
 
 **V restauraci:** Rezervujte si stůl v jednom z veganských podniků předem — adventní období je nejrušnější čas v roce pro pražské restaurace.`,
   },
+  {
+    id: "12",
+    slug: "domaci-marmelada-dzem-rozdil-recepty",
+    title: "Domácí marmeláda vs. džem: Jaký je v nich rozdíl a 10 nejlepších receptů",
+    metaDescription: "Jaký je rozdíl mezi džemem, marmeládou a povidly? Návod na zavařování, pektin, méně cukru a recepty od meruňkové po Aperol.",
+    category: "Tipy & Návody",
+    tags: ["zavařování", "džem", "marmeláda", "recepty", "ovoce", "domácí"],
+    author: "Bezmasájídla.cz",
+    publishedAt: "2026-08-01",
+    readingTimeMin: 7,
+    coverImage: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&w=800&q=80",
+    coverImageAlt: "Sklenice s domácím meruňkovým džemem a čerstvým ovocem",
+    excerpt: "Léto je v plném proudu a ovoce dozrává. Víte, jaký je přesný rozdíl mezi marmeládou, džemem a povidly podle legislativy i v praxi? Přinášíme velkého průvodce zavařováním a 10 receptů od meruňky po Aperol.",
+    content: `## Jaký je rozdíl mezi džemem, marmeládou a povidly?
+
+Při výrobě domácích sladkých zásob často používáme slova **marmeláda** a **džem** jako synonyma. Podle české i evropské legislativy je v nich ale zásadní rozdíl:
+
+1. **Marmeláda**: Oficiálně se tímto názvem smí označovat pouze výrobky vyhotovené z **citrusových plodů** (pomeranče, citrony, grapefruity, mandarinky), a to z dužiny, kůry nebo šťávy.
+2. **Džem**: Vyrábí se z jednoho nebo více druhů jiného ovoce (jahody, meruňky, borůvky) a obsahuje viditelné kousky ovoce nebo celé plody rozvařené v rosolovité hmotě.
+3. **Povidla**: Vznikají odpařováním vody z ovoce (tradičně švestek či hrušek) bez přídavku rosolujících látek a s minimem přidaného cukru.
+
+## Základní pravidla pro dokonalé zavařování
+
+- **Čistota a sterilizace**: Sklenice i víčka důkladně umyjte a vysterilizujte v horké vodě nebo v troubě na 100 °C.
+- **Kvalita ovoce**: Používejte zralé, ale pevné ovoce bez známek plísně či hniloby.
+- **Pektin**: Některé ovoce (jablka, rybíz, citrusy) má přirozeně vysoký obsah pektinu. U jahod či třešní pomůže přirozený jablečný pektin nebo kapka citrónové šťávy.
+- **Zkouška rosolování**: Kápněte trochu horkého džemu na vychlazený talířek. Pokud po chvíli ztuhne a neztéká, máte hotovo.
+
+## 10 skvělých receptů z letního ovoce
+
+### 1. Meruňkový džem s levandulí
+Jemná vůně sušených levandulových květů dodá sladkým meruňkám provensálský nádech. Svařte 1 kg meruněk s 500 g cukru, citrónovou šťávou a 1 lžičkou sušených levandulových kvítků.
+
+### 2. Ostružinový džem se skořicí
+Ostružiny obsahují dostatek pektinu. V kombinaci se špetkou mleté skořice a hřebíčku vytvoříte nádherný džem s hlubokou chutí.
+
+### 3. Džem z višní a červeného rybízu
+Kyselost rybízu dokonale vyváží sladkost zralých višní. Rybíz dodá přirozenou rosolovitost bez nutnosti přidávat želírovací cukr.
+
+### 4. Jablečný džem s vanilkou
+Šťavnatá jablka nakrájená na drobné kostičky, povařená s pravou vanilkou a kapkou citronu. Ideální do ranních ovesných kaší.
+
+### 5. Morušový džem bez pektinu
+Moruše jsou sladké a šťavnaté. Vařte je zvolna s cukrem a citrónovou šťávou do lehkého zhoustnutí.
+
+### 6. Meruňkový džem s mandlemi
+Ke konci vaření přimíchejte do meruňkového džemu opražené plátky mandlí a kapku amaretta.
+
+### 7. Rakytníkový džem se zázvorem
+Vitamínová bomba pro podzimní dny. Šťávu z rakytníku svařte s jemně nastrouhaným zázvorem a cukrem.
+
+### 8. Broskvový džem s medem a vanilkou
+Zralé broskve zbavené slupky nakrájejte, ochuťte květnovým medem a vanilkovým luskem.
+
+### 9. Marmeláda z grapefruitu a Aperolu
+Originální marmeláda pro dospělé! Křupavá kůra a dužina růžového grepfrutu v kombinaci s citrónovou šťávou a šplíchem Aperolu.
+
+### 10. Borůvkový džem s kapkou rumu
+Divoké lesní borůvky svařené s trochou cukru a kapkou tuzemského rumu pro neodolatelnou vůni.`
+  },
+  {
+    id: "13",
+    slug: "francouzsky-quiche-druhy-naplni-recept",
+    title: "Francouzský quiche: Jak na dokonalý slaný koláč a nejlepší bezmasé náplně",
+    metaDescription: "Velký průvodce francouzským slaným koláčem quiche: recept na křehké těsto pâte brisée, smetanovou zálivku a nejlepší vegetariánské náplně.",
+    category: "Tipy & Návody",
+    tags: ["quiche", "francouzská kuchyně", "slaný koláč", "špenát", "pórek", "vegetariánské"],
+    author: "Bezmasájídla.cz",
+    publishedAt: "2026-08-02",
+    readingTimeMin: 8,
+    coverImage: "https://images.unsplash.com/photo-1554998171-7e599bc95ccd?auto=format&fit=crop&w=800&q=80",
+    coverImageAlt: "Tradiční francouzský quiche se zeleninou a parmazánem",
+    excerpt: "Francouzský quiche je ideální volbou pro sytou snídani, lehký oběd i pohoštění pro návštěvu. Naučte se základní křehké těsto pâte brisée, sametovou vaječnou zálivku a inspirujte se pestrými vegetariánskými náplněmi.",
+    content: `## Co je to francouzský quiche?
+
+**Quiche** (vyslovuje se *kiš*) je tradiční francouzský slaný koláč pocházející z regionu Lotrinsko (Quiche Lorraine). Jeho základ tvoří korpus z křehkého máslového těsta (*pâte brisée*) a bohatá náplň ze smetany, vajec a sýra.
+
+Výhodou quiche je jeho neuvěřitelná variabilita. Můžete jej podávat horký přímo z trouby, ale stejně skvěle chutná i studený druhý den se salátem.
+
+## 1. Základní křehké těsto (Pâte Brisée)
+
+Klíčem k dokonalému quiche je křehký korpus, který se po upečení nerozpadá ani nenavlhne od smetanové náplně.
+
+### Suroviny na formu o průměru 24–26 cm:
+- 200 g hladké mouky
+- 100 g studeného másla (nakrájeného na kostičky)
+- 1/2 lžičky soli
+- 1 žloutek
+- 3–4 lžíce ledové vody
+
+### Postup:
+1. Mouku smíchejte se solí. Přidejte studené máslo a prsty vypracujte drobenku.
+2. Vmíchejte žloutek s ledovou vodou a rychle spojte v hladké těsto.
+3. Zabalte do fólie a nechte v lednici alespoň 30 minut odpočinout.
+4. Vyválejte těsto, vyložte jím koláčovou formu (vymazanou a vysypanou) a dno propíchejte vidličkou.
+5. **Slepé pečení (blind baking)**: Korpus vyložte pečicím papírem, zasypte zátěží (fazolemi) a předpečte 15 minut na 190 °C. Poté zátěž odstraňte a pečte ještě 5 minut.
+
+## 2. Sametová vaječná zálivka (Liaison)
+
+Základem náplně je smetana vyšlehaná s vejci. Dodržujte základní poměr:
+- 200 ml smetany ke šlehání (min. 30 % tuku) nebo zakysané smetany
+- 100 ml plnotučného mléka
+- 3 celá vejce + 1 žloutek
+- Špetka muškátového oříšku, sůl a čerstvě mletý pepř
+
+## 3. Nejlepší vegetariánské variace náplní
+
+### Špenát a kozí sýr
+Podušte 250 g čerstvého baby špenátu s česnekem na másle. Rozprestřete na předpečený korpus, posypte 100 g rozdrceného čerstvého kozího sýra a zalijte smetanovou směsí.
+
+### Pórek a Gruyère
+Dva pórky nakrájejte na kolečka a zvolna poduste na másle do změknutí (cca 10 minut). Smíchejte se 100 g strouhaného francouzského sýra Gruyère nebo Emmentaler.
+
+### Pečená dýně a listy červené řepy
+Kostky dýně Hokkaido upečte v troubě s olivovým olejem a tymiánem. Zapečte v koláči spolu s listy červené řepy a feta sýrem.
+
+### Tradiční cibulový koláč (Zwiebelkuchen)
+4 velké cibule nakrájejte na plátky a karamelizujte na mírném ohni 20 minut. Vmíchejte špetku kmínu a zakysanou smetanu.
+
+### Jarní chřestový quiche
+Zelený chřest krátce povařte ve slané vodě (2 minuty) a zchlaďte v ledové vodě. Naranžujte na korpus posypaný ricottou a parmazánem a zalijte vaječnou zálivkou.`
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
-  return blogPosts.find((p) => p.slug === slug);
+  return blogPosts.find(p => p.slug === slug);
 }
 
 export function getBlogPostsByCategory(category: string): BlogPost[] {
-  return blogPosts.filter((p) => p.category === category);
+  return blogPosts.filter(p => p.category === category);
 }
 
 export function getBlogPostsByTag(tag: string): BlogPost[] {
-  return blogPosts.filter((p) => p.tags.includes(tag));
+  return blogPosts.filter(p => p.tags.includes(tag));
 }

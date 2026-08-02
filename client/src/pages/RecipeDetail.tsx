@@ -12,8 +12,9 @@ import { Button } from "@/components/ui/button";
 import { recipes, type Recipe } from "@/lib/data";
 import SEOHead from "@/components/SEOHead";
 import OptimizedImage from "@/components/OptimizedImage";
-import { getRohlikLink, getKosikLink } from "@/lib/affiliates";
+import { getRohlikLink, getKosikLink, getScukLink, getTescoLink, trackAffiliateClick } from "@/lib/affiliates";
 import { RecipeJsonLd, BreadcrumbJsonLd, FAQPageJsonLd } from "@/components/JsonLd";
+import SmartInternalLinks from "@/components/SmartInternalLinks";
 
 const sampleIngredients: Record<string, string[]> = {
   "svickova-bez-masa": [
@@ -402,12 +403,152 @@ const sampleIngredients: Record<string, string[]> = {
     "K dochucení a servírování: ocet, cukr, citron",
     "4 čerstvá vejce a octová voda"
   ],
+
+  "veganska-michana-vajicka-z-tofu": ["200 g přírodního nebo hedvábného tofu", "1 velká cibule (jemně nakrájená)", "3 lžíce lahůdkového droždí", "1/2 lžičky drceného kmínu", "1/2 lžičky kurkumy (pro žlutou barvu)", "1/2 lžičky černé soli Kala Namak (dodá vaječnou vůni)", "Čerstvě namletý černý pepř", "2 lžíce rostlinného oleje na smažení", "Čerstvá pažitka na ozdobu", "Křupavý chléb k podávání"],
+  "kynute-livance-v-americkem-duchu": ["300 g hladké pšeničné mouky", "7 g sušeného droždí (1 balíček)", "350 ml vlažného rostlinného mléka", "2 lžíce třtinového cukru", "1 lžička vanilkového extraktu", "1/2 lžičky soli", "2 lžíce rozpuštěného kokosového oleje", "Javorový sirup a čerstvé borůvky k podávání"],
+  "pres-noc-namocena-chia-ovesna-kase": ["50 g jemných ovesných vloček", "1 lžíce chia semínek", "180 ml mandlového nebo ovesného mléka", "1 lžíce javorového sirupu nebo medu", "1/2 lžičky skořice", "Čerstvé maliny, borůvky a plátky mandlí na zdobení"],
+  "bramborovy-salat-s-domaci-sojanezou": ["800 g brambor (varný typ A/A-B)", "2 mrkve a 1/4 celeru (uvařené a nakrájené)", "150 g nakládaných okurek", "100 g mraženého hrášku", "1 malá cibule (spařená)", "100 ml neochuceného sójového mléka", "150 ml slunečnicového oleje", "1 lžíce plnotučné hořčice", "1 lžíce nálevu z okurek", "Sůl a pepř"],
+  "celozrnny-testovinovy-salat-se-susenymi-rajcaty": ["250 g celozrnných těstovin (penne/fusilli)", "80 g sušených rajčat naložených v oleji", "50 g černých oliv bez pecky", "100 g čerstvé rukoly nebo špenátu", "2 lžíce piniových nebo slunečnicových semínek", "3 lžíce extra panenského olivového oleje", "1 lžíce balzamikového octa", "Sůl, pepř a špetka oregána"],
+  "salat-tabbouleh-z-celozrnneho-bulguru": ["100 g celozrnného bulguru", "2 velké svazky čerstvé hladkolisté petrželky", "1 svazek čerstvé máty", "3 zralá pevná rajčata (nakrájená na drobné kostičky)", "1 malá červená cibule nebo jarní cibulka", "4 lžíce extra panenského olivového oleje", "Šťáva z 1-2 citronů", "Sůl a čerstvě mletý pepř"],
+  "bramboracka-s-lesnimi-houbami": ["4 velké brambory (nakrájené na kostky)", "1 mrkev, 1 petržel, 1/4 celeru", "1 cibule a 3 stroužky česneku", "30 g sušených nebo 200 g čerstvých lesních hub", "1.2 l zeleninového vývaru", "2 lžíce hladké pšeničné nebo kukuřičné mouky na jíšku", "2 lžíce oleje nebo rostlinného másla", "1 lžíce drhnuté majoránky", "1/2 lžičky drceného kmínu, sůl a pepř"],
+  "zelnacka-s-uzenym-tofu": ["400 g kysaného zelí (překrájeného)", "200 g uzeného tofu (nakrájeného na kostičky)", "3 brambory", "1 velká cibule", "2 lžičky sladké mleté papriky", "1/2 lžičky pálivé nebo uzené papriky", "1 l zeleninového vývaru", "2 bobkové listy, 4 kuličky nového koření", "2 lžíce rostlinného oleje", "Sůl a pepř"],
+  "quinoa-s-kapustovym-pestem-a-chilli": ["150 g quinoy", "100 g čerstvého kadeřávku (bez stonků)", "40 g pražených mandlí", "1 stroužek česneku", "3 lžíce lahůdkového droždí", "50 ml extra panenského olivového oleje", "Šťáva z 1/2 citronu", "1/2 lžičky chilli vloček", "Sůl a pepř"],
+  "kokosove-zeleninove-kari": ["1 batát (nakrájený na kostičky)", "1 malá cuketa", "1 červená paprika", "200 g vařené cizrny", "400 ml kokosového mléka v plechovce", "2 lžíce žluté nebo červené kari pasty", "1 cibule, 2 stroužky česneku, 2 cm zázvoru", "1 lžíce kokosového oleje", "Čerstvý koriandr a šťáva z limetky", "Rýže Basmati k podávání"],
+
+  "pres-noc-namocena-chia-ovesna-kase-s-boruvkami": ["50 g ovesných vloček", "1 lžíce chia semínek", "180 ml mandlového mléka", "1 lžíce sirupu", "Skořice", "Čerstvé borůvky"],
+  "detoxikacni-ovocne-smoothie": ["1 hrnek čerstvého ananasu", "1/2 manga", "1 hrst baby špenátu", "250 ml kokosové vody", "Limetková šťáva"],
+  "celozrnny-testovinovy-salat-se-susenymi-rajcaty-a-tofu": ["250 g celozrnných těstovin", "80 g sušených rajčat", "50 g černých oliv", "150 g marinovaného tofu", "Rukola", "Olivový olej", "Balzamikový ocet"],
+  "kuskusovy-salat-s-brusinkami-a-mandlemi": ["200 g celozrnného kuskusu", "50 g sušených brusinek", "40 g plátků mandlí", "1 svazek máty", "2 lžíce olivového oleje", "Citronová šťáva"],
+  "pohankovy-salat-s-tempehem-a-grilovanou-zeleninou": ["150 g pohanky kroupy", "150 g uzeného tempehu", "1 cuketa", "1 červená paprika", "2 lžíce sojové omáčky", "Olivový olej", "Tymián"],
+  "salat-tabbouleh-z-celozrnneho-bulguru-s-marinovanym-tofu": ["100 g bulguru", "2 svazky hladkolisté petrželky", "1 svazek máty", "3 rajčata", "150 g marinovaného tofu", "Citronová šťáva", "Olivový olej"],
+  "zeleninovy-salat-s-kremovou-tahini-zalivkou": ["1/2 hlávky římského salátu", "1 okurka", "2 rajčata", "1/2 červené cibule", "3 lžíce tahini pasty", "2 lžíce citronové šťávy", "1 stroužek česneku", "Voda"],
+  "bagetka-s-uzenym-tofu-a-karamelizovanou-cibulkou": ["2 celozrnné bagety", "200 g uzeného tofu", "2 velké cibule", "1 lžíce třtinového cukru", "1 lžíce balzamika", "Rukola", "Veganská majonéza"],
+  "psenicno-zitny-chleb-s-pecenou-dyni-a-dresinkem": ["4 krajíce pšenično-žitného chleba", "300 g dýně Hokkaido", "2 lžíce hořčice", "1 lžíce javorového sirupu", "Olivový olej", "Semínka"],
+  "cikrnovy-hummus-na-mnoho-zpusobu": ["400 g vařené cizrny", "3 lžíce tahini", "2 stroužky česneku", "Šťáva z 1 citronu", "1/2 lžičky římského kmínu", "Ice water", "Olivový olej"],
+  "brokolicova-polevka-s-hraskem": ["1 brokolice", "200 g mraženého hrášku", "1 cibule", "750 ml zeleninového vývaru", "100 ml rostlinné smetany", "Sůl, pepř"],
+  "lehce-pikantni-dynova-polevka-s-dynovym-olejem": ["1 dýně Hokkaido", "1 cibule", "2 stroužky česneku", "1/2 lžičky chilli", "800 ml vývaru", "Dýňový olej a semínka"],
+  "fazolova-polevka-s-veganskym-chorizem": ["400 g červených fazolí", "100 g veganského choriza", "1 cibule", "2 stroužky česneku", "400 g krájených rajčat", "Uzená paprika"],
+  "kremova-cizrnova-polevka": ["400 g cizrny", "1 pórek", "1 batát", "750 ml vývaru", "Kurkuma", "Římský kmín", "Olivový olej"],
+  "veganska-kulajda-s-hribky-a-koprem": ["3 brambory", "200 g lesních hříbků", "1 l vývaru", "200 ml rostlinné smetany", "Čerstvý kopr", "Kmín, ocet, sůl"],
+  "polevka-ze-sladke-kukurice-s-chilli": ["400 g sladké kukuřice", "1 cibule", "200 ml kokosového mléka", "500 ml vývaru", "Chilli vločky", "Koriandr"],
+  "raw-brokolicova-polevka-s-avokadem": ["1/2 hlávky brokolice", "1 avokádo", "1 stroužek česneku", "300 ml teplé vody", "Citronová šťáva", "Sůl"],
+  "raw-rajcatova-polevka-s-bazalkou": ["4 zralá rajčata", "4 sušená rajčata", "1 hrst bazalky", "2 lžíce olivového oleje", "1/2 str. česneku", "Sůl, pepř"],
+  "ryzove-nudle-s-veganskym-kurecim-masem-a-teriyaki": ["150 g rýžových nudlí", "150 g veganských kuřecích nudliček", "1 brokolice", "1 mrkev", "4 lžíce teriyaki omáčky", "Sezam"],
+  "veganska-kachna-se-spenatem-a-knedlikem": ["300 g seitanové kachny", "400 g duseného špenátu", "4 bramborové knedlíky", "Kmín", "Sójová omáčka", "Česnek"],
+  "falafel-a-hummus-v-pita-chlebu": ["6 kuliček falafelu", "2 pita chleby", "100 g hummusu", "1 rajče", "1/2 okurky", "Tahini dresink"],
+  "grilovana-zelenina-a-tofu-s-hummusovym-dipem": ["1 cuketa", "1 lilek", "1 paprika", "180 g tofu", "150 g hummusu", "Bylinky, olivový olej"],
+  "vegansky-kureci-rizek-s-bramborovou-kasi": ["4 sójové platky uvařené ve vývaru", "Mouka, Hraška / mléko, Strouhanka", "600 g brambor", "Rostlinné máslo", "Olej"],
+  "veganske-kureci-spizy-se-tremi-omacami": ["200 g seitanu", "1 paprika", "1 cibule", "Špejle", "Arašídové máslo, Sweet chilli, Sójová majonéza"],
+  "musaka-s-lilkem-a-smetanovym-besamelem": ["2 lilky", "3 brambory", "200 g hnědé čočky", "400 g rajčat", "Rostlinné mléko, mouka a tuk na bešamel", "Skořice"],
+  "osso-buco-z-marinovaneho-tofu": ["300 g tvrdého tofu", "1 mrkev, 1 stonkový celer", "100 ml červeného vína", "400 g pasírovaných rajčat", "Petrželka, citronová kůra"],
+  "veganske-krevety-se-zeleninou": ["200 g veganských krevet", "1 cuketa", "3 stroužky česneku", "50 ml bílého vína", "Olivový olej", "Petrželka"],
+  "vegansky-burger-xxl": ["2 burger bulky", "2 rostlinné patties", "2 plátky veganského sýra", "Kyselé okurky, rajče, salát", "BBQ omáčka"],
+  "ratatouille-s-ryzi-basmati": ["1 lilek", "1 cuketa", "2 papriky", "400 g rajčat", "200 g rýže Basmati", "Provensálské bylinky"],
+  "raw-pohankovy-salat-s-kremem-z-kesu": ["100 g naklíčené pohanky", "50 g kešu", "100 g květáku", "Citron", "Lahůdkové droždí", "Špenát"],
+  "raw-bolonske-lasagne-s-kvetakem": ["2 cukety nakrájené na plátky", "100 g vlašských ořechů", "100 g sušených rajčat", "Kešu krém"],
+  "raw-tabbouleh-salat-s-quinoou": ["100 g naklíčené quinoy", "2 svazky petrželky", "1 svazek máty", "2 rajčata", "Citron, Olivový olej"],
+  "raw-tatarak-z-cervene-repy": ["2 raw červené řepy", "1 lžíce kaparů", "2 kyselé okurky", "1 cibule", "Hořčice, kečup, uzená paprika", "Topinky"],
+  "rajcata-plnena-kesu-kremem": ["4 velká rajčata", "100 g kešu ořechů", "1 stroužek česneku", "Pažitka", "Citronová šťáva"],
+  "veganske-kure-na-paprice-s-testovinami": ["200 g sójových nudliček", "2 cibule", "2 lžíce sladké papriky", "200 ml rostlinné smetany", "Těstoviny kolínka"],
+  "bezlepkovy-spenatovy-quiche-s-tofu": ["200 g pohankové mouky", "80 g oleje / vody", "300 g špenátu", "300 g hedvábného tofu", "Česnek, lahůdkové droždí"],
+  "plnene-bramborove-knedliky-s-uzenym-tofu": ["500 g vařených brambor", "150 g hrubé mouky", "200 g uzeného tofu", "2 cibule", "Kysané zelí k podávání"],
+  "cocka-s-korenovou-zeleninou": ["250 g hnědé čočky", "1 mrkev, 1 petržel, 1/4 celeru", "1 cibule", "Kmín, ocet, sůl", "Volské oko / tofu"],
+  "smoothie-pro-chladne-rano": ["1 zralý banán", "30 g ovesných vloček", "250 ml teplého ovesného mléka", "1/2 lžičky skořice", "Špetka mletého zázvoru"],
+  "smoothie-pro-letni-rano": ["100 g jahod", "1 broskev", "200 ml mandlového mléka", "Čerstvá máta"],
+  "sport-smoothie-s-proteinem": ["1 banán", "30 g hrachového proteinu", "1 lžíce arašídového másla", "300 ml sójového mléka"],
+  "letni-exoticke-smoothie": ["1/2 manga", "Dužina z 1 marakuji", "150 ml pomerančového džusu", "2 lžíce kokosového mléka"],
+  "smoothie-pro-lepsi-imunitu": ["2 pomeranče", "2 cm čerstvého zázvoru", "1/2 lžičky kurkumy", "1/2 citronu", "Špetka černého pepře"],
+  "domaci-konopne-mleko": ["100 g loupaných konopných semínek", "1 l studené vody", "1 datle nebo lžíce sirupu", "Špetka soli"],
+  "cokoladovy-kolac-z-polenty": ["150 g jemné polenty", "500 ml rostlinného mléka", "60 g kakaa", "100 g hořké čokolády", "100 g cukru", "Olej"],
+  "jahlovy-kolac-s-vuni-podzimu": ["200 g jáhel (sparených)", "2 jablka nakrájená na kostičky", "50 g rozinek", "50 g ořechů", "Skořice, sirup"],
+  "celozrnny-makovec": ["200 g mletého máku", "250 g celozrnné mouky", "150 g jablečného pyré", "250 ml mléka", "100 g cukru", "Prášek do pečiva"],
+  "raw-boruvkovy-cheesecake": ["150 g mandlí", "150 g datlí", "300 g kešu (namočených)", "200 g borůvek", "100 ml kokosového oleje", "Javorový sirup"],
+  "malinova-zmrzlina-s-ruzovou-slehackou": ["200 g zmrazených malin", "2 zmrazené banány", "100 ml kokosové smetany ke šlehání"],
+  "coko-boruvkove-proteinove-tycinky": ["100 g vloček", "50 g čoko proteinu", "50 g borůvek", "3 lžíce arašídového másla", "Rostlinné mléko"],
+  "ruzovy-kolac-s-cokoladovym-kremem": ["250 g mouky", "100 g cukru", "50 ml šťávy z řepy", "150 g hořké čokolády", "150 ml kokosové smetany"],
+  "pohankove-livance-s-jahodami": ["150 g pohankové mouky", "250 ml mléka", "1 lžička kypřicího prášku", "Čerstvé jahody", "Sirup"],
+  "avokadovy-puding-s-chia-seminkem": ["1 zralé avokádo", "1 banán", "3 lžíce kakaa", "1 lžíce chia semínek", "2 lžíce sirupu"],
+  "amarantove-kulicky-se-skorici": ["50 g pufovaného amarantu", "50 g mletých ořechů", "1 lžička skořice", "4 lžíce datlového sirupu"],
+
+
+  "minne-di-sant-agata-sicilske-kolacky": ["Na křehké těsto: 250 g hladké mouky", "100 g krupicového cukru", "125 g studeného másla (nakrájeného na kostičky)", "1 celé vejce + 1 žloutek (bílek schovejte na polevu)", "Na krémovou náplň: 300 g čerstvé ricotty (důkladně okapané)", "35 g moučkového cukru", "40 g kvalitní hořké čokolády (nasekané najemno)", "30 g kandované citrónové nebo pomerančové kůry (nakrájené)", "Na polevu a ozdobu: 125 g moučkového cukru", "1 lžíce citrónové šťávy", "1 bílek", "6 kandovaných třešní (červených)", "🇮🇹 Tip pro milovníky Itálie: Objevte více italských receptů a cestovatelských zážitků na www.do-italie.cz"],
+  "florentinska-pizza": ["1 ks těsto na pizzu (vyválené čerstvé)", "6 lžic rajčatové omáčky na pizzu (sugo di pomodoro)", "175 g čerstvého baby špenátu", "4 lžíce nakrájených lesních hub nebo žampionů", "50 g strouhaného parmazánu (Parmigiano Reggiano)", "4 ks čerstvých vajec", "Sůl a čerstvě mletý černý pepř"],
   default: [
     "Ingredience budou brzy doplňeny.",
   ],
 };
 
 const sampleSteps: Record<string, string[]> = {
+  "minne-di-sant-agata-sicilske-kolacky": ["Příprava těsta: V míse smíchejte mouku s cukrem. Přidejte studené máslo a vypracujte drobenku. Vmíchejte vejce a žloutek a rychle vypracujte hladké těsto. Zabalte do fólie a dejte na 30 minut do lednice.", "Příprava náplně: Čerstvou ricottu rozmíchejte s moučkovým cukrem dohladka. Vmíchejte nasekanou hořkou čokoládu a kandované ovoce.", "Tvarování koláčků: Těsto rozválejte na tloušťku cca 3–4 mm. Vyložte jím 6 silikonových půlkulových forem (nebo muffinových formiček). Naplňte ricottovým krémem a zespodu uzavřete kolečkem vyváleného těsta. Okraje přimáčkněte.", "Pečení: Pečte v předehřáté troubě na 180 °C přibližně 20–25 minut dozlatova. Po upečení nechte koláčky zcela vychladnout a opatrně vyklopte z forem.", "Poleva a dokončení: Vyšlehejte bílek s moučkovým cukrem a citrónovou šťávou do hladké bílé polevy. Koláčky přelijte polevou a na vrchol umístěte kandovanou třešeň.", "Podávání: Pro více inspirace a cestovatelské i kulinářské tipy navštivte www.do-italie.cz!"],
+
+  "veganska-michana-vajicka-z-tofu": ["Cibuli orestujte na oleji.", "Přidejte rozdrobené tofu.", "Vmíchejte lahůdkové droždí, kurkumu, kmín a černou sůl.", "Restujte 3–5 minut.", "Posypejte pažitkou a podávejte."],
+  "kynute-livance-v-americkem-duchu": ["Smíchejte suché ingredience.", "Přidejte teplé mléko a vypracujte těsto.", "Nechte 30 min kynout.", "Smažte na pánvi z obou stran.", "Podávejte se sirupem."],
+  "pres-noc-namocena-chia-ovesna-kase-s-boruvkami": ["Smíchejte ve skleničce vločky, chia, skořici a mléko.", "Přidejte sirup a promíchejte.", "Nechte v lednici přes noc.", "Ráno ozdobte borůvkami a podávejte."],
+  "detoxikacni-ovocne-smoothie": ["Všechno ovoce nakrájejte na kousky.", "Vložte s baby špenátem do mixéru.", "Zalijte kokosovou vodou a šťávou z limetky.", "Rozmixujte dohladka a podávejte s ledem."],
+  "bramborovy-salat-s-domaci-sojanezou": ["Brambory uvařte ve slupce a nakrájejte.", "Zeleninu uvařte a nakrájejte.", "Vyšlehejte mléko s olejem na sójanézu.", "Vše smíchejte a nechte odležet v chladu."],
+  "celozrnny-testovinovy-salat-se-susenymi-rajcaty-a-tofu": ["Těstoviny uvařte al dente a scedíte.", "Tofu orestujte na pánvi.", "Smíchejte s rajčaty, olivami a rukolou.", "Zalijte olivovým olejem a balzamikem."],
+  "kuskusovy-salat-s-brusinkami-a-mandlemi": ["Kuskus zalijte vroucím vývarem nebo vodou a nechte 5 min přikrytý.", "Mandle opražte na suché pánvi.", "Do zchladlého kuskusu přimíchejte brusinky, mandle a nasekanou mátu.", "Dochuťte citronem a olejem."],
+  "pohankovy-salat-s-tempehem-a-grilovanou-zeleninou": ["Pohanku uvařte do měkka.", "Zeleninu a tempeh nakrájejte na kousky a ogrilujte na pánvi s olejem a sójovkou.", "Smíchejte pohanku s grilovanou směsí a bylins."],
+  "salat-tabbouleh-z-celozrnneho-bulguru-s-marinovanym-tofu": ["Bulgur zalijte vroucí vodou a nechte nabobtnat.", "Tofu nakrájejte a orestujte na pánvi.", "Petrželku a mátu nasekejte najemno.", "Vše smíchejte a dochuťte citronem a olejem."],
+  "zeleninovy-salat-s-kremovou-tahini-zalivkou": ["Zeleninu nakrájejte na sousta.", "Na zálivku prošlehejte tahini, citron, utřený česnek a trochu vody do krémové konzistence.", "Zalijte salát a podávejte."],
+  "bagetka-s-uzenym-tofu-a-karamelizovanou-cibulkou": ["Cibuli nakrájejte na kolečka a zvolna opékejte na oleji s cukrem a balzamikem 15 minut.", "Tofu nakrájejte na plátky a orestujte.", "Bagety rozřízněte, potřete majonézou, naplňte tofu, cibulkou a rukolou."],
+  "psenicno-zitny-chleb-s-pecenou-dyni-a-dresinkem": ["Dýni nakrájejte na plátky, potři olejem a upečte v troubě na 200 °C 20 min.", "Smíchejte hořčici se sirupem.", "Chléb potřete dresinkem a obložte pečenou dýní a semínky."],
+  "cikrnovy-hummus-na-mnoho-zpusobu": ["Cizrnku vložte do mixéru s tahini, česnekem, citronem a kmínem.", "Mixujte a přilévejte ledovou vodu, dokud nebude hummus nadýchaný.", "Zalijte olivovým olejem a ozdobte cizrnou."],
+  "bramboracka-s-lesnimi-houbami": ["Orestujte cibuli a zeleninu.", "Zasypte moukou na jíšku a zalijte vývarem.", "Přidejte brambory a namočené houby.", "Vařte 25 min a dokončete majoránkou a česnekem."],
+  "brokolicova-polevka-s-hraskem": ["Na oleji zpěňte cibuli.", "Přidejte brokolici a zalijte vývarem.", "Po 10 min vaření přidejte hrášek a po 3 min rozmixujte dohladka.", "Zjemněte smetanou."],
+  "lehce-pikantni-dynova-polevka-s-dynovym-olejem": ["Dýni nakrájejte i se slupkou.", "Na oleji orestujte cibuli a česnek.", "Přidejte dýni a chilli, zalijte vývarem a vařte 20 min.", "Rozmixujte a ozdobte dýňovým olejem."],
+  "fazolova-polevka-s-veganskym-chorizem": ["Nakrájené chorizo orestujte s cibulí.", "Přidejte česnek a uzenou papriku.", "Vsypte fazole a rajčata, zalijte vývarem a vařte 20 min.", "Dochuťte solí a bylinkami."],
+  "kremova-cizrnova-polevka": ["Pórek orestujte na oleji s kořením.", "Přidejte batát na kostičky a cizrnu.", "Zalijte vývarem a vařte 15 minut do změknutí batátu.", "Částečně rozmixujte pro krémovou konzistenci."],
+  "veganska-kulajda-s-hribky-a-koprem": ["Brambory vařte ve vývaru s kmínem a houbami.", "Až změknou, zalijte smetanou.", "Dochuťte solí, kapkou octa a čerstvým nasekaným koprem."],
+  "polevka-ze-sladke-kukurice-s-chilli": ["Cibuli zpěňte na oleji.", "Přidejte kukuřici, zalijte vývarem a vařte 10 min.", "Rozmixujte dohladka s kokosovým mlékem.", "Podávejte posypané chilli a koriandrem."],
+  "raw-brokolicova-polevka-s-avokadem": ["Všechny ingredience vložte do vysokorychlostního mixéru.", "Rozmixujte na hladký krém.", "Ozdobte semínky a podávejte ihned."],
+  "raw-rajcatova-polevka-s-bazalkou": ["Rajčata nakrájejte a rozmixujte s bazalkou, olejem a česnekem.", "Dochuťte solí a čerstvě mletým pepřem.", "Podávejte chladné s bazalkovým lístkem."],
+  "ryzove-nudle-s-veganskym-kurecim-masem-a-teriyaki": ["Nudle zalijte horkou vodou.", "Nudličky orestujte na pánvi s zeleninou.", "Přidejte sceděné nudle a zalijte teriyaki omáčkou.", "Posypejte opraženým sezamem."],
+  "veganska-kachna-se-spenatem-a-knedlikem": ["Seitan nakrájejte, pokapejte gelem s kmínem a upečte do křupava.", "Špenát poduste na cibulce s česnekem.", "Bramborový knedlík uvařte nebo prohřejte na páře a podávejte."],
+  "falafel-a-hummus-v-pita-chlebu": ["Falafely usmažte nebo upečte dokřupava.", "Pita chléb prohřejte a rozřízněte kapsu.", "Potřete humusem, vložte falafely a nakrájenou zeleninu.", "Zalijte tahini dresinkem."],
+  "grilovana-zelenina-a-tofu-s-hummusovym-dipem": ["Zeleninu a tofu nakrájejte a potřete gelem s bylinkami.", "Ogrilujte na pánvi do měkka a zlatova.", "Podávejte na lůžku z krémového hummusu."],
+  "vegansky-kureci-rizek-s-bramborovou-kasi": ["Sójové plátky obalte v mouce, Hrašce s mlékem a strouhance.", "Usmažte na oleji dozlatova.", "Brambory uvařte a ušlehejte kaši s teplým mlékem a máslem.", "Podávejte s citrónem."],
+  "veganske-kureci-spizy-se-tremi-omacami": ["Na špejle střídavě napichujte seitan, papriku a cibuli.", "Grilujte na pánvi 10–12 minut.", "Přípravte si 3 omáčky a podávejte k namáčení."],
+  "musaka-s-lilkem-a-smetanovym-besamelem": ["Lilky nakrájejte a upečte.", "Čočku poduste s rajčaty a špetkou skořice.", "Uvařte světlý bešamel.", "Vrstvěte v pekáči: brambory, čočka, lilek, bešamel a pečte 40 min."],
+  "osso-buco-z-marinovaneho-tofu": ["Tofu orestujte dozlatova.", "Na oleji poduste celer a mrkev, zalijte vínem a rajčaty.", "Vložte tofu a dusíte 25 min.", "Posypejte gremolatou z petrželky a kůry."],
+  "veganske-krevety-se-zeleninou": ["Krevety a nakrájenou cuketu zprudka orestujte na oleji s česnekem.", "Zalijte vína a nechte odpařit.", "Posypejte nasekanou petrželkou."],
+  "vegansky-burger-xxl": ["Patties ogrilujte z obou stran a nechte na nich roztavit sýr.", "Bulky rozpečte.", "Složte burger s dresinkem, salátem, patty a zeleninou."],
+  "ratatouille-s-ryzi-basmati": ["Zeleninu nakrájejte na kostičky.", "Orestujte postupně lilek, cuketu a papriky.", "Smíchejte s rajčaty a bylinkami a dusíte 20 min.", "Podávejte s Basmati rýží."],
+  "raw-pohankovy-salat-s-kremem-z-kesu": ["Kešu a květák rozmixujte s trochou vody a droždím na krém.", "Smíchejte s naklíčenou pohankou a špenátem."],
+  "raw-bolonske-lasagne-s-kvetakem": ["Ořechy a rajčata rozmixujte na boloňskou směs.", "Střídavě vrstvěte plátky cukety, boloňskou směs a kešu krém."],
+  "raw-tabbouleh-salat-s-quinoou": ["Bylinky nasekejte najemno.", "Smíchejte s quinou a nakrájenými rajčaty.", "Dochuťte citronem a olejem."],
+  "raw-tatarak-z-cervene-repy": ["Řepu najemno nastrouhejte a vymačkejte šťávu.", "Smíchejte s nasekanými okurkami, cibulkou, kapary a kořením.", "Servírujte na topinkách."],
+  "rajcata-plnena-kesu-kremem": ["Rajčata seřízněte a vydlabejte.", "Kešu rozmixujte s česnekem, trochou vody a citronem na krém.", "Smíchejte s pažitkou a naplňte rajčata."],
+  "veganske-kure-na-paprice-s-testovinami": ["Sójové maso uvařte ve vývaru.", "Na oleji orestujte cibuli, zasypte paprikou a zalijte vývarem.", "Přidejte maso a dusíte 15 min.", "Zahustěte smetanou a podávejte s kolínky."],
+  "bezlepkovy-spenatovy-quiche-s-tofu": ["Vypracujte těsto na korpus a předpečte 10 min.", "Tofu rozmixujte s česnekem, droždím a duseným špenátem.", "Nalijte na korpus a pečte 30 min na 180 °C."],
+  "plnene-bramborove-knedliky-s-uzenym-tofu": ["Brambory nastrouhejte a smíchejte s moukou v těsto.", "Tofu a cibuli nakrájejte a orestujte.", "Z těsta tvořte placičky, naplňte tofu a uvařte ve vodě 15 min."],
+  "cocka-s-korenovou-zeleninou": ["Čočku uvařte do měkka.", "Kořenovou zeleninu orestujte s cibulí.", "Smíchejte s čočkou a dochuťte octem a solí."],
+  "smoothie-pro-chladne-rano": ["Všechny suroviny vložte do mixéru a rozmixujte dohladka.", "Podávejte ihned teplé."],
+  "smoothie-pro-letni-rano": ["Ovoce nakrájejte a rozmixujte s mlékem a mátou.", "Podávejte s ledem."],
+  "sport-smoothie-s-proteinem": ["Všechny ingredience rozmixujte v šejkru nebo mixéru a vypijte po cvičení."],
+  "letni-exoticke-smoothie": ["Mango rozmixujte s džusem a kokosovým mlékem.", "Vmiechejte marakujovou dužinu."],
+  "smoothie-pro-lepsi-imunitu": ["Pomeranče a citron odšťavněte.", "Zázvor nastrouhejte a rozmixujte s kurkumou a pepřem."],
+  "domaci-konopne-mleko": ["Konopná semínka vložte do mixéru s vodou, datlí a solí.", "Mixujte 1 minutu na vysoké otáčky.", "Uložte do skleněné lahve v lednici."],
+  "cokoladovy-kolac-z-polenty": ["Polentu uvařte v mléce s cukrem.", "Do horké polenty vmíchejte kakao a nalámanou čokoládu.", "Vlijte do formy a pečte 35 min na 180 °C."],
+  "jahlovy-kolac-s-vuni-podzimu": ["Jáhly uvařte do měkka.", "Smíchejte s jablky, skořicí, rozinkami a sirupem.", "Zapečte v troubě na 180 °C 40 minut."],
+  "celozrnny-makovec": ["Smíchejte mák, mouku a prášek do pečiva.", "Přidejte pyré, mléko a cukr a vypracujte těsto.", "Pečte ve vymazané formě 35 minut."],
+  "raw-boruvkovy-cheesecake": ["Mandle a datle rozmixujte a natlačte na dno formy.", "Kešu rozmixujte s borůvkami, olejem a sirupem na krém.", "Nalijte na korpus a nechte ztuhnout v mrazáku."],
+  "malinova-zmrzlina-s-ruzovou-slehackou": ["Maliny a banány rozmixujte ve výkonném mixéru na zmrzlinu.", "Kokosovou smetanu ušlehejte s kapkou malinové šťávy.", "Podávejte s růžovou šlehačkou."],
+  "coko-boruvkove-proteinove-tycinky": ["Všechny ingredience smíchejte a vytvořte tužší hmotu.", "Utlačte do hranaté formy a dejte na 1 hodinu ztuhnout do lednice.", "Nakrájejte na tyčinky."],
+  "ruzovy-kolac-s-cokoladovym-kremem": ["Mouku, cukr, šťávu a olej smíchejte v růžové těsto a upečte korpus.", "Čokoládu rozpusťte v horké smetaně na krém.", "Potřete korpus krémem."],
+  "pohankove-livance-s-jahodami": ["Mouku, kypřicí prášek a mléko vyšlehejte v těstíčko.", "Smažte lívanečky na kapce oleje.", "Ozdobte nakrájenými jahodami."],
+  "avokadovy-puding-s-chia-seminkem": ["Avokádo, banán, kakao a sirup rozmixujte dohladka.", "Vmíchejte chia semínka a podávejte ve skleničkách."],
+  "amarantove-kulicky-se-skorici": ["Smíchejte amarant, ořechy, skořici a sirup v tvárnou hmotu.", "Koulejte malé kuličky a obalte ve skořici."],
+
+
+
+  "pres-noc-namocena-chia-ovesna-kase": ["Ve skleničce smíchejte vločky, chia semínka, skořici a rostlinné mléko.", "Přidejte javorový sirup a důkladně promíchejte.", "Uzavřete a dejte do chladničky přes noc (minimálně na 4 hodiny).", "Ráno ozdobte čerstvým ovocem a mandlovými plátky a podávejte."],
+  "celozrnny-testovinovy-salat-se-susenymi-rajcaty": ["Těstoviny uvařte v osolené vodě al dente, scedíte a nechte vychladnout.", "Sušená rajčata nakrájejte na proužky, olivy na kolečka.", "Semínka opražte na suché pánvi dozlatova.", "Smíchejte těstoviny, rajčata, olivy a rukolu.", "Zalijte olivovým olejem a balzamikem, dochuťte solí, pepřem a oregánem."],
+  "salat-tabbouleh-z-celozrnneho-bulguru": ["Bulgur zalijte vroucí vodou v poměru 1:2, přikryjte a nechte 15 minut nabobtnat.", "Petrželku a mátu nasekejte velmi najemno.", "Rajčata a cibuli nakrájejte na co nejmenší kostičky.", "Vše smíchejte ve velké míse spolu se zchladlým bulgurem.", "Dochuťte hojně citronovou šťávou, olivovým olejem a solí."],
+  "zelnacka-s-uzenym-tofu": ["Brambory uvařte v osolené vodě zvlášť s kmínem do změknutí.", "Na oleji orestujte cibuli a kostičky uzeného tofu dokřupava.", "Zaprašte mletou paprikou, krátce zpěňte a zalijte vývarem.", "Přidejte kysané zelí, bobkový list a nové koření a vařte 20 minut.", "Do polévky všemixujte nebo vmíchejte uvařené brambory i s trochou vody.", "Dochuťte solí a nechte krátce projít varem."],
+  "quinoa-s-kapustovym-pestem-a-chilli": ["Quinou důkladně propláchněte horkou vodou a uvařte ve dvojnásobku vody cca 15 minut.", "Kadeřávek blanšírujte 1 minutu ve vroucí vodě a zchlaďte ledovou vodou.", "V mixéru rozmixujte kadeřávek, mandle, česnek, lahůdkové droždí, olivový olej, citronovou šťávu a sůl na pesto.", "Teplou quinou promíchejte s kapustovým pestem.", "Servírujte posypané chilli vločkami a praženými mandlemi."],
+  "kokosove-zeleninove-kari": ["Na kokosovém oleji orestujte cibuli, nasekaný česnek a nastrouhaný zázvor.", "Přidejte kari pastu a míchejte 1 minutu, dokud se nerozvoní.", "Vložte nakrájené batáty, papriku a cuketu a promíchejte.", "Zalijte kokosovým mlékem a 100 ml vody nebo vývaru.", "Dusíte cca 15-20 minut do změknutí batátů.", "Přidejte cizrnu, pokapejte limetkou a ozdobte čerstvým koriandrem."],
+
   "veganska-svickova": [
     "Seitan nakrájejte na plátky a orestujte na oleji do zlatova z obou stran.",
     "Kořenovou zeleninu a cibuli nakrájejte na kostičky a restujte do měkka.",
@@ -690,6 +831,11 @@ const sampleSteps: Record<string, string[]> = {
     "Vlijte smetanu a povařte. Zahustěte předem připravenou jíškou (kterou si můžete rozmíchat s trochou vývaru) a nechte důkladně probublat.",
     "Dochuťte octem, cukrem nebo citronem podle chuti a podávejte posypané čerstvým koprem se zastřeným vejcem."
   ],
+
+
+
+
+  "florentinska-pizza": ["1 ks těsto na pizzu (vyválené čerstvé)", "6 lžic rajčatové omáčky na pizzu (sugo di pomodoro)", "175 g čerstvého baby špenátu", "4 lžíce nakrájených lesních hub nebo žampionů", "50 g strouhaného parmazánu (Parmigiano Reggiano)", "4 ks čerstvých vajec", "Sůl a čerstvě mletý černý pepř"],
   default: [
     "Postup přípravy bude brzy doplňen.",
   ],
@@ -1547,37 +1693,40 @@ export default function RecipeDetail() {
 
             {/* Affiliate: Buy ingredients */}
             <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border border-emerald-100 p-5 mb-6">
-              <div className="flex items-center gap-2 mb-3">
+              <div className="flex items-center gap-2 mb-2">
                 <ShoppingCart className="w-4 h-4 text-emerald-700" />
                 <h3 className="text-sm font-semibold text-emerald-800">Koupit ingredience online</h3>
               </div>
-              <p className="text-xs text-gray-500 mb-4">Objednejte všechny suroviny pohodlně domů a začněte vařit ještě dnes.</p>
+              <p className="text-xs text-gray-500 mb-4">Objednejte všechny suroviny pohodlně domů — kliknutím vyhledáte ingredience receptu.</p>
               <div className="flex flex-col sm:flex-row gap-2">
                 <a
-                  href={getRohlikLink(recipe.title)}
+                  href={getRohlikLink(recipe.title, ingredients)}
                   target="_blank"
                   rel="noopener noreferrer sponsored"
+                  onClick={() => trackAffiliateClick("rohlik", recipe.slug)}
                   className="flex-1"
                 >
-                  <Button className="w-full font-semibold text-white text-sm" style={{ backgroundColor: '#E8002D' }}>
+                  <Button className="w-full font-semibold text-white text-sm py-3" style={{ backgroundColor: '#E8002D' }}>
                     <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
                     Koupit na Rohlík.cz
                     <ExternalLink className="w-3 h-3 ml-1.5 opacity-70" />
                   </Button>
                 </a>
                 <a
-                  href={getKosikLink(recipe.title)}
+                  href={getKosikLink(recipe.title, ingredients)}
                   target="_blank"
                   rel="noopener noreferrer sponsored"
+                  onClick={() => trackAffiliateClick("kosik", recipe.slug)}
                   className="flex-1"
                 >
-                  <Button className="w-full font-semibold text-white text-sm" style={{ backgroundColor: '#F5A623' }}>
+                  <Button className="w-full font-semibold text-white text-sm py-3" style={{ backgroundColor: '#F5A623' }}>
                     <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
                     Koupit na Košík.cz
                     <ExternalLink className="w-3 h-3 ml-1.5 opacity-70" />
                   </Button>
                 </a>
               </div>
+              <p className="text-[10px] text-gray-400 mt-3 text-center">Partnerské odkazy — pomáhají nám tvořit nové recepty 💚</p>
             </div>
 
             {/* Steps */}
@@ -1616,6 +1765,14 @@ export default function RecipeDetail() {
                 ))}
               </div>
             </section>
+
+            {/* Smart Internal Cross-linking */}
+            <SmartInternalLinks
+              currentSlug={recipe.slug}
+              category={recipe.category}
+              tags={recipe.tags}
+              type="recipe"
+            />
 
             {/* Tags */}
             <div className="flex flex-wrap gap-2">

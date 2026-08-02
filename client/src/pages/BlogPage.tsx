@@ -5,6 +5,7 @@
 
 import { Link } from "wouter";
 import { Calendar, Clock, Tag, ArrowRight, BookOpen } from "lucide-react";
+import { useMemo, useState } from "react";
 import { blogPosts } from "@/lib/blogData";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -19,14 +20,23 @@ function formatDate(iso: string): string {
 }
 
 export default function BlogPage() {
-  const featured = blogPosts[0];
-  const rest = blogPosts.slice(1);
+  const categories = useMemo(
+    () => ["Vše", ...Array.from(new Set(blogPosts.map(post => post.category)))],
+    []
+  );
+  const [activeCategory, setActiveCategory] = useState("Vše");
+  const visiblePosts =
+    activeCategory === "Vše"
+      ? blogPosts
+      : blogPosts.filter(post => post.category === activeCategory);
+  const featured = visiblePosts[0];
+  const rest = visiblePosts.slice(1);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAF6]">
       <SEOHead
-        title="Blog — Veganské restaurace v Praze | Bezmasájídla.cz"
-        description="Průvodce veganskou a vegetariánskou Prahou. Články o nejlepších restauracích, čtvrtích, brunchích a české veganské kuchyni."
+        title="Blog — Bezmasé jídlo doma i na cestách | Bezmasájídla.cz"
+        description="Recepty, restaurace a ověřené průvodce bezmasým jídlem v Česku i Evropě. Nově Budapešť, příště Krakov, Varšava, Itálie a Francie."
         canonicalUrl="https://www.bezmasajidla.cz/blog"
       />
       <Header />
@@ -44,15 +54,37 @@ export default function BlogPage() {
             className="text-4xl font-bold text-white mb-3"
             style={{ fontFamily: "'DM Serif Display', serif" }}
           >
-            Průvodce veganskou Prahou
+            Bezmasé jídlo doma i na cestách
           </h1>
           <p className="text-emerald-200 max-w-xl">
-            Články, tipy a průvodce pro každého, kdo hledá nejlepší bezmasá jídla v Praze.
+            Ověřené restaurace, ceny a praktické tipy z Česka i evropských měst.
+            Začínáme Budapeští, pokračovat budeme Krakovem a Varšavou.
           </p>
         </div>
       </section>
 
       <main className="flex-1 container py-10">
+        <div
+          className="flex gap-2 overflow-x-auto pb-2 mb-8"
+          aria-label="Kategorie článků"
+        >
+          {categories.map(category => (
+            <button
+              key={category}
+              type="button"
+              onClick={() => setActiveCategory(category)}
+              aria-pressed={activeCategory === category}
+              className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+                activeCategory === category
+                  ? "border-emerald-700 bg-emerald-700 text-white"
+                  : "border-emerald-200 bg-white text-emerald-800 hover:border-emerald-400"
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+
         {/* ── FEATURED ARTICLE ── */}
         {featured && (
           <Link href={`/blog/${featured.slug}`}>
@@ -112,7 +144,7 @@ export default function BlogPage() {
 
         {/* ── ARTICLE GRID ── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
-          {rest.map((post) => (
+          {rest.map(post => (
             <Link key={post.id} href={`/blog/${post.slug}`}>
               <div className="group bg-white rounded-xl overflow-hidden border border-emerald-100 shadow-sm hover:shadow-md transition-shadow cursor-pointer h-full flex flex-col">
                 {/* Cover image */}
@@ -141,7 +173,7 @@ export default function BlogPage() {
                   </p>
                   {/* Tags */}
                   <div className="flex flex-wrap gap-1 mb-3">
-                    {post.tags.slice(0, 3).map((tag) => (
+                    {post.tags.slice(0, 3).map(tag => (
                       <span
                         key={tag}
                         className="flex items-center gap-0.5 text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full"

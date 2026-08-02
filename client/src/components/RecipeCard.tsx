@@ -5,7 +5,7 @@
 
 import { Link } from "wouter";
 import { Clock, Users, ChefHat, Bookmark } from "lucide-react";
-import { Recipe } from "@/lib/data";
+import { hasRecipeDietaryOption, Recipe } from "@/lib/data";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import OptimizedImage from "@/components/OptimizedImage";
 
@@ -49,6 +49,11 @@ export default function RecipeCard({ recipe }: Props) {
           ) : (
             <span className="absolute top-3 left-3 bg-green-100 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full">
               Vegetariánský
+            </span>
+          )}
+          {hasRecipeDietaryOption(recipe, "bezlepkove") && (
+            <span className="absolute top-10 left-3 bg-amber-100 text-amber-800 text-xs font-semibold px-2 py-0.5 rounded-full shadow-sm">
+              Bez lepku
             </span>
           )}
           <span className={`absolute top-3 right-3 text-xs font-semibold px-2 py-0.5 rounded-full ${difficultyColor}`}>

@@ -3,11 +3,13 @@ import express from "express";
 import { createServer } from "http";
 import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
+import { redirectMiddleware } from "./redirect";
 import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { startDailyRecipeCronJob } from "./ai-recipe";
+import { startSocialPublisher } from "./social-media";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -31,39 +33,13 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 async function startServer() {
   const app = express();
 
-  // Enforce www for production and handle SEO slug redirects
-  app.use((req, res, next) => {
-    let targetHost = req.headers.host;
-    let targetUrl = req.originalUrl || req.url;
-    let shouldRedirect = false;
-
-    if (targetHost === 'bezmasajidla.cz') {
-      targetHost = 'www.bezmasajidla.cz';
-      shouldRedirect = true;
-    }
-
-    // SEO Redirects for old slugs
-    if (targetUrl.startsWith('/recepty/veganska-svickova')) {
-      targetUrl = targetUrl.replace('/recepty/veganska-svickova', '/recepty/svickova-bez-masa');
-      shouldRedirect = true;
-    }
-    if (targetUrl.startsWith('/recepty/vegansky-gulas-knedliky')) {
-      targetUrl = targetUrl.replace('/recepty/vegansky-gulas-knedliky', '/recepty/gulas-bez-masa');
-      shouldRedirect = true;
-    }
-
-    if (shouldRedirect) {
-      const proto = targetHost === 'localhost' || targetHost?.includes(':') ? 'http' : 'https';
-      const redirectHost = targetHost === 'localhost' || targetHost?.includes(':') ? '' : `${proto}://${targetHost}`;
-      return res.redirect(301, `${redirectHost}${targetUrl}`);
-    }
-    next();
-  });
+  app.use(redirectMiddleware);
 
   const server = createServer(app);
-  // Configure body parser with larger size limit for file uploads
-  app.use(express.json({ limit: "50mb" }));
-  app.use(express.urlencoded({ limit: "50mb", extended: true }));
+  // Body parser — 1MB is enough for JSON APIs; file uploads go through storage
+  app.use(express.json({ limit: "1mb" }));
+  app.use(express.urlencoded({ limit: "1mb", extended: true }));
+
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
 
@@ -80,6 +56,25 @@ async function startServer() {
     }
   });
 
+  // RSS & Atom Feeds
+  app.get(["/rss.xml", "/feed.xml"], async (req, res) => {
+    try {
+      const { generateRssFeed } = await import("./rss");
+      const xml = generateRssFeed();
+      res.header("Content-Type", "application/xml");
+      res.send(xml);
+    } catch (err) {
+      console.error("[RSS] Error generating feed:", err);
+      res.status(500).end();
+    }
+  });
+
+  // IndexNow Verification Key
+  app.get("/bezmasajidla2026indexnowkey.txt", (req, res) => {
+    res.header("Content-Type", "text/plain");
+    res.send("bezmasajidla2026indexnowkey");
+  });
+
   // tRPC API
   app.use(
     "/api/trpc",
@@ -88,6 +83,7 @@ async function startServer() {
       createContext,
     })
   );
+
   // development mode uses Vite, production mode uses static files
   if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);
@@ -98,15 +94,14 @@ async function startServer() {
   const preferredPort = parseInt(process.env.PORT || "3000");
   const port = await findAvailablePort(preferredPort);
 
-  if (port !== preferredPort) {
-    console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
-  }
-
-  server.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}/`);
-    // Initialize the daily AI recipe service
+  server.listen(port, "0.0.0.0", () => {
+    console.log(`Server running on port ${port} (preferred: ${preferredPort})`);
     startDailyRecipeCronJob();
+    startSocialPublisher();
   });
 }
 
-startServer().catch(console.error);
+startServer().catch(err => {
+  console.error("Failed to start server:", err);
+  process.exit(1);
+});

@@ -55,15 +55,17 @@ export async function generateDailyAIRecipe() {
  * Utility to start the mock CRON job interval in the server
  */
 export function startDailyRecipeCronJob() {
-    // Runs every 24 hours (86400000 ms)
-    const INTERVAL_MS = 24 * 60 * 60 * 1000;
+  // Only run in production to avoid spamming dev databases
+  if (process.env.NODE_ENV !== "production") {
+    console.log("[CRON] Skipping daily AI recipe generator in non-production mode.");
+    return;
+  }
 
-    // Call once immediately on startup for testing if needed, or just set interval
-    // setTimeout(() => generateDailyAIRecipe(), 10000); 
+  const INTERVAL_MS = 24 * 60 * 60 * 1000;
 
-    setInterval(async () => {
-        await generateDailyAIRecipe();
-    }, INTERVAL_MS);
+  setInterval(async () => {
+    await generateDailyAIRecipe();
+  }, INTERVAL_MS);
 
-    console.log("[CRON] Daily AI recipe generator started.");
+  console.log("[CRON] Daily AI recipe generator started.");
 }

@@ -3,9 +3,21 @@
 // "Zelená Metropole" design system
 // ============================================================
 
+import { recipeImageOverrides } from "./recipeImageOverrides";
+
 export type RestaurantType = "vegan" | "vegetarian" | "friendly" | "fastfood";
 
-export type DietaryOption = "bezlepkové" | "raw" | "bio" | "bez-soji" | "bez-oriskove" | "whole-food" | "ayurvédské" | "makrobiotické" | "low-carb" | "high-protein";
+export type DietaryOption =
+  | "bezlepkové"
+  | "raw"
+  | "bio"
+  | "bez-soji"
+  | "bez-oriskove"
+  | "whole-food"
+  | "ayurvédské"
+  | "makrobiotické"
+  | "low-carb"
+  | "high-protein";
 
 export interface Restaurant {
   id: string;
@@ -130,7 +142,31 @@ export interface Recipe {
   };
 }
 
-const RESTAURANT_PLACEHOLDER = "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/restaurant-placeholder-NfsuHQoJhFmyxCXwn7EygE.webp";
+const normalizeDietaryText = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+
+export function hasRecipeDietaryOption(
+  recipe: Recipe,
+  option: string
+): boolean {
+  if (option === "bezlepkove" && recipe.isGlutenFree === true) return true;
+  const expected = normalizeDietaryText(option);
+  return [...(recipe.dietaryOptions ?? []), ...recipe.tags].some(value => {
+    const normalized = normalizeDietaryText(value);
+    return (
+      normalized === expected ||
+      (expected === "bezlepkove" &&
+        (normalized.includes("bezlepk") || normalized === "bezlepku"))
+    );
+  });
+}
+
+const RESTAURANT_PLACEHOLDER =
+  "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/restaurant-placeholder-NfsuHQoJhFmyxCXwn7EygE.webp";
 
 export const restaurants: Restaurant[] = [
   {
@@ -146,22 +182,35 @@ export const restaurants: Restaurant[] = [
     address: "Krásova 13, Praha 3 — Žižkov",
     district: "Praha 3",
     phone: "+420 776 148 259",
-    description: "Veganský gastropub specializovaný na veganizaci tradičních českých jídel. Také nabízí výběr naložených/špinavých hranolek. Nachází se v tradiční a rustikální české hospodě v Žižkově.",
+    description:
+      "Veganský gastropub specializovaný na veganizaci tradičních českých jídel. Také nabízí výběr naložených/špinavých hranolek. Nachází se v tradiční a rustikální české hospodě v Žižkově.",
     tags: ["Česká kuchyně", "Americká", "Fast food", "Pivo/Víno", "Evropská"],
     dietaryOptions: ["whole-food"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/shromazdiste-vegansky-gastropub-praha_a3a92b07.webp",
-    lat: 50.0820,
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/shromazdiste-vegansky-gastropub-praha_a3a92b07.webp",
+    lat: 50.082,
     lng: 14.4501,
     priceLevel: 2,
     hours: "Po–Pá 11:00–22:00, So–Ne 12:00–22:00",
-    bestFor: ["Pivo a jídlo", "Přátelé s různými preferencemi", "Večerní posezení"],
+    bestFor: [
+      "Pivo a jídlo",
+      "Přátelé s různými preferencemi",
+      "Večerní posezení",
+    ],
     instagramUrl: "https://www.instagram.com/shromazdistepraha/",
     facebookUrl: "https://www.facebook.com/shromazdistepraha/",
     editorialReview: {
       score: 9.0,
-      summary: "Nejlepší veganizace české kuchyně v Praze — gastropub, který dokazuje, že veganá jdou ruku v ruce s pivem a českými klasikami.",
-      bestFor: "Pivomilce, kteří chtějí jíst veganské, přátele s míchanými preferencemi, vědomé večeře v autentické žižkovské hospodě.",
-      mustOrder: ["Veganský svítkový burger", "Nalagané hranolky (loaded fries)", "Dení menu s polevá", "Veganské české jídlo dne"],
+      summary:
+        "Nejlepší veganizace české kuchyně v Praze — gastropub, který dokazuje, že veganá jdou ruku v ruce s pivem a českými klasikami.",
+      bestFor:
+        "Pivomilce, kteří chtějí jíst veganské, přátele s míchanými preferencemi, vědomé večeře v autentické žižkovské hospodě.",
+      mustOrder: [
+        "Veganský svítkový burger",
+        "Nalagané hranolky (loaded fries)",
+        "Dení menu s polevá",
+        "Veganské české jídlo dne",
+      ],
       skip: "Pokud hledáte tiché a elegants místo — Shromaždiště je hospoda v pravém slova smyslu: hlučná, živá a přeplnená večer. Rezervujte si stůl předem.",
       body: `Shromaždiště je jedním z nejodvážnějších gastro projektů v Praze — veganizovat českou hospodské kuchyni je výzva, která se málokdy daří. Tady se daří. Svejkové knedlíky, gusto ze sejtanu, veganizované svítkové burgery a nalagané hranolky — vše v autentickém žižkovském prostředí s dřevěným interiorem a čepovaným pivem.
 
@@ -184,10 +233,20 @@ Jedinou výhradou je popularita — Shromaždiště je vždy plné a bez rezerva
     address: "Újezd 43, Praha 1 — Malá Strana",
     district: "Malá Strana",
     phone: "+420 725 511 536",
-    description: "Veganská jídelna/kavárna servírující dosy, indická a asijská jídla a dezerty. Nabízí také českou kuchyni jako součást denního menu.",
-    tags: ["Indická", "Organická", "Thajská", "Asijská", "Pekárna", "Snídaně", "Bezlepková"],
+    description:
+      "Veganská jídelna/kavárna servírující dosy, indická a asijská jídla a dezerty. Nabízí také českou kuchyni jako součást denního menu.",
+    tags: [
+      "Indická",
+      "Organická",
+      "Thajská",
+      "Asijská",
+      "Pekárna",
+      "Snídaně",
+      "Bezlepková",
+    ],
     dietaryOptions: ["bezlepkové", "bio"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/dosa-dosa-veganska-indicka-restaurace-praha_abaf4fdb.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/dosa-dosa-veganska-indicka-restaurace-praha_abaf4fdb.webp",
     lat: 50.0833,
     lng: 14.4033,
     priceLevel: 2,
@@ -206,10 +265,12 @@ Jedinou výhradou je popularita — Shromaždiště je vždy plné a bez rezerva
     address: "Revoluční 18, Praha 1 — Nové Město",
     district: "Praha 1",
     phone: "+420 771 151 113",
-    description: "Veganský sladký a espresso bar provozovaný restaurací Palo Verde. Servíruje kávu, svačiny, obědy a dorty. Nabízí catering, narozeninové a svatební dorty.",
+    description:
+      "Veganský sladký a espresso bar provozovaný restaurací Palo Verde. Servíruje kávu, svačiny, obědy a dorty. Nabízí catering, narozeninové a svatební dorty.",
     tags: ["Pekárna", "Catering", "Snídaně", "Rozvoz", "S sebou"],
     dietaryOptions: ["bez-soji"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/share-sweet-espresso-bar-veganska-kavarna-praha_4bf2fb66.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/share-sweet-espresso-bar-veganska-kavarna-praha_4bf2fb66.webp",
     lat: 50.0897,
     lng: 14.4282,
     priceLevel: 1,
@@ -229,20 +290,34 @@ Jedinou výhradou je popularita — Shromaždiště je vždy plné a bez rezerva
     address: "Letohradská 50, Praha 7 — Holešovice",
     district: "Praha 7",
     phone: "+420 222 250 724",
-    description: "Rostlinná restaurace a kavárna poblíž Letenské pláně. Nabízí denní brunch, oběd a sdílené večerní menu. Má také dezerty včetně pečiva ze sesterského podniku Krafin.",
+    description:
+      "Rostlinná restaurace a kavárna poblíž Letenské pláně. Nabízí denní brunch, oběd a sdílené večerní menu. Má také dezerty včetně pečiva ze sesterského podniku Krafin.",
     tags: ["Italská", "Středomořská", "Pivo/Víno", "Snídaně", "S sebou"],
     dietaryOptions: ["whole-food"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/chutnej-rostlinna-restaurace-praha_b5acba19.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/chutnej-rostlinna-restaurace-praha_b5acba19.webp",
     lat: 50.1012,
     lng: 14.4201,
     priceLevel: 2,
     hours: "Po–Pá 9:00–22:00, So–Ne 10:00–22:00",
-    bestFor: ["Romantická večeře", "Rande", "Večerní posezení", "Přátelé s různými preferencemi"],
+    bestFor: [
+      "Romantická večeře",
+      "Rande",
+      "Večerní posezení",
+      "Přátelé s různými preferencemi",
+    ],
     editorialReview: {
       score: 9.2,
-      summary: "Nejlepší veganská restaurace v Holešovicích — sezónní kuchyně, která vás přesvědčí, že rostlinná strava může být skutečné kulinářské dobrodružství.",
-      bestFor: "Brunch nadšence, přátele hledající klidnou atmosféru, milovníky sezónní kuchyně a sdsdílených večeřních menu.",
-      mustOrder: ["Brunch menu (So–Ne)", "Sezónní pasta dne", "Domácí dezert z Krafin pekárny", "Sdsdílené večeřní menu (rezervace nutno)"],
+      summary:
+        "Nejlepší veganská restaurace v Holešovicích — sezónní kuchyně, která vás přesvědčí, že rostlinná strava může být skutečné kulinářské dobrodružství.",
+      bestFor:
+        "Brunch nadšence, přátele hledající klidnou atmosféru, milovníky sezónní kuchyně a sdsdílených večeřních menu.",
+      mustOrder: [
+        "Brunch menu (So–Ne)",
+        "Sezónní pasta dne",
+        "Domácí dezert z Krafin pekárny",
+        "Sdsdílené večeřní menu (rezervace nutno)",
+      ],
       skip: "Pokud hledáte rychlý oběd — Chutnej je místo, kde se jídlo vychutnává pomalu. Obsluha je příjemná, ale věčer může být pomalejší.",
       body: `Chutnej je jednou z nejkrásnějších veganských restaurací v Praze — a to nejen po kulinářské, ale i po vizulní stránce. Světlý interieur s dřevěnými prvky, velké okna s výhledy na Letenskou pláň a atmosféra, která vás nutno zpomalit. Toto je místo, kde se jídlo nevolí — vychutnává.
 
@@ -263,10 +338,12 @@ Chutnej je místo pro speciální příležitosti i pro pravidelné brunchové v
     isPremium: false,
     address: "Nádražní 349/3, Praha 5 — Smíchov",
     district: "Praha 5",
-    description: "Veganský podnik v budově bývalé sladovny mezi dvěma železničními mosty. Sezónní pokrmy z místních surovin. Burgery, hot dogy, tradiční česká kuchyně a saláty.",
+    description:
+      "Veganský podnik v budově bývalé sladovny mezi dvěma železničními mosty. Sezónní pokrmy z místních surovin. Burgery, hot dogy, tradiční česká kuchyně a saláty.",
     tags: ["Americká", "Mezinárodní", "Pivo/Víno", "Catering", "Rozvoz"],
     dietaryOptions: ["whole-food"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/eaternia-veganska-restaurace-praha_dc6d1126.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/eaternia-veganska-restaurace-praha_dc6d1126.webp",
     lat: 50.0701,
     lng: 14.4052,
     priceLevel: 2,
@@ -286,10 +363,12 @@ Chutnej je místo pro speciální příležitosti i pro pravidelné brunchové v
     address: "Žitná 45, Praha 2 — Nové Město",
     district: "Praha 2",
     phone: "+420 775 285 430",
-    description: "Rostlinný bistro s organickými víny a kávovými nápoji, denním výběrem pečiva a croissantů a slanými pokrmy jako čerstvě vyrobené těstoviny, houbové ravioli, Beyond burger, fusion misky a španské tapas.",
+    description:
+      "Rostlinný bistro s organickými víny a kávovými nápoji, denním výběrem pečiva a croissantů a slanými pokrmy jako čerstvě vyrobené těstoviny, houbové ravioli, Beyond burger, fusion misky a španské tapas.",
     tags: ["Organická", "Pivo/Víno", "Pekárna", "Španělská", "Česká", "Fusion"],
     dietaryOptions: ["bio", "whole-food"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/palo-verde-rostlinne-bistro-praha_e6b9150c.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/palo-verde-rostlinne-bistro-praha_e6b9150c.webp",
     lat: 50.0762,
     lng: 14.4261,
     priceLevel: 2,
@@ -297,9 +376,16 @@ Chutnej je místo pro speciální příležitosti i pro pravidelné brunchové v
     bestFor: ["Brunch", "Pracovní oběd", "Rodina s dětmi", "Levné jídlo"],
     editorialReview: {
       score: 8.8,
-      summary: "Nejlepší veganské bistro v Novém Městě — organická vína, domácí těstoviny a croissanty, které vás přesvědčí, že veganské snídě může být skutečný luxus.",
-      bestFor: "Brunch a snídě nadšence, milovníky organických vín, přátele hledající klidné místo pro pracovní oběd.",
-      mustOrder: ["Domácí croissant", "Houbové ravioli", "Organické víno dne", "Fusion miska s quinoou"],
+      summary:
+        "Nejlepší veganské bistro v Novém Městě — organická vína, domácí těstoviny a croissanty, které vás přesvědčí, že veganské snídě může být skutečný luxus.",
+      bestFor:
+        "Brunch a snídě nadšence, milovníky organických vín, přátele hledající klidné místo pro pracovní oběd.",
+      mustOrder: [
+        "Domácí croissant",
+        "Houbové ravioli",
+        "Organické víno dne",
+        "Fusion miska s quinoou",
+      ],
       skip: "Palo Verde je primárně bistro, ne restaurace — portály jsou menší a místo může být přeplnené v čas oběda. Rezervace se nedoplňuje, ale přičňte se včas.",
       body: `Palo Verde je jednou z nejkrásnějších veganských kavaren v Praze. Světlý interieur s betonými stěnami, velké okna a policičky plné organických vín — toto je místo, kde se chcete zastavit na déle, ne jen na rychlý oběd. Domácí croissanty a pekivo jsou jedny z nejlepších v Praze.
 
@@ -322,10 +408,12 @@ Palo Verde je ideální pro pracovní obědy, brunch o víkendu nebo klidný ve�
     address: "Křemencova 7, Praha 1 — Nové Město",
     district: "Praha 1",
     phone: "+420 737 048 487",
-    description: "Sociální podnik veganská restaurace zaměstnávající lidi bez domova a lidi po propuštění z vězení. Nabízí obědová menu, českou veganskou kuchyni, fair-trade kávu a alkoholické nápoje.",
+    description:
+      "Sociální podnik veganská restaurace zaměstnávající lidi bez domova a lidi po propuštění z vězení. Nabízí obědová menu, českou veganskou kuchyni, fair-trade kávu a alkoholické nápoje.",
     tags: ["Mezinárodní", "Pivo/Víno", "Catering", "Česká"],
     dietaryOptions: ["whole-food"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strecha-restaurant_d68817c7.jpg",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strecha-restaurant_d68817c7.jpg",
     gallery: [
       "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strecha-food-1_03d247fc.png",
       "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strecha-food-2_767bb434.png",
@@ -352,10 +440,12 @@ Palo Verde je ideální pro pracovní obědy, brunch o víkendu nebo klidný ve�
     address: "Biskupská 1753/5, Praha 1 — Nové Město",
     district: "Praha 1",
     phone: "+420 777 583 999",
-    description: "Vegetariánský vietnamský podnik. Servíruje rýži, nudle a pad thai pokrmy. Téměř všechna jídla jsou veganská.",
+    description:
+      "Vegetariánský vietnamský podnik. Servíruje rýži, nudle a pad thai pokrmy. Téměř všechna jídla jsou veganská.",
     tags: ["Asijská", "Vietnamská", "Organická"],
     dietaryOptions: ["bio", "bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/koko-organic-vegetarianska-vietnamska-praha_dcd9552c.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/koko-organic-vegetarianska-vietnamska-praha_dcd9552c.webp",
     lat: 50.0901,
     lng: 14.4361,
     priceLevel: 1,
@@ -374,20 +464,34 @@ Palo Verde je ideální pro pracovní obědy, brunch o víkendu nebo klidný ve�
     address: "Mánesova 7, Praha 2 — Vinohrady",
     district: "Praha 2",
     phone: "+420 608 045 711",
-    description: "Veganská vietnamská restaurace s pohádkovým interiérem. Nabízí rostlinná teplá jídla spolu s domácími dezerty, raw dorty, čerstvými džusy, smoothie a horkými nápoji. Pho, burgery, banh mi a pad thai.",
+    description:
+      "Veganská vietnamská restaurace s pohádkovým interiérem. Nabízí rostlinná teplá jídla spolu s domácími dezerty, raw dorty, čerstvými džusy, smoothie a horkými nápoji. Pho, burgery, banh mi a pad thai.",
     tags: ["Mezinárodní", "Pivo/Víno", "Asijská", "Vietnamská", "Bezlepková"],
     dietaryOptions: ["bezlepkové", "raw"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/linh-veganska-vietnamska-restaurace-praha_5960b1ac.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/linh-veganska-vietnamska-restaurace-praha_5960b1ac.webp",
     lat: 50.0762,
     lng: 14.4401,
     priceLevel: 2,
     hours: "Po–Ne 11:00–22:00",
-    bestFor: ["Romantická večeře", "Rande", "Večerní posezení", "Turistické místo"],
+    bestFor: [
+      "Romantická večeře",
+      "Rande",
+      "Večerní posezení",
+      "Turistické místo",
+    ],
     editorialReview: {
       score: 8.7,
-      summary: "Pohadčkový interieur a veganská vietnamská kuchyně — Linh je místo, které vás přesvědčí, že veganské pho může být stejně dobré jako to tradilní.",
-      bestFor: "Milovníky asijské kuchyně, přátele hledající něco neobyčejného, rodiny s dětmi, turisty hledající veganské pho.",
-      mustOrder: ["Veganské pho", "Banh mi s tofu", "Raw čokoladóvý dort", "Pad thai s tempeh"],
+      summary:
+        "Pohadčkový interieur a veganská vietnamská kuchyně — Linh je místo, které vás přesvědčí, že veganské pho může být stejně dobré jako to tradilní.",
+      bestFor:
+        "Milovníky asijské kuchyně, přátele hledající něco neobyčejného, rodiny s dětmi, turisty hledající veganské pho.",
+      mustOrder: [
+        "Veganské pho",
+        "Banh mi s tofu",
+        "Raw čokoladóvý dort",
+        "Pad thai s tempeh",
+      ],
       skip: "Linh je velmi populární a o víkendu může být čekací doba delší. Rezervujte si stůl předem, zejména pro větší skupiny.",
       body: `Linh je jednou z nejkrásnějších veganských restaurací v Praze — pohadčkový interieur s růzovými květinami, svícínky a jemným osvětlením vás přenese do jiného světa. Toto je místo pro speciální příležitosti i pro běžný oběd — atmosféra je vždy výjičná.
 
@@ -410,22 +514,35 @@ Linh je místo, které dokazuje, že veganská kuchyně může být stejně dobr
     address: "Nerudova 36, Praha 1 — Malá Strana",
     district: "Malá Strana",
     phone: "+420 735 171 313",
-    description: "Veganská restaurace v budově z 16. století poblíž Pražského hradu s terasou a výhledem, zal. 2016. Domácí česká a mezinárodní kuchyně. Guláš, raw čokoládový dort, bruschetta, sójové latte, cuketové lasagne.",
+    description:
+      "Veganská restaurace v budově z 16. století poblíž Pražského hradu s terasou a výhledem, zal. 2016. Domácí česká a mezinárodní kuchyně. Guláš, raw čokoládový dort, bruschetta, sójové latte, cuketové lasagne.",
     tags: ["Mezinárodní", "Organická", "Raw", "Juice bar", "Česká"],
     dietaryOptions: ["raw", "bio"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegans-prague-veganska-restaurace-prazsky-hrad_3d77a5ec.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegans-prague-veganska-restaurace-prazsky-hrad_3d77a5ec.webp",
     lat: 50.0882,
     lng: 14.4001,
     priceLevel: 2,
     hours: "Po–Ne 11:00–21:00",
-    bestFor: ["Turistické místo", "Rodina s dětmi", "Přátelé s různými preferencemi"],
+    bestFor: [
+      "Turistické místo",
+      "Rodina s dětmi",
+      "Přátelé s různými preferencemi",
+    ],
     instagramUrl: "https://www.instagram.com/vegansprague/",
     facebookUrl: "https://www.facebook.com/vegansprague/",
     editorialReview: {
       score: 8.5,
-      summary: "Veganská restaurace v budově z 16. století s terasou a výhledy na Pražský hrad — nejlepší veganské místo na Malé Straně.",
-      bestFor: "Turisty hledající veganské jídlo blízko Pražského hradu, milovníky raw dezertů, přátele s mixenými preferencemi.",
-      mustOrder: ["Veganský guláš", "Raw čokoladóvý dort", "Cuketové lasagne", "Sójové latte"],
+      summary:
+        "Veganská restaurace v budově z 16. století s terasou a výhledy na Pražský hrad — nejlepší veganské místo na Malé Straně.",
+      bestFor:
+        "Turisty hledající veganské jídlo blízko Pražského hradu, milovníky raw dezertů, přátele s mixenými preferencemi.",
+      mustOrder: [
+        "Veganský guláš",
+        "Raw čokoladóvý dort",
+        "Cuketové lasagne",
+        "Sójové latte",
+      ],
       skip: "Turistická poloha značně zvyšuje ceny. Pokud hledáte nejlepší poměr cena/kvalita, existují lepší volby. Ale za výhledy a atmosféru to stojí.",
       body: `Vegan's Prague je jednou z nejstarších veganských restaurací v Praze — od roku 2016. Budova z 16. století na Nerudově ulici, terasa s výhledy na Pražský hrad a interieur, který kombinuje historické prvky s moderním veganským konceptem. Toto je místo, kde se turistická Praha setkává s veganským životním stylem.
 
@@ -446,15 +563,21 @@ Vegan's Prague je ideální pro turisty, kteří hledají veganské jídlo blíz
     isPremium: false,
     address: "Záhřebská 6, Praha 2 — Vinohrady",
     district: "Praha 2",
-    description: "Veganský bar a restaurace s výběrem piv, koktejlů a jídel. Přátelská atmosféra v srdci Vinohrad.",
+    description:
+      "Veganský bar a restaurace s výběrem piv, koktejlů a jídel. Přátelská atmosféra v srdci Vinohrad.",
     tags: ["Pivo/Víno", "Česká", "Mezinárodní"],
     dietaryOptions: [],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/belzepub-vegansky-bar-praha_be8b8170.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/belzepub-vegansky-bar-praha_be8b8170.webp",
     lat: 50.0741,
     lng: 14.4421,
     priceLevel: 2,
     hours: "Po–Ne 16:00–01:00",
-    bestFor: ["Večerní posezení", "Pivo a jídlo", "Přátelé s různými preferencemi"],
+    bestFor: [
+      "Večerní posezení",
+      "Pivo a jídlo",
+      "Přátelé s různými preferencemi",
+    ],
   },
   {
     id: "12",
@@ -468,10 +591,12 @@ Vegan's Prague je ideální pro turisty, kteří hledají veganské jídlo blíz
     isPremium: false,
     address: "Mánesova 59, Praha 2 — Vinohrady",
     district: "Praha 2",
-    description: "Útulná veganská kavárna a bistro na Vinohradech. Domácí pečivo, snídaně, obědy a dezerty.",
+    description:
+      "Útulná veganská kavárna a bistro na Vinohradech. Domácí pečivo, snídaně, obědy a dezerty.",
     tags: ["Snídaně", "Pekárna", "Káva"],
     dietaryOptions: ["whole-food"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/herbivore-veganske-bistro-vinohrady_33d3ebdb.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/herbivore-veganske-bistro-vinohrady_33d3ebdb.webp",
     lat: 50.0752,
     lng: 14.4441,
     priceLevel: 1,
@@ -490,22 +615,36 @@ Vegan's Prague je ideální pro turisty, kteří hledají veganské jídlo blíz
     isPremium: false,
     address: "Mánesova 87, Praha 2 — Vinohrady",
     district: "Praha 2",
-    description: "Vegetariánská restaurace s důrazem na lokální a sezónní suroviny. Kreativní pokrmy inspirované českou i mezinárodní kuchyní.",
+    description:
+      "Vegetariánská restaurace s důrazem na lokální a sezónní suroviny. Kreativní pokrmy inspirované českou i mezinárodní kuchyní.",
     tags: ["Česká", "Mezinárodní", "Organická", "Sezónní"],
     dietaryOptions: ["bio", "whole-food"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pastva-vegetarianska-restaurace-praha_f522d5e0.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pastva-vegetarianska-restaurace-praha_f522d5e0.webp",
     lat: 50.0731,
     lng: 14.4461,
     priceLevel: 2,
     hours: "Út–Ne 12:00–22:00",
-    bestFor: ["Romantická večeře", "Rande", "Turistické místo", "Milovníci vína"],
+    bestFor: [
+      "Romantická večeře",
+      "Rande",
+      "Turistické místo",
+      "Milovníci vína",
+    ],
     instagramUrl: "https://www.instagram.com/pastva.restaurant/",
     facebookUrl: "https://www.facebook.com/pastva.restaurant/",
     editorialReview: {
       score: 8.6,
-      summary: "Nejlepší veganská restaurace na Vinohradech — sezónní kuchyně z lokálních farm a klidná atmosféra, která vás přiměje vrátit se znovu.",
-      bestFor: "Milovníky lokální a sezónní kuchyně, přátele hledající klidný oběd nebo večeři, veganské nadšence hledající autentické místo.",
-      mustOrder: ["Sezónní rizoto", "Polevá dne z lokálních surovin", "Domácí dezert", "Veganský burger dne"],
+      summary:
+        "Nejlepší veganská restaurace na Vinohradech — sezónní kuchyně z lokálních farm a klidná atmosféra, která vás přiměje vrátit se znovu.",
+      bestFor:
+        "Milovníky lokální a sezónní kuchyně, přátele hledající klidný oběd nebo večeři, veganské nadšence hledající autentické místo.",
+      mustOrder: [
+        "Sezónní rizoto",
+        "Polevá dne z lokálních surovin",
+        "Domácí dezert",
+        "Veganský burger dne",
+      ],
       skip: "Pastva je zavřená v pondělí — nezapomeňte zkontrolovat otevírací dobu před návštěvou. Menu se mění často, takže konkrétní pokrmy nemusí být vždy k dispozici.",
       body: `Pastva je jednou z nejlepších veganských restaurací na Vinohradech — a to je vysoká laťka, protože Vinohrady jsou domovem několika výjičných veganských podniků. Interieur je jednoduchý a čistý, atmosféra klidná a příjemná. Toto je místo, kde se jídlo vychutnává, ne konzumuje.
 
@@ -526,10 +665,12 @@ Pastva je místo, které se vrací k základům — dobře připravené jídlo z
     isPremium: false,
     address: "Korunní 18, Praha 2 — Vinohrady",
     district: "Praha 2",
-    description: "Japonský podnik specializovaný na onigirazu — japonské sendviče z rýže. Mnoho veganských možností.",
+    description:
+      "Japonský podnik specializovaný na onigirazu — japonské sendviče z rýže. Mnoho veganských možností.",
     tags: ["Japonská", "Asijská", "S sebou"],
     dietaryOptions: ["bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/onigirazu-japonske-jidlo-praha_c417c073.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/onigirazu-japonske-jidlo-praha_c417c073.webp",
     lat: 50.0771,
     lng: 14.4381,
     priceLevel: 1,
@@ -547,10 +688,12 @@ Pastva je místo, které se vrací k základům — dobře připravené jídlo z
     isPremium: false,
     address: "Na Poříčí 25, Praha 1 — Nové Město",
     district: "Praha 1",
-    description: "Součást mezinárodního řetězce veganských restaurací. Nabízí asijská jídla, polévky, saláty a dezerty za dostupné ceny.",
+    description:
+      "Součást mezinárodního řetězce veganských restaurací. Nabízí asijská jídla, polévky, saláty a dezerty za dostupné ceny.",
     tags: ["Asijská", "Mezinárodní", "Rozvoz", "S sebou"],
     dietaryOptions: ["bez-soji"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/loving-hut_4a7767b9.jpg",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/loving-hut_4a7767b9.jpg",
     lat: 50.0921,
     lng: 14.4341,
     priceLevel: 1,
@@ -571,22 +714,42 @@ Pastva je místo, které se vrací k základům — dobře připravené jídlo z
     district: "Praha 1",
     phone: "+420 221 711 631",
     website: "https://www.restaurace-maitrea.cz",
-    description: "Dvě patra plná magických zákoutí a vegetariánské chutě inspirované srdcem. Interiér ve stylu Feng Shui s fontánami, krbem a sochou Buddhy. Dlouhodobě v Top 10 vegetariánských restaurací v Praze, držitel TripAdvisor Hall of Fame 2018.",
-    tags: ["Vegetariánská", "Vegan-friendly", "Feng Shui", "Fine dining", "Rezervace"],
+    description:
+      "Dvě patra plná magických zákoutí a vegetariánské chutě inspirované srdcem. Interiér ve stylu Feng Shui s fontánami, krbem a sochou Buddhy. Dlouhodobě v Top 10 vegetariánských restaurací v Praze, držitel TripAdvisor Hall of Fame 2018.",
+    tags: [
+      "Vegetariánská",
+      "Vegan-friendly",
+      "Feng Shui",
+      "Fine dining",
+      "Rezervace",
+    ],
     dietaryOptions: ["bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/maitrea-vegetarianska-fine-dining-praha_0f9d6be3.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/maitrea-vegetarianska-fine-dining-praha_0f9d6be3.webp",
     lat: 50.0878,
     lng: 14.4241,
     priceLevel: 3,
     hours: "Po–Ne 11:30–22:30",
-    bestFor: ["Romantická večeře", "Pracovní oběd", "Turistické místo", "Rande"],
+    bestFor: [
+      "Romantická večeře",
+      "Pracovní oběd",
+      "Turistické místo",
+      "Rande",
+    ],
     instagramUrl: "https://www.instagram.com/maitrea.restaurant/",
     facebookUrl: "https://www.facebook.com/restauracemaitrea/",
     editorialReview: {
       score: 9.5,
-      summary: "Ikona pražské vegetariánské scény — Feng Shui interieur, magická atmosféra a kuchyně, která patří k nejlepším v Praze.",
-      bestFor: "Romantické večeře, speciální příležitosti, turisty hledající autentický zážitek, milovníky fine dining bez masa.",
-      mustOrder: ["Sezónní degustace menu", "Houbové rizoto", "Domácí dezert dne", "Bylinkový čaj z vlastní zahrady"],
+      summary:
+        "Ikona pražské vegetariánské scény — Feng Shui interieur, magická atmosféra a kuchyně, která patří k nejlepším v Praze.",
+      bestFor:
+        "Romantické večeře, speciální příležitosti, turisty hledající autentický zážitek, milovníky fine dining bez masa.",
+      mustOrder: [
+        "Sezónní degustace menu",
+        "Houbové rizoto",
+        "Domácí dezert dne",
+        "Bylinkový čaj z vlastní zahrady",
+      ],
       skip: "Bez rezervace se sem věčer nedostanete. Rezervujte alespoň týden dopředu, zejména o víkendu.",
       body: `Maitrea je místem, které definovalo pražskou vegetariánskou scénu. Od svého otevření je trvale v Top 10 nejlepších restaurací v Praze — a to nejen v kategorii vegetariánských. Interieur ve stylu Feng Shui s fontanami, krbem, sochou Buddhy a dvoupatrovým prostorem je sám o sobě zážitkem. Každý kýt je jiný, každé místo má svůj příběh.
 
@@ -610,22 +773,36 @@ Maitrea je jednou z mála restaurací v Praze, kde se vegetariánské jídlo cí
     district: "Praha 1",
     phone: "+420 222 220 665",
     website: "https://www.lehkahlava.cz",
-    description: "Jedna z nejstarších vegetariánských restaurací v Praze od roku 2005. Kreativní bezmasá kuchyně v kouzelném prostředí Starého Města, pár kroků od Karlova mostu. Každý pokoj zdoben jiným tématem — hvězdný strop, akvárium, modrý sál.",
+    description:
+      "Jedna z nejstarších vegetariánských restaurací v Praze od roku 2005. Kreativní bezmasá kuchyně v kouzelném prostředí Starého Města, pár kroků od Karlova mostu. Každý pokoj zdoben jiným tématem — hvězdný strop, akvárium, modrý sál.",
     tags: ["Vegetariánská", "Vegan-friendly", "Tapas", "Džusy", "Sezónní menu"],
     dietaryOptions: ["bezlepkové", "raw"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/lehka-hlava-vegetarianska-restaurace-praha_38480d56.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/lehka-hlava-vegetarianska-restaurace-praha_38480d56.webp",
     lat: 50.0848,
     lng: 14.4138,
     priceLevel: 2,
     hours: "Po–Čt 11:30–22:30, Pá 11:30–23:00, So 12:00–23:00, Ne 12:00–22:30",
-    bestFor: ["Romantická večeře", "Rande", "Milovníci vína", "Turistické místo"],
+    bestFor: [
+      "Romantická večeře",
+      "Rande",
+      "Milovníci vína",
+      "Turistické místo",
+    ],
     instagramUrl: "https://www.instagram.com/lehkahlava/",
     facebookUrl: "https://www.facebook.com/lehkahlava/",
     editorialReview: {
       score: 9.0,
-      summary: "Kouzelné prostředí, kreativní kuchyně a skvost několik kroků od Karlova mostu — vegetariánská klasika od roku 2005.",
-      bestFor: "Turisty, kteří hledají autentický zážitek ve Starém Městě, romantické večeře, přátele s mixenými preferencemi.",
-      mustOrder: ["Tapas výběr (sdílený stůl)", "Sezónní polevá dne", "Syré ovocné smoothie", "Hlavní jídlo z deního menu"],
+      summary:
+        "Kouzelné prostředí, kreativní kuchyně a skvost několik kroků od Karlova mostu — vegetariánská klasika od roku 2005.",
+      bestFor:
+        "Turisty, kteří hledají autentický zážitek ve Starém Městě, romantické večeře, přátele s mixenými preferencemi.",
+      mustOrder: [
+        "Tapas výběr (sdílený stůl)",
+        "Sezónní polevá dne",
+        "Syré ovocné smoothie",
+        "Hlavní jídlo z deního menu",
+      ],
       skip: "Turistická poloha značné zvyšuje ceny. Pokud hledáte nejlepší poměr cena/kvalita, Lehká Hlava není nejlevnější volba — ale za zážitek to stojí.",
       body: `Lehká Hlava je jednou z nejstarších vegetariánských restaurací v Praze a zároveň jednou z nejkrásnějších. Interieur je rozdělen do několika místností, každá s jiným tématem — hvězdný strop, akvárium, modrý sál. Prostředí je pohadté a romantické, ideální pro speciální příležitosti.
 
@@ -649,10 +826,19 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Malá Strana",
     phone: "+420 602 123 456",
     website: "https://www.natureza.cz",
-    description: "Vegetariánská restaurace s kouzelnou zahradou v těsné blízkosti kostela sv. Vavřince. Denní menu (polévka + hlavní jídlo), vegetariánská, veganská i bezlepková jídla, raw dezerty. Vhodná i pro svatební hostiny.",
-    tags: ["Vegetariánská", "Vegan-friendly", "Zahrada", "Bezlepkové", "Raw dezerty", "Catering"],
+    description:
+      "Vegetariánská restaurace s kouzelnou zahradou v těsné blízkosti kostela sv. Vavřince. Denní menu (polévka + hlavní jídlo), vegetariánská, veganská i bezlepková jídla, raw dezerty. Vhodná i pro svatební hostiny.",
+    tags: [
+      "Vegetariánská",
+      "Vegan-friendly",
+      "Zahrada",
+      "Bezlepkové",
+      "Raw dezerty",
+      "Catering",
+    ],
     dietaryOptions: ["bezlepkové", "raw"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/natureza-vegetarianska-restaurace-zahrada-praha_39ff3a7f.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/natureza-vegetarianska-restaurace-zahrada-praha_39ff3a7f.webp",
     lat: 50.0789,
     lng: 14.4031,
     priceLevel: 2,
@@ -671,10 +857,12 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     address: "Mánesova 1374/87, Praha 2 — Vinohrady",
     district: "Praha 2",
     phone: "+420 775 123 456",
-    description: "Vinohradské veganské bistro s vysoce kvalitními čerstvými pokrmy včetně bezlepkové varianty. Samoobslužný bufet s výběrem zeleninových salátů a teplých jídel v libovolném množství.",
+    description:
+      "Vinohradské veganské bistro s vysoce kvalitními čerstvými pokrmy včetně bezlepkové varianty. Samoobslužný bufet s výběrem zeleninových salátů a teplých jídel v libovolném množství.",
     tags: ["Veganská", "Bufet", "Bezlepkové", "Samoobslužný", "Vinohrady"],
     dietaryOptions: ["bezlepkové", "whole-food"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/sandokan-veganske-bistro-vinohrady_01ae168e.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/sandokan-veganske-bistro-vinohrady_01ae168e.webp",
     lat: 50.0752,
     lng: 14.4412,
     priceLevel: 1,
@@ -694,10 +882,19 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 1",
     phone: "+420 224 213 366",
     website: "https://www.countrylife.cz",
-    description: "Průkopník biopotravin v ČR od roku 1991. Teplá i studená veganská jídla, saláty, sendviče, burgery v příjemném prostředí. Prodej biopotravin, přírodní kosmetiky a produktů z vlastní ekofarmy. Preferuje bezobalový prodej.",
-    tags: ["Veganská", "Bio", "Bufet", "Zdravá výživa", "Bezobalový", "S sebou"],
+    description:
+      "Průkopník biopotravin v ČR od roku 1991. Teplá i studená veganská jídla, saláty, sendviče, burgery v příjemném prostředí. Prodej biopotravin, přírodní kosmetiky a produktů z vlastní ekofarmy. Preferuje bezobalový prodej.",
+    tags: [
+      "Veganská",
+      "Bio",
+      "Bufet",
+      "Zdravá výživa",
+      "Bezobalový",
+      "S sebou",
+    ],
     dietaryOptions: ["bio", "whole-food", "bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/country-life_5ff4ebe4.png",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/country-life_5ff4ebe4.png",
     lat: 50.0851,
     lng: 14.4201,
     priceLevel: 1,
@@ -716,10 +913,19 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 1",
     phone: "+420 773 380 371",
     website: "https://dhababeas.cz",
-    description: "Jedna z nejoblíbenějších poboček řetězce Beas Dhaba. Samoobslužná vegetariánská a veganská restaurace s indickou, thajskou a vietnamskou kuchyní. Jídlo si naložíte a zaplatíte podle váhy — zdravé, chutné a cenově dostupné.",
-    tags: ["Indická", "Vegetariánská", "Bufet", "Levné", "S sebou", "Denní menu"],
+    description:
+      "Jedna z nejoblíbenějších poboček řetězce Beas Dhaba. Samoobslužná vegetariánská a veganská restaurace s indickou, thajskou a vietnamskou kuchyní. Jídlo si naložíte a zaplatíte podle váhy — zdravé, chutné a cenově dostupné.",
+    tags: [
+      "Indická",
+      "Vegetariánská",
+      "Bufet",
+      "Levné",
+      "S sebou",
+      "Denní menu",
+    ],
     dietaryOptions: ["bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
     lat: 50.0795,
     lng: 14.4227,
     priceLevel: 2,
@@ -742,10 +948,12 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Karlín",
     phone: "+420 601 262 636",
     website: "https://www.krokitchen.cz/en/karlin",
-    description: "Druhá pobočka KRO Kitchen v Karlíně. Stejná filozofie — kvalitní suroviny, domácí tempeh a sezónní vege jídla. Vegetariánská varianta vždy součástí týdenního polédního menu.",
+    description:
+      "Druhá pobočka KRO Kitchen v Karlíně. Stejná filozofie — kvalitní suroviny, domácí tempeh a sezónní vege jídla. Vegetariánská varianta vždy součástí týdenního polédního menu.",
     tags: ["Bistro", "Tempeh", "Karlín", "Vege jídla", "Moderní kuchyně"],
     dietaryOptions: [],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kro-kitchen-thumb-padded_3714a399.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kro-kitchen-thumb-padded_3714a399.webp",
     gallery: [
       "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kro-food-1_c5b22f71.png",
       "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kro-food-2_3f771f9a.png",
@@ -771,10 +979,12 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 1",
     phone: "+420 725 963 536",
     website: "https://dhababeas.cz",
-    description: "Pobočka Beas Dhaba v dvorku za divadlem Archa. Samoobslužný bufet s indickými a asijskými vegetariánskými pokrmy. Platíte podle váhy — ideální pro rychlý a levný oběd v centru Prahy.",
+    description:
+      "Pobočka Beas Dhaba v dvorku za divadlem Archa. Samoobslužný bufet s indickými a asijskými vegetariánskými pokrmy. Platíte podle váhy — ideální pro rychlý a levný oběd v centru Prahy.",
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné", "S sebou"],
     dietaryOptions: ["bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
     lat: 50.0901,
     lng: 14.4321,
     priceLevel: 1,
@@ -793,12 +1003,14 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 1",
     phone: "+420 608 035 727",
     website: "https://dhababeas.cz",
-    description: "Pobočka Beas Dhaba schovaná v dvorku za Týnským chrámem na Staroměstském náměstí. Autentická indická vegetariánská kuchyně za skvělé ceny přímo v srdci Prahy.",
+    description:
+      "Pobočka Beas Dhaba schovaná v dvorku za Týnským chrámem na Staroměstském náměstí. Autentická indická vegetariánská kuchyně za skvělé ceny přímo v srdci Prahy.",
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné", "Staré Město"],
     dietaryOptions: ["bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
     lat: 50.0878,
-    lng: 14.4230,
+    lng: 14.423,
     priceLevel: 1,
     hours: "Po–Pá 11:00–20:00, So–Ne 12:00–20:00",
   },
@@ -815,12 +1027,14 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 1",
     phone: "+420 774 418 396",
     website: "https://dhababeas.cz",
-    description: "Menší pobočka Beas Dhaba v klidné ulici nedaleko Václavského náměstí. Samoobslužný bufet s denně obměňovanou nabídkou indických a asijských jídel.",
+    description:
+      "Menší pobočka Beas Dhaba v klidné ulici nedaleko Václavského náměstí. Samoobslužný bufet s denně obměňovanou nabídkou indických a asijských jídel.",
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné"],
     dietaryOptions: ["bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
     lat: 50.0818,
-    lng: 14.4260,
+    lng: 14.426,
     priceLevel: 1,
     hours: "Po–Pá 11:00–19:00, So–Ne zavřeno",
   },
@@ -837,10 +1051,12 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 1",
     phone: "+420 775 004 370",
     website: "https://dhababeas.cz",
-    description: "Dvoupodlažní pobočka Beas Dhaba v ikonickém Paláci Lucerna. Přízemí pro rychlý oběd, první patro s plným menu až do večera. Oblíbené místo pro pracovní obědy i turisty.",
+    description:
+      "Dvoupodlažní pobočka Beas Dhaba v ikonickém Paláci Lucerna. Přízemí pro rychlý oběd, první patro s plným menu až do večera. Oblíbené místo pro pracovní obědy i turisty.",
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné", "Lucerna"],
     dietaryOptions: ["bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
     lat: 50.0801,
     lng: 14.4255,
     priceLevel: 1,
@@ -859,10 +1075,12 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 1",
     phone: "",
     website: "https://dhababeas.cz",
-    description: "Pobočka v prestižním obchodním centru Slovanský dům na Na Příkopě. Vegetariánský bufet s indickou a asijskou kuchyní v moderním prostředí s příjemným posezením.",
+    description:
+      "Pobočka v prestižním obchodním centru Slovanský dům na Na Příkopě. Vegetariánský bufet s indickou a asijskou kuchyní v moderním prostředí s příjemným posezením.",
     tags: ["Indická", "Vegetariánská", "Bufet", "OC", "Na Příkopě"],
     dietaryOptions: ["bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
     lat: 50.0849,
     lng: 14.4282,
     priceLevel: 1,
@@ -882,12 +1100,14 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 2",
     phone: "+420 725 940 016",
     website: "https://dhababeas.cz",
-    description: "Oblíbená pobočka Beas Dhaba ve Vinohradech. Samoobslužný bufet s bohatou nabídkou indických a thajských vegetariánských jídel. Klidné prostředí ideální pro oběd i večeři.",
+    description:
+      "Oblíbená pobočka Beas Dhaba ve Vinohradech. Samoobslužný bufet s bohatou nabídkou indických a thajských vegetariánských jídel. Klidné prostředí ideální pro oběd i večeři.",
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné", "Vinohrady"],
     dietaryOptions: ["bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
     lat: 50.0731,
-    lng: 14.4310,
+    lng: 14.431,
     priceLevel: 1,
     hours: "Po–Pá 11:00–21:00, So–Ne 12:00–20:00",
   },
@@ -904,10 +1124,12 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 2",
     phone: "",
     website: "https://dhababeas.cz",
-    description: "Pobočka Beas Dhaba v horní hale Hlavního nádraží. Otevřeno denně od rána do večera — ideální pro cestující hledající rychlé a zdravé vegetariánské jídlo.",
+    description:
+      "Pobočka Beas Dhaba v horní hale Hlavního nádraží. Otevřeno denně od rána do večera — ideální pro cestující hledající rychlé a zdravé vegetariánské jídlo.",
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné", "Nádraží"],
     dietaryOptions: ["bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
     lat: 50.0833,
     lng: 14.4348,
     priceLevel: 1,
@@ -926,10 +1148,12 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 2",
     phone: "",
     website: "https://dhababeas.cz",
-    description: "Pobočka Beas Dhaba na Karlově náměstí. Samoobslužný vegetariánský bufet s indickou kuchyní v blízkosti metra. Platíte podle váhy — rychlé a cenově dostupné.",
+    description:
+      "Pobočka Beas Dhaba na Karlově náměstí. Samoobslužný vegetariánský bufet s indickou kuchyní v blízkosti metra. Platíte podle váhy — rychlé a cenově dostupné.",
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné"],
     dietaryOptions: ["bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
     lat: 50.0754,
     lng: 14.4184,
     priceLevel: 1,
@@ -948,12 +1172,14 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 4",
     phone: "+420 601 592 216",
     website: "https://dhababeas.cz",
-    description: "Pobočka Beas Dhaba v kancelářské čtvrti na Pankráci. Oblíbená volba pro pracovní obědy — rychlý vegetariánský bufet s indickými specialitami.",
+    description:
+      "Pobočka Beas Dhaba v kancelářské čtvrti na Pankráci. Oblíbená volba pro pracovní obědy — rychlý vegetariánský bufet s indickými specialitami.",
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné", "Pankrác"],
     dietaryOptions: ["bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
-    lat: 50.0530,
-    lng: 14.4380,
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+    lat: 50.053,
+    lng: 14.438,
     priceLevel: 1,
     hours: "Po–Pá 11:00–18:00, So–Ne zavřeno",
   },
@@ -970,10 +1196,12 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 4",
     phone: "+420 774 738 983",
     website: "https://dhababeas.cz",
-    description: "Pobočka Beas Dhaba v business parku na Vyskočilově. Samoobslužný vegetariánský bufet pro zaměstnance okolních kanceláří. Jídlo podle váhy za nejnižší ceny.",
+    description:
+      "Pobočka Beas Dhaba v business parku na Vyskočilově. Samoobslužný vegetariánský bufet pro zaměstnance okolních kanceláří. Jídlo podle váhy za nejnižší ceny.",
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné"],
     dietaryOptions: ["bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
     lat: 50.0445,
     lng: 14.4505,
     priceLevel: 1,
@@ -992,12 +1220,14 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 4",
     phone: "+420 774 129 723",
     website: "https://dhababeas.cz",
-    description: "Kavárna a snídaňové místo od Beas Dhaba v Nuslích. Otevřeno od rána — nabízí vegetariánské snídaně, kávu, zákusky a lehká jídla po celý den.",
+    description:
+      "Kavárna a snídaňové místo od Beas Dhaba v Nuslích. Otevřeno od rána — nabízí vegetariánské snídaně, kávu, zákusky a lehká jídla po celý den.",
     tags: ["Indická", "Vegetariánská", "Kavárna", "Snídaně", "Nusle"],
     dietaryOptions: ["bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
-    lat: 50.0630,
-    lng: 14.4340,
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+    lat: 50.063,
+    lng: 14.434,
     priceLevel: 1,
     hours: "Po–Pá 8:00–20:00, So–Ne 9:00–20:00",
   },
@@ -1014,10 +1244,12 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 4",
     phone: "+420 774 337 248",
     website: "https://dhababeas.cz",
-    description: "Klasická pobočka Beas Dhaba v Nuslích, schovaná ve dvoře. Samoobslužný bufet s indickými a asijskými vegetariánskými pokrmy za skvělé ceny.",
+    description:
+      "Klasická pobočka Beas Dhaba v Nuslích, schovaná ve dvoře. Samoobslužný bufet s indickými a asijskými vegetariánskými pokrmy za skvělé ceny.",
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné", "Nusle"],
     dietaryOptions: ["bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
     lat: 50.0632,
     lng: 14.4342,
     priceLevel: 1,
@@ -1036,12 +1268,14 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 5",
     phone: "+420 773 042 911",
     website: "https://dhababeas.cz",
-    description: "Nejlevnější pobočka Beas Dhaba v Praze! Pouze 29,90 Kč za 100 g. Samoobslužný bufet s indickou vegetariánskou kuchyní na Smíchově. Preferován odnos s sebou.",
+    description:
+      "Nejlevnější pobočka Beas Dhaba v Praze! Pouze 29,90 Kč za 100 g. Samoobslužný bufet s indickou vegetariánskou kuchyní na Smíchově. Preferován odnos s sebou.",
     tags: ["Indická", "Vegetariánská", "Bufet", "Nejlevnější", "Smíchov"],
     dietaryOptions: ["bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
-    lat: 50.0700,
-    lng: 14.4020,
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+    lat: 50.07,
+    lng: 14.402,
     priceLevel: 1,
     hours: "Po–Pá 11:00–20:00, So–Ne zavřeno",
   },
@@ -1058,12 +1292,14 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 5",
     phone: "+420 251 511 151",
     website: "https://dhababeas.cz",
-    description: "Pobočka Beas Dhaba v obchodním centru Nový Smíchov. Vegetariánský bufet s indickou kuchyní ve food courtu. Otevřeno denně včetně víkendů.",
+    description:
+      "Pobočka Beas Dhaba v obchodním centru Nový Smíchov. Vegetariánský bufet s indickou kuchyní ve food courtu. Otevřeno denně včetně víkendů.",
     tags: ["Indická", "Vegetariánská", "Bufet", "OC", "Nový Smíchov"],
     dietaryOptions: ["bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
-    lat: 50.0720,
-    lng: 14.4000,
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+    lat: 50.072,
+    lng: 14.4,
     priceLevel: 1,
     hours: "Po–Ne 9:00–21:00",
     shoppingCenter: "OC Nový Smíchov",
@@ -1081,12 +1317,14 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 6",
     phone: "",
     website: "https://dhababeas.cz",
-    description: "Pobočka Beas Dhaba v Dejvicích nedaleko metra Dejvická. Samoobslužný vegetariánský bufet oblíbený studenty a zaměstnanci okolních firem.",
+    description:
+      "Pobočka Beas Dhaba v Dejvicích nedaleko metra Dejvická. Samoobslužný vegetariánský bufet oblíbený studenty a zaměstnanci okolních firem.",
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné", "Dejvice"],
     dietaryOptions: ["bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
     lat: 50.0995,
-    lng: 14.3920,
+    lng: 14.392,
     priceLevel: 1,
     hours: "Po–Pá 11:00–21:00, So–Ne 11:00–20:00",
   },
@@ -1103,12 +1341,14 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 8",
     phone: "+420 777 038 906",
     website: "https://dhababeas.cz",
-    description: "Menší pobočka Beas Dhaba na Sokolovské. Otevřeno pouze v pracovní dny na oběd — ideální pro rychlý vegetariánský oběd v okolí Florenc.",
+    description:
+      "Menší pobočka Beas Dhaba na Sokolovské. Otevřeno pouze v pracovní dny na oběd — ideální pro rychlý vegetariánský oběd v okolí Florenc.",
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné"],
     dietaryOptions: ["bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
     lat: 50.0935,
-    lng: 14.4510,
+    lng: 14.451,
     priceLevel: 1,
     hours: "Po–Pá 11:00–15:00, So–Ne zavřeno",
   },
@@ -1125,12 +1365,14 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 8",
     phone: "+420 771 146 089",
     website: "https://dhababeas.cz",
-    description: "Pobočka Beas Dhaba v trendy Karlíně. Vegetariánský bufet s indickou a asijskou kuchyní. O víkendech otevřeno s výhodnými slevami před zavírací dobou.",
+    description:
+      "Pobočka Beas Dhaba v trendy Karlíně. Vegetariánský bufet s indickou a asijskou kuchyní. O víkendech otevřeno s výhodnými slevami před zavírací dobou.",
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné", "Karlín"],
     dietaryOptions: ["bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
     lat: 50.0928,
-    lng: 14.4530,
+    lng: 14.453,
     priceLevel: 1,
     hours: "Po–Pá 11:00–19:00, So–Ne 11:00–18:00",
   },
@@ -1147,12 +1389,14 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 8",
     phone: "",
     website: "https://dhababeas.cz",
-    description: "Pobočka Beas Dhaba v moderním kancelářském komplexu DOCK in Five v Libni. Vegetariánský bufet pro zaměstnance okolních firem.",
+    description:
+      "Pobočka Beas Dhaba v moderním kancelářském komplexu DOCK in Five v Libni. Vegetariánský bufet pro zaměstnance okolních firem.",
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné", "Libeň"],
     dietaryOptions: ["bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
-    lat: 50.1060,
-    lng: 14.4590,
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+    lat: 50.106,
+    lng: 14.459,
     priceLevel: 1,
     hours: "Po–Pá 11:00–19:00, So–Ne zavřeno",
   },
@@ -1169,12 +1413,14 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 9",
     phone: "",
     website: "https://dhababeas.cz",
-    description: "Pobočka Beas Dhaba v obchodním centru Harfa. Vegetariánský bufet s indickou kuchyní ve food courtu. Otevřeno denně s happy hour slevou hodinu před zavírací dobou.",
+    description:
+      "Pobočka Beas Dhaba v obchodním centru Harfa. Vegetariánský bufet s indickou kuchyní ve food courtu. Otevřeno denně s happy hour slevou hodinu před zavírací dobou.",
     tags: ["Indická", "Vegetariánská", "Bufet", "OC", "Harfa"],
     dietaryOptions: ["bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
     lat: 50.1035,
-    lng: 14.4740,
+    lng: 14.474,
     priceLevel: 1,
     hours: "Po–Ne 9:00–21:00",
     shoppingCenter: "OC Galerie Harfa",
@@ -1192,12 +1438,14 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 13",
     phone: "",
     website: "https://dhababeas.cz",
-    description: "Pobočka Beas Dhaba v obchodním centru Galerie Butovice na Praze 13. Vegetariánský bufet s indickou kuchyní. Otevřeno denně včetně víkendů.",
+    description:
+      "Pobočka Beas Dhaba v obchodním centru Galerie Butovice na Praze 13. Vegetariánský bufet s indickou kuchyní. Otevřeno denně včetně víkendů.",
     tags: ["Indická", "Vegetariánská", "Bufet", "OC", "Butovice"],
     dietaryOptions: ["bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
-    lat: 50.0510,
-    lng: 14.3520,
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+    lat: 50.051,
+    lng: 14.352,
     priceLevel: 1,
     hours: "Po–Ne 11:00–21:00",
     shoppingCenter: "OC Galerie Butovice",
@@ -1216,10 +1464,12 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 8",
     phone: "+420 222 311 562",
     website: "https://www.spojkakarlin.cz",
-    description: "První flexitariánská restaurace v ČR. A la carte menu s veganskými, vegetariánskými, bezlepkovými i masovými jídly, vše v bio kvalitě. Spojuje u jednoho stolu všechny bez předsudků.",
+    description:
+      "První flexitariánská restaurace v ČR. A la carte menu s veganskými, vegetariánskými, bezlepkovými i masovými jídly, vše v bio kvalitě. Spojuje u jednoho stolu všechny bez předsudků.",
     tags: ["Flexitariánská", "Bio", "Vegan-friendly", "Bezlepkové", "Karlín"],
     dietaryOptions: ["bio", "bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spojka-karlin-flexitarianska-restaurace-praha_b80f1b8b.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spojka-karlin-flexitarianska-restaurace-praha_b80f1b8b.webp",
     lat: 50.0931,
     lng: 14.4512,
     priceLevel: 2,
@@ -1236,10 +1486,18 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     isPremium: false,
     address: "Plávecká 523/4, Praha 2 — Nové Město",
     district: "Praha 2",
-    description: "Restaurace a bar s přátelskou atmosférou v blízkósti Pláveckého stadionu. Nabízejí širokou nabídku jídel včetně veganských a vegetariánských možností. Oblíbené místo pro obmědné menu i večeře.",
-    tags: ["Vegan-friendly", "Vegetariánské možnosti", "Bar", "Oblíbené", "Praha 2"],
+    description:
+      "Restaurace a bar s přátelskou atmosférou v blízkósti Pláveckého stadionu. Nabízejí širokou nabídku jídel včetně veganských a vegetariánských možností. Oblíbené místo pro obmědné menu i večeře.",
+    tags: [
+      "Vegan-friendly",
+      "Vegetariánské možnosti",
+      "Bar",
+      "Oblíbené",
+      "Praha 2",
+    ],
     dietaryOptions: ["whole-food"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/plavecka-polevka_66e369bb.jpg",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/plavecka-polevka_66e369bb.jpg",
     lat: 50.0688,
     lng: 14.4225,
     priceLevel: 2,
@@ -1258,10 +1516,19 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 1",
     phone: "+420 722 922 791",
     website: "https://puzzlesalads.cz",
-    description: "Zdravý fast-casual řetězec založený v roce 2014. Nabízí kvalitní, rychlé a zdravé jídlo z prvotníčních, sezónních a lokálních surovin. Saláty, bowly, těstoviny a více — včetně řady veganských možností. 12 poboček po celé Praze.",
-    tags: ["Vegan-friendly", "Saláty", "Bowly", "Zdravé", "Rychlé občerstvení", "Praha 1"],
+    description:
+      "Zdravý fast-casual řetězec založený v roce 2014. Nabízí kvalitní, rychlé a zdravé jídlo z prvotníčních, sezónních a lokálních surovin. Saláty, bowly, těstoviny a více — včetně řady veganských možností. 12 poboček po celé Praze.",
+    tags: [
+      "Vegan-friendly",
+      "Saláty",
+      "Bowly",
+      "Zdravé",
+      "Rychlé občerstvení",
+      "Praha 1",
+    ],
     dietaryOptions: ["whole-food", "bezlepkové"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/puzzlesalads_f57f6896.jpg",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/puzzlesalads_f57f6896.jpg",
     lat: 50.0899,
     lng: 14.4256,
     priceLevel: 2,
@@ -1279,10 +1546,12 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     isPremium: false,
     address: "M. Horákové 398, Praha 7 — Letná",
     district: "Praha 7",
-    description: "Veganské bistro na Letné se stálou nabídkou i samoobslužným bufetem. Nechybí ani výborné dezerty. Příjemná alternativa pro každodenní veganské stravování.",
+    description:
+      "Veganské bistro na Letné se stálou nabídkou i samoobslužným bufetem. Nechybí ani výborné dezerty. Příjemná alternativa pro každodenní veganské stravování.",
     tags: ["Veganská", "Bufet", "Letná", "Dezerty", "S sebou"],
     dietaryOptions: ["whole-food"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganland-express-veganske-bistro-letna_c31564da.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganland-express-veganske-bistro-letna_c31564da.webp",
     lat: 50.1001,
     lng: 14.4201,
     priceLevel: 1,
@@ -1299,10 +1568,12 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     isPremium: false,
     address: "Kafkova 605/16, Praha 6 — Dejvice",
     district: "Praha 6",
-    description: "Veganská restaurace v těsné blízkosti metra A Dejvická. Samoobslužný pult s širokou nabídkou nejen asijské kuchyně. Rychlé a dostupné veganské stravování v Dejvicích.",
+    description:
+      "Veganská restaurace v těsné blízkosti metra A Dejvická. Samoobslužný pult s širokou nabídkou nejen asijské kuchyně. Rychlé a dostupné veganské stravování v Dejvicích.",
     tags: ["Veganská", "Asijská", "Samoobslužný", "Dejvice", "S sebou"],
     dietaryOptions: [],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegetka-veganska-restaurace-dejvice_11b4e04b.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegetka-veganska-restaurace-dejvice_11b4e04b.webp",
     lat: 50.1021,
     lng: 14.3921,
     priceLevel: 1,
@@ -1320,10 +1591,12 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     isPremium: false,
     address: "Na Struze 1739/5, Praha 1 — Nové Město",
     district: "Praha 1",
-    description: "Raw veganská kavárna v samém centru Prahy. Specialita na syrovou rostlinnou stravu — raw dezerty, smoothie bowls, čerstvé šťávy a raw hlavní jídla. Ideální pro příznivce raw food.",
+    description:
+      "Raw veganská kavárna v samém centru Prahy. Specialita na syrovou rostlinnou stravu — raw dezerty, smoothie bowls, čerstvé šťávy a raw hlavní jídla. Ideální pro příznivce raw food.",
     tags: ["Veganská", "Raw food", "Smoothie", "Dezerty", "Kavárna", "Centrum"],
     dietaryOptions: ["raw", "bezlepkové", "whole-food"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/myraw-cafe-raw-veganska-kavarna-praha_166573b7.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/myraw-cafe-raw-veganska-kavarna-praha_166573b7.webp",
     lat: 50.0821,
     lng: 14.4161,
     priceLevel: 2,
@@ -1340,10 +1613,12 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     isPremium: false,
     address: "Veleslavínova 93/10, Praha 1 — Staré Město",
     district: "Praha 1",
-    description: "Restaurace s čistě rostlinnou nabídkou pokrmů v bio kvalitě v centru Prahy. Dočasně uzavřena. Kreativní veganská kuchyně s důrazem na bio suroviny.",
+    description:
+      "Restaurace s čistě rostlinnou nabídkou pokrmů v bio kvalitě v centru Prahy. Dočasně uzavřena. Kreativní veganská kuchyně s důrazem na bio suroviny.",
     tags: ["Veganská", "Bio", "Fine dining", "Centrum"],
     dietaryOptions: ["bio"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/chef-co-veganske-fine-dining-praha_98257ea9.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/chef-co-veganske-fine-dining-praha_98257ea9.webp",
     lat: 50.0871,
     lng: 14.4131,
     priceLevel: 3,
@@ -1360,10 +1635,12 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     isPremium: false,
     address: "Na Pankráci 86, Praha 4 — Nusle",
     district: "Praha 4",
-    description: "Součást sítě veganských bistr Loving Hut. Veganský způsob stravování jako chutná, zdravá a vyvážená alternativa. Asijská jídla, polévky, saláty a dezerty za dostupné ceny.",
+    description:
+      "Součást sítě veganských bistr Loving Hut. Veganský způsob stravování jako chutná, zdravá a vyvážená alternativa. Asijská jídla, polévky, saláty a dezerty za dostupné ceny.",
     tags: ["Veganská", "Asijská", "Bufet", "Pankrác", "Dostupné ceny"],
     dietaryOptions: [],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/loving-hut_4a7767b9.jpg",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/loving-hut_4a7767b9.jpg",
     lat: 50.0631,
     lng: 14.4321,
     priceLevel: 1,
@@ -1380,10 +1657,12 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     isPremium: false,
     address: "Pod Kavalírkou 471/38, Praha 5 — Košíře",
     district: "Praha 5",
-    description: "Rostlinné bistro v Košířích s pestrou kuchyní, skvělými dezerty a různými nápoji. Útulné místo pro milovníky rostlinné stravy mimo centrum.",
+    description:
+      "Rostlinné bistro v Košířích s pestrou kuchyní, skvělými dezerty a různými nápoji. Útulné místo pro milovníky rostlinné stravy mimo centrum.",
     tags: ["Veganská", "Rostlinná strava", "Dezerty", "Košíře"],
     dietaryOptions: ["whole-food"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/bistro-pod-kavalirkou-rostlinne-bistro-kosire_676ba9f1.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/bistro-pod-kavalirkou-rostlinne-bistro-kosire_676ba9f1.webp",
     lat: 50.0701,
     lng: 14.3901,
     priceLevel: 1,
@@ -1403,10 +1682,12 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 1",
     phone: "+420 770 631 690",
     website: "https://www.lovinghut.cz",
-    description: "Veganské bistro v obchodním centru Quadrio. Samoobslužný bufet s asijskými jídly, polévkami, saláty a dezerty za dostupné ceny.",
+    description:
+      "Veganské bistro v obchodním centru Quadrio. Samoobslužný bufet s asijskými jídly, polévkami, saláty a dezerty za dostupné ceny.",
     tags: ["Veganská", "Asijská", "Bufet", "OC Quadrio", "Dostupné ceny"],
     dietaryOptions: [],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/loving-hut_4a7767b9.jpg",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/loving-hut_4a7767b9.jpg",
     lat: 50.0803,
     lng: 14.4199,
     priceLevel: 1,
@@ -1426,12 +1707,14 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 5",
     phone: "+420 770 631 690",
     website: "https://www.lovinghut.cz",
-    description: "Veganské bistro v OC Nový Smíchov. Samoobslužný bufet s asijskými jídly, polévkami, saláty a dezerty. Ideální zastávka při nakupování.",
+    description:
+      "Veganské bistro v OC Nový Smíchov. Samoobslužný bufet s asijskými jídly, polévkami, saláty a dezerty. Ideální zastávka při nakupování.",
     tags: ["Veganská", "Asijská", "Bufet", "OC Nový Smíchov", "Dostupné ceny"],
     dietaryOptions: [],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/loving-hut_4a7767b9.jpg",
-    lat: 50.0720,
-    lng: 14.4030,
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/loving-hut_4a7767b9.jpg",
+    lat: 50.072,
+    lng: 14.403,
     priceLevel: 1,
     hours: "Po–So 10:00–21:00, Ne 10:00–20:00",
     shoppingCenter: "OC Nový Smíchov",
@@ -1449,12 +1732,14 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 5",
     phone: "+420 770 631 690",
     website: "https://www.lovinghut.cz",
-    description: "Veganské bistro v OC Metropole Zličín. Samoobslužný bufet s asijskými jídly, polévkami, saláty a dezerty za dostupné ceny.",
+    description:
+      "Veganské bistro v OC Metropole Zličín. Samoobslužný bufet s asijskými jídly, polévkami, saláty a dezerty za dostupné ceny.",
     tags: ["Veganská", "Asijská", "Bufet", "OC Zličín", "Dostupné ceny"],
     dietaryOptions: [],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/loving-hut_4a7767b9.jpg",
-    lat: 50.0530,
-    lng: 14.2890,
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/loving-hut_4a7767b9.jpg",
+    lat: 50.053,
+    lng: 14.289,
     priceLevel: 1,
     hours: "Po–So 10:00–21:00, Ne 10:00–20:00",
     shoppingCenter: "OC Metropole Zličín",
@@ -1472,12 +1757,14 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 2",
     phone: "+420 770 631 690",
     website: "https://www.lovinghut.cz",
-    description: "Veganské bistro na Vinohradech. Samoobslužný bufet s asijskými jídly, polévkami, saláty a dezerty. Klidné prostředí v rezidenční čtvrti.",
+    description:
+      "Veganské bistro na Vinohradech. Samoobslužný bufet s asijskými jídly, polévkami, saláty a dezerty. Klidné prostředí v rezidenční čtvrti.",
     tags: ["Veganská", "Asijská", "Bufet", "Vinohrady", "Dostupné ceny"],
     dietaryOptions: [],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/loving-hut_4a7767b9.jpg",
-    lat: 50.0770,
-    lng: 14.4370,
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/loving-hut_4a7767b9.jpg",
+    lat: 50.077,
+    lng: 14.437,
     priceLevel: 1,
     hours: "Po–Pá 10:00–20:00, So 11:00–19:00",
   },
@@ -1494,12 +1781,14 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 4",
     phone: "+420 770 631 690",
     website: "https://www.lovinghut.cz",
-    description: "Veganské bistro u metra Budějovická. Samoobslužný bufet s asijskými jídly, polévkami, saláty a dezerty za dostupné ceny.",
+    description:
+      "Veganské bistro u metra Budějovická. Samoobslužný bufet s asijskými jídly, polévkami, saláty a dezerty za dostupné ceny.",
     tags: ["Veganská", "Asijská", "Bufet", "Budějovická", "Dostupné ceny"],
     dietaryOptions: [],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/loving-hut_4a7767b9.jpg",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/loving-hut_4a7767b9.jpg",
     lat: 50.0445,
-    lng: 14.4490,
+    lng: 14.449,
     priceLevel: 1,
     hours: "Po–Pá 10:00–20:00, So 11:00–19:00",
     bestFor: ["Rychlý oběd", "Levné jídlo"],
@@ -1515,12 +1804,14 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     isPremium: false,
     address: "Roztylská 2321/19, Praha 4 — Chodov",
     district: "Praha 4",
-    description: "Vegetariánská a veganská samoobslužná restaurace v OC Westfield Chodov. Thajská a vietnamská kuchyně za dostupné ceny.",
+    description:
+      "Vegetariánská a veganská samoobslužná restaurace v OC Westfield Chodov. Thajská a vietnamská kuchyně za dostupné ceny.",
     tags: ["Veganská", "Thajská", "Vietnamská", "Bufet", "OC Chodov"],
     dietaryOptions: [],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganland-express-veganske-bistro-letna_c31564da.webp",
-    lat: 50.0310,
-    lng: 14.4910,
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganland-express-veganske-bistro-letna_c31564da.webp",
+    lat: 50.031,
+    lng: 14.491,
     priceLevel: 1,
     hours: "Po–Ne 10:00–21:00",
     shoppingCenter: "OC Westfield Chodov",
@@ -1538,10 +1829,12 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 1",
     phone: "+420 739 268 221",
     website: "https://www.countrylife.cz",
-    description: "Prodejna biopotravin a vegetariánská restaurace v samém centru Prahy. Nabízí čerstvé saláty, polévky, teplá jídla a raw dezerty.",
+    description:
+      "Prodejna biopotravin a vegetariánská restaurace v samém centru Prahy. Nabízí čerstvé saláty, polévky, teplá jídla a raw dezerty.",
     tags: ["Vegetariánská", "Bio", "Zdravá výživa", "Centrum", "S sebou"],
     dietaryOptions: ["bio", "raw"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/country-life_5ff4ebe4.png",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/country-life_5ff4ebe4.png",
     lat: 50.0845,
     lng: 14.4195,
     priceLevel: 2,
@@ -1560,12 +1853,14 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 1",
     phone: "+420 224 213 366",
     website: "https://www.countrylife.cz",
-    description: "Vegetariánská restaurace a prodejna biopotravin. Samoobslužný bufet s teplými jídly, saláty a dezerty v centru Prahy.",
+    description:
+      "Vegetariánská restaurace a prodejna biopotravin. Samoobslužný bufet s teplými jídly, saláty a dezerty v centru Prahy.",
     tags: ["Vegetariánská", "Bio", "Bufet", "Centrum", "Zdravá výživa"],
     dietaryOptions: ["bio", "raw"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/country-life_5ff4ebe4.png",
-    lat: 50.0810,
-    lng: 14.4230,
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/country-life_5ff4ebe4.png",
+    lat: 50.081,
+    lng: 14.423,
     priceLevel: 2,
     hours: "Po–Čt 10:30–18:00, Pá 10:30–15:00",
   },
@@ -1582,10 +1877,12 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 1",
     phone: "+420 224 213 366",
     website: "https://www.countrylife.cz",
-    description: "Další pobočka sítě Country Life v centru Prahy. Vegetariánská restaurace a prodejna biopotravin. Čerstvé saláty, polévky, teplná jídla a raw dezerty.",
+    description:
+      "Další pobočka sítě Country Life v centru Prahy. Vegetariánská restaurace a prodejna biopotravin. Čerstvé saláty, polévky, teplná jídla a raw dezerty.",
     tags: ["Vegetariánská", "Bio", "Bufet", "Centrum", "Zdravá výživa"],
     dietaryOptions: ["bio", "raw"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/country-life_5ff4ebe4.png",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/country-life_5ff4ebe4.png",
     lat: 50.0818,
     lng: 14.4175,
     priceLevel: 2,
@@ -1603,15 +1900,50 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     isPremium: false,
     address: "Roztylská 2321/19, Praha 4 — Chodov",
     district: "Praha 4",
-    description: "Veganské bistro v OC Westfield Chodov s bufetovou nabídkou. Asijská a mezinárodní kuchyně za dostupné ceny.",
+    description:
+      "Veganské bistro v OC Westfield Chodov s bufetovou nabídkou. Asijská a mezinárodní kuchyně za dostupné ceny.",
     tags: ["Veganská", "Bufet", "OC Chodov", "Asijská", "Dostupné ceny"],
     dietaryOptions: ["whole-food"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganland-express-veganske-bistro-letna_c31564da.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganland-express-veganske-bistro-letna_c31564da.webp",
     lat: 50.0315,
     lng: 14.4905,
     priceLevel: 1,
     hours: "Po–Ne 10:00–21:00",
     shoppingCenter: "OC Westfield Chodov",
+  },
+  // ── ČAJOVNA PEKLO, NEBE, RÁJ ──
+  {
+    id: "r28b",
+    name: "Čajovna Peklo, nebe, ráj",
+    slug: "cajovna-peklo-nebe-raj",
+    type: "friendly" as const,
+    rating: 4.4,
+    reviewCount: 10,
+    isOpen: true,
+    isPremium: false,
+    address: "Bořivojova 1102/43, Praha 3 — Žižkov",
+    district: "Praha 3",
+    phone: "+420 252 540 158",
+    website: "https://pekloneberaj.cz/",
+    description:
+      "Žižkovská čajovna s širokým výběrem čajů, čajových koktejlů, drobného občerstvení, deskových her a vodních dýmek. U bezmasých a veganských položek doporučujeme ověřit aktuální složení přímo u obsluhy.",
+    tags: [
+      "Čajovna",
+      "Vegetariánské možnosti",
+      "Veganské možnosti",
+      "Deskové hry",
+      "Vodní dýmky",
+      "Žižkov",
+    ],
+    dietaryOptions: [],
+    image:
+      "https://cdn-media.choiceqr.com/prod-eat-cajovna-peklo-nebe-raj/thumbnail_yrEWeZV-TkIZykj-LqXoGCs_G-i-e.jpeg",
+    lat: 50.0827618,
+    lng: 14.4532323,
+    priceLevel: 2,
+    hours: "Po–Ne 15:00–23:00",
+    bestFor: ["Večerní posezení", "Přátelé s různými preferencemi"],
   },
   // ── DOBRÁ ČAJOVNA ──
   {
@@ -1627,10 +1959,20 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 1",
     phone: "+420 224 231 480",
     website: "https://www.dobracajovnapraha.cz",
-    description: "Legendární čajovna otevřená od roku 1993 ve dvoře dolní části Václavského náměstí. Nabízí přes 200 druhů čajů z celého světa, vegetariánské a veganské pokrmy, dýmky a příjemnou atmosféru na měkkých polštářích. Jedno z nejkultovnějších míst v Praze.",
-    tags: ["Čajovna", "Vegetariánské", "Veganské možnosti", "Čaj", "Dýmky", "Historické místo", "Praha 1"],
+    description:
+      "Legendární čajovna otevřená od roku 1993 ve dvoře dolní části Václavského náměstí. Nabízí přes 200 druhů čajů z celého světa, vegetariánské a veganské pokrmy, dýmky a příjemnou atmosféru na měkkých polštářích. Jedno z nejkultovnějších míst v Praze.",
+    tags: [
+      "Čajovna",
+      "Vegetariánské",
+      "Veganské možnosti",
+      "Čaj",
+      "Dýmky",
+      "Historické místo",
+      "Praha 1",
+    ],
     dietaryOptions: ["whole-food"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/dobra-cajovna-praha-exterior_be6b556c.jpg",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/dobra-cajovna-praha-exterior_be6b556c.jpg",
     lat: 50.0808,
     lng: 14.4264,
     priceLevel: 1,
@@ -1650,10 +1992,19 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 1",
     phone: "+420 224 239 413",
     website: "https://www.havelska-koruna.cz",
-    description: "Tradiční česká jídelna v srdci Starého Města, fungující od roku 1971. Nabízí autentická česká jídla za dostupné ceny. Vegetariánské pokrmy zahrnují čočku na kyselo, koprovku s vejcem, smažený sýr a ovocné knedlíky. Oblíbené místo místních i turistů.",
-    tags: ["Česká kuchyně", "Tradiční", "Vegetariánské možnosti", "Dostupné ceny", "Praha 1", "Jídelna"],
+    description:
+      "Tradiční česká jídelna v srdci Starého Města, fungující od roku 1971. Nabízí autentická česká jídla za dostupné ceny. Vegetariánské pokrmy zahrnují čočku na kyselo, koprovku s vejcem, smažený sýr a ovocné knedlíky. Oblíbené místo místních i turistů.",
+    tags: [
+      "Česká kuchyně",
+      "Tradiční",
+      "Vegetariánské možnosti",
+      "Dostupné ceny",
+      "Praha 1",
+      "Jídelna",
+    ],
     dietaryOptions: [],
-    image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&q=80",
+    image:
+      "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&q=80",
     lat: 50.0843,
     lng: 14.4218,
     priceLevel: 1,
@@ -1674,10 +2025,19 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Vinohrady",
     phone: "+420 601 262 636",
     website: "https://www.krokitchen.cz",
-    description: "Moderní bistro s rotisserií ve Vinohradech. Specializují se na pečená kuřata, ale stejnou váhu dávají vege jídlům — vyrábějí vlastní tempeh z čočky a hrachu. Vege jídla zahrnují tempeh combo, pečené mrkve s kale chimichurri a sezónní saláty. Otevřeno i večer.",
-    tags: ["Bistro", "Tempeh", "Rotisserie", "Moderní kuchyně", "Vinohrady", "Vege jídla"],
+    description:
+      "Moderní bistro s rotisserií ve Vinohradech. Specializují se na pečená kuřata, ale stejnou váhu dávají vege jídlům — vyrábějí vlastní tempeh z čočky a hrachu. Vege jídla zahrnují tempeh combo, pečené mrkve s kale chimichurri a sezónní saláty. Otevřeno i večer.",
+    tags: [
+      "Bistro",
+      "Tempeh",
+      "Rotisserie",
+      "Moderní kuchyně",
+      "Vinohrady",
+      "Vege jídla",
+    ],
     dietaryOptions: [],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kro-kitchen-thumb-padded_3714a399.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kro-kitchen-thumb-padded_3714a399.webp",
     gallery: [
       "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kro-food-1_c5b22f71.png",
       "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kro-food-2_3f771f9a.png",
@@ -1690,9 +2050,26 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     instagramUrl: "https://www.instagram.com/kro_kitchen/",
     facebookUrl: "https://www.facebook.com/krokitchen/",
     fastFoodItems: [
-      { name: "Tempeh combo", description: "Domácí čočkový tempeh, jasmanová rýže, kimchi, míchaný salát, vegetable demi glace. 100% veganské.", isVegan: true, price: "265 Kč" },
-      { name: "Chickpea & lentil tempeh", description: "Pečené mrkve, kale chimichurri, labneh. Vegetariánské.", isVegan: false, price: "265 Kč" },
-      { name: "Beetroot salát", description: "Přípálená červená řepa, labneh, cavolo nero, nakládané ostružiny, tarragon oil. Vegetariánské.", isVegan: false, price: "265 Kč" },
+      {
+        name: "Tempeh combo",
+        description:
+          "Domácí čočkový tempeh, jasmanová rýže, kimchi, míchaný salát, vegetable demi glace. 100% veganské.",
+        isVegan: true,
+        price: "265 Kč",
+      },
+      {
+        name: "Chickpea & lentil tempeh",
+        description: "Pečené mrkve, kale chimichurri, labneh. Vegetariánské.",
+        isVegan: false,
+        price: "265 Kč",
+      },
+      {
+        name: "Beetroot salát",
+        description:
+          "Přípálená červená řepa, labneh, cavolo nero, nakládané ostružiny, tarragon oil. Vegetariánské.",
+        isVegan: false,
+        price: "265 Kč",
+      },
     ],
   },
   {
@@ -1709,10 +2086,12 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Libeň",
     phone: "+420 601 262 636",
     website: "https://www.krokitchen.cz/en/liben",
-    description: "Třetí pobočka KRO Kitchen v Libni. Bottomless brunch o víkendu, kimchi segedín a týdně obměňované polední menu s vegetariánskou variantou.",
+    description:
+      "Třetí pobočka KRO Kitchen v Libni. Bottomless brunch o víkendu, kimchi segedín a týdně obměňované polední menu s vegetariánskou variantou.",
     tags: ["Bistro", "Brunch", "Libeň", "Vege jídla", "Tempeh"],
     dietaryOptions: [],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kro-kitchen-thumb-padded_3714a399.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kro-kitchen-thumb-padded_3714a399.webp",
     gallery: [
       "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kro-food-1_c5b22f71.png",
       "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kro-food-2_3f771f9a.png",
@@ -1723,7 +2102,8 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     priceLevel: 1,
     hours: "Po–Pá 9:00–20:00, So 10:00–18:00",
     bestFor: ["Levné jídlo", "Zdravé jídlo", "Turistické místo"],
-    instagramUrl: "https://www.instagram.com/countrylifepraha/", facebookUrl: "https://www.facebook.com/krokitchen/",
+    instagramUrl: "https://www.instagram.com/countrylifepraha/",
+    facebookUrl: "https://www.facebook.com/krokitchen/",
   },
   // ── BAGETERIE BOULEVARD ──
   {
@@ -1738,18 +2118,50 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     address: "Václavské náměstí 1, Praha 1",
     district: "Nové Město",
     website: "https://www.bageterieboulevard.cz",
-    description: "Český řetězec bagetérií s bohatou nabídkou vegetariánských a veganských baget. Čerstvé suroviny, pečivo z vlastní pekárny. Vegetariánské bagety tvoří přibližně třetinu nabídky. Dostupné ve více pobočkách po celé Praze.",
-    tags: ["Bagety", "Vegetariánské možnosti", "Veganské možnosti", "Česká firma", "Rychlé občerstvení"],
+    description:
+      "Český řetězec bagetérií s bohatou nabídkou vegetariánských a veganských baget. Čerstvé suroviny, pečivo z vlastní pekárny. Vegetariánské bagety tvoří přibližně třetinu nabídky. Dostupné ve více pobočkách po celé Praze.",
+    tags: [
+      "Bagety",
+      "Vegetariánské možnosti",
+      "Veganské možnosti",
+      "Česká firma",
+      "Rychlé občerstvení",
+    ],
     dietaryOptions: [],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/bageterie-boulevard-thumb-400_f8c2a6c8.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/bageterie-boulevard-thumb-400_f8c2a6c8.webp",
     lat: 50.0815,
     lng: 14.4278,
     priceLevel: 1,
     hours: "Po–Pá 7:00–21:00, So–Ne 8:00–20:00",
     fastFoodItems: [
-      { name: "Caprese bageta", description: "Mozzarella, rajčata, pesto genovese, mascarpone, rukola, balsamico. Vegetariánská.", isVegan: false, price: "129 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/caprese-bageta-thumb_2de34491.webp" },
-      { name: "Švýcarská bageta", description: "Maasdamer, camembert, sýr s modrou plísní, pečené rajče, máslo, grilovaná cibulka, ořechy. Vegetariánská.", isVegan: false, price: "139 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/svycarska-bageta-thumb_7faae822.webp" },
-      { name: "Caprese wrap", description: "Mozzarella, rajčata, pesto genovese, mascarpone, rukola, balsamico v pšeničné tortille. Vegetariánský.", isVegan: false, price: "150 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/caprese-wrap-thumb_ecf66324.webp" },
+      {
+        name: "Caprese bageta",
+        description:
+          "Mozzarella, rajčata, pesto genovese, mascarpone, rukola, balsamico. Vegetariánská.",
+        isVegan: false,
+        price: "129 Kč",
+        image:
+          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/caprese-bageta-thumb_2de34491.webp",
+      },
+      {
+        name: "Švýcarská bageta",
+        description:
+          "Maasdamer, camembert, sýr s modrou plísní, pečené rajče, máslo, grilovaná cibulka, ořechy. Vegetariánská.",
+        isVegan: false,
+        price: "139 Kč",
+        image:
+          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/svycarska-bageta-thumb_7faae822.webp",
+      },
+      {
+        name: "Caprese wrap",
+        description:
+          "Mozzarella, rajčata, pesto genovese, mascarpone, rukola, balsamico v pšeničné tortille. Vegetariánský.",
+        isVegan: false,
+        price: "150 Kč",
+        image:
+          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/caprese-wrap-thumb_ecf66324.webp",
+      },
     ],
   },
   // ── UGO ──
@@ -1765,19 +2177,60 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     address: "Palladium, Náměstí Republiky 1, Praha 1",
     district: "Nové Město",
     website: "https://www.ugo.cz",
-    description: "Czechý řetězec zaměřený na zdravé stravování — fresh džusy, smoothie, saláty a teplá jídla. Většina nabídky je vegetariánská nebo veganská. Oblíbené místo pro zdravý oběd nebo svačinu. Pobočky v nákupních centrech i na ulici.",
-    tags: ["Fresh džusy", "Smoothie", "Saláty", "Zdravé stravování", "Veganské", "Vegetariánské"],
+    description:
+      "Czechý řetězec zaměřený na zdravé stravování — fresh džusy, smoothie, saláty a teplá jídla. Většina nabídky je vegetariánská nebo veganská. Oblíbené místo pro zdravý oběd nebo svačinu. Pobočky v nákupních centrech i na ulici.",
+    tags: [
+      "Fresh džusy",
+      "Smoothie",
+      "Saláty",
+      "Zdravé stravování",
+      "Veganské",
+      "Vegetariánské",
+    ],
     dietaryOptions: ["bezlepkové", "raw"],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/ugo-thumb-400_883ebbf4.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/ugo-thumb-400_883ebbf4.webp",
     lat: 50.0878,
     lng: 14.4312,
     priceLevel: 1,
     hours: "Po–Ne 8:00–21:00",
     fastFoodItems: [
-      { name: "Smoothie bowl", description: "Acai nebo mango základ, granola, čerstvé ovoce, semínka. 100% veganský.", isVegan: true, price: "149 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/smoothie-bowl-thumb_1be292f5.webp" },
-      { name: "Buddha bowl", description: "Quinoa, pečená zelenina, avokádo, cizrna, tahini dresink. 100% veganský.", isVegan: true, price: "169 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/buddha-bowl-thumb_1d6285da.webp" },
-      { name: "Fresh pomerančový džus", description: "100% čerstvě lisovaný pomerančový džus bez přidaného cukru. Veganský.", isVegan: true, price: "79 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/orange-juice-thumb_d86c2d1a.webp" },
-      { name: "Zeleninová polévka", description: "Denně měněná sezónní polévka. Vegetariánská nebo veganská.", isVegan: true, price: "89 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/zeleninova-polevka-thumb_ce4a8a5d.webp" },
+      {
+        name: "Smoothie bowl",
+        description:
+          "Acai nebo mango základ, granola, čerstvé ovoce, semínka. 100% veganský.",
+        isVegan: true,
+        price: "149 Kč",
+        image:
+          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/smoothie-bowl-thumb_1be292f5.webp",
+      },
+      {
+        name: "Buddha bowl",
+        description:
+          "Quinoa, pečená zelenina, avokádo, cizrna, tahini dresink. 100% veganský.",
+        isVegan: true,
+        price: "169 Kč",
+        image:
+          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/buddha-bowl-thumb_1d6285da.webp",
+      },
+      {
+        name: "Fresh pomerančový džus",
+        description:
+          "100% čerstvě lisovaný pomerančový džus bez přidaného cukru. Veganský.",
+        isVegan: true,
+        price: "79 Kč",
+        image:
+          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/orange-juice-thumb_d86c2d1a.webp",
+      },
+      {
+        name: "Zeleninová polévka",
+        description:
+          "Denně měněná sezónní polévka. Vegetariánská nebo veganská.",
+        isVegan: true,
+        price: "89 Kč",
+        image:
+          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/zeleninova-polevka-thumb_ce4a8a5d.webp",
+      },
     ],
   },
   // ── FAST FOOD CHAINS ──
@@ -1785,7 +2238,8 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     id: "ff1",
     name: "Burger King Praha",
     slug: "burger-king-praha",
-    woltUrl: "https://wolt.com/cs/cze/prague/restaurant/burger-king-vaclavske-namesti",
+    woltUrl:
+      "https://wolt.com/cs/cze/prague/restaurant/burger-king-vaclavske-namesti",
     type: "fastfood",
     rating: 3.8,
     reviewCount: 2140,
@@ -1795,20 +2249,56 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 1",
     phone: "+420 222 321 456",
     website: "https://www.burgerking.cz",
-    description: "Burger King nabízejí několik vegetariánských a veganských možností. Rebel Whopper je rostlinný burger na bázi sojového proteinu. Plant-Based Nuggets jsou 100% veganské. Dostupné ve většině poboček v Praze.",
+    description:
+      "Burger King nabízejí několik vegetariánských a veganských možností. Rebel Whopper je rostlinný burger na bázi sojového proteinu. Plant-Based Nuggets jsou 100% veganské. Dostupné ve většině poboček v Praze.",
     tags: ["Fast Food", "Burger", "Rostlinné měso", "Vegan-friendly"],
     dietaryOptions: [],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/burger-king-logo_09874561.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/burger-king-logo_09874561.webp",
     lat: 50.0875,
     lng: 14.4278,
     priceLevel: 1,
     hours: "Po–Ne 9:00–23:00",
     fastFoodItems: [
-      { name: "Rebel Whopper", description: "Rostlinný burger s omeletou, salátem, rajské, cibulí a mayo. Sojový protein, připraven na stejném grilu jako masé burgery.", isVegan: false, price: "149 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/rebel-whopper-thumb_e76b188b.webp" },
-      { name: "Plant-Based Nuggets (9 ks)", description: "100% veganské nugety z hrachého proteinu. Křupavé obalí, šťavnaté uvnitř. Vhodné pro vegany.", isVegan: true, price: "99 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/plant-based-nuggets-thumb_2ad90c11.webp" },
-      { name: "Veggie King", description: "Vegetariánský burger s vejcem, sýrem, salátem a rajské. Klasický burger bez masa.", isVegan: false, price: "129 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veggie-king-thumb_0e9a0443.webp" },
-      { name: "Onion Rings", description: "Cibulkové kroužky v křupavém těstíčku. Veganské přílohy.", isVegan: true, price: "59 Kč" },
-      { name: "Apple Pie", description: "Jablečný závin v křupavém těstě. Veganský dezert.", isVegan: true, price: "39 Kč" },
+      {
+        name: "Rebel Whopper",
+        description:
+          "Rostlinný burger s omeletou, salátem, rajské, cibulí a mayo. Sojový protein, připraven na stejném grilu jako masé burgery.",
+        isVegan: false,
+        price: "149 Kč",
+        image:
+          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/rebel-whopper-thumb_e76b188b.webp",
+      },
+      {
+        name: "Plant-Based Nuggets (9 ks)",
+        description:
+          "100% veganské nugety z hrachého proteinu. Křupavé obalí, šťavnaté uvnitř. Vhodné pro vegany.",
+        isVegan: true,
+        price: "99 Kč",
+        image:
+          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/plant-based-nuggets-thumb_2ad90c11.webp",
+      },
+      {
+        name: "Veggie King",
+        description:
+          "Vegetariánský burger s vejcem, sýrem, salátem a rajské. Klasický burger bez masa.",
+        isVegan: false,
+        price: "129 Kč",
+        image:
+          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veggie-king-thumb_0e9a0443.webp",
+      },
+      {
+        name: "Onion Rings",
+        description: "Cibulkové kroužky v křupavém těstíčku. Veganské přílohy.",
+        isVegan: true,
+        price: "59 Kč",
+      },
+      {
+        name: "Apple Pie",
+        description: "Jablečný závin v křupavém těstě. Veganský dezert.",
+        isVegan: true,
+        price: "39 Kč",
+      },
     ],
   },
 
@@ -1816,7 +2306,8 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     id: "ff3",
     name: "McDonald's Praha",
     slug: "mcdonalds-praha",
-    woltUrl: "https://wolt.com/cs/cze/prague/restaurant/mcdonalds-vaclavske-namesti",
+    woltUrl:
+      "https://wolt.com/cs/cze/prague/restaurant/mcdonalds-vaclavske-namesti",
     type: "fastfood",
     rating: 3.7,
     reviewCount: 3240,
@@ -1826,28 +2317,71 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 1",
     phone: "+420 222 567 890",
     website: "https://www.mcdonalds.cz",
-    description: "McDonald's nabízejí McVeggie burger a McPlant (100% veganský burger na bázi Beyond Meat). Vegetariánské možnosti zahrnují také hranolky, jablkové řízky a různé dezerty.",
+    description:
+      "McDonald's nabízejí McVeggie burger a McPlant (100% veganský burger na bázi Beyond Meat). Vegetariánské možnosti zahrnují také hranolky, jablkové řízky a různé dezerty.",
     tags: ["Fast Food", "Burger", "Beyond Meat", "Vegan-friendly"],
     dietaryOptions: [],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/mcdonalds-logo_78917cae.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/mcdonalds-logo_78917cae.webp",
     lat: 50.0823,
     lng: 14.4248,
     priceLevel: 1,
     hours: "Po–Ne 0:00–24:00",
     fastFoodItems: [
-      { name: "McPlant", description: "100% veganský burger s Beyond Meat placčkou, veganským sýrem a veganským omáčkou. Certifikovaný vegan.", isVegan: true, price: "149 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/mcplant-thumb_7b4c92e8.webp" },
-      { name: "McVeggie", description: "Vegetariánský burger s křupavou zeleninovou placčkou, salátem, rajské a mayo.", isVegan: false, price: "109 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/mcveggie-thumb_fb0318c9.webp" },
-      { name: "Hranolky", description: "Klasické McDonald's hranolky. Veganské (smažené v rostlinném oleji).", isVegan: true, price: "49 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/mcdonalds-fries-thumb_f232d340.webp" },
-      { name: "Apple Slices", description: "Jablečné řízky. Veganský zdravý dezert pro děti i dospělé.", isVegan: true, price: "29 Kč" },
-      { name: "McFlurry Oreo", description: "Zmrzlinový dezert s Oreo sušenkami. Vegetariánský.", isVegan: false, price: "79 Kč" },
-      { name: "Fruit Bag", description: "Ovocný sáček s hrozny a jablečnými řízky. Veganský.", isVegan: true, price: "39 Kč" },
+      {
+        name: "McPlant",
+        description:
+          "100% veganský burger s Beyond Meat placčkou, veganským sýrem a veganským omáčkou. Certifikovaný vegan.",
+        isVegan: true,
+        price: "149 Kč",
+        image:
+          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/mcplant-thumb_7b4c92e8.webp",
+      },
+      {
+        name: "McVeggie",
+        description:
+          "Vegetariánský burger s křupavou zeleninovou placčkou, salátem, rajské a mayo.",
+        isVegan: false,
+        price: "109 Kč",
+        image:
+          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/mcveggie-thumb_fb0318c9.webp",
+      },
+      {
+        name: "Hranolky",
+        description:
+          "Klasické McDonald's hranolky. Veganské (smažené v rostlinném oleji).",
+        isVegan: true,
+        price: "49 Kč",
+        image:
+          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/mcdonalds-fries-thumb_f232d340.webp",
+      },
+      {
+        name: "Apple Slices",
+        description:
+          "Jablečné řízky. Veganský zdravý dezert pro děti i dospělé.",
+        isVegan: true,
+        price: "29 Kč",
+      },
+      {
+        name: "McFlurry Oreo",
+        description: "Zmrzlinový dezert s Oreo sušenkami. Vegetariánský.",
+        isVegan: false,
+        price: "79 Kč",
+      },
+      {
+        name: "Fruit Bag",
+        description: "Ovocný sáček s hrozny a jablečnými řízky. Veganský.",
+        isVegan: true,
+        price: "39 Kč",
+      },
     ],
   },
   {
     id: "ff4",
     name: "Subway Praha",
     slug: "subway-praha",
-    woltUrl: "https://wolt.com/cs/cze/prague/restaurant/subway-vaclavske-namesti",
+    woltUrl:
+      "https://wolt.com/cs/cze/prague/restaurant/subway-vaclavske-namesti",
     type: "fastfood",
     rating: 3.9,
     reviewCount: 1240,
@@ -1857,27 +2391,64 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 1",
     phone: "+420 222 678 901",
     website: "https://www.subway.com/cs-CZ",
-    description: "Subway nabízejí širokou řadu vegetariánských a veganských sendvičů. Možnost výběru chleba, zeleniny a omáček. Veggie Delite je 100% veganský. Dostupné více poboček v Praze.",
+    description:
+      "Subway nabízejí širokou řadu vegetariánských a veganských sendvičů. Možnost výběru chleba, zeleniny a omáček. Veggie Delite je 100% veganský. Dostupné více poboček v Praze.",
     tags: ["Fast Food", "Sendvič", "Vegetariánské", "Vegan-friendly", "Zdravé"],
     dietaryOptions: [],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/subway-logo_1e7b41ae.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/subway-logo_1e7b41ae.webp",
     lat: 50.0854,
     lng: 14.4265,
     priceLevel: 1,
     hours: "Po–Ne 8:00–22:00",
     fastFoodItems: [
-      { name: "Veggie Delite", description: "Sendvič plněný čerstvou zeleninou bez masa. Možnost výběru veganského chleba a omáček. 100% veganský.", isVegan: true, price: "129 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/subway-veggie-delite-thumb_ff3cf959.webp" },
-      { name: "Veggie Patty", description: "Sendvič s vegetariánskou placčkou ze zeleniny a luštěnin. Vegetariánský.", isVegan: false, price: "149 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/subway-veggie-patty-thumb_9f11fd7f.webp" },
-      { name: "Beyond Meatball Marinara", description: "Sendvič s rostlinnými masovými kuličkami Beyond Meat v marinara omáčce. Veganský.", isVegan: true, price: "169 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beyond-meatball-marinara-thumb_57307927.webp" },
-      { name: "Avocado", description: "Přidat avokádo do jakéhokoli sendviče. Veganské.", isVegan: true, price: "29 Kč" },
-      { name: "Chips", description: "Křupavé brámbory. Většina příchutí je veganská.", isVegan: true, price: "39 Kč" },
+      {
+        name: "Veggie Delite",
+        description:
+          "Sendvič plněný čerstvou zeleninou bez masa. Možnost výběru veganského chleba a omáček. 100% veganský.",
+        isVegan: true,
+        price: "129 Kč",
+        image:
+          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/subway-veggie-delite-thumb_ff3cf959.webp",
+      },
+      {
+        name: "Veggie Patty",
+        description:
+          "Sendvič s vegetariánskou placčkou ze zeleniny a luštěnin. Vegetariánský.",
+        isVegan: false,
+        price: "149 Kč",
+        image:
+          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/subway-veggie-patty-thumb_9f11fd7f.webp",
+      },
+      {
+        name: "Beyond Meatball Marinara",
+        description:
+          "Sendvič s rostlinnými masovými kuličkami Beyond Meat v marinara omáčce. Veganský.",
+        isVegan: true,
+        price: "169 Kč",
+        image:
+          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beyond-meatball-marinara-thumb_57307927.webp",
+      },
+      {
+        name: "Avocado",
+        description: "Přidat avokádo do jakéhokoli sendviče. Veganské.",
+        isVegan: true,
+        price: "29 Kč",
+      },
+      {
+        name: "Chips",
+        description: "Křupavé brámbory. Většina příchutí je veganská.",
+        isVegan: true,
+        price: "39 Kč",
+      },
     ],
   },
   {
     id: "ff5",
     name: "Pizza Hut Praha",
     slug: "pizza-hut-praha",
-    woltUrl: "https://wolt.com/cs/cze/prague/restaurant/pizza-hut-vaclavske-namesti",
+    woltUrl:
+      "https://wolt.com/cs/cze/prague/restaurant/pizza-hut-vaclavske-namesti",
     type: "fastfood",
     rating: 3.7,
     reviewCount: 890,
@@ -1887,28 +2458,63 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     district: "Praha 1",
     phone: "+420 222 789 012",
     website: "https://www.pizzahut.cz",
-    description: "Pizza Hut nabízejí veganský sýr na všech pizzách. Vegetariánské pizzy zahrnují Margheritu, Veggie Supreme a Mushroom Lovers. Doručení po celé Praze.",
+    description:
+      "Pizza Hut nabízejí veganský sýr na všech pizzách. Vegetariánské pizzy zahrnují Margheritu, Veggie Supreme a Mushroom Lovers. Doručení po celé Praze.",
     tags: ["Fast Food", "Pizza", "Veganský sýr", "Vegetariánské", "Doručení"],
     dietaryOptions: [],
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pizza-hut-logo_bde18ab4.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pizza-hut-logo_bde18ab4.webp",
     lat: 50.0796,
     lng: 14.4278,
     priceLevel: 2,
     hours: "Po–Ne 11:00–23:00",
     fastFoodItems: [
-      { name: "Margherita (veganský sýr)", description: "Klasická Margherita s rajským protlakem a veganským sýrem. 100% veganská.", isVegan: true, price: "249 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pizza-hut-margherita-thumb_ab7f99bc.webp" },
-      { name: "Veggie Supreme", description: "Pizza s paprikou, houbami, cibulí, olivami a veganským sýrem. Veganská.", isVegan: true, price: "289 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pizza-hut-veggie-supreme-thumb_2eaee646.webp" },
-      { name: "Mushroom Lovers", description: "Pizza s třemi druhy hub a sýrem. Vegetariánská.", isVegan: false, price: "279 Kč", image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pizza-hut-mushroom-lovers-thumb_65e6bbb0.webp" },
-      { name: "Garlic Bread", description: "Cesnekový chleba. Veganský (bez masého másla).", isVegan: true, price: "79 Kč" },
-      { name: "Tiramisu", description: "Klasický italský dezert. Vegetariánský.", isVegan: false, price: "89 Kč" },
+      {
+        name: "Margherita (veganský sýr)",
+        description:
+          "Klasická Margherita s rajským protlakem a veganským sýrem. 100% veganská.",
+        isVegan: true,
+        price: "249 Kč",
+        image:
+          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pizza-hut-margherita-thumb_ab7f99bc.webp",
+      },
+      {
+        name: "Veggie Supreme",
+        description:
+          "Pizza s paprikou, houbami, cibulí, olivami a veganským sýrem. Veganská.",
+        isVegan: true,
+        price: "289 Kč",
+        image:
+          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pizza-hut-veggie-supreme-thumb_2eaee646.webp",
+      },
+      {
+        name: "Mushroom Lovers",
+        description: "Pizza s třemi druhy hub a sýrem. Vegetariánská.",
+        isVegan: false,
+        price: "279 Kč",
+        image:
+          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pizza-hut-mushroom-lovers-thumb_65e6bbb0.webp",
+      },
+      {
+        name: "Garlic Bread",
+        description: "Cesnekový chleba. Veganský (bez masého másla).",
+        isVegan: true,
+        price: "79 Kč",
+      },
+      {
+        name: "Tiramisu",
+        description: "Klasický italský dezert. Vegetariánský.",
+        isVegan: false,
+        price: "89 Kč",
+      },
     ],
   },
-
 ];
 
-const RECIPE_PLACEHOLDER = "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/recipe-hero-kAEk42WS8auJkLKnU8C6NV.webp";
+const RECIPE_PLACEHOLDER =
+  "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/recipe-hero-kAEk42WS8auJkLKnU8C6NV.webp";
 
-export const recipes: Recipe[] = [
+const recipeSource: Recipe[] = [
   {
     id: "r_kulajda_01",
     title: "Pravá Krkonošská Kulajda s Houbami a Vejcem",
@@ -1922,22 +2528,39 @@ export const recipes: Recipe[] = [
     isVegan: false,
     isGlutenFree: false,
     dietaryOptions: [],
-    tags: ["Brambory", "Máslo", "Pšeničná mouka", "Smetana", "Vejce", "Polévky", "Česká bezmasá jídla", "Vegetariánské Recepty"],
+    tags: [
+      "Brambory",
+      "Máslo",
+      "Pšeničná mouka",
+      "Smetana",
+      "Vejce",
+      "Polévky",
+      "Česká bezmasá jídla",
+      "Vegetariánské Recepty",
+    ],
     image: "/images/recipes/kulajda.jpg",
-    images: [{ url: "/images/recipes/kulajda.jpg", alt: "Pravá Krkonošská Kulajda v misce s vejcem, houbami a koprem" }],
-    description: "Pravá krkonošská kulajda s houbami a vejcem je tradiční polévka, která pochází z českého pohoří Krkonoše a je oblíbená pro svou sytou chuť a výživný charakter. Tato polévka je ideálním způsobem, jak si pochutnat na sezónních houbách a vytvořit bohatou a zahřívající večeři.",
+    images: [
+      {
+        url: "/images/recipes/kulajda.jpg",
+        alt: "Pravá Krkonošská Kulajda v misce s vejcem, houbami a koprem",
+      },
+    ],
+    description:
+      "Pravá krkonošská kulajda s houbami a vejcem je tradiční polévka, která pochází z českého pohoří Krkonoše a je oblíbená pro svou sytou chuť a výživný charakter. Tato polévka je ideálním způsobem, jak si pochutnat na sezónních houbách a vytvořit bohatou a zahřívající večeři.",
     storyTitle: "Chuť, která vás přenese do krkonošských chalup",
     story: [
       "Krkonošská kulajda je mnohem víc než jen polévka. Je to symbol pohostinnosti, tradice a lásky k přírodě. Její kořeny sahají hluboko do historie Krkonoš, kde byla po staletí připravována v chalupách z čerstvých surovin. Tato houbová polévka je nejen chutná, ale také výživná a zahřeje vás i v těch nejchladnějších dnech.",
       "Základem pravé krkonošské kulajdy jsou čerstvé houby, nejlépe sbírané přímo v Krkonoších. Brambory dodávají hustotu a zasytí, zatímco kopr dodává svěží vůni. Zakysaná smetana polévku zjemní a dodá jí krémovou konzistenci. A na závěr vejce, uvařené zastřeně, které přidává bohatost.",
-      "Krkonošská kulajda má bohatou historii, která sahá až do středověku. Původně byla připravována jako jednoduchá polévka pro chudé horaly, kteří využívali suroviny, které měli k dispozici. Postupem času se stala oblíbenou pochoutkou všech společenských vrstev."
+      "Krkonošská kulajda má bohatou historii, která sahá až do středověku. Původně byla připravována jako jednoduchá polévka pro chudé horaly, kteří využívali suroviny, které měli k dispozici. Postupem času se stala oblíbenou pochoutkou všech společenských vrstev.",
     ],
     editorialReview: {
-      summary: "Nejúspěšnější tradiční recept z původního VegRecepty.cz! Poctivá krkonošská kulajda vás provoní smetanou, hříbky a čerstvým koprem.",
-      bestFor: "Rodinné obědy, zahřátí v zimních měsících a pro milovníky tradiční české kuchyně bez masa.",
+      summary:
+        "Nejúspěšnější tradiční recept z původního VegRecepty.cz! Poctivá krkonošská kulajda vás provoní smetanou, hříbky a čerstvým koprem.",
+      bestFor:
+        "Rodinné obědy, zahřátí v zimních měsících a pro milovníky tradiční české kuchyně bez masa.",
       highlight: "Orestované houby a dokonalé zastřené vejce.",
-      rating: 10.0
-    }
+      rating: 10.0,
+    },
   },
   {
     id: "r1",
@@ -1948,16 +2571,34 @@ export const recipes: Recipe[] = [
     cookTime: 90,
     servings: 4,
     difficulty: "střední",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-svickova-na-smetane-hlavni-jidlo_0fe2740b.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-svickova-na-smetane-hlavni-jidlo_0fe2740b.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-svickova-na-smetane-hlavni-jidlo_0fe2740b.webp", alt: "Veganská svíčková na smetaně — hotové jídlo se seitanem, houskový knedlík a brusinkový dresink" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-svickova-kremova-omacka-detail_6962c182.webp", alt: "Detail krémové omáčky veganské svíčkové z kořenové zeleniny" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-svickova-suroviny-priprava_a3ca2a3e.webp", alt: "Suroviny na veganskou svíčkovou — kořenová zelenina, seitan, kešu ořechy a brusinky" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-svickova-na-smetane-hlavni-jidlo_0fe2740b.webp",
+        alt: "Veganská svíčková na smetaně — hotové jídlo se seitanem, houskový knedlík a brusinkový dresink",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-svickova-kremova-omacka-detail_6962c182.webp",
+        alt: "Detail krémové omáčky veganské svíčkové z kořenové zeleniny",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-svickova-suroviny-priprava_a3ca2a3e.webp",
+        alt: "Suroviny na veganskou svíčkovou — kořenová zelenina, seitan, kešu ořechy a brusinky",
+      },
     ],
-    description: "Česká klasika konečně bez masa! Připravte si krémovou vegetariánskou i plně veganskou svíčkovou, se seitanem či tempehem místo hovězího.",
+    description:
+      "Česká klasika konečně bez masa! Připravte si krémovou vegetariánskou i plně veganskou svíčkovou, se seitanem či tempehem místo hovězího.",
     tags: ["Česká kuchyně", "Seitan", "Tradiční", "Omáčky", "Svíčková"],
     isVegan: true,
-    macros: { calories: 420, protein: 22, carbs: 48, fiber: 6, fat: 14, sugars: 12 },
+    macros: {
+      calories: 420,
+      protein: 22,
+      carbs: 48,
+      fiber: 6,
+      fat: 14,
+      sugars: 12,
+    },
   },
   {
     id: "r2",
@@ -1968,17 +2609,35 @@ export const recipes: Recipe[] = [
     cookTime: 30,
     servings: 4,
     difficulty: "snadný",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cockova-polevka-uzena-paprika-miska_132d5585.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cockova-polevka-uzena-paprika-miska_132d5585.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cockova-polevka-uzena-paprika-miska_132d5585.webp", alt: "Miska čočkové polévky s uzenou paprikou a chlebem" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cockova-polevka-detail-textura-cocky_b71178dc.webp", alt: "Detail textury čočkové polévky s bylinkami a olivovým olejem" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cockova-polevka-suroviny-na-stole_9683e532.webp", alt: "Suroviny na čočkovou polévku — červená čočka, uzená paprika, cibule a rajčata" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cockova-polevka-uzena-paprika-miska_132d5585.webp",
+        alt: "Miska čočkové polévky s uzenou paprikou a chlebem",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cockova-polevka-detail-textura-cocky_b71178dc.webp",
+        alt: "Detail textury čočkové polévky s bylinkami a olivovým olejem",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cockova-polevka-suroviny-na-stole_9683e532.webp",
+        alt: "Suroviny na čočkovou polévku — červená čočka, uzená paprika, cibule a rajčata",
+      },
     ],
-    description: "Hustá a výživná čočková polévka s kouřovým aroma uzené papriky. Ideální na chladné dny.",
+    description:
+      "Hustá a výživná čočková polévka s kouřovým aroma uzené papriky. Ideální na chladné dny.",
     tags: ["Polévka", "Čočka", "Rychlé"],
     isVegan: true,
     isGlutenFree: true,
-    macros: { calories: 210, protein: 13, carbs: 32, fiber: 9, fat: 3, sugars: 4 },
+    macros: {
+      calories: 210,
+      protein: 13,
+      carbs: 32,
+      fiber: 9,
+      fat: 3,
+      sugars: 4,
+    },
   },
   {
     id: "r3",
@@ -1989,17 +2648,35 @@ export const recipes: Recipe[] = [
     cookTime: 25,
     servings: 2,
     difficulty: "snadný",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/buddha-bowl-pecena-zelenina-barevna-miska_22ddaee1.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/buddha-bowl-pecena-zelenina-barevna-miska_22ddaee1.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/buddha-bowl-pecena-zelenina-barevna-miska_22ddaee1.webp", alt: "Barevná buddha bowl miska s pečenou zeleninou, quinoou a avokádem" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/buddha-bowl-detail-textury-zeleniny_624cb334.webp", alt: "Detail textur buddha bowlu — křupavá cizrna, krémové avokádo a pečená zelenina" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/buddha-bowl-priprava-ingredience_6887656e.webp", alt: "Příprava ingrediencí na buddha bowl — misky s quinoou, zeleninou a tahini" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/buddha-bowl-pecena-zelenina-barevna-miska_22ddaee1.webp",
+        alt: "Barevná buddha bowl miska s pečenou zeleninou, quinoou a avokádem",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/buddha-bowl-detail-textury-zeleniny_624cb334.webp",
+        alt: "Detail textur buddha bowlu — křupavá cizrna, krémové avokádo a pečená zelenina",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/buddha-bowl-priprava-ingredience_6887656e.webp",
+        alt: "Příprava ingrediencí na buddha bowl — misky s quinoou, zeleninou a tahini",
+      },
     ],
-    description: "Barevná miska plná výživy — quinoa, pečená zelenina, avokádo, cizrna a tahini dresink.",
+    description:
+      "Barevná miska plná výživy — quinoa, pečená zelenina, avokádo, cizrna a tahini dresink.",
     tags: ["Bowl", "Quinoa", "Zdravé"],
     isVegan: true,
     isGlutenFree: true,
-    macros: { calories: 380, protein: 14, carbs: 52, fiber: 10, fat: 13, sugars: 8 },
+    macros: {
+      calories: 380,
+      protein: 14,
+      carbs: 52,
+      fiber: 10,
+      fat: 13,
+      sugars: 8,
+    },
   },
   {
     id: "r4",
@@ -2010,16 +2687,34 @@ export const recipes: Recipe[] = [
     cookTime: 60,
     servings: 4,
     difficulty: "střední",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-gulas-s-knedliky-cesky-talir_2cfd8972.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-gulas-s-knedliky-cesky-talir_2cfd8972.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-gulas-s-knedliky-cesky-talir_2cfd8972.webp", alt: "Veganský guláš s houskovými knedlíky na tradičním českém talíři" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-gulas-detail-omacka-houby_3ec9d3d6.webp", alt: "Detail paprikové omáčky veganského guláše s houbami a seitanem" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-gulas-suroviny-na-dreve_ab7d9793.webp", alt: "Suroviny na veganský guláš — houby, seitan, paprika, cibule a kmín" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-gulas-s-knedliky-cesky-talir_2cfd8972.webp",
+        alt: "Veganský guláš s houskovými knedlíky na tradičním českém talíři",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-gulas-detail-omacka-houby_3ec9d3d6.webp",
+        alt: "Detail paprikové omáčky veganského guláše s houbami a seitanem",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-gulas-suroviny-na-dreve_ab7d9793.webp",
+        alt: "Suroviny na veganský guláš — houby, seitan, paprika, cibule a kmín",
+      },
     ],
-    description: "Jak na poctivý guláš bez masa? Ukážeme si nejlepší varianty: houbový pro vůni lesa, fazolový pro rychlou přípravu a seitanový pro klasickou texturu.",
+    description:
+      "Jak na poctivý guláš bez masa? Ukážeme si nejlepší varianty: houbový pro vůni lesa, fazolový pro rychlou přípravu a seitanový pro klasickou texturu.",
     tags: ["Česká kuchyně", "Guláš", "Tradiční", "Omáčky"],
     isVegan: true,
-    macros: { calories: 490, protein: 16, carbs: 72, fiber: 8, fat: 12, sugars: 10 },
+    macros: {
+      calories: 490,
+      protein: 16,
+      carbs: 72,
+      fiber: 8,
+      fat: 12,
+      sugars: 10,
+    },
   },
   {
     id: "r5",
@@ -2030,16 +2725,34 @@ export const recipes: Recipe[] = [
     cookTime: 20,
     servings: 2,
     difficulty: "snadný",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-palacinky-tofu-ricotta-talir_80a4da3d.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-palacinky-tofu-ricotta-talir_80a4da3d.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-palacinky-tofu-ricotta-talir_80a4da3d.webp", alt: "Špenátové palačinky plněné tofu ricottou na bílém talíři" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-palacinky-detail-naplne_782670bc.webp", alt: "Detail krémové tofu ricotta náplně uvnitř špenátové palačinky" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-palacinky-priprava-kuchyne_111cdf12.webp", alt: "Příprava špenátových palačinek v kuchyni — pánev, špenát a tofu ricotta" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-palacinky-tofu-ricotta-talir_80a4da3d.webp",
+        alt: "Špenátové palačinky plněné tofu ricottou na bílém talíři",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-palacinky-detail-naplne_782670bc.webp",
+        alt: "Detail krémové tofu ricotta náplně uvnitř špenátové palačinky",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-palacinky-priprava-kuchyne_111cdf12.webp",
+        alt: "Příprava špenátových palačinek v kuchyni — pánev, špenát a tofu ricotta",
+      },
     ],
-    description: "Zelené špenátové palačinky plněné krémovou tofu ricottou s citronem a čerstvými bylinkami.",
+    description:
+      "Zelené špenátové palačinky plněné krémovou tofu ricottou s citronem a čerstvými bylinkami.",
     tags: ["Snídaně", "Palačinky", "Špenát"],
     isVegan: true,
-    macros: { calories: 310, protein: 16, carbs: 38, fiber: 4, fat: 10, sugars: 5 },
+    macros: {
+      calories: 310,
+      protein: 16,
+      carbs: 38,
+      fiber: 4,
+      fat: 10,
+      sugars: 5,
+    },
   },
   {
     id: "r6",
@@ -2050,16 +2763,34 @@ export const recipes: Recipe[] = [
     cookTime: 35,
     servings: 3,
     difficulty: "střední",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-kesu-parmezan-servir_1c17bb71.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-kesu-parmezan-servir_1c17bb71.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-kesu-parmezan-servir_1c17bb71.webp", alt: "Houbové rizoto s veganským parmezánem z kešu ořechů a čerstvým tymiánem" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-detail-houby-kremove_8426c27a.webp", alt: "Detail krémového houbového rizota s plátky lesních hub" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-suroviny-ingredience_7651caca.webp", alt: "Suroviny na houbové rizoto — arborio rýže, lesní houby, kešu ořechy a tymián" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-kesu-parmezan-servir_1c17bb71.webp",
+        alt: "Houbové rizoto s veganským parmezánem z kešu ořechů a čerstvým tymiánem",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-detail-houby-kremove_8426c27a.webp",
+        alt: "Detail krémového houbového rizota s plátky lesních hub",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-suroviny-ingredience_7651caca.webp",
+        alt: "Suroviny na houbové rizoto — arborio rýže, lesní houby, kešu ořechy a tymián",
+      },
     ],
-    description: "Krémové rizoto s lesními houbami a domácím veganským parmezánem z kešu ořechů.",
+    description:
+      "Krémové rizoto s lesními houbami a domácím veganským parmezánem z kešu ořechů.",
     tags: ["Italská", "Rizoto", "Houby"],
     isVegan: true,
-    macros: { calories: 450, protein: 12, carbs: 62, fiber: 4, fat: 16, sugars: 3 },
+    macros: {
+      calories: 450,
+      protein: 12,
+      carbs: 62,
+      fiber: 4,
+      fat: 16,
+      sugars: 3,
+    },
   },
   // ── NEW SEO-OPTIMIZED RECIPES (r7–r24) ──────────────────────
   // Target keywords: palačinky (50k), bramborový salát (50k), brownies (50k),
@@ -2076,16 +2807,34 @@ export const recipes: Recipe[] = [
     cookTime: 15,
     servings: 4,
     difficulty: "snadný",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganske-palacinky-recept-1_139cd8ea.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganske-palacinky-recept-1_139cd8ea.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganske-palacinky-recept-1_139cd8ea.webp", alt: "Veganské palačinky s čerstvým ovocem a javorovým sirupem na talíři" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganske-palacinky-recept-2_767391fb.webp", alt: "Příprava těsta na veganské palačinky — míchání ingrediencí v misce" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganske-palacinky-recept-3_27d8ee75.webp", alt: "Smažení veganských palačinek na pánvi — zlatavá barva" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganske-palacinky-recept-1_139cd8ea.webp",
+        alt: "Veganské palačinky s čerstvým ovocem a javorovým sirupem na talíři",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganske-palacinky-recept-2_767391fb.webp",
+        alt: "Příprava těsta na veganské palačinky — míchání ingrediencí v misce",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganske-palacinky-recept-3_27d8ee75.webp",
+        alt: "Smažení veganských palačinek na pánvi — zlatavá barva",
+      },
     ],
-    description: "Nadýchané veganské palačinky bez vajec a mléka. Podávané s čerstvým ovocem, javorovým sirupem a kokosovou šlehačkou. Ideální snídaně pro celou rodinu.",
+    description:
+      "Nadýchané veganské palačinky bez vajec a mléka. Podávané s čerstvým ovocem, javorovým sirupem a kokosovou šlehačkou. Ideální snídaně pro celou rodinu.",
     tags: ["Snídaně", "Palačinky", "Ovoce", "Rychlé"],
     isVegan: true,
-    macros: { calories: 220, protein: 6, carbs: 42, fiber: 3, fat: 4, sugars: 18 },
+    macros: {
+      calories: 220,
+      protein: 6,
+      carbs: 42,
+      fiber: 3,
+      fat: 4,
+      sugars: 18,
+    },
   },
   {
     id: "r8",
@@ -2096,17 +2845,35 @@ export const recipes: Recipe[] = [
     cookTime: 25,
     servings: 6,
     difficulty: "snadný",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegetariansky-bramborovy-salat-1_34c89298.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegetariansky-bramborovy-salat-1_34c89298.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegetariansky-bramborovy-salat-1_34c89298.webp", alt: "Vegetariánský bramborový salát v míse — tradiční český recept bez masa" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegetariansky-bramborovy-salat-2_7aa3e080.webp", alt: "Detail bramborového salátu s nakládanými okurkami a majonézou" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegetariansky-bramborovy-salat-3_e71ef266.webp", alt: "Suroviny na vegetariánský bramborový salát — brambory, mrkev, hrášek, okurky" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegetariansky-bramborovy-salat-1_34c89298.webp",
+        alt: "Vegetariánský bramborový salát v míse — tradiční český recept bez masa",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegetariansky-bramborovy-salat-2_7aa3e080.webp",
+        alt: "Detail bramborového salátu s nakládanými okurkami a majonézou",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegetariansky-bramborovy-salat-3_e71ef266.webp",
+        alt: "Suroviny na vegetariánský bramborový salát — brambory, mrkev, hrášek, okurky",
+      },
     ],
-    description: "Tradiční český bramborový salát v bezmasé verzi. Krémový, s nakládanými okurkami, mrkví a hráškem. Ideální příloha ke svátečnímu stolu nebo na piknik.",
+    description:
+      "Tradiční český bramborový salát v bezmasé verzi. Krémový, s nakládanými okurkami, mrkví a hráškem. Ideální příloha ke svátečnímu stolu nebo na piknik.",
     tags: ["Salát", "Brambory", "Česká kuchyně", "Sváteční"],
     isVegan: false,
     isGlutenFree: true,
-    macros: { calories: 290, protein: 8, carbs: 38, fiber: 4, fat: 12, sugars: 5 },
+    macros: {
+      calories: 290,
+      protein: 8,
+      carbs: 38,
+      fiber: 4,
+      fat: 12,
+      sugars: 5,
+    },
   },
   {
     id: "r9",
@@ -2117,17 +2884,35 @@ export const recipes: Recipe[] = [
     cookTime: 25,
     servings: 12,
     difficulty: "snadný",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganske-brownies-cokoladove-1_0992400b.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganske-brownies-cokoladove-1_0992400b.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganske-brownies-cokoladove-1_0992400b.webp", alt: "Veganské čokoládové brownies nakrájené na čtverečky na prkénku" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganske-brownies-cokoladove-2_e1c0254a.webp", alt: "Detail veganského brownie — vlhká čokoládová textura s ořechy" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganske-brownies-cokoladove-3_40904c10.webp", alt: "Příprava těsta na veganské brownies — míchání kakaa a mouky" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganske-brownies-cokoladove-1_0992400b.webp",
+        alt: "Veganské čokoládové brownies nakrájené na čtverečky na prkénku",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganske-brownies-cokoladove-2_e1c0254a.webp",
+        alt: "Detail veganského brownie — vlhká čokoládová textura s ořechy",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganske-brownies-cokoladove-3_40904c10.webp",
+        alt: "Příprava těsta na veganské brownies — míchání kakaa a mouky",
+      },
     ],
-    description: "Neodolatelné čokoládové brownies bez vajec a másla. Vlhké, intenzivně čokoládové a s křupavou kůrkou. Nikdo nepozná, že jsou veganské!",
+    description:
+      "Neodolatelné čokoládové brownies bez vajec a másla. Vlhké, intenzivně čokoládové a s křupavou kůrkou. Nikdo nepozná, že jsou veganské!",
     tags: ["Dezert", "Čokoláda", "Brownies", "Pečení"],
     isVegan: true,
     isGlutenFree: true,
-    macros: { calories: 310, protein: 5, carbs: 40, fiber: 4, fat: 16, sugars: 28 },
+    macros: {
+      calories: 310,
+      protein: 5,
+      carbs: 40,
+      fiber: 4,
+      fat: 16,
+      sugars: 28,
+    },
   },
   {
     id: "r10",
@@ -2138,16 +2923,34 @@ export const recipes: Recipe[] = [
     cookTime: 30,
     servings: 4,
     difficulty: "střední",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-s-parmazanem-1_31f82fa5.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-s-parmazanem-1_31f82fa5.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-s-parmazanem-1_31f82fa5.webp", alt: "Krémové houbové rizoto s veganským parmezánem a čerstvým tymiánem" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-s-parmazanem-2_bfb8e4b6.webp", alt: "Detail houbového rizota — arborio rýže s lesními houbami" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-s-parmazanem-3_2491cde6.webp", alt: "Suroviny na houbové rizoto — houby, arborio rýže, bílé víno, tymián" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-s-parmazanem-1_31f82fa5.webp",
+        alt: "Krémové houbové rizoto s veganským parmezánem a čerstvým tymiánem",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-s-parmazanem-2_bfb8e4b6.webp",
+        alt: "Detail houbového rizota — arborio rýže s lesními houbami",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-s-parmazanem-3_2491cde6.webp",
+        alt: "Suroviny na houbové rizoto — houby, arborio rýže, bílé víno, tymián",
+      },
     ],
-    description: "Luxusní krémové rizoto s lesními houbami a domácím veganským parmezánem z kešu. Italská klasika v rostlinné verzi, která chutná božsky.",
+    description:
+      "Luxusní krémové rizoto s lesními houbami a domácím veganským parmezánem z kešu. Italská klasika v rostlinné verzi, která chutná božsky.",
     tags: ["Italská", "Rizoto", "Houby", "Hlavní jídlo"],
     isVegan: true,
-    macros: { calories: 420, protein: 11, carbs: 60, fiber: 3, fat: 14, sugars: 4 },
+    macros: {
+      calories: 420,
+      protein: 11,
+      carbs: 60,
+      fiber: 3,
+      fat: 14,
+      sugars: 4,
+    },
   },
   {
     id: "r11",
@@ -2158,16 +2961,34 @@ export const recipes: Recipe[] = [
     cookTime: 50,
     servings: 10,
     difficulty: "snadný",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-babovka-cokoladova-1_9deb75a4.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-babovka-cokoladova-1_9deb75a4.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-babovka-cokoladova-1_9deb75a4.webp", alt: "Veganská čokoládová bábovka s polevou na talíři" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-babovka-cokoladova-2_5b6d333f.webp", alt: "Řez veganskou bábovkou — vláčná čokoládová textura" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-babovka-cokoladova-3_15c7156d.webp", alt: "Příprava veganské bábovky — míchání těsta v míse" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-babovka-cokoladova-1_9deb75a4.webp",
+        alt: "Veganská čokoládová bábovka s polevou na talíři",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-babovka-cokoladova-2_5b6d333f.webp",
+        alt: "Řez veganskou bábovkou — vláčná čokoládová textura",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-babovka-cokoladova-3_15c7156d.webp",
+        alt: "Příprava veganské bábovky — míchání těsta v míse",
+      },
     ],
-    description: "Vláčná čokoládová bábovka bez vajec a másla. Jednoduchý recept s bohatou čokoládovou chutí a lesklou polevou. Perfektní ke kávě.",
+    description:
+      "Vláčná čokoládová bábovka bez vajec a másla. Jednoduchý recept s bohatou čokoládovou chutí a lesklou polevou. Perfektní ke kávě.",
     tags: ["Dezert", "Bábovka", "Čokoláda", "Pečení"],
     isVegan: true,
-    macros: { calories: 340, protein: 5, carbs: 52, fiber: 3, fat: 13, sugars: 30 },
+    macros: {
+      calories: 340,
+      protein: 5,
+      carbs: 52,
+      fiber: 3,
+      fat: 13,
+      sugars: 30,
+    },
   },
   {
     id: "r12",
@@ -2178,16 +2999,34 @@ export const recipes: Recipe[] = [
     cookTime: 15,
     servings: 2,
     difficulty: "střední",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-pad-thai-tofu-1_64db4e8f.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-pad-thai-tofu-1_64db4e8f.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-pad-thai-tofu-1_64db4e8f.webp", alt: "Veganský pad thai s křupavým tofu a arašídy v misce" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-pad-thai-tofu-2_3fd91944.webp", alt: "Detail pad thai nudlí s tamarindovou omáčkou a limetkou" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-pad-thai-tofu-3_2aeab09b.webp", alt: "Příprava veganského pad thai — wok s nudlemi a zeleninou" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-pad-thai-tofu-1_64db4e8f.webp",
+        alt: "Veganský pad thai s křupavým tofu a arašídy v misce",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-pad-thai-tofu-2_3fd91944.webp",
+        alt: "Detail pad thai nudlí s tamarindovou omáčkou a limetkou",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-pad-thai-tofu-3_2aeab09b.webp",
+        alt: "Příprava veganského pad thai — wok s nudlemi a zeleninou",
+      },
     ],
-    description: "Autentický thajský pad thai v rostlinné verzi s křupavým tofu, rýžovými nudlemi a domácí tamarindovou omáčkou. Rychlé a plné chutí.",
+    description:
+      "Autentický thajský pad thai v rostlinné verzi s křupavým tofu, rýžovými nudlemi a domácí tamarindovou omáčkou. Rychlé a plné chutí.",
     tags: ["Asijská", "Thajská", "Tofu", "Nudle"],
     isVegan: true,
-    macros: { calories: 480, protein: 20, carbs: 58, fiber: 5, fat: 18, sugars: 8 },
+    macros: {
+      calories: 480,
+      protein: 20,
+      carbs: 58,
+      fiber: 5,
+      fat: 18,
+      sugars: 8,
+    },
   },
   {
     id: "r13",
@@ -2198,16 +3037,34 @@ export const recipes: Recipe[] = [
     cookTime: 15,
     servings: 4,
     difficulty: "střední",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/domaci-vegetarianska-pizza-1_8ac3d05a.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/domaci-vegetarianska-pizza-1_8ac3d05a.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/domaci-vegetarianska-pizza-1_8ac3d05a.webp", alt: "Domácí vegetariánská pizza s čerstvou zeleninou a mozzarellou" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/domaci-vegetarianska-pizza-2_3071ba71.webp", alt: "Příprava těsta na domácí pizzu — hnětení a tvarování" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/domaci-vegetarianska-pizza-3_9f91afc6.webp", alt: "Vegetariánská pizza v peci — křupavý okraj a rozteklý sýr" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/domaci-vegetarianska-pizza-1_8ac3d05a.webp",
+        alt: "Domácí vegetariánská pizza s čerstvou zeleninou a mozzarellou",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/domaci-vegetarianska-pizza-2_3071ba71.webp",
+        alt: "Příprava těsta na domácí pizzu — hnětení a tvarování",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/domaci-vegetarianska-pizza-3_9f91afc6.webp",
+        alt: "Vegetariánská pizza v peci — křupavý okraj a rozteklý sýr",
+      },
     ],
-    description: "Domácí pizza s křupavým těstem, rajčatovou omáčkou a bohatou zeleninovou náplní. Jednoduchý recept na dokonalou vegetariánskou pizzu.",
+    description:
+      "Domácí pizza s křupavým těstem, rajčatovou omáčkou a bohatou zeleninovou náplní. Jednoduchý recept na dokonalou vegetariánskou pizzu.",
     tags: ["Italská", "Pizza", "Zelenina", "Domácí"],
     isVegan: false,
-    macros: { calories: 520, protein: 18, carbs: 72, fiber: 6, fat: 16, sugars: 9 },
+    macros: {
+      calories: 520,
+      protein: 18,
+      carbs: 72,
+      fiber: 6,
+      fat: 16,
+      sugars: 9,
+    },
   },
   {
     id: "r14",
@@ -2218,17 +3075,35 @@ export const recipes: Recipe[] = [
     cookTime: 0,
     servings: 8,
     difficulty: "střední",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-cheesecake-boruvky-1_35845e39.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-cheesecake-boruvky-1_35845e39.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-cheesecake-boruvky-1_35845e39.webp", alt: "Veganský cheesecake s borůvkovou polevou na talíři" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-cheesecake-boruvky-2_4bbe6e4a.webp", alt: "Řez veganským cheesecakem — krémová kešu náplň a sušenková spodní vrstva" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-cheesecake-boruvky-3_1983f24c.webp", alt: "Příprava veganského cheesecaku — mixování kešu krému" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-cheesecake-boruvky-1_35845e39.webp",
+        alt: "Veganský cheesecake s borůvkovou polevou na talíři",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-cheesecake-boruvky-2_4bbe6e4a.webp",
+        alt: "Řez veganským cheesecakem — krémová kešu náplň a sušenková spodní vrstva",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-cheesecake-boruvky-3_1983f24c.webp",
+        alt: "Příprava veganského cheesecaku — mixování kešu krému",
+      },
     ],
-    description: "Luxusní raw veganský cheesecake s krémovou kešu náplní a borůvkovou polevou. Bez pečení, bez cukru, plný chutí. Dokonalý dezert pro každou příležitost.",
+    description:
+      "Luxusní raw veganský cheesecake s krémovou kešu náplní a borůvkovou polevou. Bez pečení, bez cukru, plný chutí. Dokonalý dezert pro každou příležitost.",
     tags: ["Dezert", "Cheesecake", "Raw", "Borůvky"],
     isVegan: true,
     isGlutenFree: true,
-    macros: { calories: 380, protein: 8, carbs: 32, fiber: 3, fat: 26, sugars: 22 },
+    macros: {
+      calories: 380,
+      protein: 8,
+      carbs: 32,
+      fiber: 3,
+      fat: 26,
+      sugars: 22,
+    },
   },
   {
     id: "r15",
@@ -2239,16 +3114,34 @@ export const recipes: Recipe[] = [
     cookTime: 10,
     servings: 4,
     difficulty: "snadný",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tortilla-grilovana-zelenina-1_76225e56.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tortilla-grilovana-zelenina-1_76225e56.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tortilla-grilovana-zelenina-1_76225e56.webp", alt: "Tortilla wrap s grilovanou zeleninou, hummusem a čerstvými bylinkami" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tortilla-grilovana-zelenina-2_78625efe.webp", alt: "Detail tortilly — grilovaná paprika, cuketa a avokádo" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tortilla-grilovana-zelenina-3_49591b2b.webp", alt: "Příprava tortilly s grilovanou zeleninou — plnění a rolování" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tortilla-grilovana-zelenina-1_76225e56.webp",
+        alt: "Tortilla wrap s grilovanou zeleninou, hummusem a čerstvými bylinkami",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tortilla-grilovana-zelenina-2_78625efe.webp",
+        alt: "Detail tortilly — grilovaná paprika, cuketa a avokádo",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tortilla-grilovana-zelenina-3_49591b2b.webp",
+        alt: "Příprava tortilly s grilovanou zeleninou — plnění a rolování",
+      },
     ],
-    description: "Křupavá tortilla plněná grilovanou zeleninou, domácím hummusem a čerstvými bylinkami. Rychlý a výživný oběd nebo svačina.",
+    description:
+      "Křupavá tortilla plněná grilovanou zeleninou, domácím hummusem a čerstvými bylinkami. Rychlý a výživný oběd nebo svačina.",
     tags: ["Mexická", "Tortilla", "Grilování", "Rychlé"],
     isVegan: true,
-    macros: { calories: 340, protein: 10, carbs: 48, fiber: 7, fat: 12, sugars: 6 },
+    macros: {
+      calories: 340,
+      protein: 10,
+      carbs: 48,
+      fiber: 7,
+      fat: 12,
+      sugars: 6,
+    },
   },
   {
     id: "r16",
@@ -2259,16 +3152,34 @@ export const recipes: Recipe[] = [
     cookTime: 55,
     servings: 8,
     difficulty: "snadný",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/bananovy-chleb-banana-bread-1_41c76e3c.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/bananovy-chleb-banana-bread-1_41c76e3c.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/bananovy-chleb-banana-bread-1_41c76e3c.webp", alt: "Veganský banánový chléb nakrájený na plátky na dřevěném prkénku" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/bananovy-chleb-banana-bread-2_aad010a5.webp", alt: "Detail banánového chleba — vláčná textura s kousky vlašských ořechů" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/bananovy-chleb-banana-bread-3_16bff2e6.webp", alt: "Suroviny na banánový chléb — zralé banány, mouka, ořechy a koření" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/bananovy-chleb-banana-bread-1_41c76e3c.webp",
+        alt: "Veganský banánový chléb nakrájený na plátky na dřevěném prkénku",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/bananovy-chleb-banana-bread-2_aad010a5.webp",
+        alt: "Detail banánového chleba — vláčná textura s kousky vlašských ořechů",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/bananovy-chleb-banana-bread-3_16bff2e6.webp",
+        alt: "Suroviny na banánový chléb — zralé banány, mouka, ořechy a koření",
+      },
     ],
-    description: "Vláčný banánový chléb bez vajec a másla. Přirozeně sladký díky zralým banánům, s vlašskými ořechy a špetkou skořice. Ideální ke snídani nebo svačině.",
+    description:
+      "Vláčný banánový chléb bez vajec a másla. Přirozeně sladký díky zralým banánům, s vlašskými ořechy a špetkou skořice. Ideální ke snídani nebo svačině.",
     tags: ["Dezert", "Banán", "Pečení", "Snídaně"],
     isVegan: true,
-    macros: { calories: 290, protein: 5, carbs: 50, fiber: 3, fat: 9, sugars: 24 },
+    macros: {
+      calories: 290,
+      protein: 5,
+      carbs: 50,
+      fiber: 3,
+      fat: 9,
+      sugars: 24,
+    },
   },
   {
     id: "r17",
@@ -2279,17 +3190,35 @@ export const recipes: Recipe[] = [
     cookTime: 0,
     servings: 2,
     difficulty: "snadný",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/smoothie-bowl-ovoce-granola-1_96e77639.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/smoothie-bowl-ovoce-granola-1_96e77639.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/smoothie-bowl-ovoce-granola-1_96e77639.webp", alt: "Smoothie bowl s čerstvým ovocem, granolou a kokosem v misce" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/smoothie-bowl-ovoce-granola-2_e797df42.webp", alt: "Detail smoothie bowlu — borůvky, banán, chia semínka a med" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/smoothie-bowl-ovoce-granola-3_1cfa3c1d.webp", alt: "Příprava smoothie bowlu — mixování ovoce a zdobení toppingy" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/smoothie-bowl-ovoce-granola-1_96e77639.webp",
+        alt: "Smoothie bowl s čerstvým ovocem, granolou a kokosem v misce",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/smoothie-bowl-ovoce-granola-2_e797df42.webp",
+        alt: "Detail smoothie bowlu — borůvky, banán, chia semínka a med",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/smoothie-bowl-ovoce-granola-3_1cfa3c1d.webp",
+        alt: "Příprava smoothie bowlu — mixování ovoce a zdobení toppingy",
+      },
     ],
-    description: "Barevná a výživná smoothie bowl s mixovaným ovocem, domácí granolou, kokosovými chipsy a chia semínky. Perfektní start do dne.",
+    description:
+      "Barevná a výživná smoothie bowl s mixovaným ovocem, domácí granolou, kokosovými chipsy a chia semínky. Perfektní start do dne.",
     tags: ["Snídaně", "Smoothie", "Ovoce", "Zdravé"],
     isVegan: true,
     isGlutenFree: true,
-    macros: { calories: 320, protein: 9, carbs: 58, fiber: 8, fat: 7, sugars: 32 },
+    macros: {
+      calories: 320,
+      protein: 9,
+      carbs: 58,
+      fiber: 8,
+      fat: 7,
+      sugars: 32,
+    },
   },
   {
     id: "r18",
@@ -2300,17 +3229,35 @@ export const recipes: Recipe[] = [
     cookTime: 25,
     servings: 4,
     difficulty: "snadný",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatova-polevka-brambory-1_114b941f.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatova-polevka-brambory-1_114b941f.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatova-polevka-brambory-1_114b941f.webp", alt: "Krémová špenátová polévka s brambory v misce s kapkou smetany" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatova-polevka-brambory-2_38529bf4.webp", alt: "Detail špenátové polévky — sytě zelená barva s krutony" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatova-polevka-brambory-3_4fac738f.webp", alt: "Suroviny na špenátovou polévku — čerstvý špenát, brambory, česnek" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatova-polevka-brambory-1_114b941f.webp",
+        alt: "Krémová špenátová polévka s brambory v misce s kapkou smetany",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatova-polevka-brambory-2_38529bf4.webp",
+        alt: "Detail špenátové polévky — sytě zelená barva s krutony",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatova-polevka-brambory-3_4fac738f.webp",
+        alt: "Suroviny na špenátovou polévku — čerstvý špenát, brambory, česnek",
+      },
     ],
-    description: "Krémová špenátová polévka s brambory a česnekem. Sytá, výživná a plná železa. Klasika české kuchyně v lehké vegetariánské verzi.",
+    description:
+      "Krémová špenátová polévka s brambory a česnekem. Sytá, výživná a plná železa. Klasika české kuchyně v lehké vegetariánské verzi.",
     tags: ["Polévka", "Špenát", "Brambory", "Česká kuchyně"],
     isVegan: false,
     isGlutenFree: true,
-    macros: { calories: 180, protein: 7, carbs: 24, fiber: 4, fat: 6, sugars: 4 },
+    macros: {
+      calories: 180,
+      protein: 7,
+      carbs: 24,
+      fiber: 4,
+      fat: 6,
+      sugars: 4,
+    },
   },
   {
     id: "r19",
@@ -2321,17 +3268,35 @@ export const recipes: Recipe[] = [
     cookTime: 25,
     servings: 4,
     difficulty: "snadný",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kvetakova-polevka-zazvor-1_ad157bb7.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kvetakova-polevka-zazvor-1_ad157bb7.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kvetakova-polevka-zazvor-1_ad157bb7.webp", alt: "Krémová květáková polévka se zázvorem a pečeným květákem navrch" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kvetakova-polevka-zazvor-2_59388acd.webp", alt: "Detail květákové polévky — hedvábná textura s dýňovým olejem" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kvetakova-polevka-zazvor-3_5f488d82.webp", alt: "Suroviny na květákovou polévku — květák, zázvor, cibule, kokosové mléko" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kvetakova-polevka-zazvor-1_ad157bb7.webp",
+        alt: "Krémová květáková polévka se zázvorem a pečeným květákem navrch",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kvetakova-polevka-zazvor-2_59388acd.webp",
+        alt: "Detail květákové polévky — hedvábná textura s dýňovým olejem",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kvetakova-polevka-zazvor-3_5f488d82.webp",
+        alt: "Suroviny na květákovou polévku — květák, zázvor, cibule, kokosové mléko",
+      },
     ],
-    description: "Hedvábně krémová květáková polévka s jemným zázvorem a kokosovým mlékem. Lehká, zahřívající a plná chutí. Ideální na chladné dny.",
+    description:
+      "Hedvábně krémová květáková polévka s jemným zázvorem a kokosovým mlékem. Lehká, zahřívající a plná chutí. Ideální na chladné dny.",
     tags: ["Polévka", "Květák", "Zázvor", "Zdravé"],
     isVegan: true,
     isGlutenFree: true,
-    macros: { calories: 160, protein: 4, carbs: 18, fiber: 5, fat: 8, sugars: 6 },
+    macros: {
+      calories: 160,
+      protein: 4,
+      carbs: 18,
+      fiber: 5,
+      fat: 8,
+      sugars: 6,
+    },
   },
   {
     id: "r20",
@@ -2342,17 +3307,35 @@ export const recipes: Recipe[] = [
     cookTime: 25,
     servings: 4,
     difficulty: "snadný",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cizrnove-curry-kokosove-mleko-1_e91d2994.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cizrnove-curry-kokosove-mleko-1_e91d2994.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cizrnove-curry-kokosove-mleko-1_e91d2994.webp", alt: "Cizrnové curry s kokosovým mlékem a rýží v misce" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cizrnove-curry-kokosove-mleko-2_1d4be672.webp", alt: "Detail cizrnového curry — krémová omáčka s koriandrem" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cizrnove-curry-kokosove-mleko-3_1c03b8da.webp", alt: "Suroviny na cizrnové curry — cizrna, kokosové mléko, rajčata, koření" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cizrnove-curry-kokosove-mleko-1_e91d2994.webp",
+        alt: "Cizrnové curry s kokosovým mlékem a rýží v misce",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cizrnove-curry-kokosove-mleko-2_1d4be672.webp",
+        alt: "Detail cizrnového curry — krémová omáčka s koriandrem",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cizrnove-curry-kokosove-mleko-3_1c03b8da.webp",
+        alt: "Suroviny na cizrnové curry — cizrna, kokosové mléko, rajčata, koření",
+      },
     ],
-    description: "Aromatické indické curry s cizrnou v krémové kokosové omáčce. Jednoduché, rychlé a neuvěřitelně chutné. Podávejte s basmati rýží a čerstvým koriandrem.",
+    description:
+      "Aromatické indické curry s cizrnou v krémové kokosové omáčce. Jednoduché, rychlé a neuvěřitelně chutné. Podávejte s basmati rýží a čerstvým koriandrem.",
     tags: ["Indická", "Curry", "Cizrna", "Kokos"],
     isVegan: true,
     isGlutenFree: true,
-    macros: { calories: 390, protein: 14, carbs: 44, fiber: 10, fat: 18, sugars: 7 },
+    macros: {
+      calories: 390,
+      protein: 14,
+      carbs: 44,
+      fiber: 10,
+      fat: 18,
+      sugars: 7,
+    },
   },
   {
     id: "r21",
@@ -2363,18 +3346,36 @@ export const recipes: Recipe[] = [
     cookTime: 10,
     servings: 2,
     difficulty: "snadný",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tofu-stir-fry-zelenina-1_8ff0e75d.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tofu-stir-fry-zelenina-1_8ff0e75d.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tofu-stir-fry-zelenina-1_8ff0e75d.webp", alt: "Tofu stir-fry s barevnou zeleninou ve woku" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tofu-stir-fry-zelenina-2_c9639675.webp", alt: "Detail křupavého tofu se sezamem a sójovou omáčkou" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tofu-stir-fry-zelenina-3_b3942374.webp", alt: "Příprava tofu stir-fry — smažení ve woku s paprikou a brokolicí" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tofu-stir-fry-zelenina-1_8ff0e75d.webp",
+        alt: "Tofu stir-fry s barevnou zeleninou ve woku",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tofu-stir-fry-zelenina-2_c9639675.webp",
+        alt: "Detail křupavého tofu se sezamem a sójovou omáčkou",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tofu-stir-fry-zelenina-3_b3942374.webp",
+        alt: "Příprava tofu stir-fry — smažení ve woku s paprikou a brokolicí",
+      },
     ],
-    description: "Rychlý a zdravý stir-fry s křupavým tofu a barevnou zeleninou v pikantní sójovo-zázvorové omáčce. Hotovo za 25 minut.",
+    description:
+      "Rychlý a zdravý stir-fry s křupavým tofu a barevnou zeleninou v pikantní sójovo-zázvorové omáčce. Hotovo za 25 minut.",
     tags: ["Asijská", "Tofu", "Wok", "Rychlé"],
     isVegan: true,
     isGlutenFree: true,
     isKeto: true,
-    macros: { calories: 280, protein: 18, carbs: 16, fiber: 6, fat: 16, sugars: 5 },
+    macros: {
+      calories: 280,
+      protein: 18,
+      carbs: 16,
+      fiber: 6,
+      fat: 16,
+      sugars: 5,
+    },
   },
   {
     id: "r22",
@@ -2385,17 +3386,35 @@ export const recipes: Recipe[] = [
     cookTime: 30,
     servings: 4,
     difficulty: "snadný",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/mexicke-fazole-ryze-1_a4b8d6fb.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/mexicke-fazole-ryze-1_a4b8d6fb.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/mexicke-fazole-ryze-1_a4b8d6fb.webp", alt: "Mexické fazole s rýží, avokádem a limetkou v misce" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/mexicke-fazole-ryze-2_808622ef.webp", alt: "Detail mexických fazolí — rajčatová omáčka s kukuřicí a paprikou" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/mexicke-fazole-ryze-3_e068aa50.webp", alt: "Suroviny na mexické fazole — černé fazole, rajčata, kukuřice, koření" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/mexicke-fazole-ryze-1_a4b8d6fb.webp",
+        alt: "Mexické fazole s rýží, avokádem a limetkou v misce",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/mexicke-fazole-ryze-2_808622ef.webp",
+        alt: "Detail mexických fazolí — rajčatová omáčka s kukuřicí a paprikou",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/mexicke-fazole-ryze-3_e068aa50.webp",
+        alt: "Suroviny na mexické fazole — černé fazole, rajčata, kukuřice, koření",
+      },
     ],
-    description: "Pikantní mexické fazole v rajčatové omáčce s kukuřicí, paprikou a koriandrem. Podávané s rýží a avokádem. Sytý a výživný bezmasý oběd.",
+    description:
+      "Pikantní mexické fazole v rajčatové omáčce s kukuřicí, paprikou a koriandrem. Podávané s rýží a avokádem. Sytý a výživný bezmasý oběd.",
     tags: ["Mexická", "Fazole", "Rýže", "Pikantní"],
     isVegan: true,
     isGlutenFree: true,
-    macros: { calories: 360, protein: 15, carbs: 58, fiber: 12, fat: 6, sugars: 5 },
+    macros: {
+      calories: 360,
+      protein: 15,
+      carbs: 58,
+      fiber: 12,
+      fat: 6,
+      sugars: 5,
+    },
   },
   {
     id: "r23",
@@ -2406,16 +3425,34 @@ export const recipes: Recipe[] = [
     cookTime: 15,
     servings: 2,
     difficulty: "snadný",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-testoviny-ricotta-1_14bb37c3.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-testoviny-ricotta-1_14bb37c3.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-testoviny-ricotta-1_14bb37c3.webp", alt: "Špenátové těstoviny s ricottou a parmezánem na talíři" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-testoviny-ricotta-2_07559177.webp", alt: "Detail špenátových těstovin — krémová omáčka s čerstvým špenátem" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-testoviny-ricotta-3_56647e06.webp", alt: "Příprava špenátových těstovin — míchání ricotty se špenátem v pánvi" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-testoviny-ricotta-1_14bb37c3.webp",
+        alt: "Špenátové těstoviny s ricottou a parmezánem na talíři",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-testoviny-ricotta-2_07559177.webp",
+        alt: "Detail špenátových těstovin — krémová omáčka s čerstvým špenátem",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-testoviny-ricotta-3_56647e06.webp",
+        alt: "Příprava špenátových těstovin — míchání ricotty se špenátem v pánvi",
+      },
     ],
-    description: "Rychlé krémové těstoviny s čerstvým špenátem a ricottou. Jednoduchý italský recept, který zvládnete za 25 minut. Ideální na rychlý oběd.",
+    description:
+      "Rychlé krémové těstoviny s čerstvým špenátem a ricottou. Jednoduchý italský recept, který zvládnete za 25 minut. Ideální na rychlý oběd.",
     tags: ["Italská", "Těstoviny", "Špenát", "Rychlé"],
     isVegan: false,
-    macros: { calories: 440, protein: 16, carbs: 62, fiber: 5, fat: 14, sugars: 4 },
+    macros: {
+      calories: 440,
+      protein: 16,
+      carbs: 62,
+      fiber: 5,
+      fat: 14,
+      sugars: 4,
+    },
   },
   {
     id: "r24",
@@ -2426,17 +3463,35 @@ export const recipes: Recipe[] = [
     cookTime: 20,
     servings: 4,
     difficulty: "snadný",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hraskova-polevka-mata-1_5fadcd06.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hraskova-polevka-mata-1_5fadcd06.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hraskova-polevka-mata-1_5fadcd06.webp", alt: "Krémová hráškova polévka s mátou a kapkou olivového oleje" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hraskova-polevka-mata-2_c89f6376.webp", alt: "Detail hráškové polévky — sytě zelená barva s krutony" },
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hraskova-polevka-mata-3_239744d7.webp", alt: "Suroviny na hráškovou polévku — hrášek, máta, cibule, česnek" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hraskova-polevka-mata-1_5fadcd06.webp",
+        alt: "Krémová hráškova polévka s mátou a kapkou olivového oleje",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hraskova-polevka-mata-2_c89f6376.webp",
+        alt: "Detail hráškové polévky — sytě zelená barva s krutony",
+      },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hraskova-polevka-mata-3_239744d7.webp",
+        alt: "Suroviny na hráškovou polévku — hrášek, máta, cibule, česnek",
+      },
     ],
-    description: "Svěží a krémová hráškova polévka s čerstvou mátou. Sytě zelená, plná vitamínů a neuvěřitelně jednoduchá na přípravu. Skvělá teplá i studená.",
+    description:
+      "Svěží a krémová hráškova polévka s čerstvou mátou. Sytě zelená, plná vitamínů a neuvěřitelně jednoduchá na přípravu. Skvělá teplá i studená.",
     tags: ["Polévka", "Hrášek", "Máta", "Zdravé"],
     isVegan: true,
     isGlutenFree: true,
-    macros: { calories: 170, protein: 9, carbs: 26, fiber: 7, fat: 3, sugars: 8 },
+    macros: {
+      calories: 170,
+      protein: 9,
+      carbs: 26,
+      fiber: 7,
+      fat: 3,
+      sugars: 8,
+    },
   },
   {
     id: "r25",
@@ -2447,11 +3502,16 @@ export const recipes: Recipe[] = [
     cookTime: 35,
     servings: 4,
     difficulty: "střední",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strudel-modry-syr-1-Umae7NNHEu6pX3bWRHv8zv.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strudel-modry-syr-1-Umae7NNHEu6pX3bWRHv8zv.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strudel-modry-syr-1-Umae7NNHEu6pX3bWRHv8zv.webp", alt: "Zlatavý štrůdl s modrým sýrem, karamelizovanou cibulí a vlašskými ořechy" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strudel-modry-syr-1-Umae7NNHEu6pX3bWRHv8zv.webp",
+        alt: "Zlatavý štrůdl s modrým sýrem, karamelizovanou cibulí a vlašskými ořechy",
+      },
     ],
-    description: "Křupavý listový štrůdl plněný intenzivním modrým sýrem, sladkou karamelizovanou cibulí a vlašskými ořechy. Elegantní vegetariánský hlavní chod nebo skvělý předkrm na večírek.",
+    description:
+      "Křupavý listový štrůdl plněný intenzivním modrým sýrem, sladkou karamelizovanou cibulí a vlašskými ořechy. Elegantní vegetariánský hlavní chod nebo skvělý předkrm na večírek.",
     tags: ["Štrůdl", "Modrý sýr", "Listové těsto", "Vegetariánské"],
     isVegan: false,
     storyTitle: "Od sladkosti k soli: jak štrůdl dobyl evropské kuchyně",
@@ -2460,7 +3520,14 @@ export const recipes: Recipe[] = [
       "Kombinace modrého sýra a karamelizované cibule je klasická francouzská dvojice, která v listovém těstě získává nový rozměr. Modré sýry jako Roquefort, Gorgonzola nebo český Niva mají díky plešňové kultivě intenzivní, lehce kořeněnou chuť, která se krásně vyvazuje se sladkostí karamelizované cibule. Všechno zabaleno do křupavého listového těsta vytváří dokonalou texturní hru.",
       "V Praze se slané štrůdly začínají objevovat na menu moderních bistro restaurací jako alternativa k tradičním quiche nebo tartěm. Je to jedno z těch jídel, které překlenívá propast mezi domácí kuchyní a restaurační úrovní — přitom ho zvládne každý, kdo pracuje s kupovaným listovým těstem.",
     ],
-    macros: { calories: 480, protein: 14, carbs: 38, fiber: 3, fat: 30, sugars: 8 },
+    macros: {
+      calories: 480,
+      protein: 14,
+      carbs: 38,
+      fiber: 3,
+      fat: 30,
+      sugars: 8,
+    },
   },
   {
     id: "r26",
@@ -2471,11 +3538,16 @@ export const recipes: Recipe[] = [
     cookTime: 40,
     servings: 4,
     difficulty: "snadný",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strudel-zeli-1-MMUaNTmswd6G4jpzMdDu9x.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strudel-zeli-1-MMUaNTmswd6G4jpzMdDu9x.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strudel-zeli-1-MMUaNTmswd6G4jpzMdDu9x.webp", alt: "Zlatavý štrůdl se zelím a kmínem, podávaný s kysanou smetanou a koprem" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strudel-zeli-1-MMUaNTmswd6G4jpzMdDu9x.webp",
+        alt: "Zlatavý štrůdl se zelím a kmínem, podávaný s kysanou smetanou a koprem",
+      },
     ],
-    description: "Tradiční český štrůdl plněný dušeným zelím, kmínem a cibulí. Jednoduchý, sytý a neuvěřitelně vonný. Podávejte s kysané smetanou — ideální podzimní jídlo.",
+    description:
+      "Tradiční český štrůdl plněný dušeným zelím, kmínem a cibulí. Jednoduchý, sytý a neuvěřitelně vonný. Podávejte s kysané smetanou — ideální podzimní jídlo.",
     tags: ["Štrůdl", "Zelí", "Česká kuchyně", "Veganské"],
     isVegan: true,
     storyTitle: "Zelí v české kuchyni: od sudového kvšení k modernímu bistru",
@@ -2484,7 +3556,14 @@ export const recipes: Recipe[] = [
       "Slaný štrůdl se zelím je česká varianta, která spojuje habsburské dědictví (listové těsto) s domácí tradicí (zelí s kmínem). V některých oblastech Čech se podobné náplně používaly v pirozích nebo knedlících. Listové těsto je modernější interpretace, která dává jídlu elegantnější charakter.",
       "Dnes se zelí v Praze zažívá renesanci — fermentované potraviny jsou trendem, a zelí je jejich nejdostupnější formou. Šef kuchaři jako Radek Kasašík nebo Pavel Maurer opakovaně zdůrazňují, že české zelí je světové kvality — jen jsme ho přestali vnímat jako něco výji mečného.",
     ],
-    macros: { calories: 320, protein: 7, carbs: 42, fiber: 5, fat: 14, sugars: 6 },
+    macros: {
+      calories: 320,
+      protein: 7,
+      carbs: 42,
+      fiber: 5,
+      fat: 14,
+      sugars: 6,
+    },
   },
   {
     id: "r27",
@@ -2495,11 +3574,16 @@ export const recipes: Recipe[] = [
     cookTime: 30,
     servings: 4,
     difficulty: "střední",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strudel-spinat-ricotta-1-fYUJYXvZHXeu6uc9LkPEfM.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strudel-spinat-ricotta-1-fYUJYXvZHXeu6uc9LkPEfM.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strudel-spinat-ricotta-1-fYUJYXvZHXeu6uc9LkPEfM.webp", alt: "Štrůdl se špenátem a ricottou na břidlicovém prkénku s cherry rajčátky a bazalkou" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strudel-spinat-ricotta-1-fYUJYXvZHXeu6uc9LkPEfM.webp",
+        alt: "Štrůdl se špenátem a ricottou na břidlicovém prkénku s cherry rajčátky a bazalkou",
+      },
     ],
-    description: "Italsky inspirovaný štrůdl plněný čerstvým špenátem, krémovou ricottou a česnekem. Lehký, aromatický a vizuálně efektní — zelená náplň v zlatavém listovém těstě.",
+    description:
+      "Italsky inspirovaný štrůdl plněný čerstvým špenátem, krémovou ricottou a česnekem. Lehký, aromatický a vizuálně efektní — zelená náplň v zlatavém listovém těstě.",
     tags: ["Štrůdl", "Špenát", "Ricotta", "Italská kuchyně", "Vegetariánské"],
     isVegan: false,
     storyTitle: "Spinaci e ricotta: italská klasika v novém šatě",
@@ -2508,8 +3592,16 @@ export const recipes: Recipe[] = [
       "Špenát má v italské kuchyni délnou historii — do Evropy ho přinesli Arabé ve středověku a rychle si získal místo v kuchyních od Sicilie po Toskanu. Florentská kuchyně ho používala tak často, že termn ‘à la Florentine’ dnes v celm světě znamená ‘se špenátem’. Katedrala Medicejských prý špenát přivezla do Francie, kde se stal módním jídlem aristokracie.",
       "Zabalit tuto kombinaci do listového těsta je moderní přístup, který dává jídlu křupavost a vizulání efekt. Zelená náplň prosvitající skrze zlatavé těsto je opticky působivá — ideální jídlo pro přátelské večeře nebo brunch.",
     ],
-    macros: { calories: 390, protein: 13, carbs: 36, fiber: 4, fat: 22, sugars: 5 },
-  }, {
+    macros: {
+      calories: 390,
+      protein: 13,
+      carbs: 36,
+      fiber: 4,
+      fat: 22,
+      sugars: 5,
+    },
+  },
+  {
     id: "r28",
     title: "Adžarský chačapuri (gruzínský chlebový člun se sýrem)",
     slug: "adzarsky-khachapuri",
@@ -2518,11 +3610,16 @@ export const recipes: Recipe[] = [
     cookTime: 20,
     servings: 2,
     difficulty: "střední",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/khachapuri-adjarsky-1-NvBcPLYARE4yt6W5ZF6pmt.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/khachapuri-adjarsky-1-NvBcPLYARE4yt6W5ZF6pmt.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/khachapuri-adjarsky-1-NvBcPLYARE4yt6W5ZF6pmt.webp", alt: "Adžarský chačapuri — gruzínský chlebový člun s roztaveným sýrem a žloutkem" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/khachapuri-adjarsky-1-NvBcPLYARE4yt6W5ZF6pmt.webp",
+        alt: "Adžarský chačapuri — gruzínský chlebový člun s roztaveným sýrem a žloutkem",
+      },
     ],
-    description: "Ikonické gruzínské jídlo ve tvaru lodičky — křupavý chleb plněný roztaveným sýrem, do středu přidáte syrový žloutek a kousek másla. Jí se tak, že odlamujete okraje a mícháte do sýrné náplně.",
+    description:
+      "Ikonické gruzínské jídlo ve tvaru lodičky — křupavý chleb plněný roztaveným sýrem, do středu přidáte syrový žloutek a kousek másla. Jí se tak, že odlamujete okraje a mícháte do sýrné náplně.",
     tags: ["Gruzínská kuchyně", "Chačapuri", "Sýr", "Pečení", "Vegetariánské"],
     isVegan: false,
     storyTitle: "Chačapuri: gruzínská duše na talkiři",
@@ -2531,7 +3628,14 @@ export const recipes: Recipe[] = [
       "Gruzínská kuchyně je jedním z nejstarších kulinářských tradic na světě. Gruzie leží na křižovatce hedvábné stezky — vlivy perské, turecké, řecké a ruské se zde míchají s autochtonní tradicí. Gruzínci jsou také jedními z prvních pěstitelů vínové révy — víno a jídlo jsou v Gruzii neoddlitelné.",
       "V Praze se gruzínská kuchyně začíná prosazovat — restaurace jako Tamada nebo Kavkaz nabízejí autentické chačapuri a khinkali. Chačapuri je přitom ideální jídlo pro domácí kuchyně: suroviny jsou běžně dostupné, technika je jednoduchá a výsledek je vždy impozantní.",
     ],
-    macros: { calories: 560, protein: 22, carbs: 58, fiber: 3, fat: 28, sugars: 4 },
+    macros: {
+      calories: 560,
+      protein: 22,
+      carbs: 58,
+      fiber: 3,
+      fat: 28,
+      sugars: 4,
+    },
   },
   {
     id: "r29",
@@ -2542,14 +3646,26 @@ export const recipes: Recipe[] = [
     cookTime: 25,
     servings: 4,
     difficulty: "střední",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/lobiani-1-4m66YSLSxPNowD4gsGQQui.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/lobiani-1-4m66YSLSxPNowD4gsGQQui.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/lobiani-1-4m66YSLSxPNowD4gsGQQui.webp", alt: "Gruzínský lobiani — kulatý chléb plněný kořeněnými fazolemi, přeříznutý napůl" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/lobiani-1-4m66YSLSxPNowD4gsGQQui.webp",
+        alt: "Gruzínský lobiani — kulatý chléb plněný kořeněnými fazolemi, přeříznutý napůl",
+      },
     ],
-    description: "Lobiani je tradiční gruzínský plochý chléb plněný kořeněnými červenými fazolemi s cibulí, česnekem a gruzínskou směsí koření khmeli-suneli. Veganský, sytý a neuvěřitelně aromatický.",
+    description:
+      "Lobiani je tradiční gruzínský plochý chléb plněný kořeněnými červenými fazolemi s cibulí, česnekem a gruzínskou směsí koření khmeli-suneli. Veganský, sytý a neuvěřitelně aromatický.",
     tags: ["Gruzínská kuchyně", "Lobiani", "Fazole", "Veganské", "Pečení"],
     isVegan: true,
-    macros: { calories: 380, protein: 14, carbs: 62, fiber: 10, fat: 8, sugars: 4 },
+    macros: {
+      calories: 380,
+      protein: 14,
+      carbs: 62,
+      fiber: 10,
+      fat: 8,
+      sugars: 4,
+    },
   },
   {
     id: "r30",
@@ -2560,16 +3676,35 @@ export const recipes: Recipe[] = [
     cookTime: 5,
     servings: 4,
     difficulty: "snadný",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pkhali-1-XjsrP3Atqzccz3DLLCAaCS.webp",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pkhali-1-XjsrP3Atqzccz3DLLCAaCS.webp",
     images: [
-      { url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pkhali-1-XjsrP3Atqzccz3DLLCAaCS.webp", alt: "Gruzínské pchali — sytě zelené kuličky ze špenátu a vlašských ořechů zdobené granátovým jablkem" },
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pkhali-1-XjsrP3Atqzccz3DLLCAaCS.webp",
+        alt: "Gruzínské pchali — sytě zelené kuličky ze špenátu a vlašských ořechů zdobené granátovým jablkem",
+      },
     ],
-    description: "Pchali jsou tradiční gruzínské předkrmy — kompaktní kuličky ze špenátu, vlašských ořechů, česneku a gruzínského koření. Zdobí se semínky granátového jablka. Veganské, bez lepku a plné chuti.",
-    tags: ["Gruzínská kuchyně", "Pchali", "Špenát", "Ořechy", "Veganské", "Předkrm"],
+    description:
+      "Pchali jsou tradiční gruzínské předkrmy — kompaktní kuličky ze špenátu, vlašských ořechů, česneku a gruzínského koření. Zdobí se semínky granátového jablka. Veganské, bez lepku a plné chuti.",
+    tags: [
+      "Gruzínská kuchyně",
+      "Pchali",
+      "Špenát",
+      "Ořechy",
+      "Veganské",
+      "Předkrm",
+    ],
     isVegan: true,
     isGlutenFree: true,
     isKeto: true,
-    macros: { calories: 180, protein: 7, carbs: 8, fiber: 4, fat: 14, sugars: 2 },
+    macros: {
+      calories: 180,
+      protein: 7,
+      carbs: 8,
+      fiber: 4,
+      fat: 14,
+      sugars: 2,
+    },
   },
   // ── ITALSKÁ KUCHYNĚ ──
   {
@@ -2577,27 +3712,48 @@ export const recipes: Recipe[] = [
     title: "Houbové risotto s parmezánem",
     slug: "houbove-risotto",
     images: [],
-    description: "Krémové italské risotto s porcini houbami, čerstvou petrželí a parmazánem. Klasika severní Itálie.",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/risotto-funghi-1-ksjQMpQMEp8dGQAcr6fG9M.webp",
+    description:
+      "Krémové italské risotto s porcini houbami, čerstvou petrželí a parmazánem. Klasika severní Itálie.",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/risotto-funghi-1-ksjQMpQMEp8dGQAcr6fG9M.webp",
     category: "Hlavní jídla",
     prepTime: 10,
     cookTime: 30,
     servings: 4,
     difficulty: "střední" as const,
-    tags: ["Italská kuchyně", "Risotto", "Houby", "Vegetariánské", "Bezlepkové"],
+    tags: [
+      "Italská kuchyně",
+      "Risotto",
+      "Houby",
+      "Vegetariánské",
+      "Bezlepkové",
+    ],
     isVegan: false,
     isGlutenFree: true,
-    macros: { calories: 420, protein: 12, carbs: 58, fiber: 3, fat: 14, sugars: 2 },
+    macros: {
+      calories: 420,
+      protein: 12,
+      carbs: 58,
+      fiber: 3,
+      fat: 14,
+      sugars: 2,
+    },
     storyTitle: "Příběh risotta: srdce Lombardie",
-    story: ["Risotto pochází ze severní Itálie, konkrétně z oblasti Lombardie a Piemontu, kde se pěstuje rýže arborio. Na rozdíl od jiných rýžových pokrmů se risotto vaří pomalým přidáváním horkého vývaru, díky čemuž rýže uvolňuje škrob a vzniká charakteristická krémová konzistence.", "Houbové risotto — risotto ai funghi — je jednou z nejoblíbenějších variant. Sušené porcini houby dodávají hlubokou zemitou chuť, která se skvěle hodí k jemné rýži. V Itálii je toto jídlo typické pro podzimní sezónu, kdy jsou čerstvé houby k dostání na každém trhu.", "V Praze si risotto oblíbily zejména italské restaurace v centru, ale připravit ho doma je překvapivě jednoduché. Klíčem je trpělivost — risotto se nedá uspěchat."],
+    story: [
+      "Risotto pochází ze severní Itálie, konkrétně z oblasti Lombardie a Piemontu, kde se pěstuje rýže arborio. Na rozdíl od jiných rýžových pokrmů se risotto vaří pomalým přidáváním horkého vývaru, díky čemuž rýže uvolňuje škrob a vzniká charakteristická krémová konzistence.",
+      "Houbové risotto — risotto ai funghi — je jednou z nejoblíbenějších variant. Sušené porcini houby dodávají hlubokou zemitou chuť, která se skvěle hodí k jemné rýži. V Itálii je toto jídlo typické pro podzimní sezónu, kdy jsou čerstvé houby k dostání na každém trhu.",
+      "V Praze si risotto oblíbily zejména italské restaurace v centru, ale připravit ho doma je překvapivě jednoduché. Klíčem je trpělivost — risotto se nedá uspěchat.",
+    ],
   },
   {
     id: "rec32",
     title: "Spaghetti al pomodoro",
     slug: "spaghetti-al-pomodoro",
     images: [],
-    description: "Jednoduchá italská klasika — špagety s čerstvou rajčatovou omáčkou, bazalkou a olivovým olejem. Méně je více.",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pasta-pomodoro-1-LmE9iJ7FjMiNRVfY5VyFP8.webp",
+    description:
+      "Jednoduchá italská klasika — špagety s čerstvou rajčatovou omáčkou, bazalkou a olivovým olejem. Méně je více.",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pasta-pomodoro-1-LmE9iJ7FjMiNRVfY5VyFP8.webp",
     category: "Hlavní jídla",
     prepTime: 5,
     cookTime: 20,
@@ -2605,17 +3761,29 @@ export const recipes: Recipe[] = [
     difficulty: "snadný" as const,
     tags: ["Italská kuchyně", "Těstoviny", "Rajčata", "Veganské", "Rychlé"],
     isVegan: true,
-    macros: { calories: 380, protein: 11, carbs: 68, fiber: 4, fat: 8, sugars: 6 },
+    macros: {
+      calories: 380,
+      protein: 11,
+      carbs: 68,
+      fiber: 4,
+      fat: 8,
+      sugars: 6,
+    },
     storyTitle: "Nejjednodušší italský recept",
-    story: ["Spaghetti al pomodoro je pokrm, který Italové považují za základ kuchyně — a zároveň za největší výzvu. Jednoduchá rajčatová omáčka neodpustí špatné suroviny. Správná rajčata, kvalitní olivový olej a čerstvá bazalka jsou vším.", "Recept pochází z Neapole, kde se rajčata začala používat v kuchyni jako první v Evropě. Původně byla rajčata považována za jedovatá — teprve v 18. století se stala základní surovinou italské kuchyně."],
+    story: [
+      "Spaghetti al pomodoro je pokrm, který Italové považují za základ kuchyně — a zároveň za největší výzvu. Jednoduchá rajčatová omáčka neodpustí špatné suroviny. Správná rajčata, kvalitní olivový olej a čerstvá bazalka jsou vším.",
+      "Recept pochází z Neapole, kde se rajčata začala používat v kuchyni jako první v Evropě. Původně byla rajčata považována za jedovatá — teprve v 18. století se stala základní surovinou italské kuchyně.",
+    ],
   },
   {
     id: "rec33",
     title: "Veganské tiramisu",
     slug: "veganske-tiramisu",
     images: [],
-    description: "Klasické italské tiramisu v plně veganské verzi — s kokosovým krémem, kávou a kakao posypem. Nerozpoznatelné od originálu.",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tiramisu-vegan-1-BKTsooD6vc2bhmxzsAnkKh.webp",
+    description:
+      "Klasické italské tiramisu v plně veganské verzi — s kokosovým krémem, kávou a kakao posypem. Nerozpoznatelné od originálu.",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tiramisu-vegan-1-BKTsooD6vc2bhmxzsAnkKh.webp",
     category: "Dezerty",
     prepTime: 30,
     cookTime: 0,
@@ -2623,17 +3791,29 @@ export const recipes: Recipe[] = [
     difficulty: "střední" as const,
     tags: ["Italská kuchyně", "Dezert", "Tiramisu", "Veganské", "Bez pečení"],
     isVegan: true,
-    macros: { calories: 310, protein: 5, carbs: 38, fiber: 2, fat: 16, sugars: 22 },
+    macros: {
+      calories: 310,
+      protein: 5,
+      carbs: 38,
+      fiber: 2,
+      fat: 16,
+      sugars: 22,
+    },
     storyTitle: "Tiramisu: italský dezert světa",
-    story: ["Tiramisu — doslova 'zvedni mě nahoru' — vzniklo v 70. letech v restauraci Le Beccherie v Trevisu. Kombinace mascarpone, vajec, kávy a piškotů se rychle stala nejpopulárnějším italským dezertem na světě.", "Veganská verze nahrazuje mascarpone kokosovým krémem a vejce aquafabou (vodou z cizrny). Výsledek je překvapivě věrný originálu — lehký, krémový a s intenzivní kávovou chutí."],
+    story: [
+      "Tiramisu — doslova 'zvedni mě nahoru' — vzniklo v 70. letech v restauraci Le Beccherie v Trevisu. Kombinace mascarpone, vajec, kávy a piškotů se rychle stala nejpopulárnějším italským dezertem na světě.",
+      "Veganská verze nahrazuje mascarpone kokosovým krémem a vejce aquafabou (vodou z cizrny). Výsledek je překvapivě věrný originálu — lehký, krémový a s intenzivní kávovou chutí.",
+    ],
   },
   {
     id: "rec34",
     title: "Veganská pizza Margherita",
     slug: "veganska-pizza-margherita",
     images: [],
-    description: "Neapolská pizza s tenkým křupavým těstem, rajčatovou omáčkou, veganskou mozzarellou a čerstvou bazalkou.",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pizza-margherita-vegan-1-MtdQyAwLVrA2ozU9GS8evH.webp",
+    description:
+      "Neapolská pizza s tenkým křupavým těstem, rajčatovou omáčkou, veganskou mozzarellou a čerstvou bazalkou.",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pizza-margherita-vegan-1-MtdQyAwLVrA2ozU9GS8evH.webp",
     category: "Hlavní jídla",
     prepTime: 20,
     cookTime: 12,
@@ -2641,7 +3821,14 @@ export const recipes: Recipe[] = [
     difficulty: "střední" as const,
     tags: ["Italská kuchyně", "Pizza", "Veganské", "Pečení"],
     isVegan: true,
-    macros: { calories: 450, protein: 14, carbs: 72, fiber: 4, fat: 12, sugars: 5 },
+    macros: {
+      calories: 450,
+      protein: 14,
+      carbs: 72,
+      fiber: 4,
+      fat: 12,
+      sugars: 5,
+    },
   },
   // ── MAĎARSKÁ KUCHYNĚ ──
   {
@@ -2649,53 +3836,105 @@ export const recipes: Recipe[] = [
     title: "Vegetariánský guláš s paprikou",
     slug: "vegetariansky-gulas-paprika",
     images: [],
-    description: "Tradiční maďarský guláš bez masa — bohatá papriková omáčka se zeleninou, bramborami a mrkví. Servírujeme s chlebem.",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hungarian-goulash-veg-1-SsdSmcJhRsvG7n5NELsgzF.webp",
+    description:
+      "Tradiční maďarský guláš bez masa — bohatá papriková omáčka se zeleninou, bramborami a mrkví. Servírujeme s chlebem.",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hungarian-goulash-veg-1-SsdSmcJhRsvG7n5NELsgzF.webp",
     category: "Hlavní jídla",
     prepTime: 15,
     cookTime: 50,
     servings: 4,
     difficulty: "snadný" as const,
-    tags: ["Maďarská kuchyně", "Guláš", "Paprika", "Veganské", "Bezlepkové", "Podzimní"],
+    tags: [
+      "Maďarská kuchyně",
+      "Guláš",
+      "Paprika",
+      "Veganské",
+      "Bezlepkové",
+      "Podzimní",
+    ],
     isVegan: true,
     isGlutenFree: true,
-    macros: { calories: 280, protein: 8, carbs: 48, fiber: 8, fat: 6, sugars: 10 },
+    macros: {
+      calories: 280,
+      protein: 8,
+      carbs: 48,
+      fiber: 8,
+      fat: 6,
+      sugars: 10,
+    },
     storyTitle: "Guláš bez masa — maďarská tradice",
-    story: ["Maďarský guláš — gulyás — byl původně pokrmem pastevců dobytka na uherské pusztě. Název pochází ze slova 'gulya' (stádo). Paprika, která je dnes jeho základem, se do Maďarska dostala v 16. století přes Turecko.", "Vegetariánská verze guláše je v Maďarsku stále populárnější. Zelenina — brambory, mrkev, paprika, cuketa — absorbuje sytou paprikovou omáčku stejně dobře jako maso. Klíčem je kvalitní maďarská sladká paprika."],
+    story: [
+      "Maďarský guláš — gulyás — byl původně pokrmem pastevců dobytka na uherské pusztě. Název pochází ze slova 'gulya' (stádo). Paprika, která je dnes jeho základem, se do Maďarska dostala v 16. století přes Turecko.",
+      "Vegetariánská verze guláše je v Maďarsku stále populárnější. Zelenina — brambory, mrkev, paprika, cuketa — absorbuje sytou paprikovou omáčku stejně dobře jako maso. Klíčem je kvalitní maďarská sladká paprika.",
+    ],
   },
   {
     id: "rec36",
     title: "Lángos s česnekovým krémem",
     slug: "langos-cesnekovym-kremem",
     images: [],
-    description: "Maďarský smažený chléb — lángos — s veganským česnekovým krémem a strouhaným sýrem. Pouliční jídlo z Budapešti.",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/langos-vegan-1-9XEFSVtSQCTXoPGKUQH2ep.webp",
+    description:
+      "Maďarský smažený chléb — lángos — s veganským česnekovým krémem a strouhaným sýrem. Pouliční jídlo z Budapešti.",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/langos-vegan-1-9XEFSVtSQCTXoPGKUQH2ep.webp",
     category: "Snídaně",
     prepTime: 30,
     cookTime: 20,
     servings: 4,
     difficulty: "střední" as const,
-    tags: ["Maďarská kuchyně", "Lángos", "Smažené", "Vegetariánské", "Pouliční jídlo"],
+    tags: [
+      "Maďarská kuchyně",
+      "Lángos",
+      "Smažené",
+      "Vegetariánské",
+      "Pouliční jídlo",
+    ],
     isVegan: false,
-    macros: { calories: 520, protein: 12, carbs: 72, fiber: 3, fat: 22, sugars: 4 },
+    macros: {
+      calories: 520,
+      protein: 12,
+      carbs: 72,
+      fiber: 3,
+      fat: 22,
+      sugars: 4,
+    },
     storyTitle: "Lángos: maďarský street food",
-    story: ["Lángos je jedním z nejoblíbenějších pouličních jídel v Maďarsku a na Slovensku. Název pochází ze slova 'láng' (plamen) — původně se pekl v troubě u ohně. Dnes se smaží v oleji a prodává na trzích a festivalech.", "Klasický lángos se potírá česnekem a zakysanou smetanou. Veganská verze používá cashew krém místo smetany — výsledek je stejně bohatý a chutný."],
+    story: [
+      "Lángos je jedním z nejoblíbenějších pouličních jídel v Maďarsku a na Slovensku. Název pochází ze slova 'láng' (plamen) — původně se pekl v troubě u ohně. Dnes se smaží v oleji a prodává na trzích a festivalech.",
+      "Klasický lángos se potírá česnekem a zakysanou smetanou. Veganská verze používá cashew krém místo smetany — výsledek je stejně bohatý a chutný.",
+    ],
   },
   {
     id: "rec37",
     title: "Maďarské palačinky s ořechy",
     slug: "madarske-palacsinky",
     images: [],
-    description: "Tenké maďarské palačinky plněné mletými vlašskými ořechy s meruňkovým džemem a vanilkovým cukrem.",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hungarian-palacsinky-1-VR2fW7Dya3MHHQHAPVjSXD.webp",
+    description:
+      "Tenké maďarské palačinky plněné mletými vlašskými ořechy s meruňkovým džemem a vanilkovým cukrem.",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hungarian-palacsinky-1-VR2fW7Dya3MHHQHAPVjSXD.webp",
     category: "Dezerty",
     prepTime: 15,
     cookTime: 20,
     servings: 4,
     difficulty: "snadný" as const,
-    tags: ["Maďarská kuchyně", "Palačinky", "Dezert", "Vegetariánské", "Ořechy"],
+    tags: [
+      "Maďarská kuchyně",
+      "Palačinky",
+      "Dezert",
+      "Vegetariánské",
+      "Ořechy",
+    ],
     isVegan: false,
-    macros: { calories: 380, protein: 9, carbs: 48, fiber: 3, fat: 18, sugars: 20 },
+    macros: {
+      calories: 380,
+      protein: 9,
+      carbs: 48,
+      fiber: 3,
+      fat: 18,
+      sugars: 20,
+    },
   },
   // ── SLOVENSKÁ KUCHYNĚ ──
   {
@@ -2703,40 +3942,2970 @@ export const recipes: Recipe[] = [
     title: "Bryndzové halušky (vegetariánské)",
     slug: "bryndzove-halusky",
     images: [],
-    description: "Národní jídlo Slovenska — bramborové halušky s bryndzou (ovčím sýrem) a karamelizovanou cibulkou. Bez slaniny.",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/bryndzove-halusky-1-87dV8sLBQrTwBUWTAk3mvm.webp",
+    description:
+      "Národní jídlo Slovenska — bramborové halušky s bryndzou (ovčím sýrem) a karamelizovanou cibulkou. Bez slaniny.",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/bryndzove-halusky-1-87dV8sLBQrTwBUWTAk3mvm.webp",
     category: "Hlavní jídla",
     prepTime: 20,
     cookTime: 20,
     servings: 4,
     difficulty: "střední" as const,
-    tags: ["Slovenská kuchyně", "Halušky", "Bryndza", "Vegetariánské", "Bezlepkové"],
+    tags: [
+      "Slovenská kuchyně",
+      "Halušky",
+      "Bryndza",
+      "Vegetariánské",
+      "Bezlepkové",
+    ],
     isVegan: false,
     isGlutenFree: true,
-    macros: { calories: 440, protein: 16, carbs: 52, fiber: 4, fat: 18, sugars: 3 },
+    macros: {
+      calories: 440,
+      protein: 16,
+      carbs: 52,
+      fiber: 4,
+      fat: 18,
+      sugars: 3,
+    },
     storyTitle: "Bryndzové halušky: slovenský národní poklad",
-    story: ["Bryndzové halušky jsou národním jídlem Slovenska — v roce 2021 byly zapsány do UNESCO jako nehmotné kulturní dědictví. Bryndza je měkký ovčí sýr s charakteristickou pikantní chutí, vyráběný tradičně v karpatských salašech.", "Halušky jsou malé bramborové knedlíčky podobné italskému gnocchi. Kombinace s bryndzou a opraženou cibulkou je jednou z nejharmoničtějších v celé středoevropské kuchyni. Vegetariánská verze vynechává tradiční slaninu — a nic jí nechybí.", "V Praze lze bryndzu koupit v prodejnách slovenských specialit nebo v některých supermarketech. Pokud ji nesežanete, lze ji nahradit kvalitním ovčím feta sýrem."],
+    story: [
+      "Bryndzové halušky jsou národním jídlem Slovenska — v roce 2021 byly zapsány do UNESCO jako nehmotné kulturní dědictví. Bryndza je měkký ovčí sýr s charakteristickou pikantní chutí, vyráběný tradičně v karpatských salašech.",
+      "Halušky jsou malé bramborové knedlíčky podobné italskému gnocchi. Kombinace s bryndzou a opraženou cibulkou je jednou z nejharmoničtějších v celé středoevropské kuchyni. Vegetariánská verze vynechává tradiční slaninu — a nic jí nechybí.",
+      "V Praze lze bryndzu koupit v prodejnách slovenských specialit nebo v některých supermarketech. Pokud ji nesežanete, lze ji nahradit kvalitním ovčím feta sýrem.",
+    ],
   },
   {
     id: "rec39",
     title: "Kapustnica — slovenská zelná polévka",
     slug: "kapustnica-slovenska",
     images: [],
-    description: "Tradiční slovenská vánoční polévka s kysaným zelím a houbami. Veganská verze bez klobásy — stejně sytá a aromatická.",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kapustnica-1-KvQyJYTPAfQQqePoNLtGWP.webp",
+    description:
+      "Tradiční slovenská vánoční polévka s kysaným zelím a houbami. Veganská verze bez klobásy — stejně sytá a aromatická.",
+    image:
+      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kapustnica-1-KvQyJYTPAfQQqePoNLtGWP.webp",
     category: "Polévky",
     prepTime: 15,
     cookTime: 45,
     servings: 6,
     difficulty: "snadný" as const,
-    tags: ["Slovenská kuchyně", "Polévka", "Zelí", "Houby", "Veganské", "Bezlepkové", "Zimní"],
+    tags: [
+      "Slovenská kuchyně",
+      "Polévka",
+      "Zelí",
+      "Houby",
+      "Veganské",
+      "Bezlepkové",
+      "Zimní",
+    ],
     isVegan: true,
     isGlutenFree: true,
-    macros: { calories: 160, protein: 5, carbs: 22, fiber: 6, fat: 5, sugars: 4 },
+    macros: {
+      calories: 160,
+      protein: 5,
+      carbs: 22,
+      fiber: 6,
+      fat: 5,
+      sugars: 4,
+    },
     storyTitle: "Kapustnica: vánoční tradice Slovenska",
-    story: ["Kapustnica je neodmyslitelnou součástí slovenských Vánoc — podává se na Štědrý večer jako první chod. Každá rodina má svůj recept, předávaný z generace na generaci. Základem je vždy kysané zelí a sušené houby.", "Tradiční recept obsahuje klobásu nebo uzené maso. Veganská verze je překvapivě autentická — sušené hříbky dodávají hlubokou umami chuť, která maso plně nahradí. Polévka je navíc mnohem lehčí a zdravější."],
+    story: [
+      "Kapustnica je neodmyslitelnou součástí slovenských Vánoc — podává se na Štědrý večer jako první chod. Každá rodina má svůj recept, předávaný z generace na generaci. Základem je vždy kysané zelí a sušené houby.",
+      "Tradiční recept obsahuje klobásu nebo uzené maso. Veganská verze je překvapivě autentická — sušené hříbky dodávají hlubokou umami chuť, která maso plně nahradí. Polévka je navíc mnohem lehčí a zdravější.",
+    ],
+  },
+
+  {
+    id: "r_ext_1",
+    title: "Vegánská míchaná vajíčka z tofu",
+    slug: "veganska-michana-vajicka-z-tofu",
+    category: "Snídaně",
+    prepTime: 10,
+    cookTime: 10,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=800&q=80",
+        alt: "Vegánská míchaná vajíčka z tofu s čerstvou pažitkou",
+      },
+    ],
+    description:
+      "Výdatná veganská snídaně z tofu. Ochucená černou solí Kala Namak a kurkumou pro autentickou vaječnou chuť a barvu.",
+    tags: ["Snídaně", "Tofu", "Rychlé", "High-Protein"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 240, protein: 18, carbs: 6, fiber: 4, fat: 15 },
+  },
+  {
+    id: "r_ext_2",
+    title: "Kynuté lívance v americkém duchu",
+    slug: "kynute-livance-v-americkem-duchu",
+    category: "Snídaně",
+    prepTime: 20,
+    cookTime: 15,
+    servings: 4,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=800&q=80",
+        alt: "Nadýchané kynuté lívance",
+      },
+    ],
+    description:
+      "Nadýchané, vláčné kynuté lívance inspirované americkou snídaňovou klasikou.",
+    tags: ["Lívance", "Snídaně", "Sladké"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 320, protein: 8, carbs: 54, fiber: 3, fat: 8 },
+  },
+  {
+    id: "r_ext_3",
+    title: "Přes noc namočená chia ovesná kaše s borůvkami",
+    slug: "pres-noc-namocena-chia-ovesna-kase-s-boruvkami",
+    category: "Snídaně",
+    prepTime: 5,
+    cookTime: 0,
+    servings: 1,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=800&q=80",
+        alt: "Overnight oats",
+      },
+    ],
+    description:
+      "Rychlá a výživná snídaně bez vaření. Ovesné vločky a chia semínka zjemněná mlékem a borůvkami.",
+    tags: ["Snídaně", "Raw", "Bez vaření"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 280, protein: 10, carbs: 42, fiber: 9, fat: 8 },
+  },
+  {
+    id: "r_ext_4",
+    title: "Detoxikační ovocné smoothie",
+    slug: "detoxikacni-ovocne-smoothie",
+    category: "Nápoje",
+    prepTime: 5,
+    cookTime: 0,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+        alt: "Detox ovocné smoothie",
+      },
+    ],
+    description:
+      "Osvěžující vitamínová bomba z ananasu, manga, špenátu a kokosové vody pro očistu organismu.",
+    tags: ["Smoothie", "Detox", "Nápoje", "Vitamíny"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 160, protein: 3, carbs: 38, fiber: 5, fat: 1 },
+  },
+  {
+    id: "r_ext_5",
+    title: "Bramborový salát s domácí sójanézou",
+    slug: "bramborovy-salat-s-domaci-sojanezou",
+    category: "Saláty a misky",
+    prepTime: 25,
+    cookTime: 20,
+    servings: 4,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1543339308-43e59d6b73a6?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1543339308-43e59d6b73a6?auto=format&fit=crop&w=800&q=80",
+        alt: "Bramborový salát",
+      },
+    ],
+    description:
+      "Lehká veganská varianta tradičního bramborového salátu s krémovou domácí sójanézou.",
+    tags: ["Salát", "Česká kuchyně", "Brambory"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 310, protein: 6, carbs: 38, fiber: 6, fat: 14 },
+  },
+  {
+    id: "r_ext_6",
+    title: "Celozrnný těstovinový salát se sušenými rajčaty a tofu",
+    slug: "celozrnny-testovinovy-salat-se-susenymi-rajcaty-a-tofu",
+    category: "Saláty a misky",
+    prepTime: 15,
+    cookTime: 10,
+    servings: 3,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80",
+        alt: "Těstovinový salát",
+      },
+    ],
+    description:
+      "Středomořský salát z celozrnných těstovin, sušených rajčat, černých oliv a marinovaného tofu.",
+    tags: ["Těstoviny", "Salát", "Středomořská"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 360, protein: 14, carbs: 50, fiber: 7, fat: 12 },
+  },
+  {
+    id: "r_ext_7",
+    title: "Kuskusový salát s brusinkami a mandlemi",
+    slug: "kuskusovy-salat-s-brusinkami-a-mandlemi",
+    category: "Saláty a misky",
+    prepTime: 10,
+    cookTime: 5,
+    servings: 3,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+        alt: "Kuskusový salát s brusinkami",
+      },
+    ],
+    description:
+      "Lehký a lahodný kuskusový salát spojený se sušenými brusinkami, plátky mandlí a mátou.",
+    tags: ["Kuskus", "Salát", "Brusinky", "Rychlé"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 290, protein: 7, carbs: 48, fiber: 5, fat: 8 },
+  },
+  {
+    id: "r_ext_8",
+    title: "Pohankový salát s tempehem a grilovanou zeleninou",
+    slug: "pohankovy-salat-s-tempehem-a-grilovanou-zeleninou",
+    category: "Saláty a misky",
+    prepTime: 15,
+    cookTime: 20,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80",
+        alt: "Pohankový salát s tempehem",
+      },
+    ],
+    description:
+      "Zahřívací výživný salát z mechanicky loupané pohanky, uzeného tempehu a grilované cukety s paprikou.",
+    tags: ["Pohanka", "Tempeh", "Bezlepek", "Zahřívací"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 340, protein: 16, carbs: 42, fiber: 8, fat: 12 },
+  },
+  {
+    id: "r_ext_9",
+    title: "Salát Tabbouleh z celozrnného bulguru s marinovaným tofu",
+    slug: "salat-tabbouleh-z-celozrnneho-bulguru-s-marinovanym-tofu",
+    category: "Saláty a misky",
+    prepTime: 15,
+    cookTime: 10,
+    servings: 4,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+        alt: "Tabbouleh s tofu",
+      },
+    ],
+    description:
+      "Čerstvý bylinkový salát z hladkolisté petrželky, máty, zralých rajčat a bulguru, doplněný o orestované marinované tofu.",
+    tags: ["Libanonská", "Bulgur", "Tofu", "Salát"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 260, protein: 11, carbs: 34, fiber: 8, fat: 9 },
+  },
+  {
+    id: "r_ext_10",
+    title: "Zeleninový salát s krémovou tahini zálivkou",
+    slug: "zeleninovy-salat-s-kremovou-tahini-zalivkou",
+    category: "Saláty a misky",
+    prepTime: 15,
+    cookTime: 0,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+        alt: "Salát s tahini zálivkou",
+      },
+    ],
+    description:
+      "Křupavá směs čerstvé zeleniny přelitá bohatým dresinkem ze sezamové pasty tahini, česneku a citronu.",
+    tags: ["Salát", "Tahini", "Sezam", "Zdravé"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 230, protein: 7, carbs: 18, fiber: 6, fat: 15 },
+  },
+  {
+    id: "r_ext_11",
+    title: "Bagetka s uzeným tofu a karamelizovanou cibulkou",
+    slug: "bagetka-s-uzenym-tofu-a-karamelizovanou-cibulkou",
+    category: "Sendviče",
+    prepTime: 10,
+    cookTime: 15,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=800&q=80",
+        alt: "Bagetka s uzeným tofu",
+      },
+    ],
+    description:
+      "Křupavá pečená bageta plněná plátky orestovaného uzeného tofu, sladkou karamelizovanou cibulkou a rukolou.",
+    tags: ["Sendvič", "Bageta", "Tofu", "Svačina"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 380, protein: 18, carbs: 46, fiber: 5, fat: 14 },
+  },
+  {
+    id: "r_ext_12",
+    title: "Pšenično-žitný chléb s pečenou dýní a medovo-hořčičným dresinkem",
+    slug: "psenicno-zitny-chleb-s-pecenou-dyni-a-dresinkem",
+    category: "Sendviče",
+    prepTime: 15,
+    cookTime: 25,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=800&q=80",
+        alt: "Chléb s dýní",
+      },
+    ],
+    description:
+      "Náš poctivý chléb obložený pečenými plátky dýně Hokkaido, piniovými oříšky a hořčičným dresinkem.",
+    tags: ["Chléb", "Dýně", "Podzimní", "Sendvič"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 320, protein: 9, carbs: 48, fiber: 7, fat: 10 },
+  },
+  {
+    id: "r_ext_13",
+    title: "Cizrnový hummus na mnoho způsobů",
+    slug: "cikrnovy-hummus-na-mnoho-zpusobu",
+    category: "Pomazánky",
+    prepTime: 15,
+    cookTime: 0,
+    servings: 4,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+        alt: "Cizrnový hummus",
+      },
+    ],
+    description:
+      "Sametově jemná blízkovýchodní pomazánka z cizrny, tahini, česneku a římského kmínu.",
+    tags: ["Hummus", "Cizrna", "Pomazánka", "Bezlepek"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 210, protein: 8, carbs: 22, fiber: 6, fat: 11 },
+  },
+  {
+    id: "r_ext_14",
+    title: "Bramboračka s lesními houbami",
+    slug: "bramboracka-s-lesnimi-houbami",
+    category: "Polévky",
+    prepTime: 15,
+    cookTime: 35,
+    servings: 4,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+        alt: "Bramboračka",
+      },
+    ],
+    description:
+      "Tradiční česká polévka s bramborami, kořenovou zeleninou, sušenými lesními houbami a majoránkou.",
+    tags: ["Polévka", "Česká kuchyně", "Houby"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 210, protein: 6, carbs: 34, fiber: 6, fat: 6 },
+  },
+  {
+    id: "r_ext_15",
+    title: "Brokolicová polévka s hráškem",
+    slug: "brokolicova-polevka-s-hraskem",
+    category: "Polévky",
+    prepTime: 10,
+    cookTime: 15,
+    servings: 3,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+        alt: "Brokolicová polévka",
+      },
+    ],
+    description:
+      "Zářivě zelená krémová polévka z čerstvé brokolice a sladkého hrášku zjemněná rostlinnou smetanou.",
+    tags: ["Polévka", "Brokolice", "Hrášek", "Zelená"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 180, protein: 8, carbs: 22, fiber: 7, fat: 7 },
+  },
+  {
+    id: "r_ext_16",
+    title: "Lehce pikantní dýňová polévka s dýňovým olejem",
+    slug: "lehce-pikantni-dynova-polevka-s-dynovym-olejem",
+    category: "Polévky",
+    prepTime: 15,
+    cookTime: 25,
+    servings: 4,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+        alt: "Dýňová polévka",
+      },
+    ],
+    description:
+      "Sametově jemná polévka z dýně Hokkaido se špetkou chilli, zahuštěná dýňovými semínky a tmavým olejem.",
+    tags: ["Polévka", "Dýně", "Hokkaido", "Pikantní"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 220, protein: 5, carbs: 24, fiber: 5, fat: 12 },
+  },
+  {
+    id: "r_ext_17",
+    title: "Fazolová polévka s veganským chorizem",
+    slug: "fazolova-polevka-s-veganskym-chorizem",
+    category: "Polévky",
+    prepTime: 15,
+    cookTime: 30,
+    servings: 4,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+        alt: "Fazolová polévka",
+      },
+    ],
+    description:
+      "Hustá mexikem inspirovaná polévka s červenými fazolemi, uzenou paprikou a kousky veganského choriza.",
+    tags: ["Polévka", "Fazole", "Chorizo", "Sytá"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 310, protein: 15, carbs: 38, fiber: 11, fat: 9 },
+  },
+  {
+    id: "r_ext_18",
+    title: "Krémová cizrnová polévka",
+    slug: "kremova-cizrnova-polevka",
+    category: "Polévky",
+    prepTime: 10,
+    cookTime: 20,
+    servings: 3,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+        alt: "Cizrnová polévka",
+      },
+    ],
+    description:
+      "Výživná polévka z cizrny, pórku a batátů ochucená kurkumou a římským kmínem.",
+    tags: ["Polévka", "Cizrna", "Bezlepek"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 240, protein: 9, carbs: 36, fiber: 8, fat: 6 },
+  },
+  {
+    id: "r_ext_19",
+    title: "Veganská kulajda s hříbky a čerstvým koprem",
+    slug: "veganska-kulajda-s-hribky-a-koprem",
+    category: "Polévky",
+    prepTime: 15,
+    cookTime: 25,
+    servings: 4,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+        alt: "Veganská kulajda",
+      },
+    ],
+    description:
+      "Tradiční jižhočeská polévka zjemněná kokosovou či ovesnou smetanou, plná hříbků a voňavého kopru.",
+    tags: ["Polévka", "Kulajda", "Kopr", "Česká kuchyně"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 230, protein: 5, carbs: 28, fiber: 4, fat: 11 },
+  },
+  {
+    id: "r_ext_20",
+    title: "Polévka ze sladké kukuřice s chilli",
+    slug: "polevka-ze-sladke-kukurice-s-chilli",
+    category: "Polévky",
+    prepTime: 10,
+    cookTime: 15,
+    servings: 3,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+        alt: "Kukuřičná polévka",
+      },
+    ],
+    description:
+      "Zářivě žlutá krémová kukuřičná polévka s nádechem kokosového mléka a pálivými vločkami chilli.",
+    tags: ["Polévka", "Kukuřice", "Kokosové mléko", "Pikantní"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 210, protein: 4, carbs: 30, fiber: 4, fat: 9 },
+  },
+  {
+    id: "r_ext_21",
+    title: "Raw brokolicová polévka s avokádem",
+    slug: "raw-brokolicova-polevka-s-avokadem",
+    category: "Polévky",
+    prepTime: 10,
+    cookTime: 0,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+        alt: "Raw brokolicová polévka",
+      },
+    ],
+    description:
+      "Nechozená studená polévka z čerstvé brokolice, zralého avokáda a česneku plná živých enzymů.",
+    tags: ["Polévka", "Raw", "Brokolice", "Avokádo"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 190, protein: 5, carbs: 12, fiber: 7, fat: 14 },
+  },
+  {
+    id: "r_ext_22",
+    title: "Raw rajčatová polévka s čerstvou bazalkou",
+    slug: "raw-rajcatova-polevka-s-bazalkou",
+    category: "Polévky",
+    prepTime: 10,
+    cookTime: 0,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+        alt: "Raw rajčatová polévka",
+      },
+    ],
+    description:
+      "Svěží letní gazpacho varianta ze zralých rajčat, sušených rajčat a svazku čerstvé bazalky.",
+    tags: ["Polévka", "Raw", "Rajčata", "Bazalka"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 140, protein: 4, carbs: 18, fiber: 5, fat: 6 },
+  },
+  {
+    id: "r_ext_23",
+    title: "Rýžové nudle s veganským kuřecím masem a teriyaki omáčkou",
+    slug: "ryzove-nudle-s-veganskym-kurecim-masem-a-teriyaki",
+    category: "Hlavní jídla",
+    prepTime: 15,
+    cookTime: 15,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80",
+        alt: "Rýžové nudle teriyaki",
+      },
+    ],
+    description:
+      "Smažené rýžové nudle se sojovými nudličkami, zeleninou a sladko-slanou omáčkou teriyaki.",
+    tags: ["Asijská", "Nudle", "Teriyaki", "High-Protein"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 420, protein: 22, carbs: 64, fiber: 6, fat: 9 },
+  },
+  {
+    id: "r_ext_24",
+    title: "Veganská kachna se špenátem a bramborovým knedlíkem",
+    slug: "veganska-kachna-se-spenatem-a-knedlikem",
+    category: "Hlavní jídla",
+    prepTime: 25,
+    cookTime: 40,
+    servings: 3,
+    difficulty: "střední",
+    image:
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        alt: "Veganská kachna",
+      },
+    ],
+    description:
+      "Poctivá nedělní klasika bez masa! Šťavnatá seitanová kachna se servíruje s dušeným špenátem a bramborovými knedlíky.",
+    tags: ["Česká kuchyně", "Seitan", "Tradiční", "Knedlíky"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 480, protein: 26, carbs: 68, fiber: 7, fat: 12 },
+  },
+  {
+    id: "r_ext_25",
+    title: "Falafel a hummus v pita chlebu",
+    slug: "falafel-a-hummus-v-pita-chlebu",
+    category: "Hlavní jídla",
+    prepTime: 20,
+    cookTime: 15,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+        alt: "Falafel v pita chlebu",
+      },
+    ],
+    description:
+      "Křupavé cizrnové kuličky falafel servírované v teplé pitě s krémovým hummusem a čerstvým salátkem.",
+    tags: ["Falafel", "Blízký východ", "Pita", "Cizrna"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 450, protein: 18, carbs: 62, fiber: 11, fat: 16 },
+  },
+  {
+    id: "r_ext_26",
+    title: "Grilovaná zelenina a tofu s hummusovým dipem",
+    slug: "grilovana-zelenina-a-tofu-s-hummusovym-dipem",
+    category: "Hlavní jídla",
+    prepTime: 15,
+    cookTime: 20,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+        alt: "Grilovaná zelenina",
+      },
+    ],
+    description:
+      "Barevná směs grilované cukety, lilku a paprik s marinovaným tofu podávaná s jemným humusem.",
+    tags: ["Grilování", "Zelenina", "Tofu", "Bezlepek"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 330, protein: 16, carbs: 28, fiber: 8, fat: 17 },
+  },
+  {
+    id: "r_ext_27",
+    title: "Veganský kuřecí řízek s bramborovou kaší",
+    slug: "vegansky-kureci-rizek-s-bramborovou-kasi",
+    category: "Hlavní jídla",
+    prepTime: 20,
+    cookTime: 20,
+    servings: 3,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        alt: "Veganský řízek",
+      },
+    ],
+    description:
+      "Křupavý trojobal na sójovém řízku podávaný s jemnou bramborovou kaší a kyselou okurkou.",
+    tags: ["Česká kuchyně", "Řízek", "Klasika", "Bramborová kaše"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 440, protein: 20, carbs: 56, fiber: 6, fat: 15 },
+  },
+  {
+    id: "r_ext_28",
+    title: "Veganské kuřecí špízy se třemi omáčkami",
+    slug: "veganske-kureci-spizy-se-tremi-omacami",
+    category: "Hlavní jídla",
+    prepTime: 20,
+    cookTime: 15,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        alt: "Veganské špízy",
+      },
+    ],
+    description:
+      "Špízy se seitanem, paprikou a cibulkou opékané na grilu s arašídovou, chilli a česnekovou omáčkou.",
+    tags: ["Špízy", "Grilování", "Seitan", "Omáčky"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 410, protein: 24, carbs: 38, fiber: 7, fat: 18 },
+  },
+  {
+    id: "r_ext_29",
+    title: "Musaka s lilkem a smetanovým bešamelem",
+    slug: "musaka-s-lilkem-a-smetanovym-besamelem",
+    category: "Hlavní jídla",
+    prepTime: 30,
+    cookTime: 45,
+    servings: 4,
+    difficulty: "střední",
+    image:
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        alt: "Musaka s lilkem",
+      },
+    ],
+    description:
+      "Řecký zapečený pokrm z plátků lilku, brambor, čočkové směsi s rajčaty a jemného rostlinného bešamelu.",
+    tags: ["Řecká", "Lilek", "Zapékané", "Musaka"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 420, protein: 15, carbs: 48, fiber: 9, fat: 18 },
+  },
+  {
+    id: "r_ext_30",
+    title: "Osso Buco z marinovaného tofu v rajčatové omáčce",
+    slug: "osso-buco-z-marinovaneho-tofu",
+    category: "Hlavní jídla",
+    prepTime: 20,
+    cookTime: 35,
+    servings: 3,
+    difficulty: "střední",
+    image:
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        alt: "Veganské Osso Buco",
+      },
+    ],
+    description:
+      "Italská varianta silné zeleninovo-rajčatové omáčky s vína a silnými plátky marinovaného tofu s gremolatou.",
+    tags: ["Italská", "Tofu", "Víno", "Gremolata"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 360, protein: 19, carbs: 24, fiber: 6, fat: 16 },
+  },
+  {
+    id: "r_ext_31",
+    title: "Veganské krevety se zeleninou",
+    slug: "veganske-krevety-se-zeleninou",
+    category: "Hlavní jídla",
+    prepTime: 15,
+    cookTime: 10,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80",
+        alt: "Veganské krevety",
+      },
+    ],
+    description:
+      "Rostlinná varianta mořských plodů ze zahuštěné konjakové hmoty smažená s cuketou, česnekem a bílým vínem.",
+    tags: ["Mořské plody", "Veganské", "Wok", "Rychlé"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 280, protein: 10, carbs: 22, fiber: 5, fat: 14 },
+  },
+  {
+    id: "r_ext_32",
+    title: "Veganský Burger XXL",
+    slug: "vegansky-burger-xxl",
+    category: "Hlavní jídla",
+    prepTime: 20,
+    cookTime: 15,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80",
+        alt: "Burger XXL",
+      },
+    ],
+    description:
+      "Sytý šťavnatý burger s rostlinným plátkem, veganským sýrem, karamelizovanou cibulkou a barbecue omáčkou.",
+    tags: ["Burger", "Fast food", "BBQ", "Syté"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 520, protein: 24, carbs: 58, fiber: 8, fat: 22 },
+  },
+  {
+    id: "r_ext_33",
+    title: "Ratatouille s rýží Basmati",
+    slug: "ratatouille-s-ryzi-basmati",
+    category: "Hlavní jídla",
+    prepTime: 20,
+    cookTime: 30,
+    servings: 3,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        alt: "Ratatouille",
+      },
+    ],
+    description:
+      "Klasický francouzský zeleninový pokrm z cuket, lilku, paprik a rajčat ochucený provensálským kořením.",
+    tags: ["Francouzská", "Ratatouille", "Zelenina", "Bezlepek"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 310, protein: 6, carbs: 52, fiber: 7, fat: 8 },
+  },
+  {
+    id: "r_ext_34",
+    title: "Raw pohankový salát s krémem z kešu a květáku",
+    slug: "raw-pohankovy-salat-s-kremem-z-kesu",
+    category: "Saláty a misky",
+    prepTime: 15,
+    cookTime: 0,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80",
+        alt: "Raw pohankový salát",
+      },
+    ],
+    description:
+      "Klíčená pohanka doplněná sametovým nechozeným dresinkem z kešu ořechů a květáku.",
+    tags: ["Raw", "Pohanka", "Kešu", "Zdravé"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 320, protein: 11, carbs: 38, fiber: 7, fat: 15 },
+  },
+  {
+    id: "r_ext_35",
+    title: "Raw boloňské lasagne s květákem",
+    slug: "raw-bolonske-lasagne-s-kvetakem",
+    category: "Hlavní jídla",
+    prepTime: 25,
+    cookTime: 0,
+    servings: 2,
+    difficulty: "střední",
+    image:
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        alt: "Raw lasagne",
+      },
+    ],
+    description:
+      "Plátky cukety vrstvené s ořechovo-rajčatovou boloňskou omáčkou a kešu sýrem.",
+    tags: ["Raw", "Lasagne", "Cuketa", "Bezlepek"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 350, protein: 12, carbs: 26, fiber: 8, fat: 22 },
+  },
+  {
+    id: "r_ext_36",
+    title: "Raw Tabbouleh salát s quinoou",
+    slug: "raw-tabbouleh-salat-s-quinoou",
+    category: "Saláty a misky",
+    prepTime: 15,
+    cookTime: 0,
+    servings: 3,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+        alt: "Raw Tabbouleh",
+      },
+    ],
+    description:
+      "Bylinkový salát z naklíčené quinoy, hromady čerstvého koriandru, petržele a rajčátek.",
+    tags: ["Raw", "Quinoa", "Tabbouleh", "Bylinky"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 230, protein: 8, carbs: 32, fiber: 7, fat: 9 },
+  },
+  {
+    id: "r_ext_37",
+    title: "Raw tatarák z červené řepy",
+    slug: "raw-tatarak-z-cervene-repy",
+    category: "Předkrmy",
+    prepTime: 15,
+    cookTime: 0,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+        alt: "Tatarák z řepy",
+      },
+    ],
+    description:
+      "Vynikající předkrm z jemně nastrouhané červené řepy, kapary, okurek, hořčice a uzené papriky.",
+    tags: ["Raw", "Tatarák", "Červená řepa", "Předkrm"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 160, protein: 4, carbs: 18, fiber: 5, fat: 8 },
+  },
+  {
+    id: "r_ext_38",
+    title: "Rajčata plněná kešu krémem",
+    slug: "rajcata-plnena-kesu-kremem",
+    category: "Předkrmy",
+    prepTime: 15,
+    cookTime: 0,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+        alt: "Plněná rajčata",
+      },
+    ],
+    description:
+      "Zralá pevná rajčata dlabaná a naplněná lehkou pomazánkou z kešu ořechů, pažitky a česneku.",
+    tags: ["Raw", "Rajčata", "Kešu", "Předkrm"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 210, protein: 7, carbs: 14, fiber: 4, fat: 15 },
+  },
+  {
+    id: "r_ext_39",
+    title: "Veganské kuře na paprice s těstovinami",
+    slug: "veganske-kure-na-paprice-s-testovinami",
+    category: "Hlavní jídla",
+    prepTime: 15,
+    cookTime: 25,
+    servings: 4,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        alt: "Kuře na paprice",
+      },
+    ],
+    description:
+      "Oblíbené omáčkové jídlo ze sójových nudliček v sametové omáčce ze sladké papriky a smetany.",
+    tags: ["Česká kuchyně", "Omáčka", "Sójové maso", "Klasika"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 430, protein: 22, carbs: 60, fiber: 5, fat: 12 },
+  },
+  {
+    id: "r_ext_40",
+    title: "Bezlepkový špenátový quiche s tofu",
+    slug: "bezlepkovy-spenatovy-quiche-s-tofu",
+    category: "Hlavní jídla",
+    prepTime: 25,
+    cookTime: 35,
+    servings: 4,
+    difficulty: "střední",
+    image:
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        alt: "Špenátový quiche",
+      },
+    ],
+    description:
+      "Slaný koláč s korpusem z pohankové mouky naplněný krémovou tofu-špenátovou náplní.",
+    tags: ["Quiche", "Špenát", "Tofu", "Bezlepek"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 380, protein: 15, carbs: 36, fiber: 6, fat: 19 },
+  },
+  {
+    id: "r_ext_41",
+    title: "Plněné bramborové knedlíky s uzeným tofu",
+    slug: "plnene-bramborove-knedliky-s-uzenym-tofu",
+    category: "Hlavní jídla",
+    prepTime: 30,
+    cookTime: 20,
+    servings: 3,
+    difficulty: "střední",
+    image:
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        alt: "Plněné knedlíky",
+      },
+    ],
+    description:
+      "Bramborové těsto plněné uzeným tofu a restovanou cibulí, servírované s kysaným zelím.",
+    tags: ["Česká kuchyně", "Knedlíky", "Tofu", "Tradiční"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 460, protein: 18, carbs: 74, fiber: 7, fat: 11 },
+  },
+  {
+    id: "r_ext_42",
+    title: "Čočka s kořenovou zeleninou",
+    slug: "cocka-s-korenovou-zeleninou",
+    category: "Hlavní jídla",
+    prepTime: 15,
+    cookTime: 25,
+    servings: 3,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        alt: "Čočka na kyselo",
+      },
+    ],
+    description:
+      "Klasická čočka podušená s petrželí, mrkví a celerem na cibulkovém základě se lžící octa.",
+    tags: ["Čočka", "Česká kuchyně", "Zelenina", "Bezlepek"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 320, protein: 19, carbs: 48, fiber: 12, fat: 6 },
+  },
+  {
+    id: "r_ext_43",
+    title: "Smoothie pro chladné ráno",
+    slug: "smoothie-pro-chladne-rano",
+    category: "Nápoje",
+    prepTime: 5,
+    cookTime: 0,
+    servings: 1,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+        alt: "Teplé hřejivé smoothie",
+      },
+    ],
+    description:
+      "Hřejivý hustý nápoj z banánu, ovesných vloček, skořice, zázvoru a teplého ovesného mléka.",
+    tags: ["Smoothie", "Hřejivé", "Snídaně", "Zázvor"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 240, protein: 6, carbs: 46, fiber: 6, fat: 4 },
+  },
+  {
+    id: "r_ext_44",
+    title: "Smoothie pro letní ráno",
+    slug: "smoothie-pro-letni-rano",
+    category: "Nápoje",
+    prepTime: 5,
+    cookTime: 0,
+    servings: 1,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+        alt: "Letní smoothie",
+      },
+    ],
+    description:
+      "Osvěžující koktejl z jahod, broskví a mléka s lístky máty pro energický start do horkého dne.",
+    tags: ["Smoothie", "Letní", "Jahody", "Osvěžující"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 180, protein: 4, carbs: 36, fiber: 5, fat: 2 },
+  },
+  {
+    id: "r_ext_45",
+    title: "Sport smoothie s plant-based proteinem",
+    slug: "sport-smoothie-s-proteinem",
+    category: "Nápoje",
+    prepTime: 5,
+    cookTime: 0,
+    servings: 1,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+        alt: "Protein smoothie",
+      },
+    ],
+    description:
+      "Výživný po-tréninkový nápoj s veganským hrachovým proteinem, banánem a arašídovým máslem.",
+    tags: ["Smoothie", "Protein", "Fitness", "High-Protein"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 340, protein: 25, carbs: 38, fiber: 6, fat: 10 },
+  },
+  {
+    id: "r_ext_46",
+    title: "Letní exotické smoothie",
+    slug: "letni-exoticke-smoothie",
+    category: "Nápoje",
+    prepTime: 5,
+    cookTime: 0,
+    servings: 1,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+        alt: "Exotické smoothie",
+      },
+    ],
+    description:
+      "Tropická smršť z marakuji, manga, marakujového džusu a kokosové smetany.",
+    tags: ["Smoothie", "Exotika", "Mango"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 210, protein: 3, carbs: 44, fiber: 4, fat: 4 },
+  },
+  {
+    id: "r_ext_47",
+    title: "Smoothie pro lepší imunitu",
+    slug: "smoothie-pro-lepsi-imunitu",
+    category: "Nápoje",
+    prepTime: 5,
+    cookTime: 0,
+    servings: 1,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+        alt: "Imunitní smoothie",
+      },
+    ],
+    description:
+      "Zářivý citrusový nápoj s čerstvým zázvorem, kurkumou, pomerančem a špetkou černého pepře.",
+    tags: ["Smoothie", "Imunita", "Zázvor", "Kurkuma"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 140, protein: 2, carbs: 32, fiber: 4, fat: 1 },
+  },
+  {
+    id: "r_ext_48",
+    title: "Domácí konopné mléko",
+    slug: "domaci-konopne-mleko",
+    category: "Nápoje",
+    prepTime: 5,
+    cookTime: 0,
+    servings: 4,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+        alt: "Konopné mléko",
+      },
+    ],
+    description:
+      "Super rychlé rostlinné mléko z konopných semínek bez nutnosti namáčení a cezení.",
+    tags: ["Mléko", "Konopí", "Rostlinné mléko", "Raw"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 110, protein: 5, carbs: 2, fiber: 1, fat: 9 },
+  },
+  {
+    id: "r_ext_49",
+    title: "Čokoládový koláč z polenty",
+    slug: "cokoladovy-kolac-z-polenty",
+    category: "Dezerty",
+    prepTime: 15,
+    cookTime: 35,
+    servings: 8,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+        alt: "Čokoládový koláč",
+      },
+    ],
+    description:
+      "Vláčný bezlepkový čokoládový koláč připravený z uvařené polenty, kvalitního kakaa a hořké čokolády.",
+    tags: ["Dezert", "Čokoláda", "Polenta", "Bezlepek"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 280, protein: 5, carbs: 38, fiber: 4, fat: 13 },
+  },
+  {
+    id: "r_ext_50",
+    title: "Jáhlový koláč s vůní podzimu",
+    slug: "jahlovy-kolac-s-vuni-podzimu",
+    category: "Dezerty",
+    prepTime: 20,
+    cookTime: 40,
+    servings: 8,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+        alt: "Jáhlový koláč",
+      },
+    ],
+    description:
+      "Zdravý pečený jáhelník s jablky, skořicí, rozinkami a vlašskými ořechy.",
+    tags: ["Dezert", "Jáhly", "Jablka", "Bezlepek"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 240, protein: 6, carbs: 44, fiber: 5, fat: 6 },
+  },
+  {
+    id: "r_ext_51",
+    title: "Celozrnný makovec",
+    slug: "celozrnny-makovec",
+    category: "Dezerty",
+    prepTime: 15,
+    cookTime: 35,
+    servings: 10,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+        alt: "Celozrnný makovec",
+      },
+    ],
+    description:
+      "Tradiční vláčný makový koláč z celozrnné pšeničné mouky slazený jablečným pyré.",
+    tags: ["Dezert", "Mák", "Makovec", "Vláčný"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 260, protein: 7, carbs: 36, fiber: 5, fat: 11 },
+  },
+  {
+    id: "r_ext_52",
+    title: "Raw borůvkový cheesecake",
+    slug: "raw-boruvkovy-cheesecake",
+    category: "Dezerty",
+    prepTime: 25,
+    cookTime: 0,
+    servings: 8,
+    difficulty: "střední",
+    image:
+      "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+        alt: "Borůvkový cheesecake",
+      },
+    ],
+    description:
+      "Luxusní nechozený dort s korpusem z ořechů a datlí a krémem z kešu a čerstvých borůvek.",
+    tags: ["Raw", "Cheesecake", "Borůvky", "Kešu"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 360, protein: 8, carbs: 32, fiber: 5, fat: 24 },
+  },
+  {
+    id: "r_ext_53",
+    title: "Malinová zmrzlina s růžovou šlehačkou",
+    slug: "malinova-zmrzlina-s-ruzovou-slehackou",
+    category: "Dezerty",
+    prepTime: 10,
+    cookTime: 0,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+        alt: "Malinová zmrzlina",
+      },
+    ],
+    description:
+      "Blesková krémová zmrzlina ze zmrazených malin a banánu zdobená kokosovou šlehačkou.",
+    tags: ["Dezert", "Zmrzlina", "Maliny", "Raw"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 190, protein: 3, carbs: 34, fiber: 6, fat: 6 },
+  },
+  {
+    id: "r_ext_54",
+    title: "Čoko-borůvkové proteinové tyčinky",
+    slug: "coko-boruvkove-proteinove-tycinky",
+    category: "Dezerty",
+    prepTime: 15,
+    cookTime: 0,
+    servings: 6,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+        alt: "Proteinové tyčinky",
+      },
+    ],
+    description:
+      "Domácí nepečené tyčinky z ovesných vloček, čokoládového proteinu a sušených borůvek.",
+    tags: ["Tyčinky", "Protein", "Fitness", "Nepečené"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 210, protein: 14, carbs: 24, fiber: 4, fat: 7 },
+  },
+  {
+    id: "r_ext_55",
+    title: "Růžový koláč s čokoládovým krémem",
+    slug: "ruzovy-kolac-s-cokoladovym-kremem",
+    category: "Dezerty",
+    prepTime: 20,
+    cookTime: 30,
+    servings: 8,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+        alt: "Růžový koláč",
+      },
+    ],
+    description:
+      "Krásný korpus zafarbený řepovou šťávou naplněný nadýchaným čokoládovým ganache krémem.",
+    tags: ["Dezert", "Koláč", "Čokoláda", "Sváteční"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 310, protein: 5, carbs: 42, fiber: 3, fat: 14 },
+  },
+  {
+    id: "r_ext_56",
+    title: "Pohankové lívance s jahodami",
+    slug: "pohankove-livance-s-jahodami",
+    category: "Snídaně",
+    prepTime: 10,
+    cookTime: 10,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=800&q=80",
+        alt: "Pohankové lívance",
+      },
+    ],
+    description:
+      "Bezlepkové nadýchané lívanečky z pohankové mouky podávané s čerstvými jahodami a rýžovým sirupem.",
+    tags: ["Lívance", "Pohanka", "Bezlepek", "Snídaně"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 270, protein: 7, carbs: 46, fiber: 5, fat: 6 },
+  },
+  {
+    id: "r_ext_57",
+    title: "Avokádový pudink s chia semínkem",
+    slug: "avokadovy-puding-s-chia-seminkem",
+    category: "Dezerty",
+    prepTime: 5,
+    cookTime: 0,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+        alt: "Avokádový pudink",
+      },
+    ],
+    description:
+      "Sametový čokoládový pudink z mletého avokáda, zralého banánu, kakaa a chia semínek.",
+    tags: ["Pudink", "Avokádo", "Čokoláda", "Raw"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 220, protein: 5, carbs: 24, fiber: 8, fat: 13 },
+  },
+  {
+    id: "r_ext_58",
+    title: "Amarantové kuličky se skořicí",
+    slug: "amarantove-kulicky-se-skorici",
+    category: "Dezerty",
+    prepTime: 15,
+    cookTime: 0,
+    servings: 4,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+        alt: "Amarantové kuličky",
+      },
+    ],
+    description:
+      "Nepečené kuličky z pufovaného amarantu, mletých skořicových oříšků a datlového sirupu.",
+    tags: ["Kuličky", "Amarant", "Skořice", "Raw"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 180, protein: 5, carbs: 28, fiber: 4, fat: 6 },
+  },
+
+  {
+    id: "r_ext_1",
+    title: "Vegánská míchaná vajíčka z tofu",
+    slug: "veganska-michana-vajicka-z-tofu",
+    category: "Snídaně",
+    prepTime: 10,
+    cookTime: 10,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=800&q=80",
+        alt: "Vegánská míchaná vajíčka z tofu s čerstvou pažitkou",
+      },
+    ],
+    description:
+      "Výdatná veganská snídaně z tofu. Ochucená černou solí Kala Namak a kurkumou pro autentickou vaječnou chuť a barvu.",
+    tags: ["Snídaně", "Tofu", "Rychlé", "High-Protein"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 240, protein: 18, carbs: 6, fiber: 4, fat: 15 },
+  },
+  {
+    id: "r_ext_2",
+    title: "Kynuté lívance v americkém duchu",
+    slug: "kynute-livance-v-americkem-duchu",
+    category: "Snídaně",
+    prepTime: 20,
+    cookTime: 15,
+    servings: 4,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=800&q=80",
+        alt: "Nadýchané kynuté lívance",
+      },
+    ],
+    description:
+      "Nadýchané, vláčné kynuté lívance inspirované americkou snídaňovou klasikou.",
+    tags: ["Lívance", "Snídaně", "Sladké"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 320, protein: 8, carbs: 54, fiber: 3, fat: 8 },
+  },
+  {
+    id: "r_ext_3",
+    title: "Přes noc namočená chia ovesná kaše s borůvkami",
+    slug: "pres-noc-namocena-chia-ovesna-kase-s-boruvkami",
+    category: "Snídaně",
+    prepTime: 5,
+    cookTime: 0,
+    servings: 1,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=800&q=80",
+        alt: "Overnight oats",
+      },
+    ],
+    description:
+      "Rychlá a výživná snídaně bez vaření. Ovesné vločky a chia semínka zjemněná mlékem a borůvkami.",
+    tags: ["Snídaně", "Raw", "Bez vaření"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 280, protein: 10, carbs: 42, fiber: 9, fat: 8 },
+  },
+  {
+    id: "r_ext_4",
+    title: "Detoxikační ovocné smoothie",
+    slug: "detoxikacni-ovocne-smoothie",
+    category: "Nápoje",
+    prepTime: 5,
+    cookTime: 0,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+        alt: "Detox ovocné smoothie",
+      },
+    ],
+    description:
+      "Osvěžující vitamínová bomba z ananasu, manga, špenátu a kokosové vody pro očistu organismu.",
+    tags: ["Smoothie", "Detox", "Nápoje", "Vitamíny"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 160, protein: 3, carbs: 38, fiber: 5, fat: 1 },
+  },
+  {
+    id: "r_ext_5",
+    title: "Bramborový salát s domácí sójanézou",
+    slug: "bramborovy-salat-s-domaci-sojanezou",
+    category: "Saláty a misky",
+    prepTime: 25,
+    cookTime: 20,
+    servings: 4,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1543339308-43e59d6b73a6?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1543339308-43e59d6b73a6?auto=format&fit=crop&w=800&q=80",
+        alt: "Bramborový salát",
+      },
+    ],
+    description:
+      "Lehká veganská varianta tradičního bramborového salátu s krémovou domácí sójanézou.",
+    tags: ["Salát", "Česká kuchyně", "Brambory"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 310, protein: 6, carbs: 38, fiber: 6, fat: 14 },
+  },
+  {
+    id: "r_ext_6",
+    title: "Celozrnný těstovinový salát se sušenými rajčaty a tofu",
+    slug: "celozrnny-testovinovy-salat-se-susenymi-rajcaty-a-tofu",
+    category: "Saláty a misky",
+    prepTime: 15,
+    cookTime: 10,
+    servings: 3,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80",
+        alt: "Těstovinový salát",
+      },
+    ],
+    description:
+      "Středomořský salát z celozrnných těstovin, sušených rajčat, černých oliv a marinovaného tofu.",
+    tags: ["Těstoviny", "Salát", "Středomořská"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 360, protein: 14, carbs: 50, fiber: 7, fat: 12 },
+  },
+  {
+    id: "r_ext_7",
+    title: "Kuskusový salát s brusinkami a mandlemi",
+    slug: "kuskusovy-salat-s-brusinkami-a-mandlemi",
+    category: "Saláty a misky",
+    prepTime: 10,
+    cookTime: 5,
+    servings: 3,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+        alt: "Kuskusový salát s brusinkami",
+      },
+    ],
+    description:
+      "Lehký a lahodný kuskusový salát spojený se sušenými brusinkami, plátky mandlí a mátou.",
+    tags: ["Kuskus", "Salát", "Brusinky", "Rychlé"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 290, protein: 7, carbs: 48, fiber: 5, fat: 8 },
+  },
+  {
+    id: "r_ext_8",
+    title: "Pohankový salát s tempehem a grilovanou zeleninou",
+    slug: "pohankovy-salat-s-tempehem-a-grilovanou-zeleninou",
+    category: "Saláty a misky",
+    prepTime: 15,
+    cookTime: 20,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80",
+        alt: "Pohankový salát s tempehem",
+      },
+    ],
+    description:
+      "Zahřívací výživný salát z mechanicky loupané pohanky, uzeného tempehu a grilované cukety s paprikou.",
+    tags: ["Pohanka", "Tempeh", "Bezlepek", "Zahřívací"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 340, protein: 16, carbs: 42, fiber: 8, fat: 12 },
+  },
+  {
+    id: "r_ext_9",
+    title: "Salát Tabbouleh z celozrnného bulguru s marinovaným tofu",
+    slug: "salat-tabbouleh-z-celozrnneho-bulguru-s-marinovanym-tofu",
+    category: "Saláty a misky",
+    prepTime: 15,
+    cookTime: 10,
+    servings: 4,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+        alt: "Tabbouleh s tofu",
+      },
+    ],
+    description:
+      "Čerstvý bylinkový salát z hladkolisté petrželky, máty, zralých rajčat a bulguru, doplněný o orestované marinované tofu.",
+    tags: ["Libanonská", "Bulgur", "Tofu", "Salát"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 260, protein: 11, carbs: 34, fiber: 8, fat: 9 },
+  },
+  {
+    id: "r_ext_10",
+    title: "Zeleninový salát s krémovou tahini zálivkou",
+    slug: "zeleninovy-salat-s-kremovou-tahini-zalivkou",
+    category: "Saláty a misky",
+    prepTime: 15,
+    cookTime: 0,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+        alt: "Salát s tahini zálivkou",
+      },
+    ],
+    description:
+      "Křupavá směs čerstvé zeleniny přelitá bohatým dresinkem ze sezamové pasty tahini, česneku a citronu.",
+    tags: ["Salát", "Tahini", "Sezam", "Zdravé"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 230, protein: 7, carbs: 18, fiber: 6, fat: 15 },
+  },
+  {
+    id: "r_ext_11",
+    title: "Bagetka s uzeným tofu a karamelizovanou cibulkou",
+    slug: "bagetka-s-uzenym-tofu-a-karamelizovanou-cibulkou",
+    category: "Sendviče",
+    prepTime: 10,
+    cookTime: 15,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=800&q=80",
+        alt: "Bagetka s uzeným tofu",
+      },
+    ],
+    description:
+      "Křupavá pečená bageta plněná plátky orestovaného uzeného tofu, sladkou karamelizovanou cibulkou a rukolou.",
+    tags: ["Sendvič", "Bageta", "Tofu", "Svačina"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 380, protein: 18, carbs: 46, fiber: 5, fat: 14 },
+  },
+  {
+    id: "r_ext_12",
+    title: "Pšenično-žitný chléb s pečenou dýní a medovo-hořčičným dresinkem",
+    slug: "psenicno-zitny-chleb-s-pecenou-dyni-a-dresinkem",
+    category: "Sendviče",
+    prepTime: 15,
+    cookTime: 25,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=800&q=80",
+        alt: "Chléb s dýní",
+      },
+    ],
+    description:
+      "Náš poctivý chléb obložený pečenými plátky dýně Hokkaido, piniovými oříšky a hořčičným dresinkem.",
+    tags: ["Chléb", "Dýně", "Podzimní", "Sendvič"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 320, protein: 9, carbs: 48, fiber: 7, fat: 10 },
+  },
+  {
+    id: "r_ext_13",
+    title: "Cizrnový hummus na mnoho způsobů",
+    slug: "cikrnovy-hummus-na-mnoho-zpusobu",
+    category: "Pomazánky",
+    prepTime: 15,
+    cookTime: 0,
+    servings: 4,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+        alt: "Cizrnový hummus",
+      },
+    ],
+    description:
+      "Sametově jemná blízkovýchodní pomazánka z cizrny, tahini, česneku a římského kmínu.",
+    tags: ["Hummus", "Cizrna", "Pomazánka", "Bezlepek"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 210, protein: 8, carbs: 22, fiber: 6, fat: 11 },
+  },
+  {
+    id: "r_ext_14",
+    title: "Bramboračka s lesními houbami",
+    slug: "bramboracka-s-lesnimi-houbami",
+    category: "Polévky",
+    prepTime: 15,
+    cookTime: 35,
+    servings: 4,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+        alt: "Bramboračka",
+      },
+    ],
+    description:
+      "Tradiční česká polévka s bramborami, kořenovou zeleninou, sušenými lesními houbami a majoránkou.",
+    tags: ["Polévka", "Česká kuchyně", "Houby"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 210, protein: 6, carbs: 34, fiber: 6, fat: 6 },
+  },
+  {
+    id: "r_ext_15",
+    title: "Brokolicová polévka s hráškem",
+    slug: "brokolicova-polevka-s-hraskem",
+    category: "Polévky",
+    prepTime: 10,
+    cookTime: 15,
+    servings: 3,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+        alt: "Brokolicová polévka",
+      },
+    ],
+    description:
+      "Zářivě zelená krémová polévka z čerstvé brokolice a sladkého hrášku zjemněná rostlinnou smetanou.",
+    tags: ["Polévka", "Brokolice", "Hrášek", "Zelená"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 180, protein: 8, carbs: 22, fiber: 7, fat: 7 },
+  },
+  {
+    id: "r_ext_16",
+    title: "Lehce pikantní dýňová polévka s dýňovým olejem",
+    slug: "lehce-pikantni-dynova-polevka-s-dynovym-olejem",
+    category: "Polévky",
+    prepTime: 15,
+    cookTime: 25,
+    servings: 4,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+        alt: "Dýňová polévka",
+      },
+    ],
+    description:
+      "Sametově jemná polévka z dýně Hokkaido se špetkou chilli, zahuštěná dýňovými semínky a tmavým olejem.",
+    tags: ["Polévka", "Dýně", "Hokkaido", "Pikantní"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 220, protein: 5, carbs: 24, fiber: 5, fat: 12 },
+  },
+  {
+    id: "r_ext_17",
+    title: "Fazolová polévka s veganským chorizem",
+    slug: "fazolova-polevka-s-veganskym-chorizem",
+    category: "Polévky",
+    prepTime: 15,
+    cookTime: 30,
+    servings: 4,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+        alt: "Fazolová polévka",
+      },
+    ],
+    description:
+      "Hustá mexikem inspirovaná polévka s červenými fazolemi, uzenou paprikou a kousky veganského choriza.",
+    tags: ["Polévka", "Fazole", "Chorizo", "Sytá"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 310, protein: 15, carbs: 38, fiber: 11, fat: 9 },
+  },
+  {
+    id: "r_ext_18",
+    title: "Krémová cizrnová polévka",
+    slug: "kremova-cizrnova-polevka",
+    category: "Polévky",
+    prepTime: 10,
+    cookTime: 20,
+    servings: 3,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+        alt: "Cizrnová polévka",
+      },
+    ],
+    description:
+      "Výživná polévka z cizrny, pórku a batátů ochucená kurkumou a římským kmínem.",
+    tags: ["Polévka", "Cizrna", "Bezlepek"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 240, protein: 9, carbs: 36, fiber: 8, fat: 6 },
+  },
+  {
+    id: "r_ext_19",
+    title: "Veganská kulajda s hříbky a čerstvým koprem",
+    slug: "veganska-kulajda-s-hribky-a-koprem",
+    category: "Polévky",
+    prepTime: 15,
+    cookTime: 25,
+    servings: 4,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+        alt: "Veganská kulajda",
+      },
+    ],
+    description:
+      "Tradiční jižhočeská polévka zjemněná kokosovou či ovesnou smetanou, plná hříbků a voňavého kopru.",
+    tags: ["Polévka", "Kulajda", "Kopr", "Česká kuchyně"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 230, protein: 5, carbs: 28, fiber: 4, fat: 11 },
+  },
+  {
+    id: "r_ext_20",
+    title: "Polévka ze sladké kukuřice s chilli",
+    slug: "polevka-ze-sladke-kukurice-s-chilli",
+    category: "Polévky",
+    prepTime: 10,
+    cookTime: 15,
+    servings: 3,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+        alt: "Kukuřičná polévka",
+      },
+    ],
+    description:
+      "Zářivě žlutá krémová kukuřičná polévka s nádechem kokosového mléka a pálivými vločkami chilli.",
+    tags: ["Polévka", "Kukuřice", "Kokosové mléko", "Pikantní"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 210, protein: 4, carbs: 30, fiber: 4, fat: 9 },
+  },
+  {
+    id: "r_ext_21",
+    title: "Raw brokolicová polévka s avokádem",
+    slug: "raw-brokolicova-polevka-s-avokadem",
+    category: "Polévky",
+    prepTime: 10,
+    cookTime: 0,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+        alt: "Raw brokolicová polévka",
+      },
+    ],
+    description:
+      "Nechozená studená polévka z čerstvé brokolice, zralého avokáda a česneku plná živých enzymů.",
+    tags: ["Polévka", "Raw", "Brokolice", "Avokádo"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 190, protein: 5, carbs: 12, fiber: 7, fat: 14 },
+  },
+  {
+    id: "r_ext_22",
+    title: "Raw rajčatová polévka s čerstvou bazalkou",
+    slug: "raw-rajcatova-polevka-s-bazalkou",
+    category: "Polévky",
+    prepTime: 10,
+    cookTime: 0,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+        alt: "Raw rajčatová polévka",
+      },
+    ],
+    description:
+      "Svěží letní gazpacho varianta ze zralých rajčat, sušených rajčat a svazku čerstvé bazalky.",
+    tags: ["Polévka", "Raw", "Rajčata", "Bazalka"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 140, protein: 4, carbs: 18, fiber: 5, fat: 6 },
+  },
+  {
+    id: "r_ext_23",
+    title: "Rýžové nudle s veganským kuřecím masem a teriyaki omáčkou",
+    slug: "ryzove-nudle-s-veganskym-kurecim-masem-a-teriyaki",
+    category: "Hlavní jídla",
+    prepTime: 15,
+    cookTime: 15,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80",
+        alt: "Rýžové nudle teriyaki",
+      },
+    ],
+    description:
+      "Smažené rýžové nudle se sojovými nudličkami, zeleninou a sladko-slanou omáčkou teriyaki.",
+    tags: ["Asijská", "Nudle", "Teriyaki", "High-Protein"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 420, protein: 22, carbs: 64, fiber: 6, fat: 9 },
+  },
+  {
+    id: "r_ext_24",
+    title: "Veganská kachna se špenátem a bramborovým knedlíkem",
+    slug: "veganska-kachna-se-spenatem-a-knedlikem",
+    category: "Hlavní jídla",
+    prepTime: 25,
+    cookTime: 40,
+    servings: 3,
+    difficulty: "střední",
+    image:
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        alt: "Veganská kachna",
+      },
+    ],
+    description:
+      "Poctivá nedělní klasika bez masa! Šťavnatá seitanová kachna se servíruje s dušeným špenátem a bramborovými knedlíky.",
+    tags: ["Česká kuchyně", "Seitan", "Tradiční", "Knedlíky"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 480, protein: 26, carbs: 68, fiber: 7, fat: 12 },
+  },
+  {
+    id: "r_ext_25",
+    title: "Falafel a hummus v pita chlebu",
+    slug: "falafel-a-hummus-v-pita-chlebu",
+    category: "Hlavní jídla",
+    prepTime: 20,
+    cookTime: 15,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+        alt: "Falafel v pita chlebu",
+      },
+    ],
+    description:
+      "Křupavé cizrnové kuličky falafel servírované v teplé pitě s krémovým hummusem a čerstvým salátkem.",
+    tags: ["Falafel", "Blízký východ", "Pita", "Cizrna"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 450, protein: 18, carbs: 62, fiber: 11, fat: 16 },
+  },
+  {
+    id: "r_ext_26",
+    title: "Grilovaná zelenina a tofu s hummusovým dipem",
+    slug: "grilovana-zelenina-a-tofu-s-hummusovym-dipem",
+    category: "Hlavní jídla",
+    prepTime: 15,
+    cookTime: 20,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+        alt: "Grilovaná zelenina",
+      },
+    ],
+    description:
+      "Barevná směs grilované cukety, lilku a paprik s marinovaným tofu podávaná s jemným humusem.",
+    tags: ["Grilování", "Zelenina", "Tofu", "Bezlepek"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 330, protein: 16, carbs: 28, fiber: 8, fat: 17 },
+  },
+  {
+    id: "r_ext_27",
+    title: "Veganský kuřecí řízek s bramborovou kaší",
+    slug: "vegansky-kureci-rizek-s-bramborovou-kasi",
+    category: "Hlavní jídla",
+    prepTime: 20,
+    cookTime: 20,
+    servings: 3,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        alt: "Veganský řízek",
+      },
+    ],
+    description:
+      "Křupavý trojobal na sójovém řízku podávaný s jemnou bramborovou kaší a kyselou okurkou.",
+    tags: ["Česká kuchyně", "Řízek", "Klasika", "Bramborová kaše"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 440, protein: 20, carbs: 56, fiber: 6, fat: 15 },
+  },
+  {
+    id: "r_ext_28",
+    title: "Veganské kuřecí špízy se třemi omáčkami",
+    slug: "veganske-kureci-spizy-se-tremi-omacami",
+    category: "Hlavní jídla",
+    prepTime: 20,
+    cookTime: 15,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        alt: "Veganské špízy",
+      },
+    ],
+    description:
+      "Špízy se seitanem, paprikou a cibulkou opékané na grilu s arašídovou, chilli a česnekovou omáčkou.",
+    tags: ["Špízy", "Grilování", "Seitan", "Omáčky"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 410, protein: 24, carbs: 38, fiber: 7, fat: 18 },
+  },
+  {
+    id: "r_ext_29",
+    title: "Musaka s lilkem a smetanovým bešamelem",
+    slug: "musaka-s-lilkem-a-smetanovym-besamelem",
+    category: "Hlavní jídla",
+    prepTime: 30,
+    cookTime: 45,
+    servings: 4,
+    difficulty: "střední",
+    image:
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        alt: "Musaka s lilkem",
+      },
+    ],
+    description:
+      "Řecký zapečený pokrm z plátků lilku, brambor, čočkové směsi s rajčaty a jemného rostlinného bešamelu.",
+    tags: ["Řecká", "Lilek", "Zapékané", "Musaka"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 420, protein: 15, carbs: 48, fiber: 9, fat: 18 },
+  },
+  {
+    id: "r_ext_30",
+    title: "Osso Buco z marinovaného tofu v rajčatové omáčce",
+    slug: "osso-buco-z-marinovaneho-tofu",
+    category: "Hlavní jídla",
+    prepTime: 20,
+    cookTime: 35,
+    servings: 3,
+    difficulty: "střední",
+    image:
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        alt: "Veganské Osso Buco",
+      },
+    ],
+    description:
+      "Italská varianta silné zeleninovo-rajčatové omáčky s vína a silnými plátky marinovaného tofu s gremolatou.",
+    tags: ["Italská", "Tofu", "Víno", "Gremolata"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 360, protein: 19, carbs: 24, fiber: 6, fat: 16 },
+  },
+  {
+    id: "r_ext_31",
+    title: "Veganské krevety se zeleninou",
+    slug: "veganske-krevety-se-zeleninou",
+    category: "Hlavní jídla",
+    prepTime: 15,
+    cookTime: 10,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80",
+        alt: "Veganské krevety",
+      },
+    ],
+    description:
+      "Rostlinná varianta mořských plodů ze zahuštěné konjakové hmoty smažená s cuketou, česnekem a bílým vínem.",
+    tags: ["Mořské plody", "Veganské", "Wok", "Rychlé"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 280, protein: 10, carbs: 22, fiber: 5, fat: 14 },
+  },
+  {
+    id: "r_ext_32",
+    title: "Veganský Burger XXL",
+    slug: "vegansky-burger-xxl",
+    category: "Hlavní jídla",
+    prepTime: 20,
+    cookTime: 15,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80",
+        alt: "Burger XXL",
+      },
+    ],
+    description:
+      "Sytý šťavnatý burger s rostlinným plátkem, veganským sýrem, karamelizovanou cibulkou a barbecue omáčkou.",
+    tags: ["Burger", "Fast food", "BBQ", "Syté"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 520, protein: 24, carbs: 58, fiber: 8, fat: 22 },
+  },
+  {
+    id: "r_ext_33",
+    title: "Ratatouille s rýží Basmati",
+    slug: "ratatouille-s-ryzi-basmati",
+    category: "Hlavní jídla",
+    prepTime: 20,
+    cookTime: 30,
+    servings: 3,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        alt: "Ratatouille",
+      },
+    ],
+    description:
+      "Klasický francouzský zeleninový pokrm z cuket, lilku, paprik a rajčat ochucený provensálským kořením.",
+    tags: ["Francouzská", "Ratatouille", "Zelenina", "Bezlepek"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 310, protein: 6, carbs: 52, fiber: 7, fat: 8 },
+  },
+  {
+    id: "r_ext_34",
+    title: "Raw pohankový salát s krémem z kešu a květáku",
+    slug: "raw-pohankovy-salat-s-kremem-z-kesu",
+    category: "Saláty a misky",
+    prepTime: 15,
+    cookTime: 0,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80",
+        alt: "Raw pohankový salát",
+      },
+    ],
+    description:
+      "Klíčená pohanka doplněná sametovým nechozeným dresinkem z kešu ořechů a květáku.",
+    tags: ["Raw", "Pohanka", "Kešu", "Zdravé"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 320, protein: 11, carbs: 38, fiber: 7, fat: 15 },
+  },
+  {
+    id: "r_ext_35",
+    title: "Raw boloňské lasagne s květákem",
+    slug: "raw-bolonske-lasagne-s-kvetakem",
+    category: "Hlavní jídla",
+    prepTime: 25,
+    cookTime: 0,
+    servings: 2,
+    difficulty: "střední",
+    image:
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        alt: "Raw lasagne",
+      },
+    ],
+    description:
+      "Plátky cukety vrstvené s ořechovo-rajčatovou boloňskou omáčkou a kešu sýrem.",
+    tags: ["Raw", "Lasagne", "Cuketa", "Bezlepek"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 350, protein: 12, carbs: 26, fiber: 8, fat: 22 },
+  },
+  {
+    id: "r_ext_36",
+    title: "Raw Tabbouleh salát s quinoou",
+    slug: "raw-tabbouleh-salat-s-quinoou",
+    category: "Saláty a misky",
+    prepTime: 15,
+    cookTime: 0,
+    servings: 3,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+        alt: "Raw Tabbouleh",
+      },
+    ],
+    description:
+      "Bylinkový salát z naklíčené quinoy, hromady čerstvého koriandru, petržele a rajčátek.",
+    tags: ["Raw", "Quinoa", "Tabbouleh", "Bylinky"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 230, protein: 8, carbs: 32, fiber: 7, fat: 9 },
+  },
+  {
+    id: "r_ext_37",
+    title: "Raw tatarák z červené řepy",
+    slug: "raw-tatarak-z-cervene-repy",
+    category: "Předkrmy",
+    prepTime: 15,
+    cookTime: 0,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+        alt: "Tatarák z řepy",
+      },
+    ],
+    description:
+      "Vynikající předkrm z jemně nastrouhané červené řepy, kapary, okurek, hořčice a uzené papriky.",
+    tags: ["Raw", "Tatarák", "Červená řepa", "Předkrm"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 160, protein: 4, carbs: 18, fiber: 5, fat: 8 },
+  },
+  {
+    id: "r_ext_38",
+    title: "Rajčata plněná kešu krémem",
+    slug: "rajcata-plnena-kesu-kremem",
+    category: "Předkrmy",
+    prepTime: 15,
+    cookTime: 0,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+        alt: "Plněná rajčata",
+      },
+    ],
+    description:
+      "Zralá pevná rajčata dlabaná a naplněná lehkou pomazánkou z kešu ořechů, pažitky a česneku.",
+    tags: ["Raw", "Rajčata", "Kešu", "Předkrm"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 210, protein: 7, carbs: 14, fiber: 4, fat: 15 },
+  },
+  {
+    id: "r_ext_39",
+    title: "Veganské kuře na paprice s těstovinami",
+    slug: "veganske-kure-na-paprice-s-testovinami",
+    category: "Hlavní jídla",
+    prepTime: 15,
+    cookTime: 25,
+    servings: 4,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        alt: "Kuře na paprice",
+      },
+    ],
+    description:
+      "Oblíbené omáčkové jídlo ze sójových nudliček v sametové omáčce ze sladké papriky a smetany.",
+    tags: ["Česká kuchyně", "Omáčka", "Sójové maso", "Klasika"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 430, protein: 22, carbs: 60, fiber: 5, fat: 12 },
+  },
+  {
+    id: "r_ext_40",
+    title: "Bezlepkový špenátový quiche s tofu",
+    slug: "bezlepkovy-spenatovy-quiche-s-tofu",
+    category: "Hlavní jídla",
+    prepTime: 25,
+    cookTime: 35,
+    servings: 4,
+    difficulty: "střední",
+    image:
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        alt: "Špenátový quiche",
+      },
+    ],
+    description:
+      "Slaný koláč s korpusem z pohankové mouky naplněný krémovou tofu-špenátovou náplní.",
+    tags: ["Quiche", "Špenát", "Tofu", "Bezlepek"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 380, protein: 15, carbs: 36, fiber: 6, fat: 19 },
+  },
+  {
+    id: "r_ext_41",
+    title: "Plněné bramborové knedlíky s uzeným tofu",
+    slug: "plnene-bramborove-knedliky-s-uzenym-tofu",
+    category: "Hlavní jídla",
+    prepTime: 30,
+    cookTime: 20,
+    servings: 3,
+    difficulty: "střední",
+    image:
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        alt: "Plněné knedlíky",
+      },
+    ],
+    description:
+      "Bramborové těsto plněné uzeným tofu a restovanou cibulí, servírované s kysaným zelím.",
+    tags: ["Česká kuchyně", "Knedlíky", "Tofu", "Tradiční"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 460, protein: 18, carbs: 74, fiber: 7, fat: 11 },
+  },
+  {
+    id: "r_ext_42",
+    title: "Čočka s kořenovou zeleninou",
+    slug: "cocka-s-korenovou-zeleninou",
+    category: "Hlavní jídla",
+    prepTime: 15,
+    cookTime: 25,
+    servings: 3,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        alt: "Čočka na kyselo",
+      },
+    ],
+    description:
+      "Klasická čočka podušená s petrželí, mrkví a celerem na cibulkovém základě se lžící octa.",
+    tags: ["Čočka", "Česká kuchyně", "Zelenina", "Bezlepek"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 320, protein: 19, carbs: 48, fiber: 12, fat: 6 },
+  },
+  {
+    id: "r_ext_43",
+    title: "Smoothie pro chladné ráno",
+    slug: "smoothie-pro-chladne-rano",
+    category: "Nápoje",
+    prepTime: 5,
+    cookTime: 0,
+    servings: 1,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+        alt: "Teplé hřejivé smoothie",
+      },
+    ],
+    description:
+      "Hřejivý hustý nápoj z banánu, ovesných vloček, skořice, zázvoru a teplého ovesného mléka.",
+    tags: ["Smoothie", "Hřejivé", "Snídaně", "Zázvor"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 240, protein: 6, carbs: 46, fiber: 6, fat: 4 },
+  },
+  {
+    id: "r_ext_44",
+    title: "Smoothie pro letní ráno",
+    slug: "smoothie-pro-letni-rano",
+    category: "Nápoje",
+    prepTime: 5,
+    cookTime: 0,
+    servings: 1,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+        alt: "Letní smoothie",
+      },
+    ],
+    description:
+      "Osvěžující koktejl z jahod, broskví a mléka s lístky máty pro energický start do horkého dne.",
+    tags: ["Smoothie", "Letní", "Jahody", "Osvěžující"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 180, protein: 4, carbs: 36, fiber: 5, fat: 2 },
+  },
+  {
+    id: "r_ext_45",
+    title: "Sport smoothie s plant-based proteinem",
+    slug: "sport-smoothie-s-proteinem",
+    category: "Nápoje",
+    prepTime: 5,
+    cookTime: 0,
+    servings: 1,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+        alt: "Protein smoothie",
+      },
+    ],
+    description:
+      "Výživný po-tréninkový nápoj s veganským hrachovým proteinem, banánem a arašídovým máslem.",
+    tags: ["Smoothie", "Protein", "Fitness", "High-Protein"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 340, protein: 25, carbs: 38, fiber: 6, fat: 10 },
+  },
+  {
+    id: "r_ext_46",
+    title: "Letní exotické smoothie",
+    slug: "letni-exoticke-smoothie",
+    category: "Nápoje",
+    prepTime: 5,
+    cookTime: 0,
+    servings: 1,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+        alt: "Exotické smoothie",
+      },
+    ],
+    description:
+      "Tropická smršť z marakuji, manga, marakujového džusu a kokosové smetany.",
+    tags: ["Smoothie", "Exotika", "Mango"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 210, protein: 3, carbs: 44, fiber: 4, fat: 4 },
+  },
+  {
+    id: "r_ext_47",
+    title: "Smoothie pro lepší imunitu",
+    slug: "smoothie-pro-lepsi-imunitu",
+    category: "Nápoje",
+    prepTime: 5,
+    cookTime: 0,
+    servings: 1,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+        alt: "Imunitní smoothie",
+      },
+    ],
+    description:
+      "Zářivý citrusový nápoj s čerstvým zázvorem, kurkumou, pomerančem a špetkou černého pepře.",
+    tags: ["Smoothie", "Imunita", "Zázvor", "Kurkuma"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 140, protein: 2, carbs: 32, fiber: 4, fat: 1 },
+  },
+  {
+    id: "r_ext_48",
+    title: "Domácí konopné mléko",
+    slug: "domaci-konopne-mleko",
+    category: "Nápoje",
+    prepTime: 5,
+    cookTime: 0,
+    servings: 4,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+        alt: "Konopné mléko",
+      },
+    ],
+    description:
+      "Super rychlé rostlinné mléko z konopných semínek bez nutnosti namáčení a cezení.",
+    tags: ["Mléko", "Konopí", "Rostlinné mléko", "Raw"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 110, protein: 5, carbs: 2, fiber: 1, fat: 9 },
+  },
+  {
+    id: "r_ext_49",
+    title: "Čokoládový koláč z polenty",
+    slug: "cokoladovy-kolac-z-polenty",
+    category: "Dezerty",
+    prepTime: 15,
+    cookTime: 35,
+    servings: 8,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+        alt: "Čokoládový koláč",
+      },
+    ],
+    description:
+      "Vláčný bezlepkový čokoládový koláč připravený z uvařené polenty, kvalitního kakaa a hořké čokolády.",
+    tags: ["Dezert", "Čokoláda", "Polenta", "Bezlepek"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 280, protein: 5, carbs: 38, fiber: 4, fat: 13 },
+  },
+  {
+    id: "r_ext_50",
+    title: "Jáhlový koláč s vůní podzimu",
+    slug: "jahlovy-kolac-s-vuni-podzimu",
+    category: "Dezerty",
+    prepTime: 20,
+    cookTime: 40,
+    servings: 8,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+        alt: "Jáhlový koláč",
+      },
+    ],
+    description:
+      "Zdravý pečený jáhelník s jablky, skořicí, rozinkami a vlašskými ořechy.",
+    tags: ["Dezert", "Jáhly", "Jablka", "Bezlepek"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 240, protein: 6, carbs: 44, fiber: 5, fat: 6 },
+  },
+  {
+    id: "r_ext_51",
+    title: "Celozrnný makovec",
+    slug: "celozrnny-makovec",
+    category: "Dezerty",
+    prepTime: 15,
+    cookTime: 35,
+    servings: 10,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+        alt: "Celozrnný makovec",
+      },
+    ],
+    description:
+      "Tradiční vláčný makový koláč z celozrnné pšeničné mouky slazený jablečným pyré.",
+    tags: ["Dezert", "Mák", "Makovec", "Vláčný"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 260, protein: 7, carbs: 36, fiber: 5, fat: 11 },
+  },
+  {
+    id: "r_ext_52",
+    title: "Raw borůvkový cheesecake",
+    slug: "raw-boruvkovy-cheesecake",
+    category: "Dezerty",
+    prepTime: 25,
+    cookTime: 0,
+    servings: 8,
+    difficulty: "střední",
+    image:
+      "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+        alt: "Borůvkový cheesecake",
+      },
+    ],
+    description:
+      "Luxusní nechozený dort s korpusem z ořechů a datlí a krémem z kešu a čerstvých borůvek.",
+    tags: ["Raw", "Cheesecake", "Borůvky", "Kešu"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 360, protein: 8, carbs: 32, fiber: 5, fat: 24 },
+  },
+  {
+    id: "r_ext_53",
+    title: "Malinová zmrzlina s růžovou šlehačkou",
+    slug: "malinova-zmrzlina-s-ruzovou-slehackou",
+    category: "Dezerty",
+    prepTime: 10,
+    cookTime: 0,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+        alt: "Malinová zmrzlina",
+      },
+    ],
+    description:
+      "Blesková krémová zmrzlina ze zmrazených malin a banánu zdobená kokosovou šlehačkou.",
+    tags: ["Dezert", "Zmrzlina", "Maliny", "Raw"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 190, protein: 3, carbs: 34, fiber: 6, fat: 6 },
+  },
+  {
+    id: "r_ext_54",
+    title: "Čoko-borůvkové proteinové tyčinky",
+    slug: "coko-boruvkove-proteinove-tycinky",
+    category: "Dezerty",
+    prepTime: 15,
+    cookTime: 0,
+    servings: 6,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+        alt: "Proteinové tyčinky",
+      },
+    ],
+    description:
+      "Domácí nepečené tyčinky z ovesných vloček, čokoládového proteinu a sušených borůvek.",
+    tags: ["Tyčinky", "Protein", "Fitness", "Nepečené"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 210, protein: 14, carbs: 24, fiber: 4, fat: 7 },
+  },
+  {
+    id: "r_ext_55",
+    title: "Růžový koláč s čokoládovým krémem",
+    slug: "ruzovy-kolac-s-cokoladovym-kremem",
+    category: "Dezerty",
+    prepTime: 20,
+    cookTime: 30,
+    servings: 8,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+        alt: "Růžový koláč",
+      },
+    ],
+    description:
+      "Krásný korpus zafarbený řepovou šťávou naplněný nadýchaným čokoládovým ganache krémem.",
+    tags: ["Dezert", "Koláč", "Čokoláda", "Sváteční"],
+    isVegan: true,
+    isGlutenFree: false,
+    macros: { calories: 310, protein: 5, carbs: 42, fiber: 3, fat: 14 },
+  },
+  {
+    id: "r_ext_56",
+    title: "Pohankové lívance s jahodami",
+    slug: "pohankove-livance-s-jahodami",
+    category: "Snídaně",
+    prepTime: 10,
+    cookTime: 10,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=800&q=80",
+        alt: "Pohankové lívance",
+      },
+    ],
+    description:
+      "Bezlepkové nadýchané lívanečky z pohankové mouky podávané s čerstvými jahodami a rýžovým sirupem.",
+    tags: ["Lívance", "Pohanka", "Bezlepek", "Snídaně"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 270, protein: 7, carbs: 46, fiber: 5, fat: 6 },
+  },
+  {
+    id: "r_ext_57",
+    title: "Avokádový pudink s chia semínkem",
+    slug: "avokadovy-puding-s-chia-seminkem",
+    category: "Dezerty",
+    prepTime: 5,
+    cookTime: 0,
+    servings: 2,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+        alt: "Avokádový pudink",
+      },
+    ],
+    description:
+      "Sametový čokoládový pudink z mletého avokáda, zralého banánu, kakaa a chia semínek.",
+    tags: ["Pudink", "Avokádo", "Čokoláda", "Raw"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 220, protein: 5, carbs: 24, fiber: 8, fat: 13 },
+  },
+  {
+    id: "r_ext_58",
+    title: "Amarantové kuličky se skořicí",
+    slug: "amarantove-kulicky-se-skorici",
+    category: "Dezerty",
+    prepTime: 15,
+    cookTime: 0,
+    servings: 4,
+    difficulty: "snadný",
+    image:
+      "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+        alt: "Amarantové kuličky",
+      },
+    ],
+    description:
+      "Nepečené kuličky z pufovaného amarantu, mletých skořicových oříšků a datlového sirupu.",
+    tags: ["Kuličky", "Amarant", "Skořice", "Raw"],
+    isVegan: true,
+    isGlutenFree: true,
+    macros: { calories: 180, protein: 5, carbs: 28, fiber: 4, fat: 6 },
+  },
+  {
+    id: "r_minne_sant_agata",
+    title: "Minne di Sant'Agata: Sicilské koláčky s ricottou a čokoládou",
+    slug: "minne-di-sant-agata-sicilske-kolacky",
+    category: "Dezerty",
+    cuisine: "Italská",
+    prepTime: 30,
+    cookTime: 25,
+    servings: 6,
+    difficulty: "střední",
+    image:
+      "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+        alt: "Minne di Sant'Agata — sicilské koláčky s ricottou a polevou",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&w=800&q=80",
+        alt: "Detail náplně z ricottového krému a tmavé čokolády",
+      },
+    ],
+    description:
+      "Tradiční sicilské sváteční koláčky z křehkého těsta plněné krémem z čerstvé ovčí ricotty, hořké čokolády a kandovaného ovocem, polité sněhově bílou polevou a ozdobené kandovanou třešní.",
+    storyTitle: "Slavný sicilský dezert na počest svaté Agáty",
+    story: [
+      "Minne di Sant'Agata (nebo Cassatelleddi di Sant'Agata) pocházejí ze sicilské Catanie, kde se pečou během únorových oslav patronky města, svaté Agáty. Jejich charakteristický tvar půlkaulí ozdobených kandovanou třešinkou má bohatou historii spojující sicilskou tradici, křesťanskou legendu a starověké slavnosti úrodnosti.",
+      "Těsto je jemné a křehké v italštině zvané pasta frolla. Uvnitř skrývá sametový krém z čerstvé ricotty smíchané s nasekanou hořkou čokoládou a kandovanou citrusovou kůrou. Na závěr se po upečení polévají sněhovou polevou (glassa) s citrónovou šťávou.",
+      "🇮🇹 Pro více receptů, tipů a cestování po Itálii navštivte portál www.do-italie.cz!",
+    ],
+    tags: [
+      "Italská kuchyně",
+      "Dezert",
+      "Ricotta",
+      "Sicílie",
+      "Čokoláda",
+      "Vegetariánské",
+    ],
+    isVegan: false,
+    isGlutenFree: false,
+    macros: {
+      calories: 340,
+      protein: 9,
+      carbs: 48,
+      fiber: 3,
+      fat: 14,
+      sugars: 28,
+    },
+    editorialReview: {
+      summary:
+        "Ikonický sicilský dezert z Food52 od Emiko Davies! Spojení jemného těsta, krémové ricotty a křupavé čokolády vás přenese přímo na slunnou Sicílii. Chcete ještě více Itálie? Navštivte www.do-italie.cz!",
+      bestFor:
+        "Sváteční pečení, odpolední kávu a pro milovníky autentické italské cukrařiny.",
+      highlight:
+        "Krém ze svěží ricotty s kousky čokolády a bílá citronová poleva.",
+      rating: 9.8,
+    },
+  },
+  {
+    id: "r_florentinska_pizza",
+    title: "Florentínská pizza se špenátem a vejci",
+    slug: "florentinska-pizza",
+    category: "Hlavní jídla",
+    cuisine: "Italská",
+    prepTime: 10,
+    cookTime: 18,
+    servings: 2,
+    difficulty: "snadný",
+    image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80",
+    images: [
+      { url: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80", alt: "Florentínská pizza se špenátem, parmazánem a zapékanými vejci" },
+      { url: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=800&q=80", alt: "Detail tekutého žloutku a špenátu na křupavém těstě" }
+    ],
+    description: "Tradiční toskánská pizza s omáčkou sugo, čerstvým podušeným špenátem, houbami, parmazánem a zastřenými vejci upečenými přímo na pizzovém těstě. Rychlé a chutné zpestření ze 6 ingrediencí.",
+    storyTitle: "Toskánská specialita s krémovým vajíčkem",
+    story: [
+      "Florentínská pizza (Pizza Fiorentina) má své kořeny v toskánské Florencii. Jejím hlavním poznávacím znamením je čerstvý listový špenát a celá vejce, která se vyklepnou na pizzu ke konci pečení.",
+      "Když pizzu rozříznete, krémový tekutý žloutek spojený se špenátem a strouhaným parmazánem vytvoří bohatou přírodní omáčku. Příprava zabere jen několik minut a vyžaduje pouze 6 základních surovin."
+    ],
+    tags: ["Italská kuchyně", "Pizza", "Špenát", "Vejce", "Parmazán", "Vegetariánské"],
+    isVegan: false,
+    isGlutenFree: false,
+    macros: { calories: 568, protein: 40, carbs: 46, fiber: 3, fat: 31, sugars: 4 },
+    editorialReview: {
+      summary: "Skvělý recept podle časopisu Apetit! Spojení jemného špenátu, parmazánu a zapečeného vajíčka na křupavém pizzovém základu je pro vegetariány dokonalý zážitek.",
+      bestFor: "Rychlou večeři ve dvou, víkendový oběd nebo milovníky italských pizz.",
+      highlight: "Tekutý žloutek s podušeným špenátem a parmazánovou kůrkou.",
+      rating: 9.7
+    }
   },
 ];
+
+/**
+ * The imported collection previously contained a duplicated block. Deduplicate
+ * at the catalog boundary and apply the reviewed, recipe-specific photography.
+ */
+export const recipes: Recipe[] = Array.from(
+  new Map(recipeSource.map(recipe => [recipe.slug, recipe])).values()
+).map(recipe => {
+  const image = recipeImageOverrides[recipe.slug] || recipe.image;
+  const images = recipe.images && recipe.images.length > 0
+    ? [{ ...recipe.images[0], url: image }, ...recipe.images.slice(1)]
+    : [{ url: image, alt: recipe.title }];
+  return { ...recipe, image, images };
+});
+
 
 export const districts = [
   "Všechny čtvrti",
@@ -2753,7 +6922,7 @@ export const districts = [
   "Praha 13",
   "Malá Strana",
   "Vinohrady",
-  "Karlin",
+  "Karlín",
   "Žižkov",
   "Holešovice",
   "Smíchov",
@@ -2781,11 +6950,6 @@ export const dietaryOptionsConfig: { value: DietaryOption; label: string; icon: 
   { value: "bio", label: "Bio / Organic", icon: "🌱" },
   { value: "whole-food", label: "Whole food", icon: "🥜" },
   { value: "bez-soji", label: "Bez sóji", icon: "🚫" },
-  { value: "bez-oriskove", label: "Bez ořechů", icon: "🥜" },
-  { value: "ayurvédské", label: "Ayurvédské", icon: "🧘" },
-  { value: "makrobiotické", label: "Makrobiotické", icon: "☘️" },
-  { value: "low-carb", label: "Low carb", icon: "📉" },
-  { value: "high-protein", label: "High protein", icon: "💪" },
 ];
 
 export const getTypeLabel = (type: RestaurantType): string => {

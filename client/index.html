@@ -17,6 +17,7 @@
     <!-- Favicon — Logo Variant B (dark green badge with bowl) -->
     <link rel="icon" type="image/png" href="https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/logo-variant-b-8rWb7ZRakZgKyBWqh3HymW.webp" />
     <link rel="apple-touch-icon" href="https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/logo-variant-b-nRLxsJiHgADDUbMofdh7hM.png" />
+    <link rel="alternate" type="application/rss+xml" href="https://www.bezmasajidla.cz/rss.xml" title="Bezmasá Jídla — RSS Feed" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -43,6 +44,69 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
+
+    <!-- LeadOS Universal Traffic Pixel -->
+    <script>
+      (function() {
+        const PROJECT_KEY = "bezmasajidla"; // např. proj_hdm, proj_dsr, proj_italie
+        const INGEST_URL = "https://leados.cz/api/ingest";
+
+        // Persistentní Visitor ID & Session ID
+        function getCookie(name) {
+          const value = `; ${document.cookie}`;
+          const parts = value.split(`; ${name}=`);
+          if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+        
+        let visitorId = getCookie("los_vid");
+        if (!visitorId) {
+          visitorId = 'v_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+          document.cookie = "los_vid=" + visitorId + "; max-age=63072000; path=/; SameSite=Lax";
+        }
+        
+        let sessionId = sessionStorage.getItem("los_sid");
+        if (!sessionId) {
+          sessionId = 's_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+          sessionStorage.setItem("los_sid", sessionId);
+        }
+
+        // Získání UTM parametrů
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Odeslání události
+        function trackEvent(eventName, eventData = {}) {
+          const payload = {
+            eventType: eventName,
+            visitorId: visitorId,
+            sessionId: sessionId,
+            pageUrl: window.location.href,
+            path: window.location.pathname,
+            referrer: document.referrer || null,
+            deviceType: /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
+            utmSource: urlParams.get('utm_source') || null,
+            utmMedium: urlParams.get('utm_medium') || null,
+            utmCampaign: urlParams.get('utm_campaign') || null,
+            metadata: eventData
+          };
+
+          fetch(INGEST_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-project-key": PROJECT_KEY
+            },
+            body: JSON.stringify(payload),
+            keepalive: true
+          }).catch(err => console.warn("[LeadOS Analytics Error]", err));
+        }
+
+        // Automatické měření zobrazení stránky
+        window.addEventListener("DOMContentLoaded", () => trackEvent("page_view"));
+        
+        // Expozice pro vlastní události (nákup, registraci, proklik)
+        window.losTrack = trackEvent;
+      })();
+    </script>
   </head>
 
   <body>

@@ -2,6 +2,7 @@ import express from "express";
 import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
+import { redirectMiddleware } from "./_core/redirect";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -9,34 +10,7 @@ const __dirname = path.dirname(__filename);
 async function startServer() {
   const app = express();
 
-  // Enforce www for production and handle SEO slug redirects
-  app.use((req, res, next) => {
-    let targetHost = req.headers.host;
-    let targetUrl = req.originalUrl || req.url;
-    let shouldRedirect = false;
-
-    if (targetHost === 'bezmasajidla.cz') {
-      targetHost = 'www.bezmasajidla.cz';
-      shouldRedirect = true;
-    }
-
-    // SEO Redirects for old slugs
-    if (targetUrl.startsWith('/recepty/veganska-svickova')) {
-      targetUrl = targetUrl.replace('/recepty/veganska-svickova', '/recepty/svickova-bez-masa');
-      shouldRedirect = true;
-    }
-    if (targetUrl.startsWith('/recepty/vegansky-gulas-knedliky')) {
-      targetUrl = targetUrl.replace('/recepty/vegansky-gulas-knedliky', '/recepty/gulas-bez-masa');
-      shouldRedirect = true;
-    }
-
-    if (shouldRedirect) {
-      const proto = targetHost === 'localhost' || targetHost?.includes(':') ? 'http' : 'https';
-      const redirectHost = targetHost === 'localhost' || targetHost?.includes(':') ? '' : `${proto}://${targetHost}`;
-      return res.redirect(301, `${redirectHost}${targetUrl}`);
-    }
-    next();
-  });
+  app.use(redirectMiddleware);
 
   const server = createServer(app);
 
