@@ -96,6 +96,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-emerald-300">
               <li><Link href="/o-nas" className="hover:text-white transition-colors">O nás</Link></li>
               <li><Link href="/premium" className="hover:text-white transition-colors">Prémiový profil</Link></li>
+              <li><Link href="/eko-zivot" className="hover:text-white transition-colors">Ekologický životní styl</Link></li>
               <li><Link href="/kontakt" className="hover:text-white transition-colors">Kontakt</Link></li>
             </ul>
 

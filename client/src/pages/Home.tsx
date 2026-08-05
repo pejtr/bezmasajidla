@@ -15,6 +15,7 @@ import RecipeCard from "@/components/RecipeCard";
 import { restaurants, recipes } from "@/lib/data";
 import { blogPosts } from "@/lib/blogData";
 import NewsletterBanner from "@/components/NewsletterBanner";
+import EcoProducts from "@/components/EcoProducts";
 import { WebsiteJsonLd } from "@/components/JsonLd";
 import SEOHead from "@/components/SEOHead";
 
@@ -45,10 +46,16 @@ export default function Home() {
   const featuredRecipes = recipes.slice(0, 6);
   const fastFoodChains = restaurants.filter(r => r.type === "fastfood");
 
+  const [searchType, setSearchType] = useState<"restaurace" | "recepty">("restaurace");
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      window.location.href = `/restaurace?q=${encodeURIComponent(searchQuery)}`;
+      if (searchType === "recepty") {
+        window.location.href = `/recepty?q=${encodeURIComponent(searchQuery)}`;
+      } else {
+        window.location.href = `/restaurace?q=${encodeURIComponent(searchQuery)}`;
+      }
     }
   };
 
@@ -107,6 +114,27 @@ export default function Home() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 rounded-xl border-0 bg-white text-gray-900 placeholder-gray-400 shadow-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
+                {/* Search type toggle */}
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex bg-gray-100 rounded-lg p-0.5 text-xs">
+                  <button
+                    type="button"
+                    onClick={() => setSearchType("restaurace")}
+                    className={`px-2 py-1 rounded-md font-medium transition-colors ${
+                      searchType === "restaurace" ? "bg-white text-emerald-700 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                    }`}
+                  >
+                    Restaurace
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSearchType("recepty")}
+                    className={`px-2 py-1 rounded-md font-medium transition-colors ${
+                      searchType === "recepty" ? "bg-white text-amber-700 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                    }`}
+                  >
+                    Recepty
+                  </button>
+                </div>
               </div>
               <Button
                 type="submit"
@@ -435,9 +463,11 @@ export default function Home() {
             <Button className="bg-amber-400 hover:bg-amber-300 text-amber-900 font-semibold px-8">
               Přidat restauraci zdarma
             </Button>
-            <Button variant="outline" className="border-emerald-500 text-emerald-200 hover:bg-emerald-800">
-              Zjistit více o prémiu
-            </Button>
+            <Link href="/premium">
+              <Button variant="outline" className="border-emerald-500 text-emerald-200 hover:bg-emerald-800">
+                Zjistit více o prémiu
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -508,6 +538,8 @@ export default function Home() {
           </Link>
         </div>
       </section>
+
+      <EcoProducts />
 
       <NewsletterBanner />
       <Footer />

@@ -25,10 +25,13 @@ import AdminPage from "./pages/AdminPage";
 import BlogPage from "./pages/BlogPage";
 import BlogDetail from "./pages/BlogDetail";
 import InzercePage from "./pages/InzercePage";
+import PremiumPage from "./pages/PremiumPage";
 import CookieConsent from "./components/CookieConsent";
 import PodminkyPage from "./pages/PodminkyPage";
 import OchranaPage from "./pages/OchranaPage";
 import KontaktPage from "./pages/KontaktPage";
+import EkoZivotPage from "./pages/EkoZivotPage";
+import EhubBanner from "./components/EhubBanner";
 function Router() {
   useScrollToTop();
   return (
@@ -46,10 +49,12 @@ function Router() {
       <Route path="/blog" component={BlogPage} />
       <Route path="/blog/:slug" component={BlogDetail} />
       <Route path="/inzerce" component={InzercePage} />
+      <Route path="/premium" component={PremiumPage} />
       <Route path="/podminky" component={PodminkyPage} />
       <Route path="/ochrana-soukromi" component={OchranaPage} />
-      <Route path="/kontakt" component={KontaktPage} />
-      <Route path="/404" component={NotFound} />
+        <Route path="/kontakt" component={KontaktPage} />
+        <Route path="/eko-zivot" component={EkoZivotPage} />
+        <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
   );
