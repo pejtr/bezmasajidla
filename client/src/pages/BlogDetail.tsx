@@ -62,7 +62,7 @@ export default function BlogDetail() {
       <SEOHead
         title={`${post.title} | Blog — Bezmasájídla.cz`}
         description={post.metaDescription}
-        canonicalUrl={`https://bezmasajidla.cz/blog/${post.slug}`}
+        canonicalUrl={`https://www.bezmasajidla.cz/blog/${post.slug}`}
       />
       <Header />
 

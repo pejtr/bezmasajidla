@@ -10,6 +10,16 @@ async function startServer() {
   const app = express();
   const server = createServer(app);
 
+  // Redirect non-www to www (301 permanent)
+  app.use((req, res, next) => {
+    const host = req.get('host');
+    if (host && !host.startsWith('www.')) {
+      res.redirect(301, `https://www.${host}${req.url}`);
+      return;
+    }
+    next();
+  });
+
   // Serve static files from dist/public in production
   const staticPath =
     process.env.NODE_ENV === "production"
@@ -17,7 +27,7 @@ async function startServer() {
       : path.resolve(__dirname, "..", "dist", "public");
 
   app.use(express.static(staticPath));
-
+  
   // Handle client-side routing - serve index.html for all routes
   app.get("*", (_req, res) => {
     res.sendFile(path.join(staticPath, "index.html"));

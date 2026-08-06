@@ -27,7 +27,7 @@ export default function BlogPage() {
       <SEOHead
         title="Blog — Veganské restaurace v Praze | Bezmasájídla.cz"
         description="Průvodce veganskou a vegetariánskou Prahou. Články o nejlepších restauracích, čtvrtích, brunchích a české veganské kuchyni."
-        canonicalUrl="https://bezmasajidla.cz/blog"
+        canonicalUrl="https://www.bezmasajidla.cz/blog"
       />
       <Header />
 
