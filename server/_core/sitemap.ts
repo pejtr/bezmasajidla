@@ -42,13 +42,18 @@ export async function generateSitemap(): Promise<string> {
   addUrl("/restaurace", "0.9", "daily");
   addUrl("/recepty", "0.9", "daily");
   addUrl("/tydenni-planovac-receptu", "0.9", "weekly");
+  addUrl("/bezmasy-warrior-vyzva", "0.9", "weekly");
   addUrl("/mapa", "0.8", "weekly");
   addUrl("/blog", "0.8", "weekly");
+  addUrl("/inzerce/pridat-podnik", "0.8", "monthly");
 
   // Pillar Pages
   addUrl("/restaurace/vegetarianske-restaurace-praha", "0.9", "monthly");
   addUrl("/restaurace/veganske-restaurace-praha", "0.9", "monthly");
   addUrl("/restaurace/vegansky-obed-praha", "0.9", "monthly");
+  addUrl("/restaurace/vegetarianske-restaurace-brno", "0.9", "monthly");
+  addUrl("/restaurace/veganske-restaurace-ostrava", "0.9", "monthly");
+  addUrl("/restaurace/bezmase-restaurace-plzen", "0.9", "monthly");
   addUrl("/recepty/ceska-klasika-bez-masa", "0.9", "monthly");
   addUrl("/recepty/rychle-bezmase-vecere", "0.9", "monthly");
   addUrl("/recepty/bezlepkove-recepty", "0.9", "monthly");

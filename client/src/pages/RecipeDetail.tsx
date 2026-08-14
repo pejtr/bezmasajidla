@@ -12,9 +12,12 @@ import { Button } from "@/components/ui/button";
 import { recipes, type Recipe } from "@/lib/data";
 import SEOHead from "@/components/SEOHead";
 import OptimizedImage from "@/components/OptimizedImage";
-import { getRohlikLink, getKosikLink, getScukLink, getTescoLink, trackAffiliateClick } from "@/lib/affiliates";
+import { getRohlikLink, getKosikLink, getScukLink, getTescoLink, trackAffiliateClick, trackAffiliateIntent } from "@/lib/affiliates";
 import { RecipeJsonLd, BreadcrumbJsonLd, FAQPageJsonLd } from "@/components/JsonLd";
 import SmartInternalLinks from "@/components/SmartInternalLinks";
+import { trpc } from "@/lib/trpc";
+import RelatedProducts from "@/components/affiliate/RelatedProducts";
+import RelatedExperiences from "@/components/affiliate/RelatedExperiences";
 
 const sampleIngredients: Record<string, string[]> = {
   "svickova-bez-masa": [
@@ -1464,6 +1467,22 @@ export default function RecipeDetail() {
     náročný: "bg-red-100 text-red-700",
   }[recipe.difficulty];
 
+  // Fetch contextual affiliate recommendations (Ekočlověk & Zážitky.cz)
+  const { data: affiliateData } = trpc.affiliate.getRecipeRecommendations.useQuery(
+    {
+      recipeSlug: recipe.slug,
+      title: recipe.title,
+      category: recipe.category,
+      cuisine: recipe.cuisine,
+      ingredients,
+      tags: recipe.tags,
+    },
+    {
+      staleTime: 5 * 60 * 1000,
+      refetchOnWindowFocus: false,
+    }
+  );
+
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAF6]">
       <SEOHead
@@ -1553,7 +1572,15 @@ export default function RecipeDetail() {
               <p className="text-gray-600 leading-relaxed mb-4">{recipe.description}</p>
 
               {/* Actions row */}
-              <div className="flex items-center gap-2 mb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-4">
+                <a
+                  href="#koupit-ingredience"
+                  onClick={() => trackAffiliateIntent("recipe_header", recipe.slug)}
+                  className="inline-flex items-center justify-center gap-2 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-600"
+                >
+                  <ShoppingCart className="w-4 h-4" />
+                  Nakoupit ingredience
+                </a>
                 <ShareRecipeCard recipe={recipe} />
               </div>
 
@@ -1692,7 +1719,7 @@ export default function RecipeDetail() {
             </div>
 
             {/* Affiliate: Buy ingredients */}
-            <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border border-emerald-100 p-5 mb-6">
+            <div id="koupit-ingredience" className="scroll-mt-24 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border border-emerald-100 p-5 mb-6">
               <div className="flex items-center gap-2 mb-2">
                 <ShoppingCart className="w-4 h-4 text-emerald-700" />
                 <h3 className="text-sm font-semibold text-emerald-800">Koupit ingredience online</h3>
@@ -1728,6 +1755,16 @@ export default function RecipeDetail() {
               </div>
               <p className="text-[10px] text-gray-400 mt-3 text-center">Partnerské odkazy — pomáhají nám tvořit nové recepty 💚</p>
             </div>
+
+            {/* ── RELATED PRODUCTS (EKOČLOVĚK) ── */}
+            {affiliateData?.products && affiliateData.products.length > 0 && (
+              <RelatedProducts
+                products={affiliateData.products}
+                recipeSlug={recipe.slug}
+                recipeTitle={recipe.title}
+                recipeCuisine={recipe.cuisine}
+              />
+            )}
 
             {/* Steps */}
             <div className="bg-white rounded-xl border border-emerald-100 p-6 mb-6">
@@ -1765,6 +1802,16 @@ export default function RecipeDetail() {
                 ))}
               </div>
             </section>
+
+            {/* ── RELATED EXPERIENCES (ZÁŽITKY.CZ) ── */}
+            {affiliateData?.experiences && affiliateData.experiences.length > 0 && (
+              <RelatedExperiences
+                experiences={affiliateData.experiences}
+                recipeSlug={recipe.slug}
+                recipeTitle={recipe.title}
+                recipeCuisine={recipe.cuisine}
+              />
+            )}
 
             {/* Smart Internal Cross-linking */}
             <SmartInternalLinks

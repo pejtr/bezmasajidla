@@ -29,6 +29,7 @@ vi.mock("./db", () => ({
 
 vi.mock("./_core/social-media", () => ({
   distributeToSocialMedia: vi.fn().mockResolvedValue(undefined),
+  scheduleRecipeForSocialMedia: vi.fn().mockResolvedValue(undefined),
 }));
 
 import {
@@ -440,7 +441,7 @@ describe("admin", () => {
     });
 
     it("rejects non-admin users", async () => {
-      await expect(authedCaller().admin.allRecipes()).rejects.toThrow(/admin|forbidden/i);
+      await expect(authedCaller().admin.allRecipes()).rejects.toThrow(/permission|admin|forbidden/i);
     });
 
     it("returns all recipes for admin", async () => {
@@ -460,7 +461,7 @@ describe("admin", () => {
     it("rejects non-admin users", async () => {
       await expect(
         authedCaller().admin.approveRecipe({ recipeId: 1 })
-      ).rejects.toThrow(/admin|forbidden/i);
+      ).rejects.toThrow(/permission|admin|forbidden/i);
     });
 
     it("approves a recipe", async () => {
@@ -481,7 +482,7 @@ describe("admin", () => {
     it("rejects non-admin users", async () => {
       await expect(
         authedCaller().admin.rejectRecipe({ recipeId: 1 })
-      ).rejects.toThrow(/admin|forbidden/i);
+      ).rejects.toThrow(/permission|admin|forbidden/i);
     });
 
     it("rejects (deletes) a recipe", async () => {
@@ -495,7 +496,7 @@ describe("admin", () => {
 
   describe("admin.allReviews (admin only)", () => {
     it("rejects non-admin users", async () => {
-      await expect(authedCaller().admin.allReviews()).rejects.toThrow(/admin|forbidden/i);
+      await expect(authedCaller().admin.allReviews()).rejects.toThrow(/permission|admin|forbidden/i);
     });
 
     it("returns all reviews for admin", async () => {
@@ -515,7 +516,7 @@ describe("admin", () => {
     it("rejects non-admin users", async () => {
       await expect(
         authedCaller().admin.deleteReview({ reviewId: 1 })
-      ).rejects.toThrow(/admin|forbidden/i);
+      ).rejects.toThrow(/permission|admin|forbidden/i);
     });
 
     it("deletes any review as admin", async () => {

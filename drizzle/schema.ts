@@ -125,3 +125,94 @@ export const socialPosts = mysqlTable(
 
 export type SocialPost = typeof socialPosts.$inferSelect;
 export type InsertSocialPost = typeof socialPosts.$inferInsert;
+
+/**
+ * Normalized affiliate products from partner feeds (Ekočlověk, Zážitky.cz, etc.)
+ */
+export const affiliateProducts = mysqlTable(
+  "affiliateProducts",
+  {
+    id: varchar("id", { length: 128 }).primaryKey(), // e.g. "ekoclovek:52/5-0" or "zazitky:1138"
+    externalId: varchar("externalId", { length: 128 }),
+    merchant: varchar("merchant", { length: 32 }).notNull(), // "ekoclovek" | "zazitky"
+    title: varchar("title", { length: 512 }).notNull(),
+    description: text("description"),
+    sourceUrl: varchar("sourceUrl", { length: 1024 }),
+    affiliateUrl: varchar("affiliateUrl", { length: 1024 }).notNull(),
+    imageUrl: varchar("imageUrl", { length: 1024 }),
+    price: decimal("price", { precision: 10, scale: 2 }),
+    currency: varchar("currency", { length: 8 }).default("CZK"),
+    category: varchar("category", { length: 256 }),
+    tags: text("tags"), // JSON array of string tags
+    cuisines: text("cuisines"), // JSON array of matched cuisines
+    ingredients: text("ingredients"), // JSON array of matched ingredients
+    intents: text("intents"), // JSON array of intents
+    active: boolean("active").default(true).notNull(),
+    relevanceScore: decimal("relevanceScore", { precision: 5, scale: 2 }).default("1.00"),
+    lastSeenAt: timestamp("lastSeenAt").defaultNow().notNull(),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  table => ({
+    merchantActiveIdx: index("affiliateProducts_merchant_active_idx").on(table.merchant, table.active),
+    categoryIdx: index("affiliateProducts_category_idx").on(table.category),
+  })
+);
+
+export type AffiliateProductRecord = typeof affiliateProducts.$inferSelect;
+export type InsertAffiliateProduct = typeof affiliateProducts.$inferInsert;
+
+/**
+ * Tracking impressions and clicks for affiliate recommendations
+ */
+export const affiliateEvents = mysqlTable(
+  "affiliateEvents",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    eventType: mysqlEnum("eventType", ["impression", "click"]).notNull(),
+    merchant: varchar("merchant", { length: 32 }).notNull(),
+    productId: varchar("productId", { length: 128 }).notNull(),
+    recipeSlug: varchar("recipeSlug", { length: 128 }),
+    placement: varchar("placement", { length: 64 }).notNull(), // "related_product" | "related_experience" | "recipe_ingredient" | "article_inline"
+    category: varchar("category", { length: 128 }),
+    cuisine: varchar("cuisine", { length: 128 }),
+    referrer: varchar("referrer", { length: 512 }),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+  },
+  table => ({
+    eventLookupIdx: index("affiliateEvents_type_merchant_idx").on(table.eventType, table.merchant),
+    recipeSlugIdx: index("affiliateEvents_recipeSlug_idx").on(table.recipeSlug),
+    createdAtIdx: index("affiliateEvents_createdAt_idx").on(table.createdAt),
+  })
+);
+
+export type AffiliateEventRecord = typeof affiliateEvents.$inferSelect;
+export type InsertAffiliateEvent = typeof affiliateEvents.$inferInsert;
+
+/**
+ * Audit log of affiliate feed synchronization runs
+ */
+export const affiliateSyncLogs = mysqlTable(
+  "affiliateSyncLogs",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    merchant: varchar("merchant", { length: 32 }).notNull(),
+    status: mysqlEnum("status", ["success", "failed"]).notNull(),
+    itemsFetched: int("itemsFetched").default(0).notNull(),
+    itemsAccepted: int("itemsAccepted").default(0).notNull(),
+    itemsRejected: int("itemsRejected").default(0).notNull(),
+    itemsInserted: int("itemsInserted").default(0).notNull(),
+    itemsUpdated: int("itemsUpdated").default(0).notNull(),
+    itemsDeactivated: int("itemsDeactivated").default(0).notNull(),
+    durationMs: int("durationMs").default(0).notNull(),
+    errorMessage: text("errorMessage"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+  },
+  table => ({
+    merchantCreatedAtIdx: index("affiliateSyncLogs_merchant_createdAt_idx").on(table.merchant, table.createdAt),
+  })
+);
+
+export type AffiliateSyncLogRecord = typeof affiliateSyncLogs.$inferSelect;
+export type InsertAffiliateSyncLog = typeof affiliateSyncLogs.$inferInsert;
+

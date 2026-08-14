@@ -28,12 +28,12 @@ const restauraceMegaMenu = {
     { href: "/restaurace?type=fastfood", label: "Fast Food", icon: Flame, color: "text-orange-500", desc: "Rychlé bezmasé možnosti" },
   ],
   districts: [
+    { href: "/restaurace/vegetarianske-restaurace-praha", label: "Praha (Vše)" },
+    { href: "/restaurace/vegetarianske-restaurace-brno", label: "Brno (Forky's & bistra)" },
+    { href: "/restaurace/veganske-restaurace-ostrava", label: "Ostrava (Black Kale & burfi)" },
+    { href: "/restaurace/bezmase-restaurace-plzen", label: "Plzeň (Slunečnice)" },
     { href: "/restaurace?district=Praha 1", label: "Praha 1" },
-    { href: "/restaurace?district=Praha 2", label: "Praha 2" },
     { href: "/restaurace?district=Praha 3", label: "Praha 3 — Žižkov" },
-    { href: "/restaurace?district=Praha 7", label: "Praha 7 — Holešovice" },
-    { href: "/restaurace?district=Vinohrady", label: "Vinohrady" },
-    { href: "/restaurace?district=Malá Strana", label: "Malá Strana" },
   ],
   quickLinks: [
     { href: "/restaurace?sort=rating", label: "Nejlépe hodnocené", icon: Star },

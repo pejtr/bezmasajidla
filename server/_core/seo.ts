@@ -168,6 +168,47 @@ async function resolveMeta(url: string): Promise<SeoMeta> {
       },
     };
   }
+  if (path === "/restaurace/vegetarianske-restaurace-brno") {
+    return {
+      title: "Nejlepší vegetariánské a veganské restaurace v Brně (2026) | Bezmasá Jídla",
+      description:
+        "Kompletní přehled a hodnocení nejlepších vegetariánských a veganských podnicích v Brně. Forky's, Dhaba Beas, Rezet Bistro, Vegalité.",
+      image: DEFAULT_IMAGE,
+      canonicalPath: path,
+      jsonLd: {
+        "@type": "CollectionPage",
+        name: "Vegetariánské a veganské restaurace v Brně",
+      },
+    };
+  }
+
+  if (path === "/restaurace/veganske-restaurace-ostrava") {
+    return {
+      title: "Veganské a vegetariánské restaurace v Ostravě | Bezmasá Jídla",
+      description:
+        "Průvodce nejlepšími bezmasými a veganskými podnicích v Ostravě. Black Kale Superfood Bar, Burfi a další ověřená bistra.",
+      image: DEFAULT_IMAGE,
+      canonicalPath: path,
+      jsonLd: {
+        "@type": "CollectionPage",
+        name: "Veganské restaurace Ostrava",
+      },
+    };
+  }
+
+  if (path === "/restaurace/bezmase-restaurace-plzen") {
+    return {
+      title: "Bezmasé a vegetariánské restaurace v Plzni | Bezmasá Jídla",
+      description:
+        "Přehled a hodnocení nejlepších vegetariánských a veganských podnicích v Plzni. Slunečnice, Green Garden Bistro a další.",
+      image: DEFAULT_IMAGE,
+      canonicalPath: path,
+      jsonLd: {
+        "@type": "CollectionPage",
+        name: "Bezmasé restaurace Plzeň",
+      },
+    };
+  }
 
   if (path === "/tydenni-planovac-receptu") {
     return {
@@ -180,6 +221,35 @@ async function resolveMeta(url: string): Promise<SeoMeta> {
         "@type": "WebApplication",
         name: "Týdenní Bezmasý Jídelníček",
         applicationCategory: "LifestyleApplication",
+      },
+    };
+  }
+
+  if (path === "/bezmasy-warrior-vyzva") {
+    return {
+      title: "Bezmasý Warrior — 21-Denní High-Protein Výzva | Bezmasá Jídla",
+      description:
+        "Transformujte své tělo na rostlinné stravě. 21-denní fitness program, recepty bohaté na bílkoviny a nákupní košíky na Rohlík.cz.",
+      image: DEFAULT_IMAGE,
+      canonicalPath: path,
+      jsonLd: {
+        "@type": "Course",
+        name: "Bezmasý Warrior 21-Denní Výzva",
+        description: "High-protein rostlinný program pro sílu, energii a regeneraci",
+      },
+    };
+  }
+
+  if (path === "/inzerce/pridat-podnik") {
+    return {
+      title: "Přidat podnik & B2B Inzerce Restaurací | Bezmasá Jídla",
+      description:
+        "Registrujte svůj bezmasý nebo veganský podnik. Získejte novou bonitní klientelu z vyhledávače BezmasáJídla.cz.",
+      image: DEFAULT_IMAGE,
+      canonicalPath: path,
+      jsonLd: {
+        "@type": "WebPage",
+        name: "Přidat podnik B2B Inzerce",
       },
     };
   }

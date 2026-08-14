@@ -29,12 +29,14 @@ import {
   ExternalLink,
   TrendingUp,
   Hash,
+  ShoppingBag,
 } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import { restaurants } from "@/lib/data";
 import SocialPublisher from "@/components/admin/SocialPublisher";
+import AffiliateDiagnostics from "@/components/admin/AffiliateDiagnostics";
 
-type Tab = "recipes" | "reviews" | "social";
+type Tab = "recipes" | "reviews" | "social" | "affiliate";
 
 export default function AdminPage() {
   const { user, loading, isAuthenticated } = useAuth();
@@ -163,12 +165,25 @@ export default function AdminPage() {
             <Instagram className="w-4 h-4 mr-2" />
             Facebook a Instagram
           </Button>
+          <Button
+            variant={activeTab === "affiliate" ? "default" : "outline"}
+            onClick={() => setActiveTab("affiliate")}
+            className={
+              activeTab === "affiliate"
+                ? "bg-emerald-800 hover:bg-emerald-700 text-white"
+                : "border-emerald-300 text-emerald-800 hover:bg-emerald-50"
+            }
+          >
+            <ShoppingBag className="w-4 h-4 mr-2" />
+            Affiliate Engine
+          </Button>
         </div>
 
         {/* Content */}
         {activeTab === "recipes" && <RecipeApproval />}
         {activeTab === "reviews" && <ReviewManagement />}
         {activeTab === "social" && <SocialPublisher />}
+        {activeTab === "affiliate" && <AffiliateDiagnostics />}
       </div>
 
       <Footer />

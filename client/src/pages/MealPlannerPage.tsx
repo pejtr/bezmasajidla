@@ -10,7 +10,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { recipes, type Recipe } from "@/lib/data";
-import { getRohlikLink, getKosikLink, trackAffiliateClick } from "@/lib/affiliates";
+import { getRohlikLink, getKosikLink, trackAffiliateClick, trackShoppingListCopy } from "@/lib/affiliates";
 import { BreadcrumbJsonLd } from "@/components/JsonLd";
 import {
   Calendar,
@@ -96,6 +96,7 @@ export default function MealPlannerPage() {
       .map((recipe, index) => `${DAYS_OF_WEEK[index]}: ${recipe.title} (${portionMultiplier} porce)`)
       .join("\n");
     navigator.clipboard.writeText(`🌱 Týdenní jídelníček z bezmasajidla.cz (${portionMultiplier} porce):\n\n${listText}`);
+    trackShoppingListCopy();
     setCopied(true);
     setTimeout(() => setCopied(false), 3000);
   };
@@ -288,8 +289,8 @@ export default function MealPlannerPage() {
                 <a
                   href={getRohlikLink(mainQuery, aggregatedIngredients)}
                   target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => trackAffiliateClick("Rohlik", "meal_planner")}
+                  rel="noopener noreferrer sponsored"
+                  onClick={() => trackAffiliateClick("rohlik", "meal_planner", "meal_planner")}
                   className="w-full bg-[#D42B28] hover:bg-[#b8221f] text-white font-bold text-sm py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-md transition-transform active:scale-95"
                 >
                   <ShoppingBag className="w-4 h-4" />
@@ -299,8 +300,8 @@ export default function MealPlannerPage() {
                 <a
                   href={getKosikLink(mainQuery, aggregatedIngredients)}
                   target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => trackAffiliateClick("Kosik", "meal_planner")}
+                  rel="noopener noreferrer sponsored"
+                  onClick={() => trackAffiliateClick("kosik", "meal_planner", "meal_planner")}
                   className="w-full bg-[#1E56B7] hover:bg-[#184596] text-white font-bold text-sm py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-md transition-transform active:scale-95"
                 >
                   <ShoppingBag className="w-4 h-4" />

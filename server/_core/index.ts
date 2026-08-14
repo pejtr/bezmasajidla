@@ -75,6 +75,83 @@ async function startServer() {
     res.send("bezmasajidla2026indexnowkey");
   });
 
+  // Comgate Payment Webhook
+  app.post("/api/webhooks/comgate", async (req, res) => {
+    try {
+      const { parseComgateWebhook } = await import("./comgate");
+      const notification = parseComgateWebhook(req.body as Record<string, string>);
+
+      if (!notification.isValid) {
+        console.warn("[Comgate Webhook] Invalid secret or merchant payload received.");
+        res.status(400).send("code=1&message=INVALID_MERCHANT_OR_SECRET");
+        return;
+      }
+
+      console.log(`[Comgate Webhook] Payment status updated: orderId=${notification.orderId}, status=${notification.status}, amount=${notification.priceCzk} CZK`);
+
+      if (notification.status === "PAID") {
+        // Send confirmation email via Brevo
+        if (notification.email) {
+          const { sendBrevoEmail } = await import("./brevo");
+          await sendBrevoEmail({
+            toEmail: notification.email,
+            subject: "✨ Potvrzení platby — Bezmasá Jídla / Bezmasý Warrior",
+            htmlContent: `<div style="font-family: sans-serif; padding: 20px;">
+              <h2>Děkujeme za vaši platbu!</h2>
+              <p>Vaše objednávka č. <strong>${notification.orderId}</strong> na částku <strong>${notification.priceCzk} Kč</strong> byla úspěšně přijata.</p>
+              <p>Přístupové údaje a e-kniha vám byly zpřístupněny na bezmasajidla.cz.</p>
+            </div>`,
+          });
+        }
+      }
+
+      res.header("Content-Type", "application/x-www-form-urlencoded");
+      res.send("code=0&message=OK");
+    } catch (err) {
+      console.error("[Comgate Webhook Error]", err);
+      res.status(500).send("code=1&message=SERVER_ERROR");
+    }
+  });
+
+  // Safe Affiliate Click & Redirect Endpoint (prevents open-redirects)
+  app.get("/api/affiliate/redirect", async (req, res) => {
+    try {
+      const merchant = req.query.merchant as string;
+      const productId = req.query.productId as string | undefined;
+      const destUrl = req.query.url as string | undefined;
+      const recipeSlug = req.query.recipeSlug as string | undefined;
+      const placement = (req.query.placement as string) || "direct_link";
+
+      if (merchant !== "ekoclovek" && merchant !== "zazitky") {
+        return res.status(400).send("Invalid merchant");
+      }
+
+      const { recordAffiliateEvent } = await import("../affiliate/storage");
+      const { getSafeAffiliateUrl } = await import("../affiliate/links");
+
+      // Record internal click event
+      await recordAffiliateEvent({
+        eventType: "click",
+        merchant,
+        productId: productId || "unknown",
+        recipeSlug,
+        placement,
+        referrer: req.headers.referer,
+      });
+
+      const safeUrl = await getSafeAffiliateUrl({
+        merchant: merchant as "ekoclovek" | "zazitky",
+        productId,
+        destinationUrl: destUrl,
+      });
+
+      res.redirect(302, safeUrl);
+    } catch (err) {
+      console.error("[Affiliate Redirect Error]", err);
+      res.redirect(302, "https://www.bezmasajidla.cz/");
+    }
+  });
+
   // tRPC API
   app.use(
     "/api/trpc",
@@ -98,6 +175,9 @@ async function startServer() {
     console.log(`Server running on port ${port} (preferred: ${preferredPort})`);
     startDailyRecipeCronJob();
     startSocialPublisher();
+    import("../affiliate/sync").then(({ startAffiliateSyncCronJob }) => {
+      startAffiliateSyncCronJob();
+    });
   });
 }
 

@@ -6,6 +6,10 @@ import { rateLimitMiddleware } from "./_core/rateLimit";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { notifyOwner } from "./_core/notification";
+import { subscribeToBrevo } from "./_core/brevo";
+import { createComgatePayment } from "./_core/comgate";
+import { notifyGoogleIndexing } from "./_core/google-indexing";
+import { affiliateRouter } from "./affiliate/router";
 import {
   getSocialPublisherStatus,
   listSocialPosts,
@@ -180,7 +184,7 @@ export const appRouter = router({
     allRecipes: adminProcedure
       .query(() => getAllUserRecipes()),
 
-    // Approve a pending recipe
+    // Approve a pending recipe and trigger Google Instant Indexing API v3
     approveRecipe: adminProcedure
       .input(z.object({ recipeId: z.number() }))
       .mutation(async ({ input }) => {
@@ -188,7 +192,16 @@ export const appRouter = router({
         if (recipe) {
           await approveUserRecipe(input.recipeId);
           await scheduleRecipeForSocialMedia(recipe.id);
+          // Ping Google Instant Indexing API v3
+          await notifyGoogleIndexing(`/recepty/${recipe.slug}`);
         }
+      }),
+
+    // Manually trigger Google Instant Indexing API v3 for any target URL
+    pingGoogleIndexing: adminProcedure
+      .input(z.object({ url: z.string().min(1) }))
+      .mutation(async ({ input }) => {
+        return await notifyGoogleIndexing(input.url);
       }),
 
     // Reject (delete) a recipe
@@ -230,6 +243,7 @@ export const appRouter = router({
       runSocialPublisherOnce(),
     ),
   }),
+
   // ── Newsletter ───────────────────────────────────────────
   newsletter: router({
     subscribe: publicProcedure
@@ -238,33 +252,10 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         const { email } = input;
 
-        // Mailchimp API integration
-        const apiKey = process.env.MAILCHIMP_API_KEY;
-        const audienceId = process.env.MAILCHIMP_AUDIENCE_ID;
-        const serverPrefix = process.env.MAILCHIMP_SERVER_PREFIX; // e.g. "us21"
-
-        if (apiKey && audienceId && serverPrefix) {
-          // Full Mailchimp API integration
-          const url = `https://${serverPrefix}.api.mailchimp.com/3.0/lists/${audienceId}/members`;
-          const response = await fetch(url, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Basic ${Buffer.from(`anystring:${apiKey}`).toString("base64")}`,
-            },
-            body: JSON.stringify({
-              email_address: email,
-              status: "subscribed",
-              tags: ["bezmasajidla"],
-            }),
-          });
-          const data = await response.json() as { title?: string; detail?: string };
-          if (!response.ok && data.title !== "Member Exists") {
-            throw new TRPCError({
-              code: "INTERNAL_SERVER_ERROR",
-              message: data.detail || "Nastala chyba při přihlášení.",
-            });
-          }
+        // Brevo API integration (formerly Sendinblue)
+        const brevoResult = await subscribeToBrevo({ email, source: "bezmasajidla.cz_newsletter" });
+        if (!brevoResult.success) {
+          console.warn("[Newsletter] Brevo subscription status:", brevoResult.message);
         }
 
         // Always notify owner about new subscriber
@@ -311,5 +302,54 @@ export const appRouter = router({
         return { success: true };
       }),
   }),
+
+  // ── Comgate Payment Gateway ───────────────────────────────
+  payment: router({
+    createPayment: publicProcedure
+      .use(rateLimitMiddleware({ windowMs: 60_000, max: 10 }))
+      .input(
+        z.object({
+          priceCzk: z.number().min(1, "Cena musí být vyšší než 0 Kč"),
+          label: z.string().min(3).max(200),
+          payerEmail: z.string().email("Neplatná e-mailová adresa"),
+          payerName: z.string().optional(),
+          orderType: z.enum(["warrior_program", "b2b_listing", "eshop_product"]).default("warrior_program"),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const orderId = `BM-${Date.now().toString(36).toUpperCase()}-${Math.floor(Math.random() * 1000)}`;
+
+        const paymentResult = await createComgatePayment({
+          orderId,
+          priceCzk: input.priceCzk,
+          label: input.label,
+          payerEmail: input.payerEmail,
+          payerName: input.payerName,
+        });
+
+        if (!paymentResult.success || !paymentResult.redirectUrl) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: paymentResult.message || "Nepodařilo se vytvořit platbu v bráně Comgate.",
+          });
+        }
+
+        // Notify owner about pending checkout init
+        await notifyOwner({
+          title: `💳 Zahájena platba v bráně Comgate`,
+          content: `**Objednávka:** ${orderId}\n**Částka:** ${input.priceCzk} Kč\n**Produkt:** ${input.label}\n**E-mail:** ${input.payerEmail}`,
+        });
+
+        return {
+          orderId,
+          transId: paymentResult.transId,
+          redirectUrl: paymentResult.redirectUrl,
+        };
+      }),
+  }),
+
+  // ── Affiliate Commerce Engine ─────────────────────────────
+  affiliate: affiliateRouter,
 });
+
 export type AppRouter = typeof appRouter;

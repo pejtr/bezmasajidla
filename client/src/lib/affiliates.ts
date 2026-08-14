@@ -113,12 +113,41 @@ function cleanIngredient(ingredient: string): string {
 /**
  * Zaznamená klik na affiliate odkaz do LeadOS (losTrack)
  */
-export function trackAffiliateClick(partner: string, recipeSlug: string) {
-  if (typeof window !== "undefined" && (window as any).losTrack) {
-    (window as any).losTrack("affiliate_click", {
-      partner,
-      recipeSlug,
-      timestamp: new Date().toISOString(),
-    });
-  }
+type AffiliateEventData = {
+  partner?: string;
+  source: string;
+  recipeSlug?: string;
+};
+
+function trackAffiliateEvent(eventName: string, data: AffiliateEventData) {
+  if (typeof window === "undefined") return;
+
+  const eventData = {
+    ...data,
+    partner: data.partner?.toLowerCase(),
+    timestamp: new Date().toISOString(),
+  };
+
+  (window as any).losTrack?.(eventName, eventData);
+  (window as any).umami?.track(eventName, eventData);
+}
+
+export function trackAffiliateIntent(source: string, recipeSlug?: string) {
+  trackAffiliateEvent("affiliate_intent", { source, recipeSlug });
+}
+
+export function trackAffiliateClick(
+  partner: string,
+  recipeSlug: string,
+  source = "recipe_detail",
+) {
+  trackAffiliateEvent("affiliate_click", {
+    partner,
+    recipeSlug,
+    source,
+  });
+}
+
+export function trackShoppingListCopy(source = "meal_planner") {
+  trackAffiliateEvent("shopping_list_copy", { source });
 }
