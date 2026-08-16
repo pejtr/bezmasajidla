@@ -91,7 +91,9 @@ export const socialPosts = mysqlTable(
   "socialPosts",
   {
     id: int("id").autoincrement().primaryKey(),
-    recipeId: int("recipeId").notNull(),
+    recipeId: int("recipeId"),
+    recipeSlug: varchar("recipeSlug", { length: 128 }),
+    postType: varchar("postType", { length: 32 }).default("recipe").notNull(),
     platform: mysqlEnum("platform", ["facebook", "instagram"]).notNull(),
     status: mysqlEnum("status", [
       "scheduled",
@@ -113,9 +115,9 @@ export const socialPosts = mysqlTable(
     updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   },
   table => ({
-    uniqueRecipePlatform: uniqueIndex(
-      "socialPosts_recipeId_platform_uidx",
-    ).on(table.recipeId, table.platform),
+    recipePlatformScheduledIdx: index(
+      "socialPosts_recipeSlug_platform_idx",
+    ).on(table.recipeSlug, table.platform),
     duePostsIdx: index("socialPosts_status_scheduledFor_idx").on(
       table.status,
       table.scheduledFor,

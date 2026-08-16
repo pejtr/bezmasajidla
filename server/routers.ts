@@ -235,6 +235,54 @@ export const appRouter = router({
         scheduleRecipeForSocialMedia(input.recipeId, input.scheduledFor),
       ),
 
+    refillSocialQueue: adminProcedure
+      .input(z.object({ days: z.number().min(1).max(60).default(14) }).optional())
+      .mutation(async ({ input }) => {
+        const { ensureAutonomousQueue } = await import("./_core/social-autopilot");
+        return await ensureAutonomousQueue(input?.days || 14);
+      }),
+
+    exportSocialCsv: adminProcedure
+      .input(z.object({ limit: z.number().min(1).max(300).default(60) }).optional())
+      .query(async ({ input }) => {
+        const { exportSocialCalendarCsv } = await import("./_core/social-autopilot");
+        return await exportSocialCalendarCsv(input?.limit || 60);
+      }),
+
+    previewSocialPost: adminProcedure
+      .input(
+        z.object({
+          recipeSlug: z.string(),
+          platform: z.enum(["facebook", "instagram"]).default("instagram"),
+        }),
+      )
+      .query(async ({ input }) => {
+        const {
+          getAllCuratedCandidates,
+          generateSocialCaption,
+          determineCopyStyle,
+          buildTrackedSocialUrl,
+        } = await import("./_core/social-autopilot");
+
+        const candidates = getAllCuratedCandidates();
+        const found = candidates.find(c => c.slug === input.recipeSlug) || candidates[0];
+        if (!found) throw new TRPCError({ code: "NOT_FOUND", message: "Recept nebyl nalezen" });
+
+        const style = determineCopyStyle(found, new Date());
+        const linkUrl = buildTrackedSocialUrl(found.slug, input.platform, style);
+        const caption = generateSocialCaption(found, input.platform, style, linkUrl);
+
+        return {
+          recipeSlug: found.slug,
+          recipeTitle: found.title,
+          platform: input.platform,
+          style,
+          linkUrl,
+          imageUrl: found.image,
+          caption,
+        };
+      }),
+
     retrySocialPost: adminProcedure
       .input(z.object({ id: z.number() }))
       .mutation(({ input }) => retrySocialPost(input.id)),
