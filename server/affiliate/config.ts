@@ -47,4 +47,10 @@ export const AFFILIATE_CONFIG = {
     "kosik.cz",
     "www.kosik.cz",
   ],
+
+  // Feature Flags (v1.1)
+  features: {
+    // Keep strictly false in production until a validated grocery partner is live
+    groceryAffiliateEnabled: process.env.GROCERY_AFFILIATE_ENABLED === "true",
+  },
 };

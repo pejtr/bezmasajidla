@@ -1718,43 +1718,45 @@ export default function RecipeDetail() {
               </ul>
             </div>
 
-            {/* Affiliate: Buy ingredients */}
-            <div id="koupit-ingredience" className="scroll-mt-24 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border border-emerald-100 p-5 mb-6">
-              <div className="flex items-center gap-2 mb-2">
-                <ShoppingCart className="w-4 h-4 text-emerald-700" />
-                <h3 className="text-sm font-semibold text-emerald-800">Koupit ingredience online</h3>
+            {/* Affiliate: Buy ingredients (Gated behind feature flag until a real grocery partner is integrated) */}
+            {import.meta.env.VITE_GROCERY_AFFILIATE_ENABLED === "true" && (
+              <div id="koupit-ingredience" className="scroll-mt-24 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border border-emerald-100 p-5 mb-6">
+                <div className="flex items-center gap-2 mb-2">
+                  <ShoppingCart className="w-4 h-4 text-emerald-700" />
+                  <h3 className="text-sm font-semibold text-emerald-800">Koupit ingredience online</h3>
+                </div>
+                <p className="text-xs text-gray-500 mb-4">Objednejte všechny suroviny pohodlně domů — kliknutím vyhledáte ingredience receptu.</p>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <a
+                    href={getRohlikLink(recipe.title, ingredients)}
+                    target="_blank"
+                    rel="noopener noreferrer sponsored"
+                    onClick={() => trackAffiliateClick("rohlik", recipe.slug)}
+                    className="flex-1"
+                  >
+                    <Button className="w-full font-semibold text-white text-sm py-3" style={{ backgroundColor: '#E8002D' }}>
+                      <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
+                      Koupit na Rohlík.cz
+                      <ExternalLink className="w-3 h-3 ml-1.5 opacity-70" />
+                    </Button>
+                  </a>
+                  <a
+                    href={getKosikLink(recipe.title, ingredients)}
+                    target="_blank"
+                    rel="noopener noreferrer sponsored"
+                    onClick={() => trackAffiliateClick("kosik", recipe.slug)}
+                    className="flex-1"
+                  >
+                    <Button className="w-full font-semibold text-white text-sm py-3" style={{ backgroundColor: '#F5A623' }}>
+                      <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
+                      Koupit na Košík.cz
+                      <ExternalLink className="w-3 h-3 ml-1.5 opacity-70" />
+                    </Button>
+                  </a>
+                </div>
+                <p className="text-[10px] text-gray-400 mt-3 text-center">Partnerské odkazy — pomáhají nám tvořit nové recepty 💚</p>
               </div>
-              <p className="text-xs text-gray-500 mb-4">Objednejte všechny suroviny pohodlně domů — kliknutím vyhledáte ingredience receptu.</p>
-              <div className="flex flex-col sm:flex-row gap-2">
-                <a
-                  href={getRohlikLink(recipe.title, ingredients)}
-                  target="_blank"
-                  rel="noopener noreferrer sponsored"
-                  onClick={() => trackAffiliateClick("rohlik", recipe.slug)}
-                  className="flex-1"
-                >
-                  <Button className="w-full font-semibold text-white text-sm py-3" style={{ backgroundColor: '#E8002D' }}>
-                    <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
-                    Koupit na Rohlík.cz
-                    <ExternalLink className="w-3 h-3 ml-1.5 opacity-70" />
-                  </Button>
-                </a>
-                <a
-                  href={getKosikLink(recipe.title, ingredients)}
-                  target="_blank"
-                  rel="noopener noreferrer sponsored"
-                  onClick={() => trackAffiliateClick("kosik", recipe.slug)}
-                  className="flex-1"
-                >
-                  <Button className="w-full font-semibold text-white text-sm py-3" style={{ backgroundColor: '#F5A623' }}>
-                    <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
-                    Koupit na Košík.cz
-                    <ExternalLink className="w-3 h-3 ml-1.5 opacity-70" />
-                  </Button>
-                </a>
-              </div>
-              <p className="text-[10px] text-gray-400 mt-3 text-center">Partnerské odkazy — pomáhají nám tvořit nové recepty 💚</p>
-            </div>
+            )}
 
             {/* ── RELATED PRODUCTS (EKOČLOVĚK) ── */}
             {affiliateData?.products && affiliateData.products.length > 0 && (

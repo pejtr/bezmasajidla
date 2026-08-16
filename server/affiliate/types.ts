@@ -84,3 +84,60 @@ export interface AffiliateProvider {
   filterAndNormalize(rawProducts: RawAffiliateProduct[]): NormalizedAffiliateProduct[];
   buildAffiliateUrl(sourceUrl?: string): string;
 }
+
+// ── Telemetry & Analytics KPI Types (v1.1) ──
+
+export interface MerchantKpiBreakdown {
+  merchant: AffiliateMerchant;
+  displayName: string;
+  impressions: number;
+  clicks: number;
+  ctr: number; // percentage, e.g. 4.8
+  activeProducts: number;
+}
+
+export interface PlacementKpiBreakdown {
+  placement: AffiliatePlacement;
+  displayName: string;
+  impressions: number;
+  clicks: number;
+  ctr: number;
+}
+
+export interface CuisineKpiBreakdown {
+  cuisine: string;
+  impressions: number;
+  clicks: number;
+  ctr: number;
+}
+
+export interface CategoryKpiBreakdown {
+  category: string;
+  impressions: number;
+  clicks: number;
+  ctr: number;
+}
+
+export interface RecipeKpiBreakdown {
+  recipeSlug: string;
+  recipeTitle: string;
+  category?: string;
+  cuisine?: string;
+  impressions: number;
+  clicks: number;
+  ctr: number;
+}
+
+export interface AffiliateKpiReport {
+  timeframeDays?: number; // undefined = all time, or 7, 14, 30
+  totalImpressions: number;
+  totalClicks: number;
+  overallCtr: number;
+  byMerchant: MerchantKpiBreakdown[];
+  byPlacement: PlacementKpiBreakdown[];
+  byCuisine: CuisineKpiBreakdown[];
+  byCategory: CategoryKpiBreakdown[];
+  topRecipes: RecipeKpiBreakdown[];
+  generatedAt: Date;
+}
+

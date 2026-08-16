@@ -4,7 +4,12 @@
 
 import { z } from "zod";
 import { publicProcedure, adminProcedure, router } from "../_core/trpc";
-import { getAllActiveAffiliateProducts, recordAffiliateEvent, getAffiliateDiagnosticStats } from "./storage";
+import {
+  getAllActiveAffiliateProducts,
+  recordAffiliateEvent,
+  getAffiliateDiagnosticStats,
+  getDetailedAffiliateKpis,
+} from "./storage";
 import { matchAffiliateProducts } from "./matcher";
 import { syncAllAffiliateFeeds, syncAffiliateProvider } from "./sync";
 import { getSafeAffiliateUrl } from "./links";
@@ -141,6 +146,13 @@ export const affiliateRouter = router({
   getDiagnosticStats: adminProcedure.query(async () => {
     return await getAffiliateDiagnosticStats();
   }),
+
+  // ── Admin: Get Detailed Multi-Dimensional Telemetry & KPIs ────────
+  getDetailedKpis: adminProcedure
+    .input(z.object({ days: z.number().optional() }).optional())
+    .query(async ({ input }) => {
+      return await getDetailedAffiliateKpis(input?.days);
+    }),
 
   // ── Admin: Manually Trigger Feed Synchronization ─────────────────
   triggerSync: adminProcedure

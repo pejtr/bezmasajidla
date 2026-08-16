@@ -21,6 +21,7 @@ import {
   getAffiliateProductById,
   recordAffiliateEvent,
   getAffiliateDiagnosticStats,
+  getDetailedAffiliateKpis,
 } from "./affiliate/storage";
 import type { RawAffiliateProduct, NormalizedAffiliateProduct, RecipeMatchContext } from "./affiliate/types";
 
@@ -389,5 +390,66 @@ describe("Affiliate Engine — Storage & Idempotent Sync", () => {
     expect(stats.impressionsCount).toBeGreaterThanOrEqual(1);
     expect(stats.clicksCount).toBeGreaterThanOrEqual(1);
     expect(stats.ctr).toBeDefined();
+  });
+
+  it("calculates multi-dimensional telemetry KPIs and handles 0 impressions safely", async () => {
+    // Record events for different merchants, placements, recipes, and cuisines
+    await recordAffiliateEvent({
+      eventType: "impression",
+      merchant: "zazitky",
+      productId: "zazitky:101",
+      recipeSlug: "domaci-vegetarianska-pizza",
+      placement: "related_experience",
+      cuisine: "Italská",
+      category: "Hlavní jídla",
+    });
+
+    await recordAffiliateEvent({
+      eventType: "impression",
+      merchant: "zazitky",
+      productId: "zazitky:101",
+      recipeSlug: "domaci-vegetarianska-pizza",
+      placement: "related_experience",
+      cuisine: "Italská",
+      category: "Hlavní jídla",
+    });
+
+    await recordAffiliateEvent({
+      eventType: "click",
+      merchant: "zazitky",
+      productId: "zazitky:101",
+      recipeSlug: "domaci-vegetarianska-pizza",
+      placement: "related_experience",
+      cuisine: "Italská",
+      category: "Hlavní jídla",
+    });
+
+    const kpis = await getDetailedAffiliateKpis();
+    expect(kpis.totalImpressions).toBeGreaterThanOrEqual(2);
+    expect(kpis.totalClicks).toBeGreaterThanOrEqual(1);
+    expect(kpis.overallCtr).toBeGreaterThan(0);
+    expect(Number.isNaN(kpis.overallCtr)).toBe(false);
+    expect(Number.isFinite(kpis.overallCtr)).toBe(true);
+
+    // By Merchant check
+    const zazitkyKpi = kpis.byMerchant.find(m => m.merchant === "zazitky");
+    expect(zazitkyKpi).toBeDefined();
+    expect(zazitkyKpi?.impressions).toBeGreaterThanOrEqual(2);
+    expect(zazitkyKpi?.clicks).toBeGreaterThanOrEqual(1);
+    expect(zazitkyKpi?.ctr).toBe(50); // 1 click / 2 impressions = 50%
+
+    // By Placement check
+    const expPlacement = kpis.byPlacement.find(p => p.placement === "related_experience");
+    expect(expPlacement).toBeDefined();
+    expect(expPlacement?.impressions).toBeGreaterThanOrEqual(2);
+
+    // Distinct Cuisine vs Category check
+    expect(kpis.byCuisine.some(c => c.cuisine === "Italská")).toBe(true);
+    expect(kpis.byCategory.some(c => c.category === "Hlavní jídla")).toBe(true);
+
+    // Top Recipes ranking
+    const topPizza = kpis.topRecipes.find(r => r.recipeSlug === "domaci-vegetarianska-pizza");
+    expect(topPizza).toBeDefined();
+    expect(topPizza?.clicks).toBeGreaterThanOrEqual(1);
   });
 });
