@@ -1,13 +1,9 @@
-// ============================================================
-// BEZMASAJIDLA.CZ — Related Experiences Component (Zážitky.cz)
-// "👨‍🍳 Naučte se tuto kuchyni od profesionála"
-// ============================================================
-
 import { useEffect, useRef } from "react";
 import { ChefHat, ExternalLink, MapPin, Sparkles, Utensils } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AffiliateDisclosure from "./AffiliateDisclosure";
 import { trackClientAffiliateImpression, trackClientAffiliateClick } from "@/lib/affiliate-tracking";
+import { getRecipeScopedAttribution, buildAttributedRedirectUrl } from "@/lib/attribution";
 import { trpc } from "@/lib/trpc";
 
 export interface RelatedExperienceItem {
@@ -43,10 +39,11 @@ export default function RelatedExperiences({
 }: RelatedExperiencesProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const trackImpressionMutation = trpc.affiliate.trackImpression.useMutation();
-  const trackClickMutation = trpc.affiliate.trackClick.useMutation();
 
   useEffect(() => {
     if (!experiences || experiences.length === 0 || !containerRef.current) return;
+
+    const scoped = getRecipeScopedAttribution(recipeSlug || "");
 
     const observer = new IntersectionObserver(
       entries => {
@@ -70,6 +67,8 @@ export default function RelatedExperiences({
               placement: "related_experience",
               category: exp.category,
               cuisine: recipeCuisine,
+              socialPostId: scoped.socialPostId,
+              attributionSessionId: scoped.attributionSessionId,
             });
           });
           observer.disconnect();
@@ -87,6 +86,7 @@ export default function RelatedExperiences({
   }
 
   const handleExperienceClick = (exp: RelatedExperienceItem) => {
+    // Client-side analytics (GA4/Umami) ONLY — the internal DB click is recorded once by /api/affiliate/redirect
     trackClientAffiliateClick({
       merchant: exp.merchant,
       productId: exp.id,
@@ -96,16 +96,6 @@ export default function RelatedExperiences({
       category: exp.category,
       cuisine: recipeCuisine,
       price: exp.price,
-    });
-
-    trackClickMutation.mutate({
-      merchant: "zazitky",
-      productId: exp.id,
-      recipeSlug,
-      placement: "related_experience",
-      category: exp.category,
-      cuisine: recipeCuisine,
-      destinationUrl: exp.sourceUrl,
     });
   };
 
@@ -176,7 +166,7 @@ export default function RelatedExperiences({
 
             <div className="pt-2 mt-auto">
               <a
-                href={exp.affiliateUrl}
+                href={buildAttributedRedirectUrl(exp.affiliateUrl, recipeSlug || "")}
                 target="_blank"
                 rel="nofollow sponsored noopener noreferrer"
                 onClick={() => handleExperienceClick(exp)}

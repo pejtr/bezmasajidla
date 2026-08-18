@@ -1,13 +1,9 @@
-// ============================================================
-// BEZMASAJIDLA.CZ — Related Products Component (Ekočlověk.cz)
-// "🌱 Vypěstujte si vlastní suroviny"
-// ============================================================
-
 import { useEffect, useRef } from "react";
-import { Sprout, ExternalLink, Sparkles, CheckCircle2 } from "lucide-react";
+import { Sprout, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AffiliateDisclosure from "./AffiliateDisclosure";
 import { trackClientAffiliateImpression, trackClientAffiliateClick } from "@/lib/affiliate-tracking";
+import { getRecipeScopedAttribution, buildAttributedRedirectUrl } from "@/lib/attribution";
 import { trpc } from "@/lib/trpc";
 
 export interface RelatedProductItem {
@@ -43,11 +39,12 @@ export default function RelatedProducts({
 }: RelatedProductsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const trackImpressionMutation = trpc.affiliate.trackImpression.useMutation();
-  const trackClickMutation = trpc.affiliate.trackClick.useMutation();
 
   // IntersectionObserver for impression tracking
   useEffect(() => {
     if (!products || products.length === 0 || !containerRef.current) return;
+
+    const scoped = getRecipeScopedAttribution(recipeSlug || "");
 
     const observer = new IntersectionObserver(
       entries => {
@@ -71,6 +68,8 @@ export default function RelatedProducts({
               placement: "related_product",
               category: p.category,
               cuisine: recipeCuisine,
+              socialPostId: scoped.socialPostId,
+              attributionSessionId: scoped.attributionSessionId,
             });
           });
           observer.disconnect();
@@ -88,6 +87,7 @@ export default function RelatedProducts({
   }
 
   const handleProductClick = (product: RelatedProductItem) => {
+    // Client-side analytics (GA4/Umami) ONLY — the internal DB click is recorded once by /api/affiliate/redirect
     trackClientAffiliateClick({
       merchant: product.merchant,
       productId: product.id,
@@ -97,16 +97,6 @@ export default function RelatedProducts({
       category: product.category,
       cuisine: recipeCuisine,
       price: product.price,
-    });
-
-    trackClickMutation.mutate({
-      merchant: "ekoclovek",
-      productId: product.id,
-      recipeSlug,
-      placement: "related_product",
-      category: product.category,
-      cuisine: recipeCuisine,
-      destinationUrl: product.sourceUrl,
     });
   };
 
@@ -172,7 +162,7 @@ export default function RelatedProducts({
 
             <div className="pt-2 mt-auto">
               <a
-                href={product.affiliateUrl}
+                href={buildAttributedRedirectUrl(product.affiliateUrl, recipeSlug || "")}
                 target="_blank"
                 rel="nofollow sponsored noopener noreferrer"
                 onClick={() => handleProductClick(product)}

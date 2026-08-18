@@ -6,6 +6,7 @@ import {
   generateScheduleSlots,
   generateSocialCaption,
   getAllCuratedCandidates,
+  getPragueDateParts,
   type RecipeSocialCandidate,
 } from "./_core/social-autopilot";
 
@@ -104,10 +105,14 @@ describe("Social Auto-Pilot — Catalog & Copywriting Engine", () => {
     const slots = generateScheduleSlots(3, start);
     expect(slots.length).toBe(6); // 2 slots * 3 days
 
-    // Verify time of day
-    expect(slots[0].getHours()).toBe(11);
-    expect(slots[0].getMinutes()).toBe(30);
-    expect(slots[1].getHours()).toBe(17);
-    expect(slots[1].getMinutes()).toBe(30);
+    // Verify time of day and slot labels
+    expect(slots[0].slotLabel).toBe("11:30");
+    expect(slots[1].slotLabel).toBe("17:30");
+    const parts0 = getPragueDateParts(slots[0].date);
+    expect(parts0.hour).toBe(11);
+    expect(parts0.minute).toBe(30);
+    const parts1 = getPragueDateParts(slots[1].date);
+    expect(parts1.hour).toBe(17);
+    expect(parts1.minute).toBe(30);
   });
 });

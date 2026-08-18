@@ -121,6 +121,9 @@ async function startServer() {
       const destUrl = req.query.url as string | undefined;
       const recipeSlug = req.query.recipeSlug as string | undefined;
       const placement = (req.query.placement as string) || "direct_link";
+      const rawSocialPostId = req.query.socialPostId as string | undefined;
+      const socialPostId = rawSocialPostId ? parseInt(rawSocialPostId, 10) : undefined;
+      const attributionSessionId = req.query.attributionSessionId as string | undefined;
 
       if (merchant !== "ekoclovek" && merchant !== "zazitky") {
         return res.status(400).send("Invalid merchant");
@@ -129,13 +132,15 @@ async function startServer() {
       const { recordAffiliateEvent } = await import("../affiliate/storage");
       const { getSafeAffiliateUrl } = await import("../affiliate/links");
 
-      // Record internal click event
+      // Record exactly ONE internal click event with server-authoritative attribution
       await recordAffiliateEvent({
         eventType: "click",
         merchant,
         productId: productId || "unknown",
         recipeSlug,
         placement,
+        socialPostId: socialPostId && !isNaN(socialPostId) ? socialPostId : undefined,
+        attributionSessionId,
         referrer: req.headers.referer,
       });
 

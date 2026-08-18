@@ -30,6 +30,7 @@ const STATUS_LABELS = {
   publishing: "Publikuje se",
   published: "Publikováno",
   failed: "Chyba",
+  uncertain: "Nejednoznačné (timeout)",
 } as const;
 
 const STATUS_STYLES = {
@@ -37,6 +38,7 @@ const STATUS_STYLES = {
   publishing: "bg-amber-100 text-amber-700 border-amber-200",
   published: "bg-emerald-100 text-emerald-700 border-emerald-200",
   failed: "bg-red-100 text-red-700 border-red-200",
+  uncertain: "bg-purple-100 text-purple-700 border-purple-200",
 } as const;
 
 function formatDate(value: Date | string | null) {

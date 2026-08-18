@@ -100,14 +100,19 @@ export const socialPosts = mysqlTable(
       "publishing",
       "published",
       "failed",
+      "uncertain",
     ])
       .default("scheduled")
       .notNull(),
     caption: text("caption").notNull(),
     imageUrl: text("imageUrl"),
     linkUrl: text("linkUrl").notNull(),
+    copyStyle: varchar("copyStyle", { length: 32 }),
+    publishingSlot: varchar("publishingSlot", { length: 16 }),
     scheduledFor: timestamp("scheduledFor").notNull(),
     publishedAt: timestamp("publishedAt"),
+    publishStartedAt: timestamp("publishStartedAt"),
+    publishAttemptId: varchar("publishAttemptId", { length: 64 }),
     externalPostId: varchar("externalPostId", { length: 255 }),
     attempts: int("attempts").default(0).notNull(),
     lastError: text("lastError"),
@@ -165,25 +170,34 @@ export type AffiliateProductRecord = typeof affiliateProducts.$inferSelect;
 export type InsertAffiliateProduct = typeof affiliateProducts.$inferInsert;
 
 /**
- * Tracking impressions and clicks for affiliate recommendations
+ * Tracking impressions, clicks, and social landings for affiliate & social attribution
  */
 export const affiliateEvents = mysqlTable(
   "affiliateEvents",
   {
     id: int("id").autoincrement().primaryKey(),
-    eventType: mysqlEnum("eventType", ["impression", "click"]).notNull(),
-    merchant: varchar("merchant", { length: 32 }).notNull(),
-    productId: varchar("productId", { length: 128 }).notNull(),
+    eventType: mysqlEnum("eventType", ["impression", "click", "social_landing"]).notNull(),
+    merchant: varchar("merchant", { length: 32 }).default("none").notNull(),
+    productId: varchar("productId", { length: 128 }).default("none").notNull(),
     recipeSlug: varchar("recipeSlug", { length: 128 }),
-    placement: varchar("placement", { length: 64 }).notNull(), // "related_product" | "related_experience" | "recipe_ingredient" | "article_inline"
+    placement: varchar("placement", { length: 64 }).default("direct_link").notNull(), // "related_product" | "related_experience" | "recipe_ingredient" | "social_landing"
     category: varchar("category", { length: 128 }),
     cuisine: varchar("cuisine", { length: 128 }),
+    socialPostId: int("socialPostId"),
+    attributionSessionId: varchar("attributionSessionId", { length: 64 }),
+    utmSource: varchar("utmSource", { length: 64 }),
+    utmMedium: varchar("utmMedium", { length: 64 }),
+    utmCampaign: varchar("utmCampaign", { length: 128 }),
+    copyStyle: varchar("copyStyle", { length: 32 }),
+    publishingSlot: varchar("publishingSlot", { length: 16 }),
     referrer: varchar("referrer", { length: 512 }),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
   },
   table => ({
     eventLookupIdx: index("affiliateEvents_type_merchant_idx").on(table.eventType, table.merchant),
     recipeSlugIdx: index("affiliateEvents_recipeSlug_idx").on(table.recipeSlug),
+    socialPostIdIdx: index("affiliateEvents_socialPostId_idx").on(table.socialPostId),
+    typeSocialPostIdx: index("affiliateEvents_type_socialPost_idx").on(table.eventType, table.socialPostId),
     createdAtIdx: index("affiliateEvents_createdAt_idx").on(table.createdAt),
   })
 );

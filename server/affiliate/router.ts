@@ -75,6 +75,8 @@ export const affiliateRouter = router({
         placement: z.string(),
         category: z.string().optional(),
         cuisine: z.string().optional(),
+        socialPostId: z.number().optional(),
+        attributionSessionId: z.string().optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -88,11 +90,39 @@ export const affiliateRouter = router({
           placement: input.placement,
           category: input.category,
           cuisine: input.cuisine,
+          socialPostId: input.socialPostId,
+          attributionSessionId: input.attributionSessionId,
           referrer,
         });
         return { success: true };
       } catch (err) {
         console.warn("[AffiliateRouter] Failed to record impression:", err);
+        return { success: false };
+      }
+    }),
+
+  // ── Public: Record Social Landing Event (Denominator for social attribution) ──
+  recordSocialLanding: publicProcedure
+    .input(
+      z.object({
+        socialPostId: z.number(),
+        recipeSlug: z.string(),
+        attributionSessionId: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      try {
+        const { recordSocialLanding } = await import("./attribution");
+        const referrer = ctx.req.headers.referer;
+        await recordSocialLanding({
+          socialPostId: input.socialPostId,
+          recipeSlug: input.recipeSlug,
+          attributionSessionId: input.attributionSessionId,
+          referrer,
+        });
+        return { success: true };
+      } catch (err) {
+        console.warn("[AffiliateRouter] Failed to record social landing:", err);
         return { success: false };
       }
     }),
@@ -108,6 +138,8 @@ export const affiliateRouter = router({
         category: z.string().optional(),
         cuisine: z.string().optional(),
         destinationUrl: z.string().optional(),
+        socialPostId: z.number().optional(),
+        attributionSessionId: z.string().optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -121,6 +153,8 @@ export const affiliateRouter = router({
           placement: input.placement,
           category: input.category,
           cuisine: input.cuisine,
+          socialPostId: input.socialPostId,
+          attributionSessionId: input.attributionSessionId,
           referrer,
         });
 
@@ -152,6 +186,14 @@ export const affiliateRouter = router({
     .input(z.object({ days: z.number().optional() }).optional())
     .query(async ({ input }) => {
       return await getDetailedAffiliateKpis(input?.days);
+    }),
+
+  // ── Admin: Get Social -> Revenue Attribution Report ───────────────
+  getSocialAttributionReport: adminProcedure
+    .input(z.object({ days: z.number().optional() }).optional())
+    .query(async ({ input }) => {
+      const { getSocialAttributionReport } = await import("./attribution");
+      return await getSocialAttributionReport(input?.days);
     }),
 
   // ── Admin: Manually Trigger Feed Synchronization ─────────────────

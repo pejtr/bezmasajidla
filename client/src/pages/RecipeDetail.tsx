@@ -3,7 +3,7 @@
 // "Zelená Metropole" — full recipe with gallery, ingredients, steps
 // ============================================================
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { useParams, Link } from "wouter";
 import { Clock, Users, ChefHat, ArrowLeft, Leaf, ChevronLeft, ChevronRight, ShoppingCart, ExternalLink, BookOpen, Flame, Share2, Download, Instagram } from "lucide-react";
 import Header from "@/components/Header";
@@ -18,6 +18,7 @@ import SmartInternalLinks from "@/components/SmartInternalLinks";
 import { trpc } from "@/lib/trpc";
 import RelatedProducts from "@/components/affiliate/RelatedProducts";
 import RelatedExperiences from "@/components/affiliate/RelatedExperiences";
+import { initSocialLandingAttribution } from "@/lib/attribution";
 
 const sampleIngredients: Record<string, string[]> = {
   "svickova-bez-masa": [
@@ -1433,6 +1434,19 @@ function ImageGallery({ images, title }: { images: { url: string; alt: string }[
 export default function RecipeDetail() {
   const params = useParams<{ slug: string }>();
   const recipe = recipes.find((r) => r.slug === params.slug);
+  const recordLandingMutation = trpc.affiliate.recordSocialLanding.useMutation();
+
+  useEffect(() => {
+    if (!recipe) return;
+    const landing = initSocialLandingAttribution(recipe.slug);
+    if (landing.isSocialLanding && landing.socialPostId) {
+      recordLandingMutation.mutate({
+        socialPostId: landing.socialPostId,
+        recipeSlug: recipe.slug,
+        attributionSessionId: landing.attributionSessionId,
+      });
+    }
+  }, [recipe?.slug]);
 
   if (!recipe) {
     return (

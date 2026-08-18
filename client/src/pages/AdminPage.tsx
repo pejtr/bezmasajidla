@@ -35,8 +35,9 @@ import { getLoginUrl } from "@/const";
 import { restaurants } from "@/lib/data";
 import SocialPublisher from "@/components/admin/SocialPublisher";
 import AffiliateDiagnostics from "@/components/admin/AffiliateDiagnostics";
+import SocialAttribution from "@/components/admin/SocialAttribution";
 
-type Tab = "recipes" | "reviews" | "social" | "affiliate";
+type Tab = "recipes" | "reviews" | "social" | "attribution" | "affiliate";
 
 export default function AdminPage() {
   const { user, loading, isAuthenticated } = useAuth();
@@ -128,7 +129,7 @@ export default function AdminPage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex flex-wrap gap-2 mb-6">
           <Button
             variant={activeTab === "recipes" ? "default" : "outline"}
             onClick={() => setActiveTab("recipes")}
@@ -163,7 +164,19 @@ export default function AdminPage() {
             }
           >
             <Instagram className="w-4 h-4 mr-2" />
-            Facebook a Instagram
+            Social Auto-Pilot
+          </Button>
+          <Button
+            variant={activeTab === "attribution" ? "default" : "outline"}
+            onClick={() => setActiveTab("attribution")}
+            className={
+              activeTab === "attribution"
+                ? "bg-indigo-600 hover:bg-indigo-500 text-white"
+                : "border-indigo-200 text-indigo-700 hover:bg-indigo-50"
+            }
+          >
+            <TrendingUp className="w-4 h-4 mr-2" />
+            Social Attribution (Profit Loop)
           </Button>
           <Button
             variant={activeTab === "affiliate" ? "default" : "outline"}
@@ -183,6 +196,7 @@ export default function AdminPage() {
         {activeTab === "recipes" && <RecipeApproval />}
         {activeTab === "reviews" && <ReviewManagement />}
         {activeTab === "social" && <SocialPublisher />}
+        {activeTab === "attribution" && <SocialAttribution />}
         {activeTab === "affiliate" && <AffiliateDiagnostics />}
       </div>
 

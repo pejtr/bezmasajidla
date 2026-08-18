@@ -339,23 +339,75 @@ export async function retrySocialPost(id: number) {
       scheduledFor: new Date(),
       attempts: 0,
       lastError: null,
+      publishAttemptId: null,
+      publishStartedAt: null,
     })
-    .where(and(eq(socialPosts.id, id), eq(socialPosts.status, "failed")));
+    .where(
+      and(
+        eq(socialPosts.id, id),
+        sql`${socialPosts.status} IN ('failed', 'uncertain')`,
+      ),
+    );
 }
 
-async function claimPost(id: number): Promise<boolean> {
+export async function reconcileUncertainPost(
+  id: number,
+  resolution: "published" | "failed" | "scheduled",
+  externalPostId?: string,
+) {
   const db = await getDb();
-  if (!db) return false;
+  if (!db) throw new Error("Database not available");
 
+  if (resolution === "published") {
+    await db
+      .update(socialPosts)
+      .set({
+        status: "published",
+        publishedAt: new Date(),
+        externalPostId: externalPostId || `rec_manual_${id}`,
+        lastError: null,
+      })
+      .where(eq(socialPosts.id, id));
+  } else if (resolution === "scheduled") {
+    await db
+      .update(socialPosts)
+      .set({
+        status: "scheduled",
+        scheduledFor: new Date(),
+        attempts: 0,
+        lastError: null,
+      })
+      .where(eq(socialPosts.id, id));
+  } else {
+    await db
+      .update(socialPosts)
+      .set({
+        status: "failed",
+        lastError: "Manuálně označeno jako neúspěšné po kontrole Meta API.",
+      })
+      .where(eq(socialPosts.id, id));
+  }
+}
+
+async function claimPost(id: number): Promise<{ success: boolean; attemptId: string }> {
+  const db = await getDb();
+  if (!db) return { success: false, attemptId: "" };
+
+  const attemptId = `att_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
   const result = await db
     .update(socialPosts)
-    .set({ status: "publishing" })
+    .set({
+      status: "publishing",
+      publishAttemptId: attemptId,
+      publishStartedAt: new Date(),
+    })
     .where(
       and(eq(socialPosts.id, id), eq(socialPosts.status, "scheduled")),
     );
   const resultValue: unknown = result;
   const header = Array.isArray(resultValue) ? resultValue[0] : resultValue;
-  return Number((header as { affectedRows?: number }).affectedRows || 0) > 0;
+  const success = Number((header as { affectedRows?: number }).affectedRows || 0) > 0;
+  return { success, attemptId };
 }
 
 async function dispatchWebhookNotification(post: SocialPost, externalPostId: string) {
@@ -386,7 +438,7 @@ async function dispatchWebhookNotification(post: SocialPost, externalPostId: str
 
 async function finishPost(
   post: SocialPost,
-  result: { externalPostId?: string; error?: unknown },
+  result: { externalPostId?: string; error?: unknown; isUncertain?: boolean },
 ) {
   const db = await getDb();
   if (!db) return;
@@ -408,11 +460,24 @@ async function finishPost(
     return;
   }
 
+  if (result.isUncertain) {
+    // Timeout or network ambiguity: mark as 'uncertain' (never blindly re-publish to avoid duplicate posts!)
+    await db
+      .update(socialPosts)
+      .set({
+        status: "uncertain",
+        attempts,
+        lastError: "Publikace skončila timeoutem nebo nejednoznačnou odpovědí sítě. Vyžaduje ruční kontrolu.",
+      })
+      .where(eq(socialPosts.id, post.id));
+    return;
+  }
+
   const message =
     result.error instanceof Error
       ? result.error.message
       : "Neznámá chyba při publikování.";
-  const shouldRetry = attempts < 5;
+  const shouldRetry = attempts < 4;
   const retryDelayMinutes = Math.min(60, 2 ** attempts * 5);
 
   await db
@@ -453,16 +518,23 @@ export async function runSocialPublisherOnce(limit = 4) {
   let processed = 0;
 
   for (const post of duePosts) {
-    if (!(await claimPost(post.id))) continue;
+    const { success } = await claimPost(post.id);
+    if (!success) continue;
 
     try {
-      if (config.accessToken && ((post.platform === "facebook" && config.facebookPageId) || (post.platform === "instagram" && config.instagramAccountId))) {
+      if (
+        config.accessToken &&
+        ((post.platform === "facebook" && config.facebookPageId) ||
+          (post.platform === "instagram" && config.instagramAccountId))
+      ) {
         const externalPostId = await client.publish(post);
         await finishPost(post, { externalPostId });
       } else {
         // Auto-pilot simulation/log mode when Meta tokens are not yet provided
         const simId = `sim_${post.platform}_${post.id}_${Date.now().toString(36)}`;
-        console.log(`[Social Auto-Pilot] Published (${post.platform}): "${post.caption.slice(0, 60)}..." -> ID: ${simId}`);
+        console.log(
+          `[Social Auto-Pilot] Published (${post.platform}): "${post.caption.slice(0, 60)}..." -> ID: ${simId}`,
+        );
         await finishPost(post, { externalPostId: simId });
       }
     } catch (error) {
@@ -470,7 +542,12 @@ export async function runSocialPublisherOnce(limit = 4) {
         `[Social Media] ${post.platform} post ${post.id} failed:`,
         error,
       );
-      await finishPost(post, { error });
+      const isTimeout =
+        error instanceof Error &&
+        (error.name === "AbortError" ||
+          error.message.toLowerCase().includes("timeout") ||
+          error.message.toLowerCase().includes("econnreset"));
+      await finishPost(post, { error, isUncertain: isTimeout });
     }
     processed += 1;
   }

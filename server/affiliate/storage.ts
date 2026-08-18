@@ -29,9 +29,9 @@ import type {
 
 // In-memory fallback cache (used when DB is not connected or in test mode)
 const inMemoryProducts = new Map<string, NormalizedAffiliateProduct>();
-const inMemoryEvents: Array<{
+export interface InMemoryAffiliateEvent {
   id: number;
-  eventType: "impression" | "click";
+  eventType: "impression" | "click" | "social_landing";
   merchant: string;
   productId: string;
   recipeSlug?: string;
@@ -39,8 +39,17 @@ const inMemoryEvents: Array<{
   category?: string;
   cuisine?: string;
   referrer?: string;
+  socialPostId?: number;
+  attributionSessionId?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  copyStyle?: string;
+  publishingSlot?: string;
   createdAt: Date;
-}> = [];
+}
+
+export const inMemoryEvents: InMemoryAffiliateEvent[] = [];
 const inMemorySyncLogs: Array<{
   id: number;
   merchant: string;
@@ -245,18 +254,53 @@ export async function saveAffiliateProducts(
 }
 
 export async function recordAffiliateEvent(event: {
-  eventType: "impression" | "click";
-  merchant: string;
-  productId: string;
+  eventType: "impression" | "click" | "social_landing";
+  merchant?: string;
+  productId?: string;
   recipeSlug?: string;
   placement: string;
   category?: string;
   cuisine?: string;
   referrer?: string;
+  socialPostId?: number;
+  attributionSessionId?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  copyStyle?: string;
+  publishingSlot?: string;
 }): Promise<void> {
+  let authoritativeMeta = null;
+  if (event.socialPostId) {
+    try {
+      const { getAuthoritativePostMetadata } = await import("./attribution");
+      authoritativeMeta = await getAuthoritativePostMetadata(event.socialPostId);
+    } catch {
+      /* ignore */
+    }
+  }
+
+  const finalUtmSource = authoritativeMeta?.platform || event.utmSource;
+  const finalCopyStyle = authoritativeMeta?.copyStyle || event.copyStyle;
+  const finalSlot = authoritativeMeta?.publishingSlot || event.publishingSlot;
+
   const item = {
     id: eventIdCounter++,
-    ...event,
+    eventType: event.eventType,
+    merchant: event.merchant || "none",
+    productId: event.productId || "none",
+    recipeSlug: event.recipeSlug,
+    placement: event.placement,
+    category: event.category,
+    cuisine: event.cuisine,
+    referrer: event.referrer,
+    socialPostId: event.socialPostId,
+    attributionSessionId: event.attributionSessionId,
+    utmSource: finalUtmSource,
+    utmMedium: event.utmMedium || (event.socialPostId ? "social_autopilot" : undefined),
+    utmCampaign: finalCopyStyle || event.utmCampaign,
+    copyStyle: finalCopyStyle,
+    publishingSlot: finalSlot,
     createdAt: new Date(),
   };
   inMemoryEvents.push(item);
@@ -267,13 +311,20 @@ export async function recordAffiliateEvent(event: {
   try {
     const values: InsertAffiliateEvent = {
       eventType: event.eventType,
-      merchant: event.merchant,
-      productId: event.productId,
+      merchant: event.merchant || "none",
+      productId: event.productId || "none",
       recipeSlug: event.recipeSlug ?? null,
       placement: event.placement,
       category: event.category ?? null,
       cuisine: event.cuisine ?? null,
       referrer: event.referrer ?? null,
+      socialPostId: event.socialPostId ?? null,
+      attributionSessionId: event.attributionSessionId ?? null,
+      utmSource: finalUtmSource ?? null,
+      utmMedium: event.utmMedium || (event.socialPostId ? "social_autopilot" : null),
+      utmCampaign: finalCopyStyle || event.utmCampaign || null,
+      copyStyle: finalCopyStyle ?? null,
+      publishingSlot: finalSlot ?? null,
     };
     await db.insert(affiliateEvents).values(values);
   } catch (err) {
