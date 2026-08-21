@@ -157,6 +157,61 @@ async function startServer() {
     }
   });
 
+  // OMNIFORGE Central Publishing Hub Webhook Feedback Receiver
+  app.post("/api/webhooks/omniforge", async (req, res) => {
+    try {
+      const payload = req.body;
+      const event = payload?.event;
+      const internalPostId = payload?.metadata?.internalPostId || payload?.internalPostId;
+      const providerPostId = payload?.providerPostId;
+      const status = payload?.status;
+
+      if (!internalPostId) {
+        return res.status(400).json({ error: "Missing internalPostId in payload metadata" });
+      }
+
+      const { getDb } = await import("../db");
+      const { socialPosts } = await import("../../drizzle/schema");
+      const { eq } = await import("drizzle-orm");
+      const db = await getDb();
+
+      if (db) {
+        if (event === "publication.published" || status === "published") {
+          await db
+            .update(socialPosts)
+            .set({
+              status: "published",
+              publishedAt: new Date(payload.publishedAt || Date.now()),
+              externalPostId: providerPostId || payload.publicationId,
+              lastError: null,
+            })
+            .where(eq(socialPosts.id, Number(internalPostId)));
+        } else if (event === "publication.failed" || status === "failed") {
+          await db
+            .update(socialPosts)
+            .set({
+              status: "failed",
+              lastError: (payload.error || "Chyba publikace přes OMNIFORGE").slice(0, 2000),
+            })
+            .where(eq(socialPosts.id, Number(internalPostId)));
+        } else if (event === "publication.uncertain" || status === "uncertain") {
+          await db
+            .update(socialPosts)
+            .set({
+              status: "uncertain",
+              lastError: "OMNIFORGE hlásí nejednoznačný stav (timeout API).",
+            })
+            .where(eq(socialPosts.id, Number(internalPostId)));
+        }
+      }
+
+      return res.status(200).json({ received: true, event, internalPostId });
+    } catch (err) {
+      console.error("[OMNIFORGE Webhook Error]", err);
+      return res.status(500).json({ error: "Internal webhook processing error" });
+    }
+  });
+
   // tRPC API
   app.use(
     "/api/trpc",

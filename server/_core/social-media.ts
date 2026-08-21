@@ -515,6 +515,10 @@ export async function runSocialPublisherOnce(limit = 4) {
   }
 
   const client = new MetaGraphClient(config);
+  const { isOmniForgeConfigured, OmniForgeClient } = await import("./omniforge-client");
+  const omniForgeActive = isOmniForgeConfigured();
+  const omniClient = omniForgeActive ? new OmniForgeClient() : null;
+
   let processed = 0;
 
   for (const post of duePosts) {
@@ -522,15 +526,20 @@ export async function runSocialPublisherOnce(limit = 4) {
     if (!success) continue;
 
     try {
-      if (
+      if (omniClient) {
+        // Primary route: publish through OMNIFORGE Central Publishing Hub
+        const { externalPostId } = await omniClient.publish(post);
+        await finishPost(post, { externalPostId });
+      } else if (
         config.accessToken &&
         ((post.platform === "facebook" && config.facebookPageId) ||
           (post.platform === "instagram" && config.instagramAccountId))
       ) {
+        // Direct Meta Graph fallback
         const externalPostId = await client.publish(post);
         await finishPost(post, { externalPostId });
       } else {
-        // Auto-pilot simulation/log mode when Meta tokens are not yet provided
+        // Auto-pilot simulation/log mode when credentials are not yet provided
         const simId = `sim_${post.platform}_${post.id}_${Date.now().toString(36)}`;
         console.log(
           `[Social Auto-Pilot] Published (${post.platform}): "${post.caption.slice(0, 60)}..." -> ID: ${simId}`,
