@@ -120,13 +120,13 @@ describe("OMNIFORGE Cutover — Webhook HMAC & Idempotency", () => {
     expect(result.reason).toContain("expired");
   });
 
-  it("should deduplicate eventId for 2 deliveries -> 1 state transition idempotency", () => {
+  it("should deduplicate eventId for 2 deliveries -> 1 state transition idempotency", async () => {
     const uniqueEventId = `evt_test_${Date.now()}_${Math.random()}`;
 
-    const delivery1 = checkAndDeduplicateWebhookEvent(uniqueEventId);
+    const delivery1 = await checkAndDeduplicateWebhookEvent(uniqueEventId);
     expect(delivery1.isDuplicate).toBe(false);
 
-    const delivery2 = checkAndDeduplicateWebhookEvent(uniqueEventId);
+    const delivery2 = await checkAndDeduplicateWebhookEvent(uniqueEventId);
     expect(delivery2.isDuplicate).toBe(true);
   });
 });

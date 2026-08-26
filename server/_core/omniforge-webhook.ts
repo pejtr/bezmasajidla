@@ -81,21 +81,64 @@ export function verifyOmniForgeWebhookSignature(params: {
 }
 
 /**
- * Deduplicates eventId to guarantee idempotency: 2 deliveries -> 1 state transition
+ * Durable DB Deduplication of eventId to guarantee idempotency: 2 deliveries -> 1 state transition.
+ * Uses DB unique constraint on eventId as single source of truth, with memory set as fast-path.
  */
-export function checkAndDeduplicateWebhookEvent(eventId?: string): { isDuplicate: boolean } {
+export async function checkAndDeduplicateWebhookEvent(
+  eventId?: string,
+  publicationId?: string,
+  eventType?: string,
+  rawBody?: string | Buffer,
+): Promise<{ isDuplicate: boolean }> {
   if (!eventId) return { isDuplicate: false };
 
+  // Fast-path in-memory check
   if (processedEventIds.has(eventId)) {
     return { isDuplicate: true };
   }
 
+  // Durable DB unique constraint authority
+  try {
+    const { getDb } = await import("../db");
+    const { omniforgeWebhookEvents } = await import("../../drizzle/schema");
+    const db = await getDb();
+
+    if (db) {
+      const payloadHash = rawBody
+        ? crypto.createHash("sha256").update(rawBody).digest("hex").slice(0, 64)
+        : null;
+
+      await db.insert(omniforgeWebhookEvents).values({
+        eventId,
+        publicationId: publicationId || null,
+        eventType: eventType || "unknown",
+        payloadHash,
+        receivedAt: new Date(),
+        processedAt: new Date(),
+      });
+    }
+  } catch (err: any) {
+    // Unique constraint violation (ER_DUP_ENTRY / 1062) means duplicate delivery!
+    const errCode = err?.code || err?.errno || "";
+    const errStr = String(err);
+    if (
+      errCode === "ER_DUP_ENTRY" ||
+      errCode === 1062 ||
+      errStr.includes("1062") ||
+      errStr.includes("Duplicate") ||
+      errStr.includes("unique")
+    ) {
+      processedEventIds.add(eventId);
+      return { isDuplicate: true };
+    }
+  }
+
+  // Update in-memory cache
   if (processedEventIds.size >= MAX_EVENT_CACHE_SIZE) {
-    // Clear oldest items to avoid unbounded memory growth
     const firstItems = Array.from(processedEventIds.values()).slice(0, 2000);
     firstItems.forEach(id => processedEventIds.delete(id));
   }
-
   processedEventIds.add(eventId);
+
   return { isDuplicate: false };
 }

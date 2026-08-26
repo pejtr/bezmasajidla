@@ -128,11 +128,36 @@ export const socialPosts = mysqlTable(
       table.status,
       table.scheduledFor,
     ),
+    publicationIdIdx: index("socialPosts_publicationId_idx").on(
+      table.publicationId,
+    ),
   }),
 );
 
 export type SocialPost = typeof socialPosts.$inferSelect;
 export type InsertSocialPost = typeof socialPosts.$inferInsert;
+
+/**
+ * Durable idempotency & audit log of received OMNIFORGE webhook events
+ */
+export const omniforgeWebhookEvents = mysqlTable(
+  "omniforgeWebhookEvents",
+  {
+    eventId: varchar("eventId", { length: 128 }).primaryKey(),
+    publicationId: varchar("publicationId", { length: 128 }),
+    eventType: varchar("eventType", { length: 64 }).notNull(),
+    payloadHash: varchar("payloadHash", { length: 64 }),
+    receivedAt: timestamp("receivedAt").defaultNow().notNull(),
+    processedAt: timestamp("processedAt").defaultNow().notNull(),
+  },
+  table => ({
+    publicationIdIdx: index("omniforgeWebhookEvents_publicationId_idx").on(table.publicationId),
+    receivedAtIdx: index("omniforgeWebhookEvents_receivedAt_idx").on(table.receivedAt),
+  })
+);
+
+export type OmniForgeWebhookEventRecord = typeof omniforgeWebhookEvents.$inferSelect;
+export type InsertOmniForgeWebhookEvent = typeof omniforgeWebhookEvents.$inferInsert;
 
 /**
  * Normalized affiliate products from partner feeds (Ekočlověk, Zážitky.cz, etc.)

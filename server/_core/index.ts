@@ -36,8 +36,15 @@ async function startServer() {
   app.use(redirectMiddleware);
 
   const server = createServer(app);
-  // Body parser — 1MB is enough for JSON APIs; file uploads go through storage
-  app.use(express.json({ limit: "1mb" }));
+  // Body parser with rawBody preservation for cryptographic HMAC webhook signatures
+  app.use(
+    express.json({
+      limit: "1mb",
+      verify: (req: any, _res, buf) => {
+        req.rawBody = buf;
+      },
+    }),
+  );
   app.use(express.urlencoded({ limit: "1mb", extended: true }));
 
   // OAuth callback under /api/oauth/callback
@@ -173,7 +180,9 @@ async function startServer() {
         (req.headers["x-omniforge-timestamp"] as string) ||
         (req.headers["X-OmniForge-Timestamp"] as string);
 
-      const rawBody = typeof req.body === "string" ? req.body : JSON.stringify(req.body || {});
+      const rawBody =
+        (req as any).rawBody ||
+        (typeof req.body === "string" ? req.body : JSON.stringify(req.body || {}));
 
       // 1. HMAC Signature Verification & Timestamp Freshness
       if (config.webhookSecret) {
@@ -198,9 +207,14 @@ async function startServer() {
       const providerPostId = payload.providerPostId;
       const status = payload.status;
 
-      // 2. Idempotency Check: 2 deliveries -> 1 state transition
+      // 2. Durable Idempotency Check: 2 deliveries -> 1 state transition
       if (eventId) {
-        const { isDuplicate } = checkAndDeduplicateWebhookEvent(eventId);
+        const { isDuplicate } = await checkAndDeduplicateWebhookEvent(
+          eventId,
+          publicationId,
+          event,
+          rawBody,
+        );
         if (isDuplicate) {
           return res
             .status(200)

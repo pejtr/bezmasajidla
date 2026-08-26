@@ -80,6 +80,8 @@ export class OmniForgeClient {
         "Content-Type": "application/json",
         Authorization: `Bearer ${this.config.apiKey}`,
         "X-Project-Id": this.config.projectId || "bezmasajidla",
+        "Idempotency-Key": publicationId,
+        "X-Idempotency-Key": publicationId,
       },
       body: JSON.stringify(payload),
       signal: AbortSignal.timeout(10000),
