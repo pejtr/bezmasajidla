@@ -36,14 +36,22 @@ export class OmniForgeClient {
   /**
    * Dispatches a publication intent to OMNIFORGE Central Hub
    */
-  async publish(post: SocialPost): Promise<{ externalPostId: string; omniPublicationId?: string }> {
+  async publish(
+    post: SocialPost,
+    options: { dryRun?: boolean } = {},
+  ): Promise<{ publicationId: string; externalPostId?: string; status: string; dryRunSuccess?: boolean }> {
     if (!this.config.apiKey) {
       throw new Error("OMNIFORGE_API_KEY is not configured");
     }
 
+    const publicationId =
+      post.publicationId || `pub_bj_${post.id}_${post.platform}_${Date.now().toString(36)}`;
+
     const payload = {
+      publicationId,
       idempotencyKey: `bj_post_${post.id}_${post.platform}`,
       project: this.config.projectId || "bezmasajidla",
+      dryRun: options.dryRun || false,
       targets: [
         {
           platform: post.platform,
@@ -60,6 +68,7 @@ export class OmniForgeClient {
           copyStyle: post.copyStyle,
           publishingSlot: post.publishingSlot,
           internalPostId: post.id,
+          publicationId,
         },
       },
       scheduledFor: post.scheduledFor.toISOString(),
@@ -83,8 +92,10 @@ export class OmniForgeClient {
 
     const data = await response.json();
     return {
-      externalPostId: data.providerPostId || data.publicationId || `omni_${data.id}`,
-      omniPublicationId: data.publicationId,
+      publicationId: data.publicationId || publicationId,
+      externalPostId: data.providerPostId || data.externalPostId || (options.dryRun ? `dry_run_${publicationId}` : undefined),
+      status: data.status || (options.dryRun ? "validated" : "scheduled"),
+      dryRunSuccess: options.dryRun ? true : undefined,
     };
   }
 

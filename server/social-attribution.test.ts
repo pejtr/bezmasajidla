@@ -38,7 +38,8 @@ describe("Social Attribution — Prague Timezone & Scheduling", () => {
   });
 
   it("should generate 14-day schedule slots (2 per day)", () => {
-    const slots = generateScheduleSlots(14);
+    const start = new Date("2026-08-16T08:00:00Z");
+    const slots = generateScheduleSlots(14, start);
     expect(slots.length).toBe(28);
     expect(slots[0].slotLabel).toBe("11:30");
     expect(slots[1].slotLabel).toBe("17:30");

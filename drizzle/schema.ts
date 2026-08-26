@@ -113,6 +113,7 @@ export const socialPosts = mysqlTable(
     publishedAt: timestamp("publishedAt"),
     publishStartedAt: timestamp("publishStartedAt"),
     publishAttemptId: varchar("publishAttemptId", { length: 64 }),
+    publicationId: varchar("publicationId", { length: 128 }),
     externalPostId: varchar("externalPostId", { length: 255 }),
     attempts: int("attempts").default(0).notNull(),
     lastError: text("lastError"),

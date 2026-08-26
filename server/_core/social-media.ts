@@ -436,14 +436,42 @@ async function dispatchWebhookNotification(post: SocialPost, externalPostId: str
   }
 }
 
+export type PublisherMode = "local" | "direct_meta" | "omniforge";
+
+export function getPublisherMode(): PublisherMode {
+  const envMode = process.env.SOCIAL_PUBLISHER_MODE?.toLowerCase();
+  if (envMode === "omniforge") return "omniforge";
+  if (envMode === "direct_meta") return "direct_meta";
+  if (envMode === "local") return "local";
+
+  // Auto-detect mode if SOCIAL_PUBLISHER_MODE is not explicitly set
+  if (process.env.OMNIFORGE_API_KEY && process.env.OMNIFORGE_API_KEY.length > 5) {
+    return "omniforge";
+  }
+  if (
+    process.env.META_ACCESS_TOKEN &&
+    (process.env.META_FACEBOOK_PAGE_ID || process.env.META_INSTAGRAM_ACCOUNT_ID)
+  ) {
+    return "direct_meta";
+  }
+  return "local";
+}
+
 async function finishPost(
   post: SocialPost,
-  result: { externalPostId?: string; error?: unknown; isUncertain?: boolean },
+  result: {
+    externalPostId?: string;
+    publicationId?: string;
+    error?: unknown;
+    isUncertain?: boolean;
+  },
 ) {
   const db = await getDb();
   if (!db) return;
 
   const attempts = post.attempts + 1;
+  const publicationId = result.publicationId || post.publicationId;
+
   if (result.externalPostId) {
     await db
       .update(socialPosts)
@@ -451,6 +479,7 @@ async function finishPost(
         status: "published",
         publishedAt: new Date(),
         externalPostId: result.externalPostId,
+        publicationId,
         attempts,
         lastError: null,
       })
@@ -466,6 +495,7 @@ async function finishPost(
       .update(socialPosts)
       .set({
         status: "uncertain",
+        publicationId,
         attempts,
         lastError: "Publikace skončila timeoutem nebo nejednoznačnou odpovědí sítě. Vyžaduje ruční kontrolu.",
       })
@@ -487,6 +517,7 @@ async function finishPost(
       scheduledFor: shouldRetry
         ? new Date(Date.now() + retryDelayMinutes * 60_000)
         : post.scheduledFor,
+      publicationId,
       attempts,
       lastError: message.slice(0, 2_000),
     })
@@ -495,8 +526,9 @@ async function finishPost(
 
 export async function runSocialPublisherOnce(limit = 4) {
   const config = getSocialPublisherConfig();
+  const mode = getPublisherMode();
   const db = await getDb();
-  if (!db) return { processed: 0, disabled: false };
+  if (!db) return { processed: 0, disabled: false, mode };
 
   const duePosts = await db
     .select()
@@ -511,14 +543,10 @@ export async function runSocialPublisherOnce(limit = 4) {
     .limit(limit);
 
   if (duePosts.length === 0) {
-    return { processed: 0, disabled: !config.enabled };
+    return { processed: 0, disabled: !config.enabled, mode };
   }
 
-  const client = new MetaGraphClient(config);
-  const { isOmniForgeConfigured, OmniForgeClient } = await import("./omniforge-client");
-  const omniForgeActive = isOmniForgeConfigured();
-  const omniClient = omniForgeActive ? new OmniForgeClient() : null;
-
+  const metaClient = new MetaGraphClient(config);
   let processed = 0;
 
   for (const post of duePosts) {
@@ -526,29 +554,37 @@ export async function runSocialPublisherOnce(limit = 4) {
     if (!success) continue;
 
     try {
-      if (omniClient) {
-        // Primary route: publish through OMNIFORGE Central Publishing Hub
-        const { externalPostId } = await omniClient.publish(post);
-        await finishPost(post, { externalPostId });
-      } else if (
-        config.accessToken &&
-        ((post.platform === "facebook" && config.facebookPageId) ||
-          (post.platform === "instagram" && config.instagramAccountId))
-      ) {
-        // Direct Meta Graph fallback
-        const externalPostId = await client.publish(post);
+      if (mode === "omniforge") {
+        // Mode A: OMNIFORGE Central Publishing Hub (No auto-fallback to direct_meta!)
+        const { isOmniForgeConfigured, OmniForgeClient } = await import("./omniforge-client");
+        if (!isOmniForgeConfigured()) {
+          throw new Error("SOCIAL_PUBLISHER_MODE=omniforge configured, but OMNIFORGE_API_KEY is missing");
+        }
+        const omniClient = new OmniForgeClient();
+        const res = await omniClient.publish(post);
+        await finishPost(post, {
+          externalPostId: res.externalPostId,
+          publicationId: res.publicationId,
+        });
+      } else if (mode === "direct_meta") {
+        // Mode B: Direct Meta Graph API integration
+        if (!config.accessToken) {
+          throw new Error("SOCIAL_PUBLISHER_MODE=direct_meta configured, but META_ACCESS_TOKEN is missing");
+        }
+        const externalPostId = await metaClient.publish(post);
         await finishPost(post, { externalPostId });
       } else {
-        // Auto-pilot simulation/log mode when credentials are not yet provided
+        // Mode C: Local Simulation Mode
         const simId = `sim_${post.platform}_${post.id}_${Date.now().toString(36)}`;
+        const publicationId = `pub_bj_${post.id}_${post.platform}_${Date.now().toString(36)}`;
         console.log(
-          `[Social Auto-Pilot] Published (${post.platform}): "${post.caption.slice(0, 60)}..." -> ID: ${simId}`,
+          `[Social Auto-Pilot (local mode)] Published (${post.platform}): "${post.caption.slice(0, 60)}..." -> ID: ${simId}`,
         );
-        await finishPost(post, { externalPostId: simId });
+        await finishPost(post, { externalPostId: simId, publicationId });
       }
     } catch (error) {
       console.error(
-        `[Social Media] ${post.platform} post ${post.id} failed:`,
+        `[Social Media Publisher] (${mode} mode) ${post.platform} post ${post.id} failed:`,
         error,
       );
       const isTimeout =
@@ -561,7 +597,7 @@ export async function runSocialPublisherOnce(limit = 4) {
     processed += 1;
   }
 
-  return { processed, disabled: false };
+  return { processed, disabled: false, mode };
 }
 
 let publisherTimer: ReturnType<typeof setInterval> | undefined;
