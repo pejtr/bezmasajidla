@@ -166,10 +166,15 @@ async function startServer() {
 
   // OMNIFORGE Central Publishing Hub Webhook Feedback Receiver
   app.post("/api/webhooks/omniforge", async (req, res) => {
+    let claimedEventId: string | undefined;
+
     try {
-      const { verifyOmniForgeWebhookSignature, checkAndDeduplicateWebhookEvent } = await import(
-        "./omniforge-webhook"
-      );
+      const {
+        verifyOmniForgeWebhookSignature,
+        claimAndCheckWebhookEvent,
+        markWebhookEventProcessed,
+        markWebhookEventFailed,
+      } = await import("./omniforge-webhook");
       const { getOmniForgeConfig } = await import("./omniforge-client");
       const config = getOmniForgeConfig();
 
@@ -207,18 +212,20 @@ async function startServer() {
       const providerPostId = payload.providerPostId;
       const status = payload.status;
 
-      // 2. Durable Idempotency Check: 2 deliveries -> 1 state transition
+      // 2. Durable Event Claim: Inserts 'received' status; if already 'processed', returns NO-OP
       if (eventId) {
-        const { isDuplicate } = await checkAndDeduplicateWebhookEvent(
+        claimedEventId = eventId;
+        const claimResult = await claimAndCheckWebhookEvent({
           eventId,
           publicationId,
-          event,
+          eventType: event,
           rawBody,
-        );
-        if (isDuplicate) {
+        });
+
+        if (!claimResult.shouldProcess && claimResult.isDuplicate) {
           return res
             .status(200)
-            .json({ received: true, deduplicated: true, message: "Duplicate event ignored" });
+            .json({ received: true, deduplicated: true, message: "Duplicate event already processed" });
         }
       }
 
@@ -228,7 +235,7 @@ async function startServer() {
 
       const { getDb } = await import("../db");
       const { socialPosts } = await import("../../drizzle/schema");
-      const { eq, or } = await import("drizzle-orm");
+      const { eq } = await import("drizzle-orm");
       const db = await getDb();
 
       if (db) {
@@ -272,9 +279,18 @@ async function startServer() {
         }
       }
 
+      // 3. Mark event as successfully processed in DB
+      if (claimedEventId) {
+        await markWebhookEventProcessed(claimedEventId);
+      }
+
       return res.status(200).json({ received: true, event, internalPostId, publicationId });
     } catch (err) {
       console.error("[OMNIFORGE Webhook Error]", err);
+      if (claimedEventId) {
+        const { markWebhookEventFailed } = await import("./omniforge-webhook");
+        await markWebhookEventFailed(claimedEventId, err);
+      }
       return res.status(500).json({ error: "Internal webhook processing error" });
     }
   });

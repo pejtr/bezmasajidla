@@ -120,14 +120,34 @@ describe("OMNIFORGE Cutover — Webhook HMAC & Idempotency", () => {
     expect(result.reason).toContain("expired");
   });
 
-  it("should deduplicate eventId for 2 deliveries -> 1 state transition idempotency", async () => {
+  it("should claim event, allow retry on failure, and deduplicate once marked processed", async () => {
+    const {
+      claimAndCheckWebhookEvent,
+      markWebhookEventProcessed,
+      markWebhookEventFailed,
+    } = await import("./_core/omniforge-webhook");
+
     const uniqueEventId = `evt_test_${Date.now()}_${Math.random()}`;
 
-    const delivery1 = await checkAndDeduplicateWebhookEvent(uniqueEventId);
-    expect(delivery1.isDuplicate).toBe(false);
+    // 1. Initial claim
+    const claim1 = await claimAndCheckWebhookEvent({ eventId: uniqueEventId });
+    expect(claim1.shouldProcess).toBe(true);
+    expect(claim1.isDuplicate).toBe(false);
 
-    const delivery2 = await checkAndDeduplicateWebhookEvent(uniqueEventId);
-    expect(delivery2.isDuplicate).toBe(true);
+    // 2. Simulated failure during processing -> mark failed
+    await markWebhookEventFailed(uniqueEventId, new Error("Temporary DB connection drop"));
+
+    // 3. Retry delivery -> should still allow processing!
+    const claim2 = await claimAndCheckWebhookEvent({ eventId: uniqueEventId });
+    expect(claim2.shouldProcess).toBe(true);
+
+    // 4. Successful processing -> mark processed
+    await markWebhookEventProcessed(uniqueEventId);
+
+    // 5. Subsequent duplicate delivery -> NO-OP deduplicated!
+    const claim3 = await claimAndCheckWebhookEvent({ eventId: uniqueEventId });
+    expect(claim3.shouldProcess).toBe(false);
+    expect(claim3.isDuplicate).toBe(true);
   });
 });
 

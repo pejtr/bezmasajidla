@@ -81,29 +81,50 @@ export function verifyOmniForgeWebhookSignature(params: {
 }
 
 /**
- * Durable DB Deduplication of eventId to guarantee idempotency: 2 deliveries -> 1 state transition.
- * Uses DB unique constraint on eventId as single source of truth, with memory set as fast-path.
+ * Claims a webhook event in DB or checks its current processingStatus.
+ *
+ * - If event does not exist in DB: Inserts row with processingStatus = "received". Returns { shouldProcess: true, isDuplicate: false }.
+ * - If event exists with processingStatus = "processed": Returns { shouldProcess: false, isDuplicate: true }.
+ * - If event exists with processingStatus = "received" or "failed": Returns { shouldProcess: true, isDuplicate: false, isRetry: true }.
  */
-export async function checkAndDeduplicateWebhookEvent(
-  eventId?: string,
-  publicationId?: string,
-  eventType?: string,
-  rawBody?: string | Buffer,
-): Promise<{ isDuplicate: boolean }> {
-  if (!eventId) return { isDuplicate: false };
+export async function claimAndCheckWebhookEvent(params: {
+  eventId?: string;
+  publicationId?: string;
+  eventType?: string;
+  rawBody?: string | Buffer;
+}): Promise<{ shouldProcess: boolean; isDuplicate: boolean; isRetry?: boolean }> {
+  const { eventId, publicationId, eventType, rawBody } = params;
+  if (!eventId) return { shouldProcess: true, isDuplicate: false };
 
-  // Fast-path in-memory check
+  // Fast-path in-memory set check for already processed events
   if (processedEventIds.has(eventId)) {
-    return { isDuplicate: true };
+    return { shouldProcess: false, isDuplicate: true };
   }
 
-  // Durable DB unique constraint authority
   try {
     const { getDb } = await import("../db");
     const { omniforgeWebhookEvents } = await import("../../drizzle/schema");
+    const { eq } = await import("drizzle-orm");
     const db = await getDb();
 
     if (db) {
+      const existing = await db
+        .select()
+        .from(omniforgeWebhookEvents)
+        .where(eq(omniforgeWebhookEvents.eventId, eventId))
+        .limit(1);
+
+      if (existing.length > 0) {
+        const record = existing[0];
+        if (record.processingStatus === "processed") {
+          processedEventIds.add(eventId);
+          return { shouldProcess: false, isDuplicate: true };
+        }
+        // Event exists but was not successfully processed ("received" or "failed"): allow retry!
+        return { shouldProcess: true, isDuplicate: false, isRetry: true };
+      }
+
+      // Record does not exist: insert initial record with processingStatus = 'received'
       const payloadHash = rawBody
         ? crypto.createHash("sha256").update(rawBody).digest("hex").slice(0, 64)
         : null;
@@ -113,32 +134,71 @@ export async function checkAndDeduplicateWebhookEvent(
         publicationId: publicationId || null,
         eventType: eventType || "unknown",
         payloadHash,
+        processingStatus: "received",
         receivedAt: new Date(),
-        processedAt: new Date(),
+        processedAt: null,
       });
+
+      return { shouldProcess: true, isDuplicate: false };
     }
   } catch (err: any) {
-    // Unique constraint violation (ER_DUP_ENTRY / 1062) means duplicate delivery!
-    const errCode = err?.code || err?.errno || "";
     const errStr = String(err);
-    if (
-      errCode === "ER_DUP_ENTRY" ||
-      errCode === 1062 ||
-      errStr.includes("1062") ||
-      errStr.includes("Duplicate") ||
-      errStr.includes("unique")
-    ) {
-      processedEventIds.add(eventId);
-      return { isDuplicate: true };
+    if (errStr.includes("1062") || errStr.includes("Duplicate") || errStr.includes("unique")) {
+      return { shouldProcess: true, isDuplicate: false, isRetry: true };
     }
   }
 
-  // Update in-memory cache
-  if (processedEventIds.size >= MAX_EVENT_CACHE_SIZE) {
-    const firstItems = Array.from(processedEventIds.values()).slice(0, 2000);
-    firstItems.forEach(id => processedEventIds.delete(id));
-  }
-  processedEventIds.add(eventId);
+  return { shouldProcess: true, isDuplicate: false };
+}
 
-  return { isDuplicate: false };
+/**
+ * Marks a claimed webhook event as successfully processed.
+ */
+export async function markWebhookEventProcessed(eventId: string) {
+  processedEventIds.add(eventId);
+  try {
+    const { getDb } = await import("../db");
+    const { omniforgeWebhookEvents } = await import("../../drizzle/schema");
+    const { eq } = await import("drizzle-orm");
+    const db = await getDb();
+
+    if (db) {
+      await db
+        .update(omniforgeWebhookEvents)
+        .set({
+          processingStatus: "processed",
+          processedAt: new Date(),
+          lastError: null,
+        })
+        .where(eq(omniforgeWebhookEvents.eventId, eventId));
+    }
+  } catch (err) {
+    console.error("[OmniForge Webhook] Error marking event processed:", err);
+  }
+}
+
+/**
+ * Marks a claimed webhook event as failed during processing.
+ */
+export async function markWebhookEventFailed(eventId: string, error: unknown) {
+  try {
+    const { getDb } = await import("../db");
+    const { omniforgeWebhookEvents } = await import("../../drizzle/schema");
+    const { eq } = await import("drizzle-orm");
+    const db = await getDb();
+
+    const errorMessage = error instanceof Error ? error.message : String(error);
+
+    if (db) {
+      await db
+        .update(omniforgeWebhookEvents)
+        .set({
+          processingStatus: "failed",
+          lastError: errorMessage.slice(0, 2000),
+        })
+        .where(eq(omniforgeWebhookEvents.eventId, eventId));
+    }
+  } catch (err) {
+    console.error("[OmniForge Webhook] Error marking event failed:", err);
+  }
 }

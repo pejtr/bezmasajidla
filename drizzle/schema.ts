@@ -113,7 +113,7 @@ export const socialPosts = mysqlTable(
     publishedAt: timestamp("publishedAt"),
     publishStartedAt: timestamp("publishStartedAt"),
     publishAttemptId: varchar("publishAttemptId", { length: 64 }),
-    publicationId: varchar("publicationId", { length: 128 }),
+    publicationId: varchar("publicationId", { length: 128 }).unique(),
     externalPostId: varchar("externalPostId", { length: 255 }),
     attempts: int("attempts").default(0).notNull(),
     lastError: text("lastError"),
@@ -139,6 +139,7 @@ export type InsertSocialPost = typeof socialPosts.$inferInsert;
 
 /**
  * Durable idempotency & audit log of received OMNIFORGE webhook events
+ * Tracks processingStatus ("received" -> "processed" | "failed") for zero event loss on retries.
  */
 export const omniforgeWebhookEvents = mysqlTable(
   "omniforgeWebhookEvents",
@@ -147,12 +148,15 @@ export const omniforgeWebhookEvents = mysqlTable(
     publicationId: varchar("publicationId", { length: 128 }),
     eventType: varchar("eventType", { length: 64 }).notNull(),
     payloadHash: varchar("payloadHash", { length: 64 }),
+    processingStatus: mysqlEnum("processingStatus", ["received", "processed", "failed"]).default("received").notNull(),
+    lastError: text("lastError"),
     receivedAt: timestamp("receivedAt").defaultNow().notNull(),
-    processedAt: timestamp("processedAt").defaultNow().notNull(),
+    processedAt: timestamp("processedAt"),
   },
   table => ({
     publicationIdIdx: index("omniforgeWebhookEvents_publicationId_idx").on(table.publicationId),
     receivedAtIdx: index("omniforgeWebhookEvents_receivedAt_idx").on(table.receivedAt),
+    statusIdx: index("omniforgeWebhookEvents_status_idx").on(table.processingStatus),
   })
 );
 
