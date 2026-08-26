@@ -139,7 +139,7 @@ export type InsertSocialPost = typeof socialPosts.$inferInsert;
 
 /**
  * Durable idempotency & audit log of received OMNIFORGE webhook events
- * Tracks processingStatus ("received" -> "processed" | "failed") for zero event loss on retries.
+ * Tracks processingStatus ("received" -> "processing" -> "processed" | "failed") for zero event loss & atomic lock.
  */
 export const omniforgeWebhookEvents = mysqlTable(
   "omniforgeWebhookEvents",
@@ -148,7 +148,8 @@ export const omniforgeWebhookEvents = mysqlTable(
     publicationId: varchar("publicationId", { length: 128 }),
     eventType: varchar("eventType", { length: 64 }).notNull(),
     payloadHash: varchar("payloadHash", { length: 64 }),
-    processingStatus: mysqlEnum("processingStatus", ["received", "processed", "failed"]).default("received").notNull(),
+    processingStatus: mysqlEnum("processingStatus", ["received", "processing", "processed", "failed"]).default("received").notNull(),
+    processingStartedAt: timestamp("processingStartedAt"),
     lastError: text("lastError"),
     receivedAt: timestamp("receivedAt").defaultNow().notNull(),
     processedAt: timestamp("processedAt"),

@@ -6,6 +6,7 @@
 import crypto from "crypto";
 
 const processedEventIds = new Set<string>();
+const activeProcessingEventIds = new Set<string>();
 const MAX_EVENT_CACHE_SIZE = 10000;
 
 export interface OmniForgeWebhookPayload {
@@ -81,18 +82,19 @@ export function verifyOmniForgeWebhookSignature(params: {
 }
 
 /**
- * Claims a webhook event in DB or checks its current processingStatus.
+ * Atomically claims a webhook event for processing.
  *
- * - If event does not exist in DB: Inserts row with processingStatus = "received". Returns { shouldProcess: true, isDuplicate: false }.
- * - If event exists with processingStatus = "processed": Returns { shouldProcess: false, isDuplicate: true }.
- * - If event exists with processingStatus = "received" or "failed": Returns { shouldProcess: true, isDuplicate: false, isRetry: true }.
+ * Uses atomic SQL UPDATE to transition processingStatus:
+ * ("received" | "failed" | expired "processing") -> "processing"
+ *
+ * Prevents concurrent parallel processing of identical webhook events.
  */
 export async function claimAndCheckWebhookEvent(params: {
   eventId?: string;
   publicationId?: string;
   eventType?: string;
   rawBody?: string | Buffer;
-}): Promise<{ shouldProcess: boolean; isDuplicate: boolean; isRetry?: boolean }> {
+}): Promise<{ shouldProcess: boolean; isDuplicate: boolean; isProcessing?: boolean }> {
   const { eventId, publicationId, eventType, rawBody } = params;
   if (!eventId) return { shouldProcess: true, isDuplicate: false };
 
@@ -104,49 +106,87 @@ export async function claimAndCheckWebhookEvent(params: {
   try {
     const { getDb } = await import("../db");
     const { omniforgeWebhookEvents } = await import("../../drizzle/schema");
-    const { eq } = await import("drizzle-orm");
+    const { eq, and, or, lt, inArray } = await import("drizzle-orm");
     const db = await getDb();
 
     if (db) {
+      // 1. Ensure initial row exists
       const existing = await db
         .select()
         .from(omniforgeWebhookEvents)
         .where(eq(omniforgeWebhookEvents.eventId, eventId))
         .limit(1);
 
-      if (existing.length > 0) {
-        const record = existing[0];
-        if (record.processingStatus === "processed") {
-          processedEventIds.add(eventId);
-          return { shouldProcess: false, isDuplicate: true };
+      if (existing.length === 0) {
+        const payloadHash = rawBody
+          ? crypto.createHash("sha256").update(rawBody).digest("hex").slice(0, 64)
+          : null;
+
+        try {
+          await db.insert(omniforgeWebhookEvents).values({
+            eventId,
+            publicationId: publicationId || null,
+            eventType: eventType || "unknown",
+            payloadHash,
+            processingStatus: "received",
+            receivedAt: new Date(),
+            processedAt: null,
+          });
+        } catch {
+          // Ignore duplicate insert error on concurrent arrival
         }
-        // Event exists but was not successfully processed ("received" or "failed"): allow retry!
-        return { shouldProcess: true, isDuplicate: false, isRetry: true };
       }
 
-      // Record does not exist: insert initial record with processingStatus = 'received'
-      const payloadHash = rawBody
-        ? crypto.createHash("sha256").update(rawBody).digest("hex").slice(0, 64)
-        : null;
+      // 2. Atomic claim via UPDATE with condition
+      const leaseExpiry = new Date(Date.now() - 5 * 60 * 1000); // 5 minute lock lease
+      const updateResult = await db
+        .update(omniforgeWebhookEvents)
+        .set({
+          processingStatus: "processing",
+          processingStartedAt: new Date(),
+        })
+        .where(
+          and(
+            eq(omniforgeWebhookEvents.eventId, eventId),
+            or(
+              inArray(omniforgeWebhookEvents.processingStatus, ["received", "failed"]),
+              and(
+                eq(omniforgeWebhookEvents.processingStatus, "processing"),
+                lt(omniforgeWebhookEvents.processingStartedAt, leaseExpiry)
+              )
+            )
+          )
+        );
 
-      await db.insert(omniforgeWebhookEvents).values({
-        eventId,
-        publicationId: publicationId || null,
-        eventType: eventType || "unknown",
-        payloadHash,
-        processingStatus: "received",
-        receivedAt: new Date(),
-        processedAt: null,
-      });
+      const affectedRows = (updateResult as any)?.[0]?.affectedRows ?? (updateResult as any)?.affectedRows ?? 1;
 
-      return { shouldProcess: true, isDuplicate: false };
+      if (affectedRows > 0) {
+        return { shouldProcess: true, isDuplicate: false };
+      }
+
+      // Re-read status to distinguish between 'processed' and 'currently processing'
+      const reRead = await db
+        .select()
+        .from(omniforgeWebhookEvents)
+        .where(eq(omniforgeWebhookEvents.eventId, eventId))
+        .limit(1);
+
+      if (reRead.length > 0 && reRead[0].processingStatus === "processed") {
+        processedEventIds.add(eventId);
+        return { shouldProcess: false, isDuplicate: true };
+      }
+
+      return { shouldProcess: false, isDuplicate: false, isProcessing: true };
     }
   } catch (err: any) {
-    const errStr = String(err);
-    if (errStr.includes("1062") || errStr.includes("Duplicate") || errStr.includes("unique")) {
-      return { shouldProcess: true, isDuplicate: false, isRetry: true };
-    }
+    console.error("[OmniForge Webhook] Error claiming event:", err);
   }
+
+  // In-memory fallback lock when DB is not available
+  if (activeProcessingEventIds.has(eventId)) {
+    return { shouldProcess: false, isDuplicate: false, isProcessing: true };
+  }
+  activeProcessingEventIds.add(eventId);
 
   return { shouldProcess: true, isDuplicate: false };
 }
@@ -156,6 +196,7 @@ export async function claimAndCheckWebhookEvent(params: {
  */
 export async function markWebhookEventProcessed(eventId: string) {
   processedEventIds.add(eventId);
+  activeProcessingEventIds.delete(eventId);
   try {
     const { getDb } = await import("../db");
     const { omniforgeWebhookEvents } = await import("../../drizzle/schema");
@@ -181,6 +222,7 @@ export async function markWebhookEventProcessed(eventId: string) {
  * Marks a claimed webhook event as failed during processing.
  */
 export async function markWebhookEventFailed(eventId: string, error: unknown) {
+  activeProcessingEventIds.delete(eventId);
   try {
     const { getDb } = await import("../db");
     const { omniforgeWebhookEvents } = await import("../../drizzle/schema");
