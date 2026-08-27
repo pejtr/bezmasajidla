@@ -50,6 +50,14 @@ async function startServer() {
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
 
+  // Robots.txt Handler
+  app.get("/robots.txt", (_req, res) => {
+    res.header("Content-Type", "text/plain");
+    res.send(
+      `User-agent: *\nAllow: /\nSitemap: https://www.bezmasajidla.cz/sitemap.xml\n`
+    );
+  });
+
   // Sitemap & Legacy WordPress Sitemap Handler
   app.get(["/sitemap.xml", "/*sitemap*.xml", "/sitemap_index.xml"], async (_req, res) => {
     try {
