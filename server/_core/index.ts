@@ -50,16 +50,16 @@ async function startServer() {
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
 
-  // Sitemap
-  app.get("/sitemap.xml", async (req, res) => {
+  // Sitemap & Legacy WordPress Sitemap Handler
+  app.get(["/sitemap.xml", "/*sitemap*.xml", "/sitemap_index.xml"], async (_req, res) => {
     try {
       const { generateSitemap } = await import("./sitemap");
       const xml = await generateSitemap();
       res.header("Content-Type", "application/xml");
       res.send(xml);
     } catch (err) {
-      console.error("[Sitemap] Error generating sitemap:", err);
-      res.status(500).end();
+      console.error("[Sitemap Error]", err);
+      res.status(500).send("Error generating sitemap");
     }
   });
 
