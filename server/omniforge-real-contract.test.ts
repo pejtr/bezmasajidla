@@ -5,16 +5,15 @@
 
 import { describe, it, expect } from "vitest";
 import { getOmniForgeConfig, OmniForgeClient } from "./_core/omniforge-client";
-import { verifyAndApplyOmniForgeMigrations } from "./_core/db-migration-check";
+import { verifyOmniForgeMigrationsReadOnly } from "./_core/db-migration-check";
 import { claimAndCheckWebhookEvent, markWebhookEventProcessed } from "./_core/omniforge-webhook";
 
 describe("OMNIFORGE Contract Gate — Database Migration Proof", () => {
-  it("should verify physical DB schema columns, indexes, and tables", async () => {
-    const report = await verifyAndApplyOmniForgeMigrations();
+  it("should verify physical DB schema columns, indexes, and tables in READ-ONLY mode", async () => {
+    const report = await verifyOmniForgeMigrationsReadOnly();
 
     expect(typeof report.timestamp).toBe("string");
-    // When DB is offline/unconfigured, report gracefully outputs current status
-    console.log("[PROD DB Migration Proof]", JSON.stringify(report, null, 2));
+    console.log("[PROD DB Migration Proof (Read-Only)]", JSON.stringify(report, null, 2));
   });
 });
 
