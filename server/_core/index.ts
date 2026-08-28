@@ -312,6 +312,11 @@ async function startServer() {
     })
   );
 
+  // Railway / Container Health Check Endpoint
+  app.get(["/health", "/api/health"], (_req, res) => {
+    res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
+  });
+
   // development mode uses Vite, production mode uses static files
   if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);
@@ -319,11 +324,13 @@ async function startServer() {
     serveStatic(app);
   }
 
-  const preferredPort = parseInt(process.env.PORT || "3000");
-  const port = await findAvailablePort(preferredPort);
+  // On production platforms (e.g. Railway), bind strictly to process.env.PORT
+  const port = process.env.PORT
+    ? parseInt(process.env.PORT, 10)
+    : await findAvailablePort(3000);
 
   server.listen(port, "0.0.0.0", () => {
-    console.log(`Server running on port ${port} (preferred: ${preferredPort})`);
+    console.log(`[Server] Listening on 0.0.0.0:${port} (ENV.PORT=${process.env.PORT || "none"})`);
     startDailyRecipeCronJob();
     startSocialPublisher();
     import("../affiliate/sync").then(({ startAffiliateSyncCronJob }) => {
