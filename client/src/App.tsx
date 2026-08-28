@@ -43,6 +43,9 @@ const PodminkyPage = lazy(() => import("./pages/PodminkyPage"));
 const OchranaPage = lazy(() => import("./pages/OchranaPage"));
 const KontaktPage = lazy(() => import("./pages/KontaktPage"));
 
+const DistrictPillarPage = lazy(() => import("./pages/DistrictPillarPage"));
+const IngredientPillarPage = lazy(() => import("./pages/IngredientPillarPage"));
+
 function PageFallback() {
   return <div className="min-h-screen bg-[#F8FAF6]" aria-busy="true" />;
 }
@@ -56,11 +59,20 @@ function Router() {
         <Route path="/restaurace" component={Restaurants} />
         <Route path="/restaurace/vegetarianske-restaurace-praha" component={RestaurantPillarPage} />
         <Route path="/restaurace/veganske-restaurace-praha" component={VeganRestaurantPillarPage} />
+        <Route path="/restaurace/praha/vinohrady">{() => <DistrictPillarPage districtKey="vinohrady" />}</Route>
+        <Route path="/restaurace/praha/karlin">{() => <DistrictPillarPage districtKey="karlin" />}</Route>
+        <Route path="/restaurace/praha/smichov">{() => <DistrictPillarPage districtKey="smichov" />}</Route>
+        <Route path="/restaurace/praha/stare-mesto">{() => <DistrictPillarPage districtKey="stare-mesto" />}</Route>
         <Route path="/restaurace/vegetarianske-restaurace-brno" component={BrnoRestaurantPillarPage} />
         <Route path="/restaurace/veganske-restaurace-ostrava" component={OstravaRestaurantPillarPage} />
         <Route path="/restaurace/bezmase-restaurace-plzen" component={PlzenRestaurantPillarPage} />
         <Route path="/restaurace/:slug" component={RestaurantDetail} />
         <Route path="/recepty" component={Recipes} />
+        <Route path="/recepty/tofu">{() => <IngredientPillarPage ingredientKey="tofu" />}</Route>
+        <Route path="/recepty/cizrna">{() => <IngredientPillarPage ingredientKey="cizrna" />}</Route>
+        <Route path="/recepty/cocka">{() => <IngredientPillarPage ingredientKey="cocka" />}</Route>
+        <Route path="/recepty/kvetak">{() => <IngredientPillarPage ingredientKey="kvetak" />}</Route>
+        <Route path="/recepty/tempeh">{() => <IngredientPillarPage ingredientKey="tempeh" />}</Route>
         <Route path="/recepty/ceska-klasika-bez-masa" component={RecipePillarPage} />
         <Route path="/recepty/rychle-bezmase-vecere" component={QuickDinnersPillarPage} />
         <Route path="/recepty/bezlepkove-recepty" component={GlutenFreePillarPage} />

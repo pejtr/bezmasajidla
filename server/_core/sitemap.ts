@@ -47,13 +47,24 @@ export async function generateSitemap(): Promise<string> {
   addUrl("/blog", "0.8", "weekly");
   addUrl("/inzerce/pridat-podnik", "0.8", "monthly");
 
-  // Pillar Pages
+  // Pillar Pages — Restaurant Clusters
   addUrl("/restaurace/vegetarianske-restaurace-praha", "0.9", "monthly");
   addUrl("/restaurace/veganske-restaurace-praha", "0.9", "monthly");
   addUrl("/restaurace/vegansky-obed-praha", "0.9", "monthly");
+  addUrl("/restaurace/praha/vinohrady", "0.9", "monthly");
+  addUrl("/restaurace/praha/karlin", "0.9", "monthly");
+  addUrl("/restaurace/praha/smichov", "0.9", "monthly");
+  addUrl("/restaurace/praha/stare-mesto", "0.9", "monthly");
   addUrl("/restaurace/vegetarianske-restaurace-brno", "0.9", "monthly");
   addUrl("/restaurace/veganske-restaurace-ostrava", "0.9", "monthly");
   addUrl("/restaurace/bezmase-restaurace-plzen", "0.9", "monthly");
+
+  // Pillar Pages — Recipe Clusters & Ingredients
+  addUrl("/recepty/tofu", "0.9", "monthly");
+  addUrl("/recepty/cizrna", "0.9", "monthly");
+  addUrl("/recepty/cocka", "0.9", "monthly");
+  addUrl("/recepty/kvetak", "0.9", "monthly");
+  addUrl("/recepty/tempeh", "0.9", "monthly");
   addUrl("/recepty/ceska-klasika-bez-masa", "0.9", "monthly");
   addUrl("/recepty/rychle-bezmase-vecere", "0.9", "monthly");
   addUrl("/recepty/bezlepkove-recepty", "0.9", "monthly");

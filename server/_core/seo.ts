@@ -113,6 +113,107 @@ async function resolveMeta(url: string): Promise<SeoMeta> {
     };
   }
 
+  // Prague District Clusters
+  if (path === "/restaurace/praha/vinohrady") {
+    return {
+      title: "Vegetariánské a veganské restaurace Vinohrady Praha 2 | Bezmasá Jídla",
+      description:
+        "Objevte nejlepší veganská a vegetariánská bistra na Vinohradech. Recenze, denní menu, adresa a hodnocení podniků na Praze 2.",
+      image: DEFAULT_IMAGE,
+      canonicalPath: path,
+      jsonLd: { "@type": "CollectionPage", name: "Restaurace Vinohrady Praha 2" },
+    };
+  }
+
+  if (path === "/restaurace/praha/karlin") {
+    return {
+      title: "Veganské a vegetariánské restaurace Karlín Praha 8 | Bezmasá Jídla",
+      description:
+        "Průvodce vegetariánskými a veganskými podniky v Karlíně. Kam na polední pauzu, rychlé bistro i gurmánskou večeři na Praze 8.",
+      image: DEFAULT_IMAGE,
+      canonicalPath: path,
+      jsonLd: { "@type": "CollectionPage", name: "Restaurace Karlín Praha 8" },
+    };
+  }
+
+  if (path === "/restaurace/praha/smichov") {
+    return {
+      title: "Vegetariánské restaurace Smíchov Praha 5 | Bezmasá Jídla",
+      description:
+        "Kde se najíst vegetariánsky a vegansky na Smíchově u Anděla. Ověřené podniky, denní nabídka a hodnocení zákazníků.",
+      image: DEFAULT_IMAGE,
+      canonicalPath: path,
+      jsonLd: { "@type": "CollectionPage", name: "Restaurace Smíchov Praha 5" },
+    };
+  }
+
+  if (path === "/restaurace/praha/stare-mesto") {
+    return {
+      title: "Veganské restaurace Staré Město Praha 1 | Nejlepší podniky v centru",
+      description:
+        "Nejlepší vegetariánské a veganské restaurace na Starém Městě v Praze 1. Maitrea, Lehká Hlava, Country Life a další ikonická místa.",
+      image: DEFAULT_IMAGE,
+      canonicalPath: path,
+      jsonLd: { "@type": "CollectionPage", name: "Restaurace Staré Město Praha 1" },
+    };
+  }
+
+  // Ingredient Clusters
+  if (path === "/recepty/tofu") {
+    return {
+      title: "Nejlepší recepty z tofu | Rychlá jídla s vysokým obsahem bílkovin",
+      description:
+        "Objevte ověřené vegetariánské a veganské recepty z tofu. Křupavé tofu, curry, asijské soté i pomazánky s přepočtem bílkovin a ceny porce.",
+      image: DEFAULT_IMAGE,
+      canonicalPath: path,
+      jsonLd: { "@type": "CollectionPage", name: "Recepty z tofu" },
+    };
+  }
+
+  if (path === "/recepty/cizrna") {
+    return {
+      title: "Recepty z cizrny | Hummus, kari a pečená cizrna bez masa",
+      description:
+        "Nejlepší bezmasé recepty z cizrny. Krémový hummus, indické chana masala, cizrnové karbanátky i křupavá pečená cizrna jako snack.",
+      image: DEFAULT_IMAGE,
+      canonicalPath: path,
+      jsonLd: { "@type": "CollectionPage", name: "Recepty z cizrny" },
+    };
+  }
+
+  if (path === "/recepty/cocka") {
+    return {
+      title: "Čočkové recepty bez masa | Červená, černá Beluga a indický dál",
+      description:
+        "Výživné recepty z čočky bez masa. Červená čočka za 15 minut, černá Beluga do salátů, klasický čočkový dál a polévky.",
+      image: DEFAULT_IMAGE,
+      canonicalPath: path,
+      jsonLd: { "@type": "CollectionPage", name: "Čočkové recepty" },
+    };
+  }
+
+  if (path === "/recepty/kvetak") {
+    return {
+      title: "Květákové recepty | Pečený květák, buffalo křídla a kari",
+      description:
+        "Skvělé vegetariánské recepty z květáku. Pečený květákový steak, chrumkavá buffalo křidélka, květáková rýže a krémové polévky.",
+      image: DEFAULT_IMAGE,
+      canonicalPath: path,
+      jsonLd: { "@type": "CollectionPage", name: "Recepty z květáku" },
+    };
+  }
+
+  if (path === "/recepty/tempeh") {
+    return {
+      title: "Recepty z tempehu | Uzený tempeh, stir-fry a bezmasá slanina",
+      description:
+        "Nejlepší recepty s tempehem. Uzený tempeh k těstovinám, smažený v marinádě i jako křupavá rostlinná 'slanina' s vysokým obsahem proteinu.",
+      image: DEFAULT_IMAGE,
+      canonicalPath: path,
+      jsonLd: { "@type": "CollectionPage", name: "Recepty z tempehu" },
+    };
+  }
+
   if (path === "/recepty/ceska-klasika-bez-masa") {
     return {
       title: "Tradiční česká kuchyně bez masa | Bezmasé recepty",
