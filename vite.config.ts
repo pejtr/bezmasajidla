@@ -173,6 +173,19 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    cssCodeSplit: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("react") || id.includes("wouter")) return "vendor-core";
+            if (id.includes("@radix-ui") || id.includes("framer-motion") || id.includes("lucide-react")) return "vendor-ui";
+            if (id.includes("@tanstack") || id.includes("@trpc")) return "vendor-[#2C352E]";
+            return "vendor-libs";
+          }
+        },
+      },
+    },
   },
   server: {
     host: true,
