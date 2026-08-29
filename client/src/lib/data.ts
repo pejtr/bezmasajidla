@@ -4,6 +4,7 @@
 // ============================================================
 
 import { recipeImageOverrides } from "./recipeImageOverrides";
+import { expansionRecipes } from "./recipeExpansion";
 
 export type RestaurantType = "vegan" | "vegetarian" | "friendly" | "fastfood";
 
@@ -7066,7 +7067,7 @@ const recipeSource: Recipe[] = [
  * at the catalog boundary and apply the reviewed, recipe-specific photography.
  */
 export const recipes: Recipe[] = Array.from(
-  new Map(recipeSource.map(recipe => [recipe.slug, recipe])).values()
+  new Map([...recipeSource, ...expansionRecipes].map(recipe => [recipe.slug, recipe])).values()
 ).map(recipe => {
   const image = recipeImageOverrides[recipe.slug] || recipe.image;
   const images = recipe.images && recipe.images.length > 0

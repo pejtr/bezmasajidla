@@ -19,6 +19,7 @@ import { trpc } from "@/lib/trpc";
 import RelatedProducts from "@/components/affiliate/RelatedProducts";
 import RelatedExperiences from "@/components/affiliate/RelatedExperiences";
 import { initSocialLandingAttribution } from "@/lib/attribution";
+import RecipeGroceryWidget from "@/components/RecipeGroceryWidget";
 
 const sampleIngredients: Record<string, string[]> = {
   "svickova-bez-masa": [
@@ -1653,6 +1654,15 @@ export default function RecipeDetail() {
             </section>
 
 
+
+            {/* ── 1-CLICK GROCERY INGREDIENT CART & AFFILIATE WIDGET ── */}
+            <RecipeGroceryWidget
+              recipeTitle={recipe.title}
+              recipeSlug={recipe.slug}
+              servings={recipe.servings}
+              ingredients={(sampleIngredients[recipe.slug] || sampleIngredients.default).map(i => ({ name: i }))}
+              estimatedCostPerServingCzk={35}
+            />
 
             {/* ── MACRO NUTRIENTS PANEL WITH SERVING CALCULATOR ── */}
             {recipe.macros && (
