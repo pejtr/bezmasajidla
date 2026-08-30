@@ -14,7 +14,7 @@ const partnerProjects = [
     description: "Dovolená za nejlepší ceny",
     href: "https://www.lastminutedovolene.cz",
     image:
-      "https://files.manuscdn.com/user_upload_by_module/session_file/89740521/BkmZsbAdGIRJXzzG.jpg",
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900&h=600&fit=crop&q=82",
   },
   {
     name: "Akční letenky",
@@ -22,7 +22,8 @@ const partnerProjects = [
     suffix: ".COM",
     description: "Levné lety a cestovatelské tipy",
     href: "https://www.akcni-letenky.com",
-    image: "https://www.akcni-letenky.com/hero-bg.jpg",
+    image:
+      "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=900&h=600&fit=crop&q=82",
   },
   {
     name: "Katastr Online",
@@ -30,7 +31,8 @@ const partnerProjects = [
     suffix: ".CZ",
     description: "Nemovitosti přehledně online",
     href: "https://www.katastr-online.cz",
-    image: "https://www.katastr-online.cz/og-image.jpg",
+    image:
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=900&h=600&fit=crop&q=82",
   },
   {
     name: "Čajovny Praha",
@@ -39,7 +41,7 @@ const partnerProjects = [
     description: "Oázy klidu uprostřed Prahy",
     href: "https://www.cajovny-praha.cz",
     image:
-      "https://files.manuscdn.com/user_upload_by_module/session_file/310419663032296198/yxZoXDMoMcHuiGuf.jpg",
+      "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=900&h=600&fit=crop&q=82",
   },
   {
     name: "Do Itálie",
@@ -57,7 +59,7 @@ const partnerProjects = [
     description: "Objevte mapu svého já",
     href: "https://www.humandesignmapa.cz",
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/SJUUMjJfby3uu5HSPh4u4R/og-homepage-TnsCURzJFMQ4a9smwqmEMU.png",
+      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=900&h=600&fit=crop&q=82",
   },
 ] as const;
 
