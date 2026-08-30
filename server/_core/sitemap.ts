@@ -45,6 +45,7 @@ export async function generateSitemap(): Promise<string> {
   addUrl("/bezmasy-warrior-vyzva", "0.9", "weekly");
   addUrl("/mapa", "0.8", "weekly");
   addUrl("/blog", "0.8", "weekly");
+  addUrl("/catering", "0.9", "weekly");
   addUrl("/inzerce/pridat-podnik", "0.8", "monthly");
 
   // Pillar Pages — Restaurant Clusters

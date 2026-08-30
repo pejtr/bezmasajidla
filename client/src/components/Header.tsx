@@ -130,6 +130,7 @@ export default function Header() {
   };
 
   const navLinks = [
+    { href: "/catering", label: "Catering ✨" },
     { href: "/mapa", label: "Mapa" },
     { href: "/blog", label: "Blog" },
     { href: "/o-nas", label: "O nás" },
