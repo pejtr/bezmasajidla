@@ -50,11 +50,19 @@ async function startServer() {
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
 
+  // Redirect legacy /assets/ URLs indexed by search engines back to homepage
+  app.use((req, res, next) => {
+    if (req.path.startsWith("/assets/") && (req.headers["sec-fetch-dest"] === "document" || req.headers.accept?.includes("text/html"))) {
+      return res.redirect(301, "/");
+    }
+    next();
+  });
+
   // Robots.txt Handler
   app.get("/robots.txt", (_req, res) => {
     res.header("Content-Type", "text/plain");
     res.send(
-      `User-agent: *\nAllow: /\nSitemap: https://www.bezmasajidla.cz/sitemap.xml\n`
+      `User-agent: *\nAllow: /\nDisallow: /assets/\nDisallow: /api/\nSitemap: https://www.bezmasajidla.cz/sitemap.xml\n`
     );
   });
 
