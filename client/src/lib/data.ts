@@ -2682,7 +2682,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
 ];
 
 const RECIPE_PLACEHOLDER =
-  "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/recipe-hero-kAEk42WS8auJkLKnU8C6NV.webp";
+  "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80";
 
 const recipeSource: Recipe[] = [
   {

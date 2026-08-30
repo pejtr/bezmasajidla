@@ -15,10 +15,10 @@ export const expansionRecipes: Recipe[] = [
     cookTime: 45,
     servings: 4,
     difficulty: "střední",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/svickova-bez-masa_c417c073.webp",
+    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/svickova-bez-masa_c417c073.webp",
+        url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
         alt: "Veganská svíčková na smetaně s houskovým knedlíkem a brusinkami",
       },
     ],
@@ -56,10 +56,10 @@ export const expansionRecipes: Recipe[] = [
     cookTime: 20,
     servings: 4,
     difficulty: "snadný",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cockovy-dal-kari_c417c073.webp",
+    image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cockovy-dal-kari_c417c073.webp",
+        url: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=80",
         alt: "Krémový indický dál z červené čočky s kokosovým mlékem a čerstvým koriandrem",
       },
     ],
@@ -96,10 +96,10 @@ export const expansionRecipes: Recipe[] = [
     cookTime: 15,
     servings: 2,
     difficulty: "snadný",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/arasidove-tofu_c417c073.webp",
+    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/arasidove-tofu_c417c073.webp",
+        url: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80",
         alt: "Zlatavě opékané tofu obalené v kukuřičném škrobu s krémovou arašídovou omáčkou",
       },
     ],
@@ -132,10 +132,10 @@ export const expansionRecipes: Recipe[] = [
     cookTime: 20,
     servings: 4,
     difficulty: "snadný",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kremovy-hummus-cizrna_c417c073.webp",
+    image: "https://images.unsplash.com/photo-1577906096429-f73cbe038379?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kremovy-hummus-cizrna_c417c073.webp",
+        url: "https://images.unsplash.com/photo-1577906096429-f73cbe038379?auto=format&fit=crop&w=800&q=80",
         alt: "Sametově jemný hummus zdobený křupavou pečenou cizrnou, olivovým olejem a za'atar kořením",
       },
     ],
@@ -168,10 +168,10 @@ export const expansionRecipes: Recipe[] = [
     cookTime: 25,
     servings: 3,
     difficulty: "střední",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kvetakova-kridla-buffalo_c417c073.webp",
+    image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kvetakova-kridla-buffalo_c417c073.webp",
+        url: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80",
         alt: "Šťavnatá pečená křídla z květáku obalená v pikantní buffalo omáčce podávaná s veganským ranch dresinkem",
       },
     ],
@@ -204,10 +204,10 @@ export const expansionRecipes: Recipe[] = [
     cookTime: 15,
     servings: 2,
     difficulty: "snadný",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tempeh-testoviny-spenat_c417c073.webp",
+    image: "https://images.unsplash.com/photo-1621996346565-e3d5d6281288?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tempeh-testoviny-spenat_c417c073.webp",
+        url: "https://images.unsplash.com/photo-1621996346565-e3d5d6281288?auto=format&fit=crop&w=800&q=80",
         alt: "Křupavý uzený tempeh opékaný na pánvi s penne těstovinami a jemnou špenátovo-kešu omáčkou",
       },
     ],
