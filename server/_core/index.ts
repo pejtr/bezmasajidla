@@ -337,13 +337,36 @@ async function startServer() {
     ? parseInt(process.env.PORT, 10)
     : await findAvailablePort(3000);
 
+  // Global Error Resiliency — prevent background DB/async errors from crashing the HTTP server
+  process.on("unhandledRejection", (reason) => {
+    console.error("[Non-fatal Unhandled Rejection]:", reason);
+  });
+
+  process.on("uncaughtException", (err) => {
+    console.error("[Non-fatal Uncaught Exception]:", err);
+  });
+
   server.listen(port, "0.0.0.0", () => {
     console.log(`[Server] Listening on 0.0.0.0:${port} (ENV.PORT=${process.env.PORT || "none"})`);
-    startDailyRecipeCronJob();
-    startSocialPublisher();
-    import("../affiliate/sync").then(({ startAffiliateSyncCronJob }) => {
-      startAffiliateSyncCronJob();
-    });
+    try {
+      startDailyRecipeCronJob();
+    } catch (e) {
+      console.error("[Background Cron Error]:", e);
+    }
+    try {
+      startSocialPublisher();
+    } catch (e) {
+      console.error("[Background Social Publisher Error]:", e);
+    }
+    import("../affiliate/sync")
+      .then(({ startAffiliateSyncCronJob }) => {
+        try {
+          startAffiliateSyncCronJob();
+        } catch (e) {
+          console.error("[Background Affiliate Sync Error]:", e);
+        }
+      })
+      .catch((e) => console.error("[Affiliate Module Import Error]:", e));
   });
 }
 
