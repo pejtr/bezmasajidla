@@ -176,18 +176,21 @@ export default function RestaurantCard({ restaurant, rank }: Props) {
               </div>
             )}
 
-            {/* Address & Phone */}
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center gap-1 text-xs text-gray-500">
-                <MapPin className="w-3 h-3 text-emerald-500 flex-shrink-0" />
-                <span className="truncate">{restaurant.address}</span>
-              </div>
-              {restaurant.phone && (
-                <div className="flex items-center gap-1 text-xs text-emerald-600">
-                  <Phone className="w-3 h-3 flex-shrink-0" />
-                  <span>{restaurant.phone}</span>
-                </div>
-              )}
+            {/* Action Buttons: 1-Click Navigate & Detail */}
+            <div className="mt-3 pt-2.5 border-t border-emerald-50 flex items-center justify-between gap-2">
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${restaurant.name} ${restaurant.address}`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded-lg transition-colors"
+              >
+                <MapPin className="w-3 h-3" />
+                <span>Navigovat</span>
+              </a>
+              <span className="text-[11px] font-semibold text-emerald-600 group-hover:underline">
+                Zobrazit detail →
+              </span>
             </div>
           </div>
         </div>

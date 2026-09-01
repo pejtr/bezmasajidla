@@ -149,6 +149,36 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Etický Kodex Inzerce */}
+      <section className="py-12 bg-gradient-to-br from-emerald-900 via-teal-950 to-emerald-950 text-white">
+        <div className="container max-w-4xl mx-auto px-4 text-center">
+          <div className="inline-flex items-center gap-2 bg-emerald-800/80 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-amber-300 mb-4 border border-emerald-700">
+            <span>🛡️ Redakční Nezávislost & Etický Kodex</span>
+          </div>
+          <h2 className="text-3xl font-bold mb-4 font-serif text-white">
+            Jak pracujeme s reklamou a inzerce
+          </h2>
+          <p className="text-emerald-100/90 text-sm leading-relaxed max-w-2xl mx-auto mb-8">
+            Zakládáme si na 100% důvěře komunity. Naše redakční skóre, žebříčky a hodnocení si nelze koupit.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left">
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/15">
+              <h4 className="font-bold text-amber-300 text-sm mb-1">1. Žebříčky nelze koupit</h4>
+              <p className="text-xs text-emerald-100/80">Pořadí v žebříčkách a doporučeních vychází z reálných návštěv, kvality jídla a hodnocení hostů.</p>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/15">
+              <h4 className="font-bold text-amber-300 text-sm mb-1">2. Inzerce je označená</h4>
+              <p className="text-xs text-emerald-100/80">Placená inzerce (bannery, sponzorované posty) je vždy viditelně označená jako "Sponzorováno" nebo "Inzerce".</p>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/15">
+              <h4 className="font-bold text-amber-300 text-sm mb-1">3. Žádné greenwashingy</h4>
+              <p className="text-xs text-emerald-100/80">Propagujeme pouze prověřené bezmasé a vegan-friendly podniky, které to s udržitelností myslí vážně.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Timeline */}
       <section className="py-16 sm:py-20">
         <div className="container">

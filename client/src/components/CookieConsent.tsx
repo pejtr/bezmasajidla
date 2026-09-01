@@ -48,21 +48,20 @@ export default function CookieConsent() {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[9999] p-4 md:p-6">
-      <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl border border-emerald-100 overflow-hidden">
+    <div className="fixed bottom-4 left-4 z-[9999] max-w-lg w-[calc(100%-2rem)] sm:w-auto">
+      <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-emerald-100 p-4">
         {/* Main banner */}
-        <div className="p-5 md:p-6">
-          <div className="flex items-start gap-4">
-            <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
-              <Cookie className="w-5 h-5 text-emerald-700" />
+        <div>
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 bg-emerald-100 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
+              <Cookie className="w-4 h-4 text-emerald-700" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-base font-bold text-gray-900 mb-1">
+              <h3 className="text-xs font-bold text-gray-900 mb-0.5">
                 Tento web používá cookies
               </h3>
-              <p className="text-sm text-gray-500 leading-relaxed">
-                Používáme cookies pro zajištění základní funkčnosti webu a analýzu návštěvnosti.
-                Vaše soukromí je pro nás důležité.{" "}
+              <p className="text-[11px] text-gray-500 leading-normal">
+                Používáme anonymní cookies pro analýzu návštěvnosti.{" "}
                 <Link href="/ochrana-soukromi" className="text-emerald-600 hover:underline">
                   Více informací
                 </Link>
@@ -70,10 +69,10 @@ export default function CookieConsent() {
             </div>
             <button
               onClick={() => save("rejected", { necessary: true, analytics: false, marketing: false })}
-              className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
+              className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
               aria-label="Odmítnout cookies"
             >
-              <X className="w-4 h-4" />
+              <X className="w-3.5 h-3.5" />
             </button>
           </div>
 

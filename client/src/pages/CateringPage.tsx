@@ -47,8 +47,8 @@ export default function CateringPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#F9FAF8]">
       <SEOHead
-        title="Bezmasý Catering v Praze — Signature Catering by Maryna Deiak × BezmasáJídla.cz"
-        description="Prémiový bezmasý catering pro firmy, soukromé oslavy a wedding eventy v Praze. Moderní evropská kuchyně, ukrajinské kořeny a středomořská lehkost bez masa."
+        title="Bezmasý Catering v Praze — Signature Catering by Matouš Matěj × BezmasáJídla.cz"
+        description="Prémiový bezmasý catering pro firmy, soukromé oslavy a wedding eventy v Praze. Moderní evropská kuchyně, středomořská lehkost a poctivé kuchařské řemeslo bez masa."
         ogType="website"
         ogUrl="https://www.bezmasajidla.cz/catering"
       />
@@ -70,7 +70,7 @@ export default function CateringPage() {
             <div className="flex-1 text-center lg:text-left">
               <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider text-amber-300 uppercase mb-4">
                 <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                <span>MARYNA DEIAK × BEZMASÁJÍDLA.CZ</span>
+                <span>MATOUŠ MATĚJ × BEZMASÁJÍDLA.CZ</span>
               </div>
 
               <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight mb-4 font-serif">
@@ -79,7 +79,7 @@ export default function CateringPage() {
               </h1>
 
               <p className="text-base sm:text-lg text-emerald-100/90 font-light max-w-2xl mb-6 leading-relaxed">
-                Signature catering od profesionální šéfkuchařky. Moderní evropská kuchyně, ukrajinské kořeny a středomořská lehkost pro firmy, soukromé oslavy i chvíle, kdy jídlo nemá být jen občerstvení, ale součást zážitku.
+                Signature catering od šéfkuchaře Matouše Matěje. Moderní evropská kuchyně, autorské receptury a středomořská lehkost pro firmy, soukromé oslavy i chvíle, kdy jídlo nemá být jen občerstvení, ale součást zážitku.
               </p>
 
               {/* Badges Bar */}
@@ -121,13 +121,13 @@ export default function CateringPage() {
                 <div className="w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-amber-400 mb-4 shadow-md">
                   <img
                     src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=400&q=80"
-                    alt="Maryna Deiak — Profesionální Šéfkuchařka"
+                    alt="Matouš Matěj — Profesionální Šéfkuchař"
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-1">Maryna Deiak</h3>
+                <h3 className="text-xl font-bold text-white mb-1">Matouš Matěj</h3>
                 <p className="text-xs text-amber-400 font-bold uppercase tracking-wider mb-3">
-                  Profesionální Šéfkuchařka
+                  Profesionální Šéfkuchař
                 </p>
                 <p className="text-xs text-emerald-100/80 italic leading-relaxed">
                   "Spojuji klasické kuchařské řemeslo s moderní bezmasou gastronomií. Každé menu sestavuji s důrazem na čistotu surovin, sezónnost a estetiku."
@@ -215,7 +215,7 @@ export default function CateringPage() {
                 <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-4">
                   <ChefHat className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-bold text-[#1C2826] mb-2">MARYNA SIGNATURE</h3>
+                <h3 className="text-xl font-bold text-[#1C2826] mb-2">CHEF SIGNATURE</h3>
                 <p className="text-xs text-[#5A685D] leading-relaxed mb-4">
                   Kurátorované signature menu. Vyvážená kombinace teplých a studených chodů s kvalitním servisem.
                 </p>
@@ -250,7 +250,7 @@ export default function CateringPage() {
               </div>
             </div>
 
-            {/* Private Table by Maryna */}
+            {/* Private Table by Matouš */}
             <div
               onClick={() => setSelectedPackage("privatetable")}
               className={`bg-white rounded-3xl p-6 border transition-all cursor-pointer shadow-sm relative flex flex-col justify-between ${
@@ -265,7 +265,7 @@ export default function CateringPage() {
                 </div>
                 <h3 className="text-xl font-bold text-[#1C2826] mb-2">PRIVATE TABLE</h3>
                 <p className="text-xs text-[#5A685D] leading-relaxed mb-4">
-                  Pro 6–14 hostů. Komorní chef experience s osobnou účastí Maryny a individuálním degustčním menu.
+                  Pro 6–14 hostů. Komorní chef experience s osobní účastí Matouše a individuálním degustačním menu.
                 </p>
               </div>
               <div className="pt-4 border-t border-gray-100">
