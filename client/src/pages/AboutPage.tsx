@@ -62,30 +62,46 @@ export default function AboutPage() {
       ]} />
       <Header />
 
-      {/* Hero */}
-      <section className="relative bg-emerald-800 py-20 sm:py-28">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: "radial-gradient(circle at 20% 50%, rgba(255,255,255,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 40%)",
-          }} />
-        </div>
-        <div className="container relative">
+      {/* Hero with Rich Background Graphics */}
+      <section className="relative bg-gradient-to-br from-[#1C352D] via-[#24483C] to-[#12241E] text-white py-20 sm:py-24 overflow-hidden">
+        <div
+          className="absolute inset-0 opacity-20 bg-cover bg-center"
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1600&q=80')",
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1C352D] via-[#1C352D]/80 to-transparent" />
+
+        <div className="container relative z-10 max-w-5xl mx-auto px-4">
           <div className="max-w-3xl">
-            <div className="flex items-center gap-2 mb-4">
-              <Leaf className="w-5 h-5 text-emerald-300" />
-              <span className="text-emerald-300 text-sm font-medium tracking-wide uppercase">O nás</span>
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-amber-300 mb-4 border border-white/15">
+              <Leaf className="w-4 h-4 text-amber-300" />
+              <span>NÁŠ PŘÍBĚH & MISE</span>
             </div>
             <h1
-              className="text-4xl sm:text-5xl font-bold text-white mb-6 leading-tight"
-              style={{ fontFamily: "'DM Serif Display', serif" }}
+              className="text-4xl sm:text-6xl font-extrabold text-white mb-6 leading-tight font-serif"
             >
-              Průvodce bezmasou Prahou
+              Průvodce Bezmasou Prahou
             </h1>
-            <p className="text-lg text-emerald-100 leading-relaxed max-w-2xl">
-              Jsme tým nadšenců do rostlinné kuchyně, kteří věří, že Praha si zaslouží
-              vlastní komplexní průvodce veganskými a vegetariánskými restauracemi.
-              Bez reklam, bez kompromisů — jen poctivé recenze a tipy.
+            <p className="text-base sm:text-lg text-emerald-100/90 leading-relaxed max-w-2xl font-light mb-8">
+              Jsme nezávislá česká platforma pro všechny milovníky rostlinné a vegetariánské stravy. Spojujeme objevování skvělých restaurací v Praze s inspirací na poctivá domácí bezmasá jídla.
             </p>
+
+            {/* Key Metrics / Stats Badges */}
+            <div className="grid grid-cols-3 gap-4 border-t border-white/15 pt-6 text-left max-w-xl">
+              <div>
+                <span className="text-2xl sm:text-3xl font-black text-amber-400 block">80+</span>
+                <span className="text-xs text-emerald-100/80">Podniků v Praze</span>
+              </div>
+              <div>
+                <span className="text-2xl sm:text-3xl font-black text-amber-400 block">100+</span>
+                <span className="text-xs text-emerald-100/80">Bezmasých receptů</span>
+              </div>
+              <div>
+                <span className="text-2xl sm:text-3xl font-black text-amber-400 block">15k+</span>
+                <span className="text-xs text-emerald-100/80">Návštěv měsíčně</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>

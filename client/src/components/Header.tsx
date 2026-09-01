@@ -147,16 +147,19 @@ export default function Header() {
           <div className="flex items-center justify-between h-16">
             {/* Logo + Tagline */}
             <div className="flex items-center gap-4">
-              <Link href="/" className="flex items-center group">
-                <img
-                  src="https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/logo-cropped_d7cd6ecf.png"
-                  alt="bezmasá jídla — průvodce bezmasou Prahou"
-                  className="h-10 sm:h-12 md:h-14 w-auto object-contain logo-animated group-hover:opacity-90"
-                />
+              <Link href="/" className="flex items-center gap-2.5 group">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-800 text-white flex items-center justify-center shadow-sm border border-emerald-500/20 group-hover:scale-105 transition-transform">
+                  <Leaf className="w-6 h-6 text-amber-300 fill-amber-300/30" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 leading-none" style={{ fontFamily: "'DM Serif Display', serif" }}>
+                    bezmasá<span className="text-emerald-600">jídla</span><span className="text-amber-500 text-sm font-bold">.cz</span>
+                  </span>
+                  <span className="text-[10px] font-bold text-emerald-800/80 tracking-wider uppercase mt-0.5">
+                    Průvodce bezmasou Prahou
+                  </span>
+                </div>
               </Link>
-              <p className="hidden sm:block text-sm text-emerald-700/60 font-light italic tracking-wide" style={{ fontFamily: "'DM Serif Display', serif" }}>
-                Pro zdraví, pro planetu.
-              </p>
             </div>
 
             {/* Desktop Nav */}
