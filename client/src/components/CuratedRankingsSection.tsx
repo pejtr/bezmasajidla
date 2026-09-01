@@ -60,7 +60,7 @@ export default function CuratedRankingsSection() {
               Kam v Praze za tím nejlepším
             </h2>
             <p className="text-sm text-[#5A685D] mt-1">
-              Testováno redakcí BezmasáJídla.cz — podle reálné chuti, obsluhy a atmosféry.
+              Vybrané tipy redakce BezmasáJídla.cz — na základě hodnocení komunity, recenzí a osobních doporučení.
             </p>
           </div>
 

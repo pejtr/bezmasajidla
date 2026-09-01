@@ -1,10 +1,10 @@
 // ============================================================
-// BEZMASAJIDLA.CZ — Signature Catering Landing Page
-// Maryna Deiak × BezmasáJídla.cz
+// BEZMASAJIDLA.CZ — Commercial Signature Catering Engine
+// MATOUŠ MATĚJ × BEZMASÁJÍDLA.CZ
+// 3 Standard Packages, Interactive Price Calculator & Lead Tracking
 // ============================================================
 
-import { useState } from "react";
-import { Link } from "wouter";
+import { useState, useId } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -20,15 +20,81 @@ import {
   ArrowRight,
   ChefHat,
   Award,
-  HeartHandshake,
   Leaf,
   Send,
+  Calculator,
+  Wine,
+  GlassWater,
+  ShieldCheck,
+  Check,
 } from "lucide-react";
 
+// ── 3 Standard Commercial Packages ──────────────────────────
+const CATERING_PACKAGES = [
+  {
+    id: "office",
+    name: "GREEN OFFICE",
+    pricePerPerson: 590,
+    minGuests: 15,
+    tagline: "Svěží & Lehké",
+    badge: "Pro Firmy & Workshopy",
+    description: "Lehká a zdravá bezmasá jídla pro porady, týmové snídaně, teambuildingy a workshopy.",
+    color: "border-emerald-500 bg-emerald-50/40 text-emerald-800",
+    features: [
+      "4× Studený finger food (jednohubky & tapas)",
+      "2× Sezónní salát nebo tartař z pečlivě vybrané zeleniny",
+      "1× Lehký dezert (chia pudink / bezlepkový koláč)",
+      "1× Domácí osvěžující limonáda (máta/citrón)",
+    ],
+  },
+  {
+    id: "signature",
+    name: "MATOUŠ SIGNATURE",
+    pricePerPerson: 950,
+    minGuests: 10,
+    tagline: "Kurátorovaný Raut",
+    badge: "⚡ Nejoblíbenější",
+    description: "Kompletní zážitkové menu. Vyvážená kombinace teplých i studených chodů s prémiovým servisem.",
+    color: "border-amber-500 bg-amber-50/40 text-amber-950 ring-2 ring-amber-400/30",
+    features: [
+      "6× Studené tapas & bruschetty (hummus, pečený lilek, sušená rajčata)",
+      "3× Teplé signature chody (květákový steak, seitanový goulash, varenyky)",
+      "2× Autorský dezert Matouše Matěje",
+      "Nealko nápojový bar & ovocné limonády v ceně",
+      "Kompletní servírovací rautové nádobí",
+    ],
+  },
+  {
+    id: "privatetable",
+    name: "PRIVATE TABLE BY MATOUŠ",
+    pricePerPerson: 1800,
+    minGuests: 6,
+    maxGuests: 15,
+    tagline: "Osobní Chef Experience",
+    badge: "VIP Degustace",
+    description: "Komorní fine-dining pro 6 až 15 osob s osobní účastí šéfkuchaře Matouše Matěje.",
+    color: "border-purple-600 bg-purple-50/40 text-purple-950",
+    features: [
+      "5 Chodové degustační menu připravené přímo před hosty",
+      "Párování s bio nealko mošty, kombuchami a výběrovou kávou",
+      "Osobní příprava a komentované servírování šéfkuchařem",
+      "Plný skleněný & porcelánový servis v ceně",
+    ],
+  },
+];
+
 export default function CateringPage() {
-  const [guestCount, setGuestCount] = useState<number>(20);
-  const [selectedPackage, setSelectedPackage] = useState<string>("signature");
+  const guestCountInputId = useId();
+  // Calculator state
+  const [selectedPkgId, setSelectedPkgId] = useState<string>("signature");
+  const [guestCount, setGuestCount] = useState<number>(25);
+  const [includeBioDrinks, setIncludeBioDrinks] = useState<boolean>(true);
+  const [includeGlassware, setIncludeGlassware] = useState<boolean>(false);
+  const [includeStaff, setIncludeStaff] = useState<boolean>(false);
+
+  // Form submission state
   const [formSubmitted, setFormSubmitted] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -39,16 +105,67 @@ export default function CateringPage() {
     notes: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const activePackage = CATERING_PACKAGES.find((p) => p.id === selectedPkgId) || CATERING_PACKAGES[1];
+
+  // Price Calculation Logic
+  const basePricePerPerson = activePackage.pricePerPerson;
+  const drinkAddon = includeBioDrinks ? 150 : 0;
+  const glasswareAddon = includeGlassware ? 80 : 0;
+  const staffFlatFee = includeStaff ? 3500 : 0;
+
+  // Volume discounts
+  let volumeDiscountPct = 0;
+  if (guestCount >= 80) volumeDiscountPct = 10;
+  else if (guestCount >= 50) volumeDiscountPct = 5;
+
+  const grossPerPerson = basePricePerPerson + drinkAddon + glasswareAddon;
+  const discountedPerPerson = Math.round(grossPerPerson * (1 - volumeDiscountPct / 100));
+  const estimatedTotal = discountedPerPerson * guestCount + staffFlatFee;
+
+  const handleApplyCalculatorToForm = () => {
+    const el = document.getElementById("poptavka");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFormSubmitted(true);
+    setIsSubmitting(true);
+
+    try {
+      const payload = {
+        ...formData,
+        packageId: activePackage.id,
+        packageName: activePackage.name,
+        guestCount,
+        estimatedTotal,
+        discountedPerPerson,
+        includeBioDrinks,
+        includeGlassware,
+        includeStaff,
+      };
+
+      await fetch("/api/catering-inquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      setFormSubmitted(true);
+    } catch (err) {
+      console.error("Inquiry submit error", err);
+      setFormSubmitted(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F9FAF8]">
       <SEOHead
         title="Bezmasý Catering v Praze — Signature Catering by Matouš Matěj × BezmasáJídla.cz"
-        description="Prémiový bezmasý catering pro firmy, soukromé oslavy a wedding eventy v Praze. Moderní evropská kuchyně, středomořská lehkost a poctivé kuchařské řemeslo bez masa."
+        description="Prémiový bezmasý catering pro firmy, soukromé oslavy a wedding eventy v Praze. Kalkulačka ceny na míru, 3 pevné balíčky, osobní chef experience."
         ogType="website"
         ogUrl="https://www.bezmasajidla.cz/catering"
       />
@@ -101,16 +218,17 @@ export default function CateringPage() {
               {/* Hero CTA Buttons */}
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                 <a
-                  href="#poptavka"
-                  className="w-full sm:w-auto px-7 py-3.5 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold rounded-2xl shadow-lg transition-all text-center"
+                  href="#kalkulacka"
+                  className="w-full sm:w-auto px-7 py-3.5 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold rounded-2xl shadow-lg transition-all text-center flex items-center justify-center gap-2"
                 >
-                  Poptat Catering
+                  <Calculator className="w-4 h-4" />
+                  <span>Spočítat Cenu Akce</span>
                 </a>
                 <a
-                  href="#nabidka"
+                  href="#balicky"
                   className="w-full sm:w-auto px-7 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-2xl border border-white/20 transition-all text-center"
                 >
-                  Prohlédnout Menu
+                  Prohlédnout Balíčky
                 </a>
               </div>
             </div>
@@ -160,245 +278,284 @@ export default function CateringPage() {
 
       {/* Main Content Area */}
       <div className="container max-w-6xl mx-auto px-4 py-16">
-        {/* Section: Catering Packages */}
-        <section id="nabidka" className="mb-20">
+        {/* Section 1: 3 Standard Commercial Packages */}
+        <section id="balicky" className="mb-20">
           <div className="text-center max-w-2xl mx-auto mb-12">
             <span className="text-xs font-bold text-[#4A7C59] uppercase tracking-wider block mb-2">
-              Naše Nabídka
+              Standardní Nabídka
             </span>
             <h2 className="text-3xl font-extrabold text-[#1C2826] font-serif">
-              Cateringové Balíčky & Koncepty
+              3 Pevné Cateringové Balíčky
             </h2>
             <p className="text-sm text-[#5A685D] mt-2">
-              Vyberte si formát, který nejlépe odpovídá charakteru vaší události.
+              Jasně definované složení menu i cena. Žádné skryté poplatky.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Green Office */}
-            <div
-              onClick={() => setSelectedPackage("office")}
-              className={`bg-white rounded-3xl p-6 border transition-all cursor-pointer shadow-sm relative flex flex-col justify-between ${
-                selectedPackage === "office"
-                  ? "border-[#4A7C59] ring-2 ring-[#4A7C59]/20"
-                  : "border-gray-200 hover:border-gray-300"
-              }`}
-            >
-              <div>
-                <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-[#4A7C59] flex items-center justify-center mb-4">
-                  <Leaf className="w-6 h-6" />
-                </div>
-                <h3 className="text-xl font-bold text-[#1C2826] mb-2">GREEN OFFICE</h3>
-                <p className="text-xs text-[#5A685D] leading-relaxed mb-4">
-                  Lehká a svěží jídla pro porady, workshopy, teambuildingy a menší firemní setkání.
-                </p>
-              </div>
-              <div className="pt-4 border-t border-gray-100">
-                <span className="text-xs text-[#7A887D] block">Cenový odhad</span>
-                <span className="text-lg font-bold text-[#4A7C59]">od 590–690 Kč <span className="text-xs font-normal text-gray-500">/ os.</span></span>
-              </div>
-            </div>
-
-            {/* Maryna Signature */}
-            <div
-              onClick={() => setSelectedPackage("signature")}
-              className={`bg-white rounded-3xl p-6 border transition-all cursor-pointer shadow-sm relative flex flex-col justify-between ${
-                selectedPackage === "signature"
-                  ? "border-[#4A7C59] ring-2 ring-[#4A7C59]/20"
-                  : "border-gray-200 hover:border-gray-300"
-              }`}
-            >
-              <div className="absolute -top-3 right-4 bg-amber-400 text-slate-900 text-[10px] font-black uppercase px-3 py-1 rounded-full shadow-xs">
-                Nejoblíbenější
-              </div>
-              <div>
-                <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-4">
-                  <ChefHat className="w-6 h-6" />
-                </div>
-                <h3 className="text-xl font-bold text-[#1C2826] mb-2">CHEF SIGNATURE</h3>
-                <p className="text-xs text-[#5A685D] leading-relaxed mb-4">
-                  Kurátorované signature menu. Vyvážená kombinace teplých a studených chodů s kvalitním servisem.
-                </p>
-              </div>
-              <div className="pt-4 border-t border-gray-100">
-                <span className="text-xs text-[#7A887D] block">Cenový odhad</span>
-                <span className="text-lg font-bold text-[#4A7C59]">od 890–1 090 Kč <span className="text-xs font-normal text-gray-500">/ os.</span></span>
-              </div>
-            </div>
-
-            {/* Signature Event */}
-            <div
-              onClick={() => setSelectedPackage("event")}
-              className={`bg-white rounded-3xl p-6 border transition-all cursor-pointer shadow-sm relative flex flex-col justify-between ${
-                selectedPackage === "event"
-                  ? "border-[#4A7C59] ring-2 ring-[#4A7C59]/20"
-                  : "border-gray-200 hover:border-gray-300"
-              }`}
-            >
-              <div>
-                <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mb-4">
-                  <Sparkles className="w-6 h-6" />
-                </div>
-                <h3 className="text-xl font-bold text-[#1C2826] mb-2">SIGNATURE EVENT</h3>
-                <p className="text-xs text-[#5A685D] leading-relaxed mb-4">
-                  Menu na míru, prémiový plating a rautová prezentace včetně možnosti profesionální obsluhy.
-                </p>
-              </div>
-              <div className="pt-4 border-t border-gray-100">
-                <span className="text-xs text-[#7A887D] block">Cenový odhad</span>
-                <span className="text-lg font-bold text-[#4A7C59]">od 1 190–1 490 Kč <span className="text-xs font-normal text-gray-500">/ os.</span></span>
-              </div>
-            </div>
-
-            {/* Private Table by Matouš */}
-            <div
-              onClick={() => setSelectedPackage("privatetable")}
-              className={`bg-white rounded-3xl p-6 border transition-all cursor-pointer shadow-sm relative flex flex-col justify-between ${
-                selectedPackage === "privatetable"
-                  ? "border-[#4A7C59] ring-2 ring-[#4A7C59]/20"
-                  : "border-gray-200 hover:border-gray-300"
-              }`}
-            >
-              <div>
-                <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center mb-4">
-                  <UtensilsCrossed className="w-6 h-6" />
-                </div>
-                <h3 className="text-xl font-bold text-[#1C2826] mb-2">PRIVATE TABLE</h3>
-                <p className="text-xs text-[#5A685D] leading-relaxed mb-4">
-                  Pro 6–14 hostů. Komorní chef experience s osobní účastí Matouše a individuálním degustačním menu.
-                </p>
-              </div>
-              <div className="pt-4 border-t border-gray-100">
-                <span className="text-xs text-[#7A887D] block">Cenový odhad</span>
-                <span className="text-lg font-bold text-[#4A7C59]">od 1 800 Kč <span className="text-xs font-normal text-gray-500">/ os.</span></span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Section: Signature Menu Concepts */}
-        <section className="mb-20">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <span className="text-xs font-bold text-[#4A7C59] uppercase tracking-wider block mb-2">
-              Kulinářský Styl
-            </span>
-            <h2 className="text-3xl font-extrabold text-[#1C2826] font-serif">
-              Signature Menu Koncepty
-            </h2>
-          </div>
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Kyiv Roots */}
-            <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all">
-              <div className="h-44 rounded-2xl overflow-hidden mb-5">
-                <img
-                  src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80"
-                  alt="Kyiv Roots"
-                  className="w-full h-full object-cover"
-                />
+            {CATERING_PACKAGES.map((pkg) => (
+              <div
+                key={pkg.id}
+                onClick={() => setSelectedPkgId(pkg.id)}
+                className={`bg-white rounded-3xl p-7 border transition-all cursor-pointer shadow-sm relative flex flex-col justify-between ${
+                  selectedPkgId === pkg.id
+                    ? "border-[#4A7C59] ring-2 ring-[#4A7C59]/30 shadow-md"
+                    : "border-gray-200 hover:border-gray-300"
+                }`}
+              >
+                {pkg.badge && (
+                  <div className="absolute -top-3.5 right-6 bg-amber-400 text-slate-900 text-[10px] font-black uppercase px-3 py-1 rounded-full shadow-xs">
+                    {pkg.badge}
+                  </div>
+                )}
+
+                <div>
+                  <span className="text-xs font-bold text-[#4A7C59] uppercase tracking-wider block mb-1">
+                    {pkg.tagline}
+                  </span>
+                  <h3 className="text-2xl font-extrabold text-[#1C2826] font-serif mb-2">
+                    {pkg.name}
+                  </h3>
+                  <p className="text-xs text-[#5A685D] leading-relaxed mb-6">
+                    {pkg.description}
+                  </p>
+
+                  {/* Price Banner */}
+                  <div className="bg-[#F4F7F4] rounded-2xl p-4 mb-6 border border-emerald-100/60">
+                    <span className="text-xs text-[#7A887D] block mb-0.5">Základní cena</span>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-3xl font-black text-[#1C2826]">{pkg.pricePerPerson} Kč</span>
+                      <span className="text-xs text-gray-500 font-medium">/ osoba</span>
+                    </div>
+                    <span className="text-[11px] text-[#4A7C59] font-semibold block mt-1">
+                      Minimálně {pkg.minGuests} osob
+                    </span>
+                  </div>
+
+                  {/* Features checklist */}
+                  <div className="space-y-3 mb-6">
+                    {pkg.features.map((feat, i) => (
+                      <div key={i} className="flex items-start gap-2.5 text-xs text-[#3C4A3E]">
+                        <Check className="w-4 h-4 text-[#4A7C59] flex-shrink-0 mt-0.5" />
+                        <span>{feat}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setSelectedPkgId(pkg.id);
+                    handleApplyCalculatorToForm();
+                  }}
+                  className={`w-full py-3 rounded-xl font-bold text-xs transition-all text-center flex items-center justify-center gap-1.5 ${
+                    selectedPkgId === pkg.id
+                      ? "bg-[#4A7C59] text-white shadow-sm"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  <span>Vybrat tento balíček</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
               </div>
-              <h3 className="text-xl font-bold text-[#1C2826] mb-2">KYIV ROOTS</h3>
-              <p className="text-xs text-[#4A7C59] font-semibold mb-3">Moderní interpretace postní kuchyně</p>
-              <ul className="space-y-1.5 text-xs text-[#5A685D]">
-                <li className="flex items-center gap-2">• Pečená řepa a uzená pohanka</li>
-                <li className="flex items-center gap-2">• Moderní varenyky s bramborem a houbami</li>
-                <li className="flex items-center gap-2">• Fermentovaná zelenina & koření</li>
-                <li className="flex items-center gap-2">• Mák, vlašské ořechy a lesní ovoce</li>
-              </ul>
+            ))}
+          </div>
+        </section>
+
+        {/* Section 2: Interactive Real-Time Price Calculator */}
+        <section id="kalkulacka" className="mb-20 bg-gradient-to-br from-[#1C352D] to-[#25463B] rounded-3xl p-8 sm:p-12 text-white shadow-xl">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center gap-2 bg-white/10 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-amber-300 mb-3 border border-white/10">
+                <Calculator className="w-4 h-4 text-amber-300" />
+                <span>Interaktivní Výpočet Ceny</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-extrabold font-serif mb-2">
+                Kalkulačka Ceny Cateringu
+              </h2>
+              <p className="text-sm text-emerald-100/80">
+                Spočítejte si okamžitou orientační cenu pro vaši akci podle počtu osob a volitelných doplňků.
+              </p>
             </div>
 
-            {/* Mediterranean Table */}
-            <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all">
-              <div className="h-44 rounded-2xl overflow-hidden mb-5">
-                <img
-                  src="https://images.unsplash.com/photo-1577906096429-f73cbe038379?auto=format&fit=crop&w=600&q=80"
-                  alt="Mediterranean Table"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <h3 className="text-xl font-bold text-[#1C2826] mb-2">MEDITERRANEAN TABLE</h3>
-              <p className="text-xs text-[#4A7C59] font-semibold mb-3">Středomořské suroviny, lehce a poctivě</p>
-              <ul className="space-y-1.5 text-xs text-[#5A685D]">
-                <li className="flex items-center gap-2">• Sametový hummus s tahini & pečený lilek</li>
-                <li className="flex items-center gap-2">• Domácí křupavá focaccia s rozmarýnem</li>
-                <li className="flex items-center gap-2">• Sušená rajčata, olivy & čerstvé bylinky</li>
-                <li className="flex items-center gap-2">• Premium panenský olivový olej</li>
-              </ul>
-            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              {/* Left Configuration Inputs (7 cols) */}
+              <div className="lg:col-span-7 space-y-6 bg-white/5 p-6 rounded-2xl border border-white/10">
+                {/* Step A: Package Select */}
+                <div>
+                  <span className="block text-xs font-bold uppercase tracking-wider text-amber-300 mb-2">
+                    1. Vyberte Balíček
+                  </span>
+                  <div className="grid grid-cols-3 gap-2">
+                    {CATERING_PACKAGES.map((p) => (
+                      <button
+                        key={p.id}
+                        onClick={() => setSelectedPkgId(p.id)}
+                        className={`p-3 rounded-xl text-left border transition-all ${
+                          selectedPkgId === p.id
+                            ? "bg-amber-400 text-slate-900 border-amber-300 font-bold shadow-md"
+                            : "bg-white/10 text-white border-white/15 hover:bg-white/15"
+                        }`}
+                      >
+                        <span className="text-xs font-extrabold block truncate">{p.name}</span>
+                        <span className="text-[10px] opacity-80">{p.pricePerPerson} Kč / os.</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
-            {/* Modern Europe */}
-            <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all">
-              <div className="h-44 rounded-2xl overflow-hidden mb-5">
-                <img
-                  src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=600&q=80"
-                  alt="Modern Europe"
-                  className="w-full h-full object-cover"
-                />
+                {/* Step B: Guest Count Slider */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label htmlFor={guestCountInputId} className="text-xs font-bold uppercase tracking-wider text-amber-300">
+                      2. Počet Osob (Hostů)
+                    </label>
+                    <span className="text-lg font-black text-amber-400 bg-black/30 px-3 py-0.5 rounded-lg border border-amber-400/30">
+                      {guestCount} osob
+                    </span>
+                  </div>
+                  <input
+                    id={guestCountInputId}
+                    type="range"
+                    min={activePackage.minGuests}
+                    max={activePackage.maxGuests || 150}
+                    step={1}
+                    value={guestCount}
+                    onChange={(e) => setGuestCount(parseInt(e.target.value) || 10)}
+                    className="w-full h-2 bg-emerald-950 rounded-lg appearance-none cursor-pointer accent-amber-400"
+                  />
+                  <div className="flex justify-between text-[10px] text-emerald-200/60 mt-1">
+                    <span>Min {activePackage.minGuests} osob</span>
+                    {guestCount >= 50 && <span className="text-amber-300 font-bold">🎉 5% Sleva pro 50+ osob</span>}
+                    {guestCount >= 80 && <span className="text-amber-300 font-bold">🎉 10% Sleva pro 80+ osob</span>}
+                    <span>Max {activePackage.maxGuests || 150} osob</span>
+                  </div>
+                </div>
+
+                {/* Step C: Add-ons checkboxes */}
+                <div className="space-y-3 pt-2">
+                  <span className="block text-xs font-bold uppercase tracking-wider text-amber-300">
+                    3. Volitelné Doplňky
+                  </span>
+
+                  <label className="flex items-center justify-between p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 cursor-pointer transition-colors">
+                    <div className="flex items-center gap-3">
+                      <Wine className="w-4 h-4 text-amber-300" />
+                      <div>
+                        <span className="text-xs font-semibold block">Bio Nealko Nápojový Bar</span>
+                        <span className="text-[10px] text-emerald-200/70">Domácí mošty, kombuchy & limonády (+150 Kč/os)</span>
+                      </div>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={includeBioDrinks}
+                      onChange={(e) => setIncludeBioDrinks(e.target.checked)}
+                      className="w-4 h-4 rounded text-amber-400 focus:ring-amber-400 accent-amber-400"
+                    />
+                  </label>
+
+                  <label className="flex items-center justify-between p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 cursor-pointer transition-colors">
+                    <div className="flex items-center gap-3">
+                      <GlassWater className="w-4 h-4 text-amber-300" />
+                      <div>
+                        <span className="text-xs font-semibold block">Zapůjčení Skla & Porcelánu</span>
+                        <span className="text-[10px] text-emerald-200/70">Designový inventář vč. debarasu (+80 Kč/os)</span>
+                      </div>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={includeGlassware}
+                      onChange={(e) => setIncludeGlassware(e.target.checked)}
+                      className="w-4 h-4 rounded text-amber-400 focus:ring-amber-400 accent-amber-400"
+                    />
+                  </label>
+
+                  <label className="flex items-center justify-between p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 cursor-pointer transition-colors">
+                    <div className="flex items-center gap-3">
+                      <ChefHat className="w-4 h-4 text-amber-300" />
+                      <div>
+                        <span className="text-xs font-semibold block">Profesionální Obsluha Na Místě</span>
+                        <span className="text-[10px] text-emerald-200/70">Obsluha po celou dobu akce (+3 500 Kč paušál)</span>
+                      </div>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={includeStaff}
+                      onChange={(e) => setIncludeStaff(e.target.checked)}
+                      className="w-4 h-4 rounded text-amber-400 focus:ring-amber-400 accent-amber-400"
+                    />
+                  </label>
+                </div>
               </div>
-              <h3 className="text-xl font-bold text-[#1C2826] mb-2">MODERN EUROPE</h3>
-              <p className="text-xs text-[#4A7C59] font-semibold mb-3">Současná evropská gastronomie</p>
-              <ul className="space-y-1.5 text-xs text-[#5A685D]">
-                <li className="flex items-center gap-2">• Sezónní zeleninové tartaře & krémy</li>
-                <li className="flex items-center gap-2">• Pečené dýně, květákové steaky & seitan</li>
-                <li className="flex items-center gap-2">• Autorské omáčky ze sníženým obsahem tuku</li>
-                <li className="flex items-center gap-2">• Elegantní finger food a minidezerty</li>
-              </ul>
+
+              {/* Right Calculated Total Result Card (5 cols) */}
+              <div className="lg:col-span-5 bg-white text-slate-900 rounded-2xl p-6 shadow-2xl border-4 border-amber-400/40">
+                <span className="text-xs font-bold text-[#4A7C59] uppercase tracking-wider block mb-1">
+                  Kalkulovaná Odhadní Cena
+                </span>
+                <h3 className="text-xl font-bold text-[#1C2826] mb-4">
+                  {activePackage.name}
+                </h3>
+
+                <div className="space-y-2 border-t border-b border-gray-100 py-4 mb-4 text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Počet hostů:</span>
+                    <span className="font-bold text-gray-900">{guestCount} osob</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Základní cena:</span>
+                    <span className="font-bold text-gray-900">{basePricePerPerson} Kč / os.</span>
+                  </div>
+                  {includeBioDrinks && (
+                    <div className="flex justify-between text-emerald-700">
+                      <span>+ Bio Nealko Bar:</span>
+                      <span className="font-bold">+150 Kč / os.</span>
+                    </div>
+                  )}
+                  {includeGlassware && (
+                    <div className="flex justify-between text-emerald-700">
+                      <span>+ Sklo & Porcelán:</span>
+                      <span className="font-bold">+80 Kč / os.</span>
+                    </div>
+                  )}
+                  {volumeDiscountPct > 0 && (
+                    <div className="flex justify-between text-amber-600 font-bold bg-amber-50 p-1.5 rounded-lg">
+                      <span>🎉 Množstevní sleva ({volumeDiscountPct}%):</span>
+                      <span>Ušetříte {Math.round(grossPerPerson * (volumeDiscountPct / 100))} Kč/os</span>
+                    </div>
+                  )}
+                  {includeStaff && (
+                    <div className="flex justify-between text-purple-700">
+                      <span>+ Obsluha na místě:</span>
+                      <span className="font-bold">+3 500 Kč</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Final Total Display */}
+                <div className="mb-6">
+                  <span className="text-xs text-gray-500 block">Celková orientační cena akce:</span>
+                  <div className="text-4xl font-black text-[#4A7C59] tracking-tight">
+                    {estimatedTotal.toLocaleString("cs-CZ")} Kč
+                  </div>
+                  <span className="text-xs text-gray-400">
+                    ({discountedPerPerson} Kč / osoba vč. vybraných doplňků)
+                  </span>
+                </div>
+
+                <button
+                  onClick={handleApplyCalculatorToForm}
+                  className="w-full py-4 bg-[#4A7C59] hover:bg-[#3D6649] text-white font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-sm"
+                >
+                  <Send className="w-4 h-4" />
+                  <span>Poptat Tuto Akci</span>
+                </button>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Section: Process (Jak to funguje) */}
-        <section className="bg-[#F0F4EF] rounded-3xl p-8 sm:p-12 mb-20">
-          <div className="text-center max-w-2xl mx-auto mb-10">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1C2826] font-serif">
-              Jak Objednávka Funguje
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-white rounded-2xl p-5 border border-emerald-100 shadow-2xs">
-              <div className="w-8 h-8 rounded-xl bg-[#4A7C59] text-white font-bold text-sm flex items-center justify-center mb-3">
-                1
-              </div>
-              <h4 className="font-bold text-[#1C2826] mb-1">POPTÁVKA</h4>
-              <p className="text-xs text-[#5A685D]">
-                Vyplňte formulář níže nebo nás kontaktujte s informacemi o akci.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-2xl p-5 border border-emerald-100 shadow-2xs">
-              <div className="w-8 h-8 rounded-xl bg-[#4A7C59] text-white font-bold text-sm flex items-center justify-center mb-3">
-                2
-              </div>
-              <h4 className="font-bold text-[#1C2826] mb-1">NAVRHNEME MENU</h4>
-              <p className="text-xs text-[#5A685D]">
-                Připravíme nabídku přímo na míru podle počtu hostů a rozpočtu.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-2xl p-5 border border-emerald-100 shadow-2xs">
-              <div className="w-8 h-8 rounded-xl bg-[#4A7C59] text-white font-bold text-sm flex items-center justify-center mb-3">
-                3
-              </div>
-              <h4 className="font-bold text-[#1C2826] mb-1">POTVRZENÍ</h4>
-              <p className="text-xs text-[#5A685D]">
-                Dolaďujeme detaily, časový harmonogram a potvrdíme rezervaci termínu.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-2xl p-5 border border-emerald-100 shadow-2xs">
-              <div className="w-8 h-8 rounded-xl bg-[#4A7C59] text-white font-bold text-sm flex items-center justify-center mb-3">
-                4
-              </div>
-              <h4 className="font-bold text-[#1C2826] mb-1">REALIZACE</h4>
-              <p className="text-xs text-[#5A685D]">
-                Doručíme skvělé jídlo, prostřeme a zajistíme kompletní servis bez starostí.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Section: Catering Inquiry Form */}
+        {/* Section 3: Catering Inquiry Form with Lead Tracking */}
         <section id="poptavka" className="bg-white rounded-3xl border border-gray-200 p-8 sm:p-12 shadow-sm">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-8">
@@ -409,8 +566,22 @@ export default function CateringPage() {
                 Připraveni na Chuťový Zážitek?
               </h2>
               <p className="text-sm text-[#5A685D]">
-                Ozvěte se nám a my vám do 24 hodin připravíme nabídku přímo pro váš event.
+                Vyplňte kontaktní údaje a my vám do 24 hodin zašleme přesné potvrzení termínu a finální rozpočet.
               </p>
+            </div>
+
+            {/* Selected summary banner */}
+            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 mb-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-[#4A7C59]" />
+                <div>
+                  <span className="font-bold text-[#1C2826]">Vybraný balíček: {activePackage.name}</span>
+                  <span className="text-[#5A685D] block">Počet osob: {guestCount} | Kalkulováno: {estimatedTotal.toLocaleString("cs-CZ")} Kč</span>
+                </div>
+              </div>
+              <span className="bg-[#4A7C59] text-white font-bold px-3 py-1 rounded-full text-[10px]">
+                Nezávazná rezervace
+              </span>
             </div>
 
             {formSubmitted ? (
@@ -418,7 +589,7 @@ export default function CateringPage() {
                 <CheckCircle2 className="w-12 h-12 text-[#4A7C59] mx-auto mb-3" />
                 <h3 className="text-xl font-bold text-[#1C2826] mb-2">Poptávka byla úspěšně odeslána!</h3>
                 <p className="text-sm text-[#5A685D]">
-                  Děkujeme. Ozveme se vám zpět na uvedený e-mail do 24 hodin s návrhem menu.
+                  Děkujeme. Šéfkuchař Matouš Matěj a náš tým se vám ozvou zpět na e-mail <strong>{formData.email}</strong> do 24 hodin.
                 </p>
               </div>
             ) : (
@@ -453,7 +624,7 @@ export default function CateringPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-[#2C352E] uppercase mb-1">
                       Telefon *
@@ -479,29 +650,15 @@ export default function CateringPage() {
                       className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#4A7C59] focus:outline-none text-sm"
                     />
                   </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-[#2C352E] uppercase mb-1">
-                      Odhadovaný Počet Hostů
-                    </label>
-                    <input
-                      type="number"
-                      min={5}
-                      max={200}
-                      value={guestCount}
-                      onChange={(e) => setGuestCount(parseInt(e.target.value) || 20)}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#4A7C59] focus:outline-none text-sm"
-                    />
-                  </div>
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-[#2C352E] uppercase mb-1">
-                    Detailnější představa & Poznámky
+                    Poznámka / Místo konání / Diety
                   </label>
                   <textarea
-                    rows={4}
-                    placeholder="Místo konání, speciální dietní požadavky, preferovaný cateringový balíček..."
+                    rows={3}
+                    placeholder="Místo konání akce v Praze, alergie, speciální přání..."
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#4A7C59] focus:outline-none text-sm"
@@ -510,10 +667,11 @@ export default function CateringPage() {
 
                 <button
                   type="submit"
-                  className="w-full py-4 bg-[#4A7C59] hover:bg-[#3D6649] text-white font-bold rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 text-base"
+                  disabled={isSubmitting}
+                  className="w-full py-4 bg-[#4A7C59] hover:bg-[#3D6649] text-white font-bold rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 text-base disabled:opacity-50"
                 >
                   <Send className="w-5 h-5" />
-                  Odeslat Nezávaznou Poptávku
+                  <span>{isSubmitting ? "Odesílám..." : "Odeslat Nezávaznou Poptávku Akce"}</span>
                 </button>
               </form>
             )}

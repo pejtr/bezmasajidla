@@ -165,7 +165,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left">
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/15">
               <h4 className="font-bold text-amber-300 text-sm mb-1">1. Žebříčky nelze koupit</h4>
-              <p className="text-xs text-emerald-100/80">Pořadí v žebříčkách a doporučeních vychází z reálných návštěv, kvality jídla a hodnocení hostů.</p>
+              <p className="text-xs text-emerald-100/80">Pořadí v žebříčkách a doporučeních sestavujeme na základě kombinace komunitního hodnocení, ověřených recenzí a redakčního výběru. Pozice si nelze zaplatit.</p>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/15">
               <h4 className="font-bold text-amber-300 text-sm mb-1">2. Inzerce je označená</h4>

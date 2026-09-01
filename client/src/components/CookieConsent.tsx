@@ -17,6 +17,18 @@ interface CookiePrefs {
   marketing: boolean;
 }
 
+export function hasAnalyticsConsent(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) return false;
+    const parsed = JSON.parse(stored);
+    return Boolean(parsed?.prefs?.analytics);
+  } catch {
+    return false;
+  }
+}
+
 export default function CookieConsent() {
   const [visible, setVisible] = useState(false);
   const [showDetails, setShowDetails] = useState(false);

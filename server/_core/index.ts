@@ -325,6 +325,33 @@ async function startServer() {
     res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
   });
 
+  // Catering Inquiry Lead Tracking Endpoint
+  app.post("/api/catering-inquiry", (req, res) => {
+    try {
+      const body = req.body || {};
+      console.log("--------------------------------------------------");
+      console.log("🌿 NEW CATERING LEAD RECEIVED [MATOUŠ MATĚJ × BEZMASÁJÍDLA.CZ]:");
+      console.log(`Name: ${body.name}`);
+      console.log(`Email: ${body.email}`);
+      console.log(`Phone: ${body.phone}`);
+      console.log(`Package: ${body.packageName}`);
+      console.log(`Guests: ${body.guestCount}`);
+      console.log(`Estimated Total: ${body.estimatedTotal} Kč`);
+      console.log(`Date: ${body.date || "Nespecifikováno"}`);
+      console.log(`Notes: ${body.notes || "Bez poznámky"}`);
+      console.log("--------------------------------------------------");
+
+      return res.status(200).json({
+        success: true,
+        message: "Poptávka byla úspěšně zaznamenána.",
+        leadId: `LEAD-${Date.now()}`,
+      });
+    } catch (e) {
+      console.error("[Catering Lead Error]:", e);
+      return res.status(500).json({ error: "Failed to record inquiry" });
+    }
+  });
+
   // development mode uses Vite, production mode uses static files
   if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);
