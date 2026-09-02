@@ -265,7 +265,7 @@ export type InsertAffiliateSyncLog = typeof affiliateSyncLogs.$inferInsert;
 
 /**
  * Commercial Catering Leads & Profit Gate Table
- * Matouš Matěj × BezmasáJídla.cz
+ * MATOUŠ × BEZMASÁJÍDLA.CZ
  */
 export const cateringLeads = mysqlTable(
   "catering_leads",

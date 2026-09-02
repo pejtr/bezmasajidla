@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link } from "wouter";
 import { Search, MapPin, ChevronRight, Leaf, TrendingUp, BookOpen, ArrowRight, Utensils, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,11 +22,8 @@ export default function Home() {
   const czechClassics = [...recipes]
     .filter(
       (r) =>
-        r.cuisine?.toLowerCase().includes("česká") ||
-        r.tags.some((t) => t.toLowerCase().includes("česká")) ||
-        r.title.toLowerCase().includes("svíčková") ||
-        r.title.toLowerCase().includes("kulajda") ||
-        r.title.toLowerCase().includes("čočk")
+        r.editorialCollections?.includes("czech-classics") ||
+        r.cuisine?.toLowerCase().includes("česká")
     )
     .slice(0, 3);
   const veganRecipes = [...recipes].filter((r) => r.isVegan).slice(0, 3);
@@ -42,6 +39,16 @@ export default function Home() {
     }
   };
 
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {
+        // Graceful autoplay fallback if browser blocks video playback
+      });
+    }
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAF6]">
       <SEOHead
@@ -52,16 +59,24 @@ export default function Home() {
       <WebsiteJsonLd />
       <Header />
 
-      {/* ── HERO WITH CINEMATIC VIDEO BACKGROUND ── */}
+      {/* ── HERO WITH CINEMATIC VIDEO BACKGROUND (MOBILE & MOTION OPTIMIZED) ── */}
       <section className="relative min-h-[620px] flex items-center overflow-hidden bg-emerald-950">
-        {/* Background HTML5 Video Loop */}
+        {/* Mobile & Motion-Reduce Static Poster Image (0 MB Video Download on Mobile) */}
+        <div
+          className="absolute inset-0 bg-cover bg-center filter brightness-75 scale-105 md:hidden motion-reduce:block"
+          style={{ backgroundImage: `url(${HERO_POSTER})` }}
+        />
+
+        {/* Desktop HTML5 Video Loop (Hidden on Mobile & Reduced Motion) */}
         <video
+          ref={videoRef}
           autoPlay
           loop
           muted
           playsInline
+          preload="metadata"
           poster={HERO_POSTER}
-          className="absolute inset-0 w-full h-full object-cover filter brightness-75 scale-105"
+          className="hidden md:block absolute inset-0 w-full h-full object-cover filter brightness-75 scale-105 motion-reduce:hidden"
         >
           <source src={HERO_VIDEO} type="video/mp4" />
         </video>

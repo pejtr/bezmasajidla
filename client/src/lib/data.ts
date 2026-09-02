@@ -134,6 +134,8 @@ export interface Recipe {
   story?: string[];
   /** Macro nutrients per serving */
   macros?: MacroNutrients;
+  /** Editorial CMS collection tags for homepage placement (e.g. ["czech-classics", "quick-dinners"]) */
+  editorialCollections?: string[];
   /** Editorial review: who is it for, best dishes, what to skip */
   editorialReview?: {
     summary: string;
@@ -2691,6 +2693,7 @@ const recipeSource: Recipe[] = [
     slug: "prava-krkonosska-kulajda",
     category: "Polévky",
     cuisine: "Česká bezmasá",
+    editorialCollections: ["czech-classics"],
     prepTime: 10,
     cookTime: 20,
     servings: 4,
@@ -2737,6 +2740,8 @@ const recipeSource: Recipe[] = [
     title: "Svíčková bez masa: vegetariánská i veganská verze",
     slug: "svickova-bez-masa",
     category: "Hlavní jídla",
+    cuisine: "Česká bezmasá",
+    editorialCollections: ["czech-classics"],
     prepTime: 30,
     cookTime: 90,
     servings: 4,

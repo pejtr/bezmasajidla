@@ -35,35 +35,21 @@ export function redirectMiddleware(
       .send("Tato URL již neexistuje.");
   }
 
-  if (requestHost === "bezmasajidla.cz") {
-    targetHost = "www.bezmasajidla.cz";
-    shouldRedirect = true;
-  }
+  const hostHeader = String(req.headers.host || "").toLowerCase().replace(/:\d+$/, "");
+  const forwardedHostHeader = String(req.headers["x-forwarded-host"] || "").toLowerCase().replace(/:\d+$/, "");
+  const protoHeader = String(req.headers["x-forwarded-proto"] || "").toLowerCase();
 
-  if (targetUrl.startsWith("/recepty/veganska-svickova")) {
-    targetUrl = targetUrl.replace(
-      "/recepty/veganska-svickova",
-      "/recepty/svickova-bez-masa"
-    );
-    shouldRedirect = true;
-  }
-  if (targetUrl.startsWith("/recepty/vegansky-gulas-knedliky")) {
-    targetUrl = targetUrl.replace(
-      "/recepty/vegansky-gulas-knedliky",
-      "/recepty/gulas-bez-masa"
-    );
-    shouldRedirect = true;
+  const isNakedDomain = requestHost === "bezmasajidla.cz" || hostHeader === "bezmasajidla.cz" || forwardedHostHeader === "bezmasajidla.cz";
+  const isHttp = protoHeader === "http";
+
+  if (isNakedDomain) {
+    const fullTarget = `https://www.bezmasajidla.cz${targetUrl}`;
+    return res.redirect(301, fullTarget);
   }
 
   if (shouldRedirect) {
-    const proto =
-      targetHost === "localhost" || targetHost?.includes(":")
-        ? "http"
-        : "https";
-    const redirectHost =
-      targetHost === "localhost" || targetHost?.includes(":")
-        ? ""
-        : `${proto}://${targetHost}`;
+    const proto = targetHost === "localhost" || targetHost?.includes(":") ? "http" : "https";
+    const redirectHost = targetHost === "localhost" || targetHost?.includes(":") ? "" : `${proto}://${targetHost}`;
     return res.redirect(301, `${redirectHost}${targetUrl}`);
   }
   next();
