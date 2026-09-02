@@ -85,46 +85,107 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-r from-emerald-950/90 via-emerald-950/75 to-emerald-900/40 backdrop-blur-[1px]" />
 
         <div className="relative container py-20 z-10">
-          <div className="max-w-2xl">
+          <div className="max-w-2xl space-y-6">
+            <div className="inline-flex items-center gap-2 bg-emerald-800/60 backdrop-blur border border-emerald-500/30 text-amber-300 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide">
+              <span>🌿 CRAVE × ABUNDANCE × CRAFT</span>
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+            </div>
+
             <h1
-              className="text-5xl md:text-6xl font-bold text-white leading-tight mb-6"
+              className="text-5xl md:text-6xl font-bold text-white leading-tight"
               style={{ fontFamily: "'DM Serif Display', serif" }}
             >
               Bezmasá jídla:{" "}
-              <span className="text-amber-400">recepty a restaurace</span>{" "}
+              <span className="text-amber-400 italic">recepty a restaurace</span>{" "}
               bez masa
             </h1>
 
-            <p className="text-emerald-100 text-lg mb-10 leading-relaxed max-w-lg font-light">
-              Český průvodce pro každé bezmasé jídlo. Od jednoduchých veganských receptů přes vegetariánské recepty až po tipy na vegan krabičkovou dietu a nejlepší podniky.
+            <p className="text-emerald-100 text-lg leading-relaxed max-w-lg font-light">
+              Český průvodce pro každé bezmasé jídlo. Objevte ověřené restaurace, syté domácí recepty i poctivý chef catering od Matouše.
             </p>
 
             {/* Hero CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4 max-w-lg">
+            <div className="flex flex-col sm:flex-row gap-4 max-w-lg pt-2">
               <Link href="/recepty">
-                <Button className="w-full sm:w-auto bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold px-8 py-6 rounded-xl shadow-lg text-lg flex items-center justify-center">
+                <Button className="w-full sm:w-auto bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold px-8 py-6 rounded-xl shadow-lg text-lg flex items-center justify-center transition transform hover:-translate-y-0.5">
                   <Utensils className="w-5 h-5 mr-2" />
-                  Najít recept
+                  Najít recept na dnes
                 </Button>
               </Link>
               <Link href="/restaurace">
-                <Button variant="outline" className="w-full sm:w-auto border-emerald-400/30 bg-emerald-800/40 backdrop-blur text-white hover:bg-emerald-700/60 font-bold px-8 py-6 rounded-xl shadow-lg text-lg flex items-center justify-center">
+                <Button variant="outline" className="w-full sm:w-auto border-emerald-400/30 bg-emerald-800/40 backdrop-blur text-white hover:bg-emerald-700/60 font-bold px-8 py-6 rounded-xl shadow-lg text-lg flex items-center justify-center transition">
                   <MapPin className="w-5 h-5 mr-2 text-emerald-300" />
-                  Najít restauraci
+                  Mapa restaurací
                 </Button>
               </Link>
             </div>
 
-            <form onSubmit={handleSearch} className="mt-8 flex gap-2 max-w-lg relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-700/50" />
-              <input
-                type="text"
-                placeholder="Nebo zadejte na co máte chuť (např. kulajda)..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-emerald-700/20 bg-white/95 backdrop-blur text-gray-900 placeholder-gray-500 shadow-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all font-medium"
-              />
+            <form onSubmit={handleSearch} className="mt-8 flex flex-col gap-3 max-w-lg relative">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-700/50" />
+                <input
+                  type="text"
+                  placeholder="Nebo zadejte na co máte chuť (např. kulajda)..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-emerald-700/20 bg-white/95 backdrop-blur text-gray-900 placeholder-gray-500 shadow-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all font-medium"
+                />
+              </div>
+              <div className="flex items-center gap-2 text-xs text-emerald-200">
+                <span className="font-semibold text-emerald-400">Nejhledanější:</span>
+                <Link href="/recepty?q=kulajda">
+                  <span className="bg-emerald-900/60 hover:bg-emerald-800 px-2.5 py-1 rounded-lg border border-emerald-700/50 transition cursor-pointer">Kulajda</span>
+                </Link>
+                <Link href="/recepty?q=svíčková">
+                  <span className="bg-emerald-900/60 hover:bg-emerald-800 px-2.5 py-1 rounded-lg border border-emerald-700/50 transition cursor-pointer">Svíčková</span>
+                </Link>
+                <Link href="/restaurace?q=indie">
+                  <span className="bg-emerald-900/60 hover:bg-emerald-800 px-2.5 py-1 rounded-lg border border-emerald-700/50 transition cursor-pointer">Indický bufet</span>
+                </Link>
+              </div>
             </form>
+          </div>
+        </div>
+      </section>
+
+      {/* ── TRUST & STATS PILLARS ── */}
+      <section className="bg-white border-b border-emerald-100 py-8">
+        <div className="container">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex items-center gap-4 p-4 rounded-2xl bg-emerald-50/50 border border-emerald-100">
+              <div className="w-12 h-12 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-xl shadow-sm">
+                🏛️
+              </div>
+              <div>
+                <div className="text-xl font-bold text-gray-900" style={{ fontFamily: "'DM Serif Display', serif" }}>150+ Podniků v Praze</div>
+                <div className="text-xs text-gray-500 font-medium">Filtrovatelný průvodce s hodnocením</div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4 p-4 rounded-2xl bg-emerald-50/50 border border-emerald-100">
+              <div className="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xl shadow-sm">
+                🍳
+              </div>
+              <div>
+                <div className="text-xl font-bold text-gray-900" style={{ fontFamily: "'DM Serif Display', serif" }}>100+ Receptů bez masa</div>
+                <div className="text-xs text-gray-500 font-medium">Poctivé obědy & česká klasika</div>
+              </div>
+            </div>
+
+            <Link href="/catering">
+              <div className="flex items-center gap-4 p-4 rounded-2xl bg-emerald-950 text-white border border-emerald-800 shadow-sm hover:border-amber-400 transition cursor-pointer">
+                <div className="w-12 h-12 rounded-xl bg-amber-400 text-amber-950 flex items-center justify-center font-bold text-xl shadow-sm">
+                  🌿
+                </div>
+                <div>
+                  <div className="text-xl font-bold text-white flex items-center gap-2" style={{ fontFamily: "'DM Serif Display', serif" }}>
+                    Chef Catering
+                    <span className="text-[10px] uppercase font-extrabold bg-amber-400 text-amber-950 px-2 py-0.5 rounded">Matouš</span>
+                  </div>
+                  <div className="text-xs text-emerald-200 font-medium">Firemní akce & oslavy od 15 osob</div>
+                </div>
+              </div>
+            </Link>
           </div>
         </div>
       </section>
@@ -266,6 +327,26 @@ export default function Home() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {quickDinners.map((r) => <RecipeCard key={r.id} recipe={r} />)}
+      {/* ── CATERING BRAND SECTION (MATOUŠ × BEZMASÁJÍDLA) ── */}
+      <section className="py-12 container">
+        <div className="bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-950 text-white rounded-3xl p-8 md:p-12 border border-emerald-800 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="space-y-3 max-w-2xl">
+            <div className="inline-flex items-center gap-2 bg-amber-400/20 text-amber-400 font-extrabold text-xs px-3 py-1 rounded-full uppercase tracking-wider">
+              🌿 MATOUŠ × BEZMASÁJÍDLA.CZ
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: "'DM Serif Display', serif" }}>
+              Plánujete firemní akci nebo oslavu bez masa?
+            </h2>
+            <p className="text-emerald-200 text-sm leading-relaxed">
+              Prémiový bezmasý fingerfood, rauty a fine-dining menu od šéfkuchaře Matouše pro 15 až 200+ hostů. Spočítejte si nezávaznou kalkulaci během 1 minuty.
+            </p>
+          </div>
+
+          <Link href="/catering">
+            <Button className="bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold text-base px-7 py-6 rounded-xl shadow-xl transition transform hover:-translate-y-0.5 whitespace-nowrap">
+              Spočítat kalkulaci cateringu →
+            </Button>
+          </Link>
         </div>
       </section>
 
