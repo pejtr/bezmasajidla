@@ -263,3 +263,63 @@ export const affiliateSyncLogs = mysqlTable(
 export type AffiliateSyncLogRecord = typeof affiliateSyncLogs.$inferSelect;
 export type InsertAffiliateSyncLog = typeof affiliateSyncLogs.$inferInsert;
 
+/**
+ * Commercial Catering Leads & Profit Gate Table
+ * Matouš Matěj × BezmasáJídla.cz
+ */
+export const cateringLeads = mysqlTable(
+  "catering_leads",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    leadCode: varchar("leadCode", { length: 64 }).notNull().unique(),
+    status: mysqlEnum("status", ["NEW", "OFFER_SENT", "WON", "LOST"]).default("NEW").notNull(),
+    lostReason: text("lostReason"),
+
+    // Customer & Event Info
+    name: text("name").notNull(),
+    email: varchar("email", { length: 320 }).notNull(),
+    phone: varchar("phone", { length: 64 }).notNull(),
+    eventDate: varchar("eventDate", { length: 64 }),
+    notes: text("notes"),
+
+    // Package & Calculator Parameters
+    packageId: varchar("packageId", { length: 64 }).notNull(),
+    packageName: varchar("packageName", { length: 128 }).notNull(),
+    guestCount: int("guestCount").notNull(),
+    includeDrinks: boolean("includeDrinks").default(false).notNull(),
+    includeGlassware: boolean("includeGlassware").default(false).notNull(),
+    includeStaff: boolean("includeStaff").default(false).notNull(),
+
+    // Financial & Profit Gate Metrics
+    estimatedRevenue: int("estimatedRevenue").notNull(),
+    finalRevenue: int("finalRevenue"),
+    foodCost: int("foodCost"),
+    chefCost: int("chefCost"),
+    staffCost: int("staffCost"),
+    transportCost: int("transportCost"),
+    equipmentCost: int("equipmentCost"),
+    marketingCost: int("marketingCost"),
+    otherCost: int("otherCost"),
+    contribution: int("contribution"),
+    marginPct: decimal("marginPct", { precision: 5, scale: 2 }),
+
+    // Attribution & Analytics
+    utmSource: varchar("utmSource", { length: 128 }),
+    utmMedium: varchar("utmMedium", { length: 128 }),
+    utmCampaign: varchar("utmCampaign", { length: 128 }),
+    referrer: text("referrer"),
+    landingPage: text("landingPage"),
+
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  table => ({
+    statusIdx: index("cateringLeads_status_idx").on(table.status),
+    createdAtIdx: index("cateringLeads_createdAt_idx").on(table.createdAt),
+  })
+);
+
+export type CateringLead = typeof cateringLeads.$inferSelect;
+export type InsertCateringLead = typeof cateringLeads.$inferInsert;
+
+

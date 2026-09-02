@@ -36,8 +36,9 @@ import { restaurants } from "@/lib/data";
 import SocialPublisher from "@/components/admin/SocialPublisher";
 import AffiliateDiagnostics from "@/components/admin/AffiliateDiagnostics";
 import SocialAttribution from "@/components/admin/SocialAttribution";
+import CateringLeadsAdmin from "@/components/admin/CateringLeadsAdmin";
 
-type Tab = "recipes" | "reviews" | "social" | "attribution" | "affiliate";
+type Tab = "catering" | "recipes" | "reviews" | "social" | "attribution" | "affiliate";
 
 export default function AdminPage() {
   const { user, loading, isAuthenticated } = useAuth();
@@ -131,6 +132,18 @@ export default function AdminPage() {
         {/* Tabs */}
         <div className="flex flex-wrap gap-2 mb-6">
           <Button
+            variant={activeTab === "catering" ? "default" : "outline"}
+            onClick={() => setActiveTab("catering")}
+            className={
+              activeTab === "catering"
+                ? "bg-[#4A7C59] hover:bg-[#3D6649] text-white font-bold"
+                : "border-emerald-300 text-emerald-800 hover:bg-emerald-50"
+            }
+          >
+            <ChefHat className="w-4 h-4 mr-2 text-amber-300" />
+            🌿 Catering CRM & Profit Gate
+          </Button>
+          <Button
             variant={activeTab === "recipes" ? "default" : "outline"}
             onClick={() => setActiveTab("recipes")}
             className={
@@ -193,6 +206,7 @@ export default function AdminPage() {
         </div>
 
         {/* Content */}
+        {activeTab === "catering" && <CateringLeadsAdmin />}
         {activeTab === "recipes" && <RecipeApproval />}
         {activeTab === "reviews" && <ReviewManagement />}
         {activeTab === "social" && <SocialPublisher />}

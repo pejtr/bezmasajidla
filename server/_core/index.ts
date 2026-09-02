@@ -325,30 +325,287 @@ async function startServer() {
     res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
   });
 
-  // Catering Inquiry Lead Tracking Endpoint
-  app.post("/api/catering-inquiry", (req, res) => {
+  // ── Catering Pricing Engine & Revenue Gate ─────────────────────
+  interface ServerPackageRule {
+    id: string;
+    name: string;
+    pricePerPerson: number;
+    minGuests: number;
+    maxGuests?: number;
+  }
+
+  const SERVER_CATERING_PACKAGES: Record<string, ServerPackageRule> = {
+    office: { id: "office", name: "GREEN OFFICE", pricePerPerson: 590, minGuests: 15, maxGuests: 150 },
+    signature: { id: "signature", name: "MATOUŠ SIGNATURE", pricePerPerson: 950, minGuests: 10, maxGuests: 150 },
+    privatetable: { id: "privatetable", name: "PRIVATE TABLE BY MATOUŠ", pricePerPerson: 1800, minGuests: 6, maxGuests: 15 },
+  };
+
+  interface CateringLeadRecord {
+    id: number;
+    leadCode: string;
+    status: "NEW" | "OFFER_SENT" | "WON" | "LOST";
+    lostReason?: string;
+    name: string;
+    email: string;
+    phone: string;
+    eventDate?: string;
+    notes?: string;
+    packageId: string;
+    packageName: string;
+    guestCount: number;
+    includeDrinks: boolean;
+    includeGlassware: boolean;
+    includeStaff: boolean;
+    estimatedRevenue: number;
+    finalRevenue?: number;
+    foodCost?: number;
+    chefCost?: number;
+    staffCost?: number;
+    transportCost?: number;
+    equipmentCost?: number;
+    marketingCost?: number;
+    otherCost?: number;
+    contribution?: number;
+    marginPct?: number;
+    utmSource?: string;
+    utmMedium?: string;
+    utmCampaign?: string;
+    referrer?: string;
+    landingPage?: string;
+    createdAt: string;
+  }
+
+  const inMemoryCateringLeads: CateringLeadRecord[] = [];
+
+  // Commercial Lead Inquiry Endpoint (Server-Side Pricing & Validation)
+  app.post("/api/catering-inquiry", async (req, res) => {
     try {
       const body = req.body || {};
-      console.log("--------------------------------------------------");
-      console.log("🌿 NEW CATERING LEAD RECEIVED [MATOUŠ MATĚJ × BEZMASÁJÍDLA.CZ]:");
-      console.log(`Name: ${body.name}`);
-      console.log(`Email: ${body.email}`);
-      console.log(`Phone: ${body.phone}`);
-      console.log(`Package: ${body.packageName}`);
-      console.log(`Guests: ${body.guestCount}`);
-      console.log(`Estimated Total: ${body.estimatedTotal} Kč`);
-      console.log(`Date: ${body.date || "Nespecifikováno"}`);
-      console.log(`Notes: ${body.notes || "Bez poznámky"}`);
-      console.log("--------------------------------------------------");
+      const {
+        name, email, phone, date, notes,
+        packageId, guestCount, includeDrinks, includeGlassware, includeStaff,
+        utmSource, utmMedium, utmCampaign, referrer, landingPage
+      } = body;
+
+      if (!name || !email || !phone || !packageId || !guestCount) {
+        return res.status(400).json({ error: "Missing required inquiry fields (name, email, phone, packageId, guestCount)." });
+      }
+
+      const pkg = SERVER_CATERING_PACKAGES[packageId];
+      if (!pkg) {
+        return res.status(400).json({ error: `Unknown catering packageId: ${packageId}` });
+      }
+
+      const numGuests = parseInt(guestCount, 10);
+      if (isNaN(numGuests) || numGuests < pkg.minGuests) {
+        return res.status(400).json({
+          error: `Balíček ${pkg.name} vyžaduje minimálně ${pkg.minGuests} osob.`
+        });
+      }
+
+      if (pkg.maxGuests && numGuests > pkg.maxGuests) {
+        return res.status(400).json({
+          error: `Balíček ${pkg.name} umožňuje maximálně ${pkg.maxGuests} osob.`
+        });
+      }
+
+      // Server-Side Pricing Engine (Never trust client-passed price)
+      const drinksFee = includeDrinks ? 150 : 0;
+      const glasswareFee = includeGlassware ? 80 : 0;
+      const staffFee = includeStaff ? 3500 : 0;
+      const calculatedPerPerson = pkg.pricePerPerson + drinksFee + glasswareFee;
+      const estimatedRevenue = calculatedPerPerson * numGuests + staffFee;
+
+      const leadCode = `LEAD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
+      const leadRecord: CateringLeadRecord = {
+        id: inMemoryCateringLeads.length + 1,
+        leadCode,
+        status: "NEW",
+        name,
+        email,
+        phone,
+        eventDate: date || undefined,
+        notes: notes || undefined,
+        packageId: pkg.id,
+        packageName: pkg.name,
+        guestCount: numGuests,
+        includeDrinks: Boolean(includeDrinks),
+        includeGlassware: Boolean(includeGlassware),
+        includeStaff: Boolean(includeStaff),
+        estimatedRevenue,
+        utmSource: utmSource || undefined,
+        utmMedium: utmMedium || undefined,
+        utmCampaign: utmCampaign || undefined,
+        referrer: referrer || undefined,
+        landingPage: landingPage || undefined,
+        createdAt: new Date().toISOString(),
+      };
+
+      inMemoryCateringLeads.unshift(leadRecord);
+
+      // Attempt DB persistence
+      try {
+        const { getDb } = await import("../db");
+        const { cateringLeads } = await import("../../drizzle/schema");
+        const db = await getDb();
+        if (db) {
+          await db.insert(cateringLeads).values({
+            leadCode: leadRecord.leadCode,
+            status: "NEW",
+            name: leadRecord.name,
+            email: leadRecord.email,
+            phone: leadRecord.phone,
+            eventDate: leadRecord.eventDate,
+            notes: leadRecord.notes,
+            packageId: leadRecord.packageId,
+            packageName: leadRecord.packageName,
+            guestCount: leadRecord.guestCount,
+            includeDrinks: leadRecord.includeDrinks,
+            includeGlassware: leadRecord.includeGlassware,
+            includeStaff: leadRecord.includeStaff,
+            estimatedRevenue: leadRecord.estimatedRevenue,
+            utmSource: leadRecord.utmSource,
+            utmMedium: leadRecord.utmMedium,
+            utmCampaign: leadRecord.utmCampaign,
+            referrer: leadRecord.referrer,
+            landingPage: leadRecord.landingPage,
+          });
+        }
+      } catch (dbErr) {
+        console.warn("[DB Catering Lead Persist Warning]:", dbErr);
+      }
+
+      console.log("==================================================");
+      console.log(`🌿 NEW CATERING LEAD [${leadCode}]:`);
+      console.log(`Customer: ${name} (${email}, ${phone})`);
+      console.log(`Package: ${pkg.name} | Guests: ${numGuests}`);
+      console.log(`Server-Calculated Estimated Revenue: ${estimatedRevenue} Kč`);
+      console.log(`UTM: ${utmSource || 'direct'} / ${utmMedium || 'none'} / ${utmCampaign || 'none'}`);
+      console.log("==================================================");
 
       return res.status(200).json({
         success: true,
         message: "Poptávka byla úspěšně zaznamenána.",
-        leadId: `LEAD-${Date.now()}`,
+        leadCode,
+        estimatedRevenue,
       });
-    } catch (e) {
+    } catch (e: any) {
       console.error("[Catering Lead Error]:", e);
-      return res.status(500).json({ error: "Failed to record inquiry" });
+      return res.status(500).json({ error: e.message || "Failed to record inquiry" });
+    }
+  });
+
+  // Admin Catering Leads API — List all leads
+  app.get("/api/admin/catering-leads", async (_req, res) => {
+    try {
+      let dbLeads: any[] = [];
+      try {
+        const { getDb } = await import("../db");
+        const { cateringLeads } = await import("../../drizzle/schema");
+        const db = await getDb();
+        if (db) {
+          const { desc } = await import("drizzle-orm");
+          dbLeads = await db.select().from(cateringLeads).orderBy(desc(cateringLeads.createdAt));
+        }
+      } catch {
+        dbLeads = [];
+      }
+
+      const merged = dbLeads.length > 0 ? dbLeads : inMemoryCateringLeads;
+      return res.status(200).json({ leads: merged });
+    } catch (err: any) {
+      return res.status(500).json({ error: err.message });
+    }
+  });
+
+  // Admin Catering Lead Update API — Profit Gate Financial Entry (Costs, Revenue, Contribution, Margin %)
+  app.post("/api/admin/catering-leads/update", async (req, res) => {
+    try {
+      const body = req.body || {};
+      const {
+        leadCode, status, lostReason, finalRevenue,
+        foodCost, chefCost, staffCost, transportCost, equipmentCost, marketingCost, otherCost
+      } = body;
+
+      if (!leadCode) {
+        return res.status(400).json({ error: "Missing leadCode" });
+      }
+
+      const numFinalRev = parseInt(finalRevenue, 10) || 0;
+      const numFood = parseInt(foodCost, 10) || 0;
+      const numChef = parseInt(chefCost, 10) || 0;
+      const numStaff = parseInt(staffCost, 10) || 0;
+      const numTransport = parseInt(transportCost, 10) || 0;
+      const numEquip = parseInt(equipmentCost, 10) || 0;
+      const numMktg = parseInt(marketingCost, 10) || 0;
+      const numOther = parseInt(otherCost, 10) || 0;
+
+      const totalCosts = numFood + numChef + numStaff + numTransport + numEquip + numMktg + numOther;
+      const contribution = numFinalRev - totalCosts;
+      const marginPct = numFinalRev > 0 ? Number(((contribution / numFinalRev) * 100).toFixed(2)) : 0;
+      const isTargetMet = marginPct >= 25.0;
+
+      // Update memory record
+      const idx = inMemoryCateringLeads.findIndex(l => l.leadCode === leadCode);
+      if (idx !== -1) {
+        inMemoryCateringLeads[idx] = {
+          ...inMemoryCateringLeads[idx],
+          status: status || inMemoryCateringLeads[idx].status,
+          lostReason,
+          finalRevenue: numFinalRev,
+          foodCost: numFood,
+          chefCost: numChef,
+          staffCost: numStaff,
+          transportCost: numTransport,
+          equipmentCost: numEquip,
+          marketingCost: numMktg,
+          otherCost: numOther,
+          contribution,
+          marginPct,
+        };
+      }
+
+      // Update DB record
+      try {
+        const { getDb } = await import("../db");
+        const { cateringLeads } = await import("../../drizzle/schema");
+        const { eq } = await import("drizzle-orm");
+        const db = await getDb();
+        if (db) {
+          await db
+            .update(cateringLeads)
+            .set({
+              status,
+              lostReason,
+              finalRevenue: numFinalRev,
+              foodCost: numFood,
+              chefCost: numChef,
+              staffCost: numStaff,
+              transportCost: numTransport,
+              equipmentCost: numEquip,
+              marketingCost: numMktg,
+              otherCost: numOther,
+              contribution,
+              marginPct: marginPct.toString() as any,
+            })
+            .where(eq(cateringLeads.leadCode, leadCode));
+        }
+      } catch (dbErr) {
+        console.warn("[DB Catering Lead Update Warning]:", dbErr);
+      }
+
+      return res.status(200).json({
+        success: true,
+        leadCode,
+        finalRevenue: numFinalRev,
+        totalCosts,
+        contribution,
+        marginPct,
+        isProfitGateTargetMet: isTargetMet,
+      });
+    } catch (err: any) {
+      return res.status(500).json({ error: err.message });
     }
   });
 

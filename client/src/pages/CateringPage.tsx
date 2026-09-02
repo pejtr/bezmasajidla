@@ -1,10 +1,10 @@
 // ============================================================
 // BEZMASAJIDLA.CZ — Commercial Signature Catering Engine
 // MATOUŠ MATĚJ × BEZMASÁJÍDLA.CZ
-// 3 Standard Packages, Interactive Price Calculator & Lead Tracking
+// 3 Standard Packages, Server-Validated Calculator & Revenue Gate
 // ============================================================
 
-import { useState, useId } from "react";
+import { useState, useId, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -36,6 +36,7 @@ const CATERING_PACKAGES = [
     name: "GREEN OFFICE",
     pricePerPerson: 590,
     minGuests: 15,
+    maxGuests: 150,
     tagline: "Svěží & Lehké",
     badge: "Pro Firmy & Workshopy",
     description: "Lehká a zdravá bezmasá jídla pro porady, týmové snídaně, teambuildingy a workshopy.",
@@ -52,15 +53,16 @@ const CATERING_PACKAGES = [
     name: "MATOUŠ SIGNATURE",
     pricePerPerson: 950,
     minGuests: 10,
+    maxGuests: 150,
     tagline: "Kurátorovaný Raut",
-    badge: "⚡ Nejoblíbenější",
+    badge: "DOPORUČUJEME",
     description: "Kompletní zážitkové menu. Vyvážená kombinace teplých i studených chodů s prémiovým servisem.",
     color: "border-amber-500 bg-amber-50/40 text-amber-950 ring-2 ring-amber-400/30",
     features: [
       "6× Studené tapas & bruschetty (hummus, pečený lilek, sušená rajčata)",
       "3× Teplé signature chody (květákový steak, seitanový goulash, varenyky)",
       "2× Autorský dezert Matouše Matěje",
-      "Nealko nápojový bar & ovocné limonády v ceně",
+      "Signature nealko bar & ovocné limonády v ceně",
       "Kompletní servírovací rautové nádobí",
     ],
   },
@@ -76,7 +78,7 @@ const CATERING_PACKAGES = [
     color: "border-purple-600 bg-purple-50/40 text-purple-950",
     features: [
       "5 Chodové degustační menu připravené přímo před hosty",
-      "Párování s bio nealko mošty, kombuchami a výběrovou kávou",
+      "Párování se signature nealko mošty, kombuchami a výběrovou kávou",
       "Osobní příprava a komentované servírování šéfkuchařem",
       "Plný skleněný & porcelánový servis v ceně",
     ],
@@ -88,13 +90,23 @@ export default function CateringPage() {
   // Calculator state
   const [selectedPkgId, setSelectedPkgId] = useState<string>("signature");
   const [guestCount, setGuestCount] = useState<number>(25);
-  const [includeBioDrinks, setIncludeBioDrinks] = useState<boolean>(true);
+  const [includeDrinks, setIncludeDrinks] = useState<boolean>(true);
   const [includeGlassware, setIncludeGlassware] = useState<boolean>(false);
   const [includeStaff, setIncludeStaff] = useState<boolean>(false);
+
+  // Attribution tracking state
+  const [utmParams, setUtmParams] = useState({
+    utmSource: "",
+    utmMedium: "",
+    utmCampaign: "",
+    referrer: "",
+    landingPage: "",
+  });
 
   // Form submission state
   const [formSubmitted, setFormSubmitted] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -105,22 +117,43 @@ export default function CateringPage() {
     notes: "",
   });
 
+  // Load UTM & Attribution parameters on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      setUtmParams({
+        utmSource: urlParams.get("utm_source") || "",
+        utmMedium: urlParams.get("utm_medium") || "",
+        utmCampaign: urlParams.get("utm_campaign") || "",
+        referrer: document.referrer || "",
+        landingPage: window.location.pathname,
+      });
+    }
+  }, []);
+
   const activePackage = CATERING_PACKAGES.find((p) => p.id === selectedPkgId) || CATERING_PACKAGES[1];
 
-  // Price Calculation Logic
+  // Hard boundary package switcher
+  const handleSelectPackage = (pkgId: string) => {
+    setSelectedPkgId(pkgId);
+    const pkg = CATERING_PACKAGES.find((p) => p.id === pkgId);
+    if (pkg) {
+      if (guestCount < pkg.minGuests) {
+        setGuestCount(pkg.minGuests);
+      } else if (pkg.maxGuests && guestCount > pkg.maxGuests) {
+        setGuestCount(pkg.maxGuests);
+      }
+    }
+  };
+
+  // Authoritative Pricing Logic (No automatic volume retail discounts)
   const basePricePerPerson = activePackage.pricePerPerson;
-  const drinkAddon = includeBioDrinks ? 150 : 0;
+  const drinkAddon = includeDrinks ? 150 : 0;
   const glasswareAddon = includeGlassware ? 80 : 0;
   const staffFlatFee = includeStaff ? 3500 : 0;
 
-  // Volume discounts
-  let volumeDiscountPct = 0;
-  if (guestCount >= 80) volumeDiscountPct = 10;
-  else if (guestCount >= 50) volumeDiscountPct = 5;
-
-  const grossPerPerson = basePricePerPerson + drinkAddon + glasswareAddon;
-  const discountedPerPerson = Math.round(grossPerPerson * (1 - volumeDiscountPct / 100));
-  const estimatedTotal = discountedPerPerson * guestCount + staffFlatFee;
+  const calculatedPerPerson = basePricePerPerson + drinkAddon + glasswareAddon;
+  const estimatedTotal = calculatedPerPerson * guestCount + staffFlatFee;
 
   const handleApplyCalculatorToForm = () => {
     const el = document.getElementById("poptavka");
@@ -132,6 +165,7 @@ export default function CateringPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setServerError(null);
 
     try {
       const payload = {
@@ -139,23 +173,27 @@ export default function CateringPage() {
         packageId: activePackage.id,
         packageName: activePackage.name,
         guestCount,
-        estimatedTotal,
-        discountedPerPerson,
-        includeBioDrinks,
+        includeDrinks,
         includeGlassware,
         includeStaff,
+        ...utmParams,
       };
 
-      await fetch("/api/catering-inquiry", {
+      const res = await fetch("/api/catering-inquiry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
-      setFormSubmitted(true);
-    } catch (err) {
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        setServerError(data.error || "Chyba při odesílání poptávky.");
+      } else {
+        setFormSubmitted(true);
+      }
+    } catch (err: any) {
       console.error("Inquiry submit error", err);
-      setFormSubmitted(true);
+      setServerError("Nepodařilo se připojit k serveru. Zkuste to prosím znovu.");
     } finally {
       setIsSubmitting(false);
     }
@@ -288,7 +326,7 @@ export default function CateringPage() {
               3 Pevné Cateringové Balíčky
             </h2>
             <p className="text-sm text-[#5A685D] mt-2">
-              Jasně definované složení menu i cena. Žádné skryté poplatky.
+              Jasně definované složení menu i cena za osoba. Žádné skryté poplatky.
             </p>
           </div>
 
@@ -296,7 +334,7 @@ export default function CateringPage() {
             {CATERING_PACKAGES.map((pkg) => (
               <div
                 key={pkg.id}
-                onClick={() => setSelectedPkgId(pkg.id)}
+                onClick={() => handleSelectPackage(pkg.id)}
                 className={`bg-white rounded-3xl p-7 border transition-all cursor-pointer shadow-sm relative flex flex-col justify-between ${
                   selectedPkgId === pkg.id
                     ? "border-[#4A7C59] ring-2 ring-[#4A7C59]/30 shadow-md"
@@ -328,7 +366,7 @@ export default function CateringPage() {
                       <span className="text-xs text-gray-500 font-medium">/ osoba</span>
                     </div>
                     <span className="text-[11px] text-[#4A7C59] font-semibold block mt-1">
-                      Minimálně {pkg.minGuests} osob
+                      {pkg.maxGuests ? `Rozsah ${pkg.minGuests}–${pkg.maxGuests} osob` : `Minimálně ${pkg.minGuests} osob`}
                     </span>
                   </div>
 
@@ -345,7 +383,7 @@ export default function CateringPage() {
 
                 <button
                   onClick={() => {
-                    setSelectedPkgId(pkg.id);
+                    handleSelectPackage(pkg.id);
                     handleApplyCalculatorToForm();
                   }}
                   className={`w-full py-3 rounded-xl font-bold text-xs transition-all text-center flex items-center justify-center gap-1.5 ${
@@ -374,7 +412,7 @@ export default function CateringPage() {
                 Kalkulačka Ceny Cateringu
               </h2>
               <p className="text-sm text-emerald-100/80">
-                Spočítejte si okamžitou orientační cenu pro vaši akci podle počtu osob a volitelných doplňků.
+                Spočítejte si orientační cenu pro vaši akci. Při akcích nad 50 osob připravujeme individuální rozpočet.
               </p>
             </div>
 
@@ -390,7 +428,7 @@ export default function CateringPage() {
                     {CATERING_PACKAGES.map((p) => (
                       <button
                         key={p.id}
-                        onClick={() => setSelectedPkgId(p.id)}
+                        onClick={() => handleSelectPackage(p.id)}
                         className={`p-3 rounded-xl text-left border transition-all ${
                           selectedPkgId === p.id
                             ? "bg-amber-400 text-slate-900 border-amber-300 font-bold shadow-md"
@@ -421,13 +459,12 @@ export default function CateringPage() {
                     max={activePackage.maxGuests || 150}
                     step={1}
                     value={guestCount}
-                    onChange={(e) => setGuestCount(parseInt(e.target.value) || 10)}
+                    onChange={(e) => setGuestCount(parseInt(e.target.value) || activePackage.minGuests)}
                     className="w-full h-2 bg-emerald-950 rounded-lg appearance-none cursor-pointer accent-amber-400"
                   />
                   <div className="flex justify-between text-[10px] text-emerald-200/60 mt-1">
                     <span>Min {activePackage.minGuests} osob</span>
-                    {guestCount >= 50 && <span className="text-amber-300 font-bold">🎉 5% Sleva pro 50+ osob</span>}
-                    {guestCount >= 80 && <span className="text-amber-300 font-bold">🎉 10% Sleva pro 80+ osob</span>}
+                    {guestCount >= 50 && <span className="text-amber-300 font-bold">✨ 50+ hostů: Individuální kalkulace</span>}
                     <span>Max {activePackage.maxGuests || 150} osob</span>
                   </div>
                 </div>
@@ -442,14 +479,14 @@ export default function CateringPage() {
                     <div className="flex items-center gap-3">
                       <Wine className="w-4 h-4 text-amber-300" />
                       <div>
-                        <span className="text-xs font-semibold block">Bio Nealko Nápojový Bar</span>
+                        <span className="text-xs font-semibold block">Signature Nealko Bar</span>
                         <span className="text-[10px] text-emerald-200/70">Domácí mošty, kombuchy & limonády (+150 Kč/os)</span>
                       </div>
                     </div>
                     <input
                       type="checkbox"
-                      checked={includeBioDrinks}
-                      onChange={(e) => setIncludeBioDrinks(e.target.checked)}
+                      checked={includeDrinks}
+                      onChange={(e) => setIncludeDrinks(e.target.checked)}
                       className="w-4 h-4 rounded text-amber-400 focus:ring-amber-400 accent-amber-400"
                     />
                   </label>
@@ -474,8 +511,8 @@ export default function CateringPage() {
                     <div className="flex items-center gap-3">
                       <ChefHat className="w-4 h-4 text-amber-300" />
                       <div>
-                        <span className="text-xs font-semibold block">Profesionální Obsluha Na Místě</span>
-                        <span className="text-[10px] text-emerald-200/70">Obsluha po celou dobu akce (+3 500 Kč paušál)</span>
+                        <span className="text-xs font-semibold block">Obsluha Na Místě</span>
+                        <span className="text-[10px] text-emerald-200/70">Základní obsluha od 3 500 Kč (potvrdíme dle rozsahu)</span>
                       </div>
                     </div>
                     <input
@@ -506,9 +543,9 @@ export default function CateringPage() {
                     <span className="text-gray-600">Základní cena:</span>
                     <span className="font-bold text-gray-900">{basePricePerPerson} Kč / os.</span>
                   </div>
-                  {includeBioDrinks && (
+                  {includeDrinks && (
                     <div className="flex justify-between text-emerald-700">
-                      <span>+ Bio Nealko Bar:</span>
+                      <span>+ Signature Nealko Bar:</span>
                       <span className="font-bold">+150 Kč / os.</span>
                     </div>
                   )}
@@ -518,16 +555,10 @@ export default function CateringPage() {
                       <span className="font-bold">+80 Kč / os.</span>
                     </div>
                   )}
-                  {volumeDiscountPct > 0 && (
-                    <div className="flex justify-between text-amber-600 font-bold bg-amber-50 p-1.5 rounded-lg">
-                      <span>🎉 Množstevní sleva ({volumeDiscountPct}%):</span>
-                      <span>Ušetříte {Math.round(grossPerPerson * (volumeDiscountPct / 100))} Kč/os</span>
-                    </div>
-                  )}
                   {includeStaff && (
                     <div className="flex justify-between text-purple-700">
                       <span>+ Obsluha na místě:</span>
-                      <span className="font-bold">+3 500 Kč</span>
+                      <span className="font-bold">od +3 500 Kč</span>
                     </div>
                   )}
                 </div>
@@ -539,7 +570,7 @@ export default function CateringPage() {
                     {estimatedTotal.toLocaleString("cs-CZ")} Kč
                   </div>
                   <span className="text-xs text-gray-400">
-                    ({discountedPerPerson} Kč / osoba vč. vybraných doplňků)
+                    ({calculatedPerPerson} Kč / osoba vč. vybraných doplňků)
                   </span>
                 </div>
 
@@ -584,12 +615,18 @@ export default function CateringPage() {
               </span>
             </div>
 
+            {serverError && (
+              <div className="bg-red-50 border border-red-200 text-red-700 text-xs p-4 rounded-xl mb-6">
+                <strong>Chyba:</strong> {serverError}
+              </div>
+            )}
+
             {formSubmitted ? (
               <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-8 text-center">
                 <CheckCircle2 className="w-12 h-12 text-[#4A7C59] mx-auto mb-3" />
                 <h3 className="text-xl font-bold text-[#1C2826] mb-2">Poptávka byla úspěšně odeslána!</h3>
                 <p className="text-sm text-[#5A685D]">
-                  Děkujeme. Šéfkuchař Matouš Matěj a náš tým se vám ozvou zpět na e-mail <strong>{formData.email}</strong> do 24 hodin.
+                  Děkujeme. Šéfkuchař Matouš Matěj a náš tým se vám ozvou zpět na e-mail <strong>{formData.email}</strong> do 24 hodin s finálním potvrzením termínu a rozpočtu.
                 </p>
               </div>
             ) : (
