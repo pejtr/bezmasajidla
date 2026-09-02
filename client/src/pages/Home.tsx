@@ -327,6 +327,9 @@ export default function Home() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {quickDinners.map((r) => <RecipeCard key={r.id} recipe={r} />)}
+        </div>
+      </section>
+
       {/* ── CATERING BRAND SECTION (MATOUŠ × BEZMASÁJÍDLA) ── */}
       <section className="py-12 container">
         <div className="bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-950 text-white rounded-3xl p-8 md:p-12 border border-emerald-800 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
