@@ -325,26 +325,112 @@ async function startServer() {
     res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
   });
 
-  // ── Catering Pricing Engine & Revenue Gate ─────────────────────
+  // ── Single Source of Truth Catering Pricing Config ──────────────
   interface ServerPackageRule {
     id: string;
     name: string;
     pricePerPerson: number;
     minGuests: number;
     maxGuests?: number;
+    tagline: string;
+    description: string;
+    features: string[];
   }
 
   const SERVER_CATERING_PACKAGES: Record<string, ServerPackageRule> = {
-    office: { id: "office", name: "GREEN OFFICE", pricePerPerson: 590, minGuests: 15, maxGuests: 150 },
-    signature: { id: "signature", name: "MATOUŠ SIGNATURE", pricePerPerson: 950, minGuests: 10, maxGuests: 150 },
-    privatetable: { id: "privatetable", name: "PRIVATE TABLE BY MATOUŠ", pricePerPerson: 1800, minGuests: 6, maxGuests: 15 },
+    office: {
+      id: "office",
+      name: "GREEN OFFICE",
+      pricePerPerson: 590,
+      minGuests: 15,
+      maxGuests: 150,
+      tagline: "Svěží & Lehké",
+      description: "Lehká a zdravá bezmasá jídla pro porady, týmové snídaně, teambuildingy a workshopy.",
+      features: [
+        "4× Studený finger food (jednohubky & tapas)",
+        "2× Sezónní salát nebo tartař z pečlivě vybrané zeleniny",
+        "1× Lehký dezert (chia pudink / bezlepkový koláč)",
+        "1× Domácí osvěžující limonáda (máta/citrón)",
+      ],
+    },
+    signature: {
+      id: "signature",
+      name: "MATOUŠ SIGNATURE",
+      pricePerPerson: 950,
+      minGuests: 10,
+      maxGuests: 150,
+      tagline: "Kurátorovaný Raut",
+      description: "Kompletní zážitkové menu. Vyvážená kombinace teplých i studených chodů s prémiovým servisem.",
+      features: [
+        "6× Studené tapas & bruschetty (hummus, pečený lilek, sušená rajčata)",
+        "3× Teplé signature chody (květákový steak, seitanový goulash, varenyky)",
+        "2× Autorský dezert Matouše Matěje",
+        "Signature nealko bar & ovocné limonády v ceně",
+        "Kompletní servírovací rautové nádobí",
+      ],
+    },
+    privatetable: {
+      id: "privatetable",
+      name: "PRIVATE TABLE BY MATOUŠ",
+      pricePerPerson: 1800,
+      minGuests: 6,
+      maxGuests: 15,
+      tagline: "Osobní Chef Experience",
+      description: "Komorní fine-dining pro 6 až 15 osob s osobní účastí šéfkuchaře Matouše Matěje.",
+      features: [
+        "5 Chodové degustační menu připravené přímo před hosty",
+        "Párování se signature nealko mošty, kombuchami a výběrovou kávou",
+        "Osobní příprava a komentované servírování šéfkuchařem",
+        "Plný skleněný & porcelánový servis v ceně",
+      ],
+    },
   };
+
+  // Endpoint: Single Source of Truth Pricing Config (Used by Frontend & Calculator)
+  app.get("/api/catering/config", (_req, res) => {
+    return res.status(200).json({
+      packages: Object.values(SERVER_CATERING_PACKAGES),
+      addons: [
+        { id: "drinks", name: "Signature Nealko Bar", pricePerPerson: 150 },
+        { id: "glassware", name: "Zapůjčení Skla & Porcelánu", pricePerPerson: 80 },
+        { id: "staff", name: "Obsluha Na Místě", baseFee: 3500 },
+      ],
+      notice: "Orientační cena. Finální nabídku potvrdíme dle termínu, lokality a rozsahu služby.",
+    });
+  });
+
+  // Admin Authorization Middleware Guard (RBAC)
+  const requireAdminMiddleware = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      // 1. Check Secret Header (CLI / Internal Canary Runner)
+      const adminSecret = req.headers["x-admin-secret"];
+      if (adminSecret && process.env.ADMIN_SECRET && adminSecret === process.env.ADMIN_SECRET) {
+        return next();
+      }
+
+      // 2. Authenticate User Session & Role
+      const { sdk } = await import("./sdk");
+      const user = await sdk.authenticateRequest(req);
+      if (user && user.role === "admin") {
+        (req as any).user = user;
+        return next();
+      }
+
+      return res.status(403).json({ error: "Forbidden: Admin authorization required." });
+    } catch {
+      return res.status(403).json({ error: "Forbidden: Admin authorization required." });
+    }
+  };
+
+  // Public Lead Endpoint Protection (Honeypot & Simple IP Rate Limiting)
+  const leadIpTracker = new Map<string, { count: number; expiresAt: number }>();
 
   interface CateringLeadRecord {
     id: number;
     leadCode: string;
-    status: "NEW" | "OFFER_SENT" | "WON" | "LOST";
+    status: "NEW" | "CONTACTED" | "OFFER_SENT" | "WON" | "CONFIRMED" | "COMPLETED" | "SETTLED" | "LOST";
     lostReason?: string;
+    isTest: boolean;
     name: string;
     email: string;
     phone: string;
@@ -357,14 +443,22 @@ async function startServer() {
     includeGlassware: boolean;
     includeStaff: boolean;
     estimatedRevenue: number;
+    bookedRevenue?: number;
+    realizedRevenue?: number;
+    paidRevenue?: number;
     finalRevenue?: number;
     foodCost?: number;
-    chefCost?: number;
+    chefFee?: number;
+    chefRoyalty?: number;
+    chefTotalCost?: number;
     staffCost?: number;
     transportCost?: number;
     equipmentCost?: number;
     marketingCost?: number;
     otherCost?: number;
+    grossContribution?: number;
+    acquisitionContribution?: number;
+    netEventContribution?: number;
     contribution?: number;
     marginPct?: number;
     utmSource?: string;
@@ -372,28 +466,64 @@ async function startServer() {
     utmCampaign?: string;
     referrer?: string;
     landingPage?: string;
+    firstContactAt?: string;
+    offerSentAt?: string;
+    wonAt?: string;
+    completedAt?: string;
+    settledAt?: string;
     createdAt: string;
   }
 
   const inMemoryCateringLeads: CateringLeadRecord[] = [];
 
-  // Commercial Lead Inquiry Endpoint (Server-Side Pricing & Validation)
+  // Public Lead Inquiry Endpoint (With Security Protection & Server-Side Pricing Engine)
   app.post("/api/catering-inquiry", async (req, res) => {
     try {
       const body = req.body || {};
+
+      // 1. Honeypot check (Bot protection)
+      if (body.website_hp && String(body.website_hp).trim().length > 0) {
+        return res.status(200).json({ success: true, message: "Poptávka byla přijata." });
+      }
+
+      // 2. IP Rate Limiting (5 inquiries per 15 min per IP)
+      const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0] || req.socket.remoteAddress || "unknown";
+      const now = Date.now();
+      const ipData = leadIpTracker.get(ip);
+
+      if (ipData && ipData.expiresAt > now) {
+        if (ipData.count >= 5) {
+          return res.status(429).json({ error: "Příliš mnoho poptávek. Zkuste to prosím znovu za 15 minut." });
+        }
+        ipData.count += 1;
+      } else {
+        leadIpTracker.set(ip, { count: 1, expiresAt: now + 15 * 60 * 1000 });
+      }
+
       const {
         name, email, phone, date, notes,
         packageId, guestCount, includeDrinks, includeGlassware, includeStaff,
-        utmSource, utmMedium, utmCampaign, referrer, landingPage
+        utmSource, utmMedium, utmCampaign, referrer, landingPage, isTest
       } = body;
 
       if (!name || !email || !phone || !packageId || !guestCount) {
         return res.status(400).json({ error: "Missing required inquiry fields (name, email, phone, packageId, guestCount)." });
       }
 
+      // Payload Sanitization & String Length Validation
+      const cleanName = String(name).trim().slice(0, 128);
+      const cleanEmail = String(email).trim().toLowerCase().slice(0, 128);
+      const cleanPhone = String(phone).trim().slice(0, 32);
+      const cleanNotes = notes ? String(notes).trim().slice(0, 2000) : "";
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(cleanEmail)) {
+        return res.status(400).json({ error: "Zadejte platný e-mail ve tvaru jmeno@domena.cz." });
+      }
+
       const pkg = SERVER_CATERING_PACKAGES[packageId];
       if (!pkg) {
-        return res.status(400).json({ error: `Unknown catering packageId: ${packageId}` });
+        return res.status(400).json({ error: `Neznámý cateringový balíček: ${packageId}` });
       }
 
       const numGuests = parseInt(guestCount, 10);
@@ -409,24 +539,26 @@ async function startServer() {
         });
       }
 
-      // Server-Side Pricing Engine (Never trust client-passed price)
+      // Authoritative Server-Side Pricing Engine (Never trust client-passed price)
       const drinksFee = includeDrinks ? 150 : 0;
       const glasswareFee = includeGlassware ? 80 : 0;
       const staffFee = includeStaff ? 3500 : 0;
       const calculatedPerPerson = pkg.pricePerPerson + drinksFee + glasswareFee;
       const estimatedRevenue = calculatedPerPerson * numGuests + staffFee;
 
-      const leadCode = `LEAD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+      const isSyntheticTest = Boolean(isTest);
+      const leadCode = `LEAD-${now}-${Math.floor(Math.random() * 1000)}`;
 
       const leadRecord: CateringLeadRecord = {
         id: inMemoryCateringLeads.length + 1,
         leadCode,
         status: "NEW",
-        name,
-        email,
-        phone,
+        isTest: isSyntheticTest,
+        name: cleanName,
+        email: cleanEmail,
+        phone: cleanPhone,
         eventDate: date || undefined,
-        notes: notes || undefined,
+        notes: cleanNotes || undefined,
         packageId: pkg.id,
         packageName: pkg.name,
         guestCount: numGuests,
@@ -453,6 +585,7 @@ async function startServer() {
           await db.insert(cateringLeads).values({
             leadCode: leadRecord.leadCode,
             status: "NEW",
+            isTest: leadRecord.isTest,
             name: leadRecord.name,
             email: leadRecord.email,
             phone: leadRecord.phone,
@@ -477,8 +610,8 @@ async function startServer() {
       }
 
       console.log("==================================================");
-      console.log(`🌿 NEW CATERING LEAD [${leadCode}]:`);
-      console.log(`Customer: ${name} (${email}, ${phone})`);
+      console.log(`🌿 NEW CATERING LEAD [${leadCode}] ${isSyntheticTest ? '(CANARY TEST)' : ''}:`);
+      console.log(`Customer: ${cleanName} (${cleanEmail}, ${cleanPhone})`);
       console.log(`Package: ${pkg.name} | Guests: ${numGuests}`);
       console.log(`Server-Calculated Estimated Revenue: ${estimatedRevenue} Kč`);
       console.log(`UTM: ${utmSource || 'direct'} / ${utmMedium || 'none'} / ${utmCampaign || 'none'}`);
@@ -496,8 +629,8 @@ async function startServer() {
     }
   });
 
-  // Admin Catering Leads API — List all leads
-  app.get("/api/admin/catering-leads", async (_req, res) => {
+  // Admin Catering Leads API — Protected by requireAdminMiddleware
+  app.get("/api/admin/catering-leads", requireAdminMiddleware, async (_req, res) => {
     try {
       let dbLeads: any[] = [];
       try {
@@ -519,13 +652,13 @@ async function startServer() {
     }
   });
 
-  // Admin Catering Lead Update API — Profit Gate Financial Entry (Costs, Revenue, Contribution, Margin %)
-  app.post("/api/admin/catering-leads/update", async (req, res) => {
+  // Admin Catering Lead Update API — Profit Gate v2 Financial Entry (Protected by requireAdminMiddleware)
+  app.post("/api/admin/catering-leads/update", requireAdminMiddleware, async (req, res) => {
     try {
       const body = req.body || {};
       const {
-        leadCode, status, lostReason, finalRevenue,
-        foodCost, chefCost, staffCost, transportCost, equipmentCost, marketingCost, otherCost
+        leadCode, status, lostReason, finalRevenue, bookedRevenue, realizedRevenue, paidRevenue,
+        foodCost, chefFee, chefRoyalty, staffCost, transportCost, equipmentCost, marketingCost, otherCost
       } = body;
 
       if (!leadCode) {
@@ -533,36 +666,61 @@ async function startServer() {
       }
 
       const numFinalRev = parseInt(finalRevenue, 10) || 0;
+      const numBookedRev = parseInt(bookedRevenue, 10) || numFinalRev;
+      const numRealizedRev = parseInt(realizedRevenue, 10) || numFinalRev;
+      const numPaidRev = parseInt(paidRevenue, 10) || 0;
+
       const numFood = parseInt(foodCost, 10) || 0;
-      const numChef = parseInt(chefCost, 10) || 0;
+      const numChefFee = parseInt(chefFee, 10) || 0;
+      const numChefRoyalty = parseFloat(chefRoyalty) || 0;
+      const chefRoyaltyAmount = Math.round(numFinalRev * (numChefRoyalty / 100));
+      const chefTotalCost = numChefFee + chefRoyaltyAmount;
+
       const numStaff = parseInt(staffCost, 10) || 0;
       const numTransport = parseInt(transportCost, 10) || 0;
       const numEquip = parseInt(equipmentCost, 10) || 0;
       const numMktg = parseInt(marketingCost, 10) || 0;
       const numOther = parseInt(otherCost, 10) || 0;
 
-      const totalCosts = numFood + numChef + numStaff + numTransport + numEquip + numMktg + numOther;
-      const contribution = numFinalRev - totalCosts;
-      const marginPct = numFinalRev > 0 ? Number(((contribution / numFinalRev) * 100).toFixed(2)) : 0;
+      // Profit Gate v2 Layered Contributions
+      const directCosts = numFood + chefTotalCost + numStaff + numTransport + numEquip;
+      const grossContribution = numFinalRev - directCosts;
+      const acquisitionContribution = grossContribution - numMktg;
+      const netEventContribution = acquisitionContribution - numOther;
+      const marginPct = numFinalRev > 0 ? Number(((netEventContribution / numFinalRev) * 100).toFixed(2)) : 0;
       const isTargetMet = marginPct >= 25.0;
+
+      const nowIso = new Date().toISOString();
 
       // Update memory record
       const idx = inMemoryCateringLeads.findIndex(l => l.leadCode === leadCode);
       if (idx !== -1) {
+        const lead = inMemoryCateringLeads[idx];
         inMemoryCateringLeads[idx] = {
-          ...inMemoryCateringLeads[idx],
-          status: status || inMemoryCateringLeads[idx].status,
+          ...lead,
+          status: status || lead.status,
           lostReason,
           finalRevenue: numFinalRev,
+          bookedRevenue: numBookedRev,
+          realizedRevenue: numRealizedRev,
+          paidRevenue: numPaidRev,
           foodCost: numFood,
-          chefCost: numChef,
+          chefFee: numChefFee,
+          chefRoyalty: numChefRoyalty,
+          chefTotalCost,
           staffCost: numStaff,
           transportCost: numTransport,
           equipmentCost: numEquip,
           marketingCost: numMktg,
           otherCost: numOther,
-          contribution,
+          grossContribution,
+          acquisitionContribution,
+          netEventContribution,
+          contribution: netEventContribution,
           marginPct,
+          wonAt: status === "WON" && !lead.wonAt ? nowIso : lead.wonAt,
+          completedAt: status === "COMPLETED" && !lead.completedAt ? nowIso : lead.completedAt,
+          settledAt: status === "SETTLED" && !lead.settledAt ? nowIso : lead.settledAt,
         };
       }
 
@@ -573,23 +731,34 @@ async function startServer() {
         const { eq } = await import("drizzle-orm");
         const db = await getDb();
         if (db) {
-          await db
-            .update(cateringLeads)
-            .set({
-              status,
-              lostReason,
-              finalRevenue: numFinalRev,
-              foodCost: numFood,
-              chefCost: numChef,
-              staffCost: numStaff,
-              transportCost: numTransport,
-              equipmentCost: numEquip,
-              marketingCost: numMktg,
-              otherCost: numOther,
-              contribution,
-              marginPct: marginPct.toString() as any,
-            })
-            .where(eq(cateringLeads.leadCode, leadCode));
+          const updateData: any = {
+            status,
+            lostReason,
+            finalRevenue: numFinalRev,
+            bookedRevenue: numBookedRev,
+            realizedRevenue: numRealizedRev,
+            paidRevenue: numPaidRev,
+            foodCost: numFood,
+            chefFee: numChefFee,
+            chefRoyalty: numChefRoyalty.toString(),
+            chefTotalCost,
+            staffCost: numStaff,
+            transportCost: numTransport,
+            equipmentCost: numEquip,
+            marketingCost: numMktg,
+            otherCost: numOther,
+            grossContribution,
+            acquisitionContribution,
+            netEventContribution,
+            contribution: netEventContribution,
+            marginPct: marginPct.toString(),
+          };
+
+          if (status === "WON") updateData.wonAt = new Date();
+          if (status === "COMPLETED") updateData.completedAt = new Date();
+          if (status === "SETTLED") updateData.settledAt = new Date();
+
+          await db.update(cateringLeads).set(updateData).where(eq(cateringLeads.leadCode, leadCode));
         }
       } catch (dbErr) {
         console.warn("[DB Catering Lead Update Warning]:", dbErr);
@@ -599,8 +768,10 @@ async function startServer() {
         success: true,
         leadCode,
         finalRevenue: numFinalRev,
-        totalCosts,
-        contribution,
+        directCosts,
+        grossContribution,
+        acquisitionContribution,
+        netEventContribution,
         marginPct,
         isProfitGateTargetMet: isTargetMet,
       });

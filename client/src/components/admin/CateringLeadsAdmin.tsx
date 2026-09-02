@@ -1,6 +1,7 @@
 // ============================================================
-// BEZMASAJIDLA.CZ — Catering Leads & Profit Gate CRM Dashboard
+// BEZMASAJIDLA.CZ — Catering Sales Ops & Profit Gate v2 CRM Dashboard
 // MATOUŠ MATĚJ × BEZMASÁJÍDLA.CZ
+// Layered Contributions, Matouš Economics & Sales Lifecycle Statuses
 // ============================================================
 
 import { useState, useEffect } from "react";
@@ -21,14 +22,26 @@ import {
   Phone,
   Mail,
   Search,
+  ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
+
+export type CateringStatus =
+  | "NEW"
+  | "CONTACTED"
+  | "OFFER_SENT"
+  | "WON"
+  | "CONFIRMED"
+  | "COMPLETED"
+  | "SETTLED"
+  | "LOST";
 
 interface CateringLeadRecord {
   id: number;
   leadCode: string;
-  status: "NEW" | "OFFER_SENT" | "WON" | "LOST";
+  status: CateringStatus;
   lostReason?: string;
+  isTest?: boolean;
   name: string;
   email: string;
   phone: string;
@@ -41,21 +54,37 @@ interface CateringLeadRecord {
   includeGlassware: boolean;
   includeStaff: boolean;
   estimatedRevenue: number;
+  bookedRevenue?: number;
+  realizedRevenue?: number;
+  paidRevenue?: number;
   finalRevenue?: number;
+
   foodCost?: number;
-  chefCost?: number;
+  chefFee?: number;
+  chefRoyalty?: number;
+  chefTotalCost?: number;
   staffCost?: number;
   transportCost?: number;
   equipmentCost?: number;
   marketingCost?: number;
   otherCost?: number;
+
+  grossContribution?: number;
+  acquisitionContribution?: number;
+  netEventContribution?: number;
   contribution?: number;
   marginPct?: number;
+
   utmSource?: string;
   utmMedium?: string;
   utmCampaign?: string;
   referrer?: string;
   landingPage?: string;
+  firstContactAt?: string;
+  offerSentAt?: string;
+  wonAt?: string;
+  completedAt?: string;
+  settledAt?: string;
   createdAt: string;
 }
 
@@ -65,11 +94,12 @@ export default function CateringLeadsAdmin() {
   const [editingLead, setEditingLead] = useState<CateringLeadRecord | null>(null);
 
   // Financial Entry Form State
-  const [editStatus, setEditStatus] = useState<"NEW" | "OFFER_SENT" | "WON" | "LOST">("NEW");
+  const [editStatus, setEditStatus] = useState<CateringStatus>("NEW");
   const [editLostReason, setEditLostReason] = useState("");
   const [editFinalRevenue, setEditFinalRevenue] = useState<number>(0);
   const [editFoodCost, setEditFoodCost] = useState<number>(0);
-  const [editChefCost, setEditChefCost] = useState<number>(0);
+  const [editChefFee, setEditChefFee] = useState<number>(0);
+  const [editChefRoyalty, setEditChefRoyalty] = useState<number>(0);
   const [editStaffCost, setEditStaffCost] = useState<number>(0);
   const [editTransportCost, setEditTransportCost] = useState<number>(0);
   const [editEquipmentCost, setEditEquipmentCost] = useState<number>(0);
@@ -102,7 +132,8 @@ export default function CateringLeadsAdmin() {
     setEditLostReason(lead.lostReason || "");
     setEditFinalRevenue(lead.finalRevenue || lead.estimatedRevenue);
     setEditFoodCost(lead.foodCost || 0);
-    setEditChefCost(lead.chefCost || 0);
+    setEditChefFee(lead.chefFee || 0);
+    setEditChefRoyalty(lead.chefRoyalty || 0);
     setEditStaffCost(lead.staffCost || 0);
     setEditTransportCost(lead.transportCost || 0);
     setEditEquipmentCost(lead.equipmentCost || 0);
@@ -121,7 +152,8 @@ export default function CateringLeadsAdmin() {
         lostReason: editLostReason,
         finalRevenue: editFinalRevenue,
         foodCost: editFoodCost,
-        chefCost: editChefCost,
+        chefFee: editChefFee,
+        chefRoyalty: editChefRoyalty,
         staffCost: editStaffCost,
         transportCost: editTransportCost,
         equipmentCost: editEquipmentCost,
@@ -137,7 +169,7 @@ export default function CateringLeadsAdmin() {
 
       const data = await res.json();
       if (res.ok && data.success) {
-        toast.success(`Finanční korigace uložena. Marže: ${data.marginPct}%`);
+        toast.success(`Finanční rozpad uložen. Čistá marže: ${data.marginPct}%`);
         setEditingLead(null);
         fetchLeads();
       } else {
@@ -148,13 +180,14 @@ export default function CateringLeadsAdmin() {
     }
   };
 
-  // Metrics
-  const totalLeads = leads.length;
-  const wonLeads = leads.filter((l) => l.status === "WON");
-  const totalEstimatedRev = leads.reduce((sum, l) => sum + (l.estimatedRevenue || 0), 0);
+  // Exclude synthetic test leads from business KPIs
+  const realLeads = leads.filter((l) => !l.isTest);
+  const totalLeads = realLeads.length;
+  const wonLeads = realLeads.filter((l) => ["WON", "CONFIRMED", "COMPLETED", "SETTLED"].includes(l.status));
+  const totalEstimatedRev = realLeads.reduce((sum, l) => sum + (l.estimatedRevenue || 0), 0);
   const totalWonRev = wonLeads.reduce((sum, l) => sum + (l.finalRevenue || l.estimatedRevenue || 0), 0);
-  const totalWonContribution = wonLeads.reduce((sum, l) => sum + (l.contribution || 0), 0);
-  const avgWonMarginPct = totalWonRev > 0 ? ((totalWonContribution / totalWonRev) * 100).toFixed(1) : "0.0";
+  const totalWonNetContribution = wonLeads.reduce((sum, l) => sum + (l.netEventContribution || l.contribution || 0), 0);
+  const avgWonMarginPct = totalWonRev > 0 ? ((totalWonNetContribution / totalWonRev) * 100).toFixed(1) : "0.0";
 
   return (
     <div className="space-y-8">
@@ -162,19 +195,19 @@ export default function CateringLeadsAdmin() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white p-5 rounded-2xl border border-emerald-100 shadow-xs">
           <span className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">
-            Celkem Poptávek
+            Reálné Poptávky
           </span>
           <div className="flex items-baseline justify-between">
             <span className="text-3xl font-black text-gray-900">{totalLeads}</span>
             <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
-              {wonLeads.length} zrealizováno
+              {wonLeads.length} uzavřeno
             </span>
           </div>
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-emerald-100 shadow-xs">
           <span className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">
-            Odhadovaný Pipet (CZK)
+            Pipeline Potenciál (CZK)
           </span>
           <div className="flex items-baseline justify-between">
             <span className="text-2xl font-black text-gray-900">
@@ -185,7 +218,7 @@ export default function CateringLeadsAdmin() {
 
         <div className="bg-white p-5 rounded-2xl border border-emerald-100 shadow-xs">
           <span className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">
-            Realizované Tržby (WON)
+            Uzavřené Tržby (WON/SETTLED)
           </span>
           <div className="flex items-baseline justify-between">
             <span className="text-2xl font-black text-emerald-700">
@@ -196,7 +229,7 @@ export default function CateringLeadsAdmin() {
 
         <div className="bg-white p-5 rounded-2xl border border-emerald-100 shadow-xs">
           <span className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">
-            Průměrná Marže (Contribution)
+            Čistá Marže (Net Contribution %)
           </span>
           <div className="flex items-baseline justify-between">
             <span className={`text-2xl font-black ${Number(avgWonMarginPct) >= 25 ? "text-emerald-600" : "text-amber-600"}`}>
@@ -211,9 +244,9 @@ export default function CateringLeadsAdmin() {
       <div className="bg-white rounded-2xl border border-gray-200 shadow-xs overflow-hidden">
         <div className="p-5 border-b border-gray-100 flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-bold text-gray-900">Catering Leads & Profit Gate CRM</h3>
+            <h3 className="text-lg font-bold text-gray-900">Catering Sales Ops & Profit Gate v2 CRM</h3>
             <p className="text-xs text-gray-500">
-              Matouš Matěj × BezmasáJídla.cz — Poptávky, finanční marže a stav konverze
+              Matouš Matěj × BezmasáJídla.cz — Řízení obchodního cyklu, Matouš-ekonomika & vrstvené marže
             </p>
           </div>
           <button
@@ -239,8 +272,8 @@ export default function CateringLeadsAdmin() {
                   <th className="p-4">Zákazník & Kontakt</th>
                   <th className="p-4">Balíček & Hosté</th>
                   <th className="p-4">Odhad Tržeb</th>
-                  <th className="p-4">Skutečná Marže</th>
-                  <th className="p-4">Zdroj (UTM)</th>
+                  <th className="p-4">Čistá Marže (Net)</th>
+                  <th className="p-4">UTM Zdroj</th>
                   <th className="p-4 text-right font-bold">Akce</th>
                 </tr>
               </thead>
@@ -251,16 +284,23 @@ export default function CateringLeadsAdmin() {
                   const isMarginOk = marginPct >= 25;
 
                   return (
-                    <tr key={lead.leadCode} className="hover:bg-gray-50/60 transition-colors">
+                    <tr key={lead.leadCode} className={`hover:bg-gray-50/60 transition-colors ${lead.isTest ? "bg-amber-50/30" : ""}`}>
                       <td className="p-4">
-                        <span className="font-mono text-[11px] font-bold text-gray-800 block mb-1">
-                          {lead.leadCode}
-                        </span>
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <span className="font-mono text-[11px] font-bold text-gray-800">
+                            {lead.leadCode}
+                          </span>
+                          {lead.isTest && (
+                            <span className="bg-amber-200 text-amber-900 text-[9px] font-black px-1.5 py-0.5 rounded-sm">
+                              CANARY TEST
+                            </span>
+                          )}
+                        </div>
                         <span
                           className={`inline-block text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase ${
-                            lead.status === "WON"
+                            ["WON", "CONFIRMED", "COMPLETED", "SETTLED"].includes(lead.status)
                               ? "bg-emerald-100 text-emerald-800"
-                              : lead.status === "OFFER_SENT"
+                              : lead.status === "OFFER_SENT" || lead.status === "CONTACTED"
                               ? "bg-blue-100 text-blue-800"
                               : lead.status === "LOST"
                               ? "bg-red-100 text-red-800"
@@ -298,12 +338,12 @@ export default function CateringLeadsAdmin() {
                                 isMarginOk ? "text-emerald-700" : "text-red-600"
                               }`}
                             >
-                              <span>Marže: {marginPct}%</span>
+                              <span>Čistá marže: {marginPct}%</span>
                               {isMarginOk ? "🟢" : "⚠️"}
                             </span>
                           </div>
                         ) : (
-                          <span className="text-gray-400 italic">Čeká na zadání nákladů</span>
+                          <span className="text-gray-400 italic">Čeká na zadání rozpadu</span>
                         )}
                       </td>
 
@@ -317,7 +357,7 @@ export default function CateringLeadsAdmin() {
                           onClick={() => handleOpenEdit(lead)}
                           className="bg-emerald-700 hover:bg-emerald-600 text-white font-semibold text-xs px-3 py-1.5 rounded-xl transition-colors"
                         >
-                          Zadat Finanční Náklady & Stav
+                          Spravovat Obchod & Náklady
                         </button>
                       </td>
                     </tr>
@@ -335,7 +375,7 @@ export default function CateringLeadsAdmin() {
           <div className="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-gray-200 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4 border-b border-gray-100 pb-3">
               <div>
-                <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider">Profit Gate CRM Entry</span>
+                <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider">Profit Gate v2 Engine Entry</span>
                 <h3 className="text-xl font-bold text-gray-900">
                   {editingLead.leadCode} — {editingLead.name}
                 </h3>
@@ -351,21 +391,25 @@ export default function CateringLeadsAdmin() {
             <form onSubmit={handleSaveFinancials} className="space-y-4 text-xs">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-gray-700 mb-1">Stav Zakázky *</label>
+                  <label className="block font-bold text-gray-700 mb-1">Stav Obchodního Cyklu (Sales Ops) *</label>
                   <select
                     value={editStatus}
                     onChange={(e) => setEditStatus(e.target.value as any)}
                     className="w-full p-2.5 rounded-xl border border-gray-300 font-semibold"
                   >
                     <option value="NEW">NEW (Nová Poptávka)</option>
+                    <option value="CONTACTED">CONTACTED (Kontaktováno)</option>
                     <option value="OFFER_SENT">OFFER_SENT (Nabídka Odeslána)</option>
-                    <option value="WON">WON (Zrealizováno & Zaplaceno)</option>
+                    <option value="WON">WON (Vyhráno / Potvrzeno)</option>
+                    <option value="CONFIRMED">CONFIRMED (Záloha Zaplacena)</option>
+                    <option value="COMPLETED">COMPLETED (Akce Odservírována)</option>
+                    <option value="SETTLED">SETTLED (Vyúčtováno & Zaplaceno)</option>
                     <option value="LOST">LOST (Stornováno / Ztraceno)</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block font-bold text-gray-700 mb-1">Finální Tržba / Cena (Kč) *</label>
+                  <label className="block font-bold text-gray-700 mb-1">Finální Realizovaná Cena (Kč) *</label>
                   <input
                     type="number"
                     value={editFinalRevenue}
@@ -388,9 +432,38 @@ export default function CateringLeadsAdmin() {
                 </div>
               )}
 
+              {/* Matouš Economics */}
+              <div className="bg-amber-50/60 p-4 rounded-xl border border-amber-200">
+                <span className="block font-bold text-amber-900 mb-2 uppercase tracking-wider text-[11px]">
+                  👨‍🍳 Matouš Matěj Ekonomika
+                </span>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-gray-700 mb-0.5">Matouš Fixní Fee (Kč)</label>
+                    <input
+                      type="number"
+                      value={editChefFee}
+                      onChange={(e) => setEditChefFee(parseInt(e.target.value) || 0)}
+                      className="w-full p-2 rounded-lg border border-gray-300 bg-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 mb-0.5">Matouš Royalty (% z tržby)</label>
+                    <input
+                      type="number"
+                      step="0.5"
+                      value={editChefRoyalty}
+                      onChange={(e) => setEditChefRoyalty(parseFloat(e.target.value) || 0)}
+                      className="w-full p-2 rounded-lg border border-gray-300 bg-white"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Direct Costs Breakdown */}
               <div className="pt-2 border-t border-gray-100">
                 <span className="block font-bold text-gray-900 mb-2 uppercase tracking-wider text-[11px]">
-                  Rozpad Skutečných Nákladů Akce (Kč)
+                  Rozpad Přímých Nákladů Akce (Kč)
                 </span>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   <div>
@@ -403,16 +476,7 @@ export default function CateringLeadsAdmin() {
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-600 mb-0.5">Šéfkuchař (Matouš)</label>
-                    <input
-                      type="number"
-                      value={editChefCost}
-                      onChange={(e) => setEditChefCost(parseInt(e.target.value) || 0)}
-                      className="w-full p-2 rounded-lg border border-gray-300"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-600 mb-0.5">Personál (Obsluha)</label>
+                    <label className="block text-gray-600 mb-0.5">Obsluha & Servis</label>
                     <input
                       type="number"
                       value={editStaffCost}
@@ -430,7 +494,7 @@ export default function CateringLeadsAdmin() {
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-600 mb-0.5">Inventář & Sklo</label>
+                    <label className="block text-gray-600 mb-0.5">Inventář & Porcelán</label>
                     <input
                       type="number"
                       value={editEquipmentCost}
@@ -447,28 +511,46 @@ export default function CateringLeadsAdmin() {
                       className="w-full p-2 rounded-lg border border-gray-300"
                     />
                   </div>
+                  <div>
+                    <label className="block text-gray-600 mb-0.5">Ostatní náklady</label>
+                    <input
+                      type="number"
+                      value={editOtherCost}
+                      onChange={(e) => setEditOtherCost(parseInt(e.target.value) || 0)}
+                      className="w-full p-2 rounded-lg border border-gray-300"
+                    />
+                  </div>
                 </div>
               </div>
 
               {/* Calculated Preview Box */}
               {(() => {
-                const totalC = editFoodCost + editChefCost + editStaffCost + editTransportCost + editEquipmentCost + editMarketingCost + editOtherCost;
-                const contrib = editFinalRevenue - totalC;
-                const margin = editFinalRevenue > 0 ? Number(((contrib / editFinalRevenue) * 100).toFixed(2)) : 0;
+                const chefTot = editChefFee + Math.round(editFinalRevenue * (editChefRoyalty / 100));
+                const direct = editFoodCost + chefTot + editStaffCost + editTransportCost + editEquipmentCost;
+                const grossContr = editFinalRevenue - direct;
+                const acqContr = grossContr - editMarketingCost;
+                const netContr = acqContr - editOtherCost;
+                const margin = editFinalRevenue > 0 ? Number(((netContr / editFinalRevenue) * 100).toFixed(2)) : 0;
                 const isTarget = margin >= 25;
 
                 return (
-                  <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 flex items-center justify-between text-xs">
-                    <div>
-                      <span className="text-gray-500 block">Celkové Náklady: {totalC.toLocaleString("cs-CZ")} Kč</span>
-                      <span className="font-bold text-gray-900 block">Čistý Zisk (Contribution): {contrib.toLocaleString("cs-CZ")} Kč</span>
+                  <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 space-y-1 text-xs">
+                    <div className="flex justify-between text-gray-600">
+                      <span>Gross Contribution (Před marketingem):</span>
+                      <span className="font-bold">{grossContr.toLocaleString("cs-CZ")} Kč</span>
                     </div>
-                    <div className="text-right">
-                      <span className={`text-xl font-black ${isTarget ? "text-emerald-700" : "text-amber-600"}`}>
-                        {margin}% Marže
-                      </span>
-                      <span className="block text-[10px] text-gray-500">
-                        {isTarget ? "🟢 Cíl Profit Gate Splněn (≥25%)" : "⚠️ Pod Cílovou Marží"}
+                    <div className="flex justify-between text-gray-600">
+                      <span>Acquisition Contribution (Po marketingu):</span>
+                      <span className="font-bold">{acqContr.toLocaleString("cs-CZ")} Kč</span>
+                    </div>
+                    <div className="flex justify-between text-gray-900 pt-1 border-t border-gray-200 font-bold">
+                      <span>Net Event Contribution (Čistý Zisk):</span>
+                      <span className="text-emerald-700">{netContr.toLocaleString("cs-CZ")} Kč</span>
+                    </div>
+                    <div className="flex items-center justify-between pt-1">
+                      <span className="text-gray-500">Čistá marže eventu:</span>
+                      <span className={`text-base font-black ${isTarget ? "text-emerald-700" : "text-amber-600"}`}>
+                        {margin}% {isTarget ? "🟢 (Target ≥25% splněn)" : "⚠️ (Pod cílovou marží)"}
                       </span>
                     </div>
                   </div>
@@ -487,7 +569,7 @@ export default function CateringLeadsAdmin() {
                   type="submit"
                   className="px-5 py-2 bg-emerald-700 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-sm"
                 >
-                  Uložit Finanční Výsledky
+                  Uložit Výsledky Akce
                 </button>
               </div>
             </form>

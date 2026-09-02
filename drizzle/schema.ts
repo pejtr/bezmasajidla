@@ -272,8 +272,18 @@ export const cateringLeads = mysqlTable(
   {
     id: int("id").autoincrement().primaryKey(),
     leadCode: varchar("leadCode", { length: 64 }).notNull().unique(),
-    status: mysqlEnum("status", ["NEW", "OFFER_SENT", "WON", "LOST"]).default("NEW").notNull(),
+    status: mysqlEnum("status", [
+      "NEW",
+      "CONTACTED",
+      "OFFER_SENT",
+      "WON",
+      "CONFIRMED",
+      "COMPLETED",
+      "SETTLED",
+      "LOST",
+    ]).default("NEW").notNull(),
     lostReason: text("lostReason"),
+    isTest: boolean("isTest").default(false).notNull(),
 
     // Customer & Event Info
     name: text("name").notNull(),
@@ -290,16 +300,28 @@ export const cateringLeads = mysqlTable(
     includeGlassware: boolean("includeGlassware").default(false).notNull(),
     includeStaff: boolean("includeStaff").default(false).notNull(),
 
-    // Financial & Profit Gate Metrics
+    // Financial Revenue Buckets
     estimatedRevenue: int("estimatedRevenue").notNull(),
+    bookedRevenue: int("bookedRevenue"),
+    realizedRevenue: int("realizedRevenue"),
+    paidRevenue: int("paidRevenue"),
     finalRevenue: int("finalRevenue"),
+
+    // Cost Breakdown & Matouš Economics
     foodCost: int("foodCost"),
-    chefCost: int("chefCost"),
+    chefFee: int("chefFee"),
+    chefRoyalty: int("chefRoyalty"),
+    chefTotalCost: int("chefTotalCost"),
     staffCost: int("staffCost"),
     transportCost: int("transportCost"),
     equipmentCost: int("equipmentCost"),
     marketingCost: int("marketingCost"),
     otherCost: int("otherCost"),
+
+    // Layered Contributions & Profit Gate v2
+    grossContribution: int("grossContribution"),
+    acquisitionContribution: int("acquisitionContribution"),
+    netEventContribution: int("netEventContribution"),
     contribution: int("contribution"),
     marginPct: decimal("marginPct", { precision: 5, scale: 2 }),
 
@@ -310,12 +332,19 @@ export const cateringLeads = mysqlTable(
     referrer: text("referrer"),
     landingPage: text("landingPage"),
 
+    // Sales Ops SLA Timestamps
+    firstContactAt: timestamp("firstContactAt"),
+    offerSentAt: timestamp("offerSentAt"),
+    wonAt: timestamp("wonAt"),
+    completedAt: timestamp("completedAt"),
+    settledAt: timestamp("settledAt"),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   },
   table => ({
     statusIdx: index("cateringLeads_status_idx").on(table.status),
     createdAtIdx: index("cateringLeads_createdAt_idx").on(table.createdAt),
+    isTestIdx: index("cateringLeads_isTest_idx").on(table.isTest),
   })
 );
 

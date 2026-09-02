@@ -115,6 +115,7 @@ export default function CateringPage() {
     date: "",
     eventType: "firemni",
     notes: "",
+    website_hp: "",
   });
 
   // Load UTM & Attribution parameters on mount
@@ -631,6 +632,17 @@ export default function CateringPage() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Honeypot Anti-Bot Field */}
+                <input
+                  type="text"
+                  name="website_hp"
+                  value={formData.website_hp}
+                  onChange={(e) => setFormData({ ...formData, website_hp: e.target.value })}
+                  style={{ display: "none" }}
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-[#2C352E] uppercase mb-1">
