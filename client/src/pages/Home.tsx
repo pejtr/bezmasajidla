@@ -88,7 +88,7 @@ export default function Home() {
           <div className="max-w-2xl space-y-6">
             <div className="inline-flex items-center gap-2 bg-emerald-800/60 backdrop-blur border border-emerald-500/30 text-amber-300 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide">
               <span>🌿 CRAVE × ABUNDANCE × CRAFT</span>
-              <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
             </div>
 
             <h1
