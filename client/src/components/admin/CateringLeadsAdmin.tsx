@@ -1,6 +1,6 @@
 // ============================================================
 // BEZMASAJIDLA.CZ — Catering Sales Ops & Profit Gate v2 CRM Dashboard
-// MATOUŠ MATĚJ × BEZMASÁJÍDLA.CZ
+// MATOUŠ × BEZMASÁJÍDLA.CZ
 // Layered Contributions, Matouš Economics & Sales Lifecycle Statuses
 // ============================================================
 
@@ -246,7 +246,7 @@ export default function CateringLeadsAdmin() {
           <div>
             <h3 className="text-lg font-bold text-gray-900">Catering Sales Ops & Profit Gate v2 CRM</h3>
             <p className="text-xs text-gray-500">
-              Matouš Matěj × BezmasáJídla.cz — Řízení obchodního cyklu, Matouš-ekonomika & vrstvené marže
+              Matouš × BezmasáJídla.cz — Řízení obchodního cyklu, Matouš-ekonomika & vrstvené marže
             </p>
           </div>
           <button
@@ -435,7 +435,7 @@ export default function CateringLeadsAdmin() {
               {/* Matouš Economics */}
               <div className="bg-amber-50/60 p-4 rounded-xl border border-amber-200">
                 <span className="block font-bold text-amber-900 mb-2 uppercase tracking-wider text-[11px]">
-                  👨‍🍳 Matouš Matěj Ekonomika
+                  👨‍🍳 Matouš Ekonomika
                 </span>
                 <div className="grid grid-cols-2 gap-3">
                   <div>

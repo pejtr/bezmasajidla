@@ -1,6 +1,6 @@
 // ============================================================
 // BEZMASAJIDLA.CZ — Commercial Signature Catering Engine
-// MATOUŠ MATĚJ × BEZMASÁJÍDLA.CZ
+// MATOUŠ × BEZMASÁJÍDLA.CZ
 // 3 Standard Packages, Server-Validated Calculator & Revenue Gate
 // ============================================================
 
@@ -61,7 +61,7 @@ const CATERING_PACKAGES = [
     features: [
       "6× Studené tapas & bruschetty (hummus, pečený lilek, sušená rajčata)",
       "3× Teplé signature chody (květákový steak, seitanový goulash, varenyky)",
-      "2× Autorský dezert Matouše Matěje",
+      "2× Autorský dezert Matouše",
       "Signature nealko bar & ovocné limonády v ceně",
       "Kompletní servírovací rautové nádobí",
     ],
@@ -74,7 +74,7 @@ const CATERING_PACKAGES = [
     maxGuests: 15,
     tagline: "Osobní Chef Experience",
     badge: "VIP Degustace",
-    description: "Komorní fine-dining pro 6 až 15 osob s osobní účastí šéfkuchaře Matouše Matěje.",
+    description: "Komorní fine-dining pro 6 až 15 osob s osobní účastí šéfkuchaře Matouše.",
     color: "border-purple-600 bg-purple-50/40 text-purple-950",
     features: [
       "5 Chodové degustační menu připravené přímo před hosty",
@@ -203,7 +203,7 @@ export default function CateringPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#F9FAF8]">
       <SEOHead
-        title="Bezmasý Catering v Praze — Signature Catering by Matouš Matěj × BezmasáJídla.cz"
+        title="Bezmasý Catering v Praze — Signature Catering by Matouš × BezmasáJídla.cz"
         description="Prémiový bezmasý catering pro firmy, soukromé oslavy a wedding eventy v Praze. Kalkulačka ceny na míru, 3 pevné balíčky, osobní chef experience."
         ogType="website"
         ogUrl="https://www.bezmasajidla.cz/catering"
@@ -226,7 +226,7 @@ export default function CateringPage() {
             <div className="flex-1 text-center lg:text-left">
               <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider text-amber-300 uppercase mb-4">
                 <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                <span>MATOUŠ MATĚJ × BEZMASÁJÍDLA.CZ</span>
+                <span>MATOUŠ × BEZMASÁJÍDLA.CZ</span>
               </div>
 
               <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight mb-4 font-serif">
@@ -235,7 +235,7 @@ export default function CateringPage() {
               </h1>
 
               <p className="text-base sm:text-lg text-emerald-100/90 font-light max-w-2xl mb-6 leading-relaxed">
-                Signature catering od šéfkuchaře Matouše Matěje. Moderní evropská kuchyně, autorské receptury a středomořská lehkost pro firmy, soukromé oslavy i chvíle, kdy jídlo nemá být jen občerstvení, ale součást zážitku.
+                Signature catering od šéfkuchaře Matouše. Moderní evropská kuchyně, autorské receptury a středomořská lehkost pro firmy, soukromé oslavy i chvíle, kdy jídlo nemá být jen občerstvení, ale součást zážitku.
               </p>
 
               {/* Badges Bar */}
@@ -278,11 +278,11 @@ export default function CateringPage() {
                 <div className="w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-amber-400 mb-4 shadow-md">
                   <img
                     src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=400&q=80"
-                    alt="Matouš Matěj — Profesionální Šéfkuchař"
+                    alt="Matouš — Profesionální Šéfkuchař"
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-1">Matouš Matěj</h3>
+                <h3 className="text-xl font-bold text-white mb-1">Matouš</h3>
                 <p className="text-xs text-amber-400 font-bold uppercase tracking-wider mb-3">
                   Profesionální Šéfkuchař
                 </p>
@@ -627,7 +627,7 @@ export default function CateringPage() {
                 <CheckCircle2 className="w-12 h-12 text-[#4A7C59] mx-auto mb-3" />
                 <h3 className="text-xl font-bold text-[#1C2826] mb-2">Poptávka byla úspěšně odeslána!</h3>
                 <p className="text-sm text-[#5A685D]">
-                  Děkujeme. Šéfkuchař Matouš Matěj a náš tým se vám ozvou zpět na e-mail <strong>{formData.email}</strong> do 24 hodin s finálním potvrzením termínu a rozpočtu.
+                  Děkujeme. Šéfkuchař Matouš a náš tým se vám ozvou zpět na e-mail <strong>{formData.email}</strong> do 24 hodin s finálním potvrzením termínu a rozpočtu.
                 </p>
               </div>
             ) : (

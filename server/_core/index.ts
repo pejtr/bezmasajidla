@@ -364,7 +364,7 @@ async function startServer() {
       features: [
         "6× Studené tapas & bruschetty (hummus, pečený lilek, sušená rajčata)",
         "3× Teplé signature chody (květákový steak, seitanový goulash, varenyky)",
-        "2× Autorský dezert Matouše Matěje",
+        "2× Autorský dezert Matouše",
         "Signature nealko bar & ovocné limonády v ceně",
         "Kompletní servírovací rautové nádobí",
       ],
@@ -376,7 +376,7 @@ async function startServer() {
       minGuests: 6,
       maxGuests: 15,
       tagline: "Osobní Chef Experience",
-      description: "Komorní fine-dining pro 6 až 15 osob s osobní účastí šéfkuchaře Matouše Matěje.",
+      description: "Komorní fine-dining pro 6 až 15 osob s osobní účastí šéfkuchaře Matouše.",
       features: [
         "5 Chodové degustační menu připravené přímo před hosty",
         "Párování se signature nealko mošty, kombuchami a výběrovou kávou",

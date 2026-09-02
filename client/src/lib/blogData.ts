@@ -109,7 +109,7 @@ Budapešť otevírá naši novou rubriku **Cestování**. V dalších průvodcí
     publishedAt: "2026-02-15",
     readingTimeMin: 7,
     coverImage:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-top10-restauraci-2026-GG52nEiDEd32Ak7ZoMrq7b.webp",
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1200&q=80",
     coverImageAlt:
       "Veganské jídlo v pražské restauraci — barevné misky se zeleninou",
     excerpt:
@@ -176,7 +176,7 @@ Při výběru veganské restaurace v Praze doporučujeme zohlednit několik fakt
     publishedAt: "2026-01-28",
     readingTimeMin: 6,
     coverImage:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-pruvodce-prahou-ctvrti-CqPYeA7rpXcHnjTFsN6YB8.webp",
+      "https://images.unsplash.com/photo-1541849546-216549ae216d?auto=format&fit=crop&w=1200&q=80",
     coverImageAlt: "Pohled na Prahu z ptáčí perspektivy — střechy a parky",
     excerpt:
       "Praha má přes 150 veganských a vegetariánských restaurací, ale jejich rozmístění po městě je nerovnoměrné. Vinohrady a Žižkov vévodí nabídce, zatímco některé okrajové čtvrti stále zaostávají. Přinášíme přehled čtvrtí, kde se vyplatí hledat bezmasé jídlo.",
@@ -232,7 +232,7 @@ Na naší platformě najdete interaktivní mapu všech veganských a vegetarián
     publishedAt: "2026-01-10",
     readingTimeMin: 5,
     coverImage:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-restaurace-pro-deti-4R54tN9Pg8itEE4N5JASMG.webp",
+      "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=1200&q=80",
     coverImageAlt: "Rodina u stolu s barevnými vegetariánskými jídly",
     excerpt:
       "Vzít děti do veganské restaurace může být výzva — ne každý podnik myslí na nejmenší hosty. Přinášíme přehled pražských restaurací, které nabízejí dětské menu, přátelský přístup a prostředí vhodné pro celou rodinu.",
@@ -282,7 +282,7 @@ Pro rychlé a dostupné stravování s dětmi jsou vhodné i fast food řetězce
     publishedAt: "2025-12-20",
     readingTimeMin: 5,
     coverImage:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-veganske-brunche-CKfN9994upzJuaRbq9fq7J.webp",
+      "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=1200&q=80",
     coverImageAlt:
       "Veganský brunch — avokádový toast, smoothie bowl a čerstvé ovoce",
     excerpt:
@@ -333,7 +333,7 @@ Brunch je ideální pro pozdní vstávání a delší posezení. Pokud hledáte 
     publishedAt: "2025-12-05",
     readingTimeMin: 6,
     coverImage:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-ceska-veganska-kuchyne-Z3BaSWsmxY2tRDXFpLi6s4.webp",
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1200&q=80",
     coverImageAlt:
       "Tradiční česká veganská jídla — svíčková z celeru, houbový guláš",
     excerpt:
@@ -397,7 +397,7 @@ Pokud vás česká veganská kuchyně zaujala natolik, že ji chcete vyzkoušet 
     publishedAt: "2026-03-10",
     readingTimeMin: 6,
     coverImage:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-fast-food-vegan-VDP4UHZkDjJMTyxjf2vJfv.webp",
+      "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=1200&q=80",
     coverImageAlt: "Veganský burger a hranolky na dřevěném prkně",
     excerpt:
       "Veganský fast food už není oxymorón. Praha nabízejí deseti míst, kde se najdete rychle, levně a bez masa — od indických bujetů po veganské burgery.",

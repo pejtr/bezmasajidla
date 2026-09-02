@@ -12,18 +12,28 @@ import NewsletterBanner from "@/components/NewsletterBanner";
 import { WebsiteJsonLd } from "@/components/JsonLd";
 import SEOHead from "@/components/SEOHead";
 
-const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hero-bg-8DsoJ9QpVxJTndww9Yv7SZ.webp";
+const HERO_POSTER = "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1920&q=80";
+const HERO_VIDEO = "https://cdn.coverr.co/videos/coverr-preparing-a-salad-5437/1080p.mp4";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const latestRecipes = [...recipes].slice(0, 3);
-  const czechClassics = [...recipes].filter(r => r.cuisine?.toLowerCase().includes("česká")).slice(0, 3);
-  const veganRecipes = [...recipes].filter(r => r.isVegan).slice(0, 3);
-  const quickDinners = [...recipes].filter(r => r.prepTime + r.cookTime <= 30).slice(0, 3);
+  const czechClassics = [...recipes]
+    .filter(
+      (r) =>
+        r.cuisine?.toLowerCase().includes("česká") ||
+        r.tags.some((t) => t.toLowerCase().includes("česká")) ||
+        r.title.toLowerCase().includes("svíčková") ||
+        r.title.toLowerCase().includes("kulajda") ||
+        r.title.toLowerCase().includes("čočk")
+    )
+    .slice(0, 3);
+  const veganRecipes = [...recipes].filter((r) => r.isVegan).slice(0, 3);
+  const quickDinners = [...recipes].filter((r) => r.prepTime + r.cookTime <= 30).slice(0, 3);
 
-  const vegetarianRestaurants = [...restaurants].filter(r => r.type === "vegetarian").slice(0, 3);
-  const veganRestaurants = [...restaurants].filter(r => r.type === "vegan").slice(0, 3);
+  const vegetarianRestaurants = [...restaurants].filter((r) => r.type === "vegetarian").slice(0, 3);
+  const veganRestaurants = [...restaurants].filter((r) => r.type === "vegan").slice(0, 3);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,15 +52,24 @@ export default function Home() {
       <WebsiteJsonLd />
       <Header />
 
-      {/* ── HERO ── */}
-      <section className="relative min-h-[580px] flex items-center overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${HERO_BG})` }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-emerald-950/85 via-emerald-900/70 to-emerald-900/30" />
+      {/* ── HERO WITH CINEMATIC VIDEO BACKGROUND ── */}
+      <section className="relative min-h-[620px] flex items-center overflow-hidden bg-emerald-950">
+        {/* Background HTML5 Video Loop */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          poster={HERO_POSTER}
+          className="absolute inset-0 w-full h-full object-cover filter brightness-75 scale-105"
+        >
+          <source src={HERO_VIDEO} type="video/mp4" />
+        </video>
 
-        <div className="relative container py-20">
+        {/* Dark Gradient Overlay for Maximum Text Readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-emerald-950/90 via-emerald-950/75 to-emerald-900/40 backdrop-blur-[1px]" />
+
+        <div className="relative container py-20 z-10">
           <div className="max-w-2xl">
             <h1
               className="text-5xl md:text-6xl font-bold text-white leading-tight mb-6"
@@ -61,14 +80,14 @@ export default function Home() {
               bez masa
             </h1>
 
-            <p className="text-emerald-100 text-lg mb-10 leading-relaxed max-w-lg">
+            <p className="text-emerald-100 text-lg mb-10 leading-relaxed max-w-lg font-light">
               Český průvodce pro každé bezmasé jídlo. Od jednoduchých veganských receptů přes vegetariánské recepty až po tipy na vegan krabičkovou dietu a nejlepší podniky.
             </p>
 
             {/* Hero CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 max-w-lg">
               <Link href="/recepty">
-                <Button className="w-full sm:w-auto bg-amber-400 hover:bg-amber-300 text-amber-900 font-bold px-8 py-6 rounded-xl shadow-lg text-lg flex items-center justify-center">
+                <Button className="w-full sm:w-auto bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold px-8 py-6 rounded-xl shadow-lg text-lg flex items-center justify-center">
                   <Utensils className="w-5 h-5 mr-2" />
                   Najít recept
                 </Button>
