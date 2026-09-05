@@ -28,6 +28,7 @@ import {
   ShieldCheck,
   Check,
 } from "lucide-react";
+import { trackCateringEvent } from "@/lib/cateringTracking";
 
 // ── 3 Standard Commercial Packages ──────────────────────────
 const CATERING_PACKAGES = [
@@ -118,16 +119,26 @@ export default function CateringPage() {
     website_hp: "",
   });
 
-  // Load UTM & Attribution parameters on mount
+  const [hasStartedCalculator, setHasStartedCalculator] = useState(false);
+  const [hasStartedInquiry, setHasStartedInquiry] = useState(false);
+
+  // Load UTM & Attribution parameters on mount + track catering_view
   useEffect(() => {
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
-      setUtmParams({
+      const utm = {
         utmSource: urlParams.get("utm_source") || "",
         utmMedium: urlParams.get("utm_medium") || "",
         utmCampaign: urlParams.get("utm_campaign") || "",
         referrer: document.referrer || "",
         landingPage: window.location.pathname,
+      };
+      setUtmParams(utm);
+
+      // Track catering_view
+      trackCateringEvent("catering_view", {
+        packageId: selectedPkgId,
+        ...utm,
       });
     }
   }, []);
@@ -137,6 +148,13 @@ export default function CateringPage() {
   // Hard boundary package switcher
   const handleSelectPackage = (pkgId: string) => {
     setSelectedPkgId(pkgId);
+    if (!hasStartedCalculator) {
+      setHasStartedCalculator(true);
+      trackCateringEvent("calculator_started", {
+        packageId: pkgId,
+        guestCount,
+      });
+    }
     const pkg = CATERING_PACKAGES.find((p) => p.id === pkgId);
     if (pkg) {
       if (guestCount < pkg.minGuests) {
@@ -144,6 +162,17 @@ export default function CateringPage() {
       } else if (pkg.maxGuests && guestCount > pkg.maxGuests) {
         setGuestCount(pkg.maxGuests);
       }
+    }
+  };
+
+  const handleGuestCountChange = (newCount: number) => {
+    setGuestCount(newCount);
+    if (!hasStartedCalculator) {
+      setHasStartedCalculator(true);
+      trackCateringEvent("calculator_started", {
+        packageId: selectedPkgId,
+        guestCount: newCount,
+      });
     }
   };
 
@@ -157,9 +186,33 @@ export default function CateringPage() {
   const estimatedTotal = calculatedPerPerson * guestCount + staffFlatFee;
 
   const handleApplyCalculatorToForm = () => {
+    trackCateringEvent("calculator_completed", {
+      packageId: activePackage.id,
+      packageName: activePackage.name,
+      guestCount,
+      estimatedRevenue: estimatedTotal,
+    });
+    trackCateringEvent("inquiry_started", {
+      packageId: activePackage.id,
+      packageName: activePackage.name,
+      guestCount,
+      estimatedRevenue: estimatedTotal,
+    });
     const el = document.getElementById("poptavka");
     if (el) {
       el.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const handleFormFocus = () => {
+    if (!hasStartedInquiry) {
+      setHasStartedInquiry(true);
+      trackCateringEvent("inquiry_started", {
+        packageId: activePackage.id,
+        packageName: activePackage.name,
+        guestCount,
+        estimatedRevenue: estimatedTotal,
+      });
     }
   };
 
@@ -191,6 +244,16 @@ export default function CateringPage() {
         setServerError(data.error || "Chyba při odesílání poptávky.");
       } else {
         setFormSubmitted(true);
+        trackCateringEvent("inquiry_submitted", {
+          leadCode: data.leadCode,
+          packageId: activePackage.id,
+          packageName: activePackage.name,
+          guestCount,
+          estimatedRevenue: data.estimatedRevenue || estimatedTotal,
+          utmSource: utmParams.utmSource,
+          utmMedium: utmParams.utmMedium,
+          utmCampaign: utmParams.utmCampaign,
+        });
       }
     } catch (err: any) {
       console.error("Inquiry submit error", err);
@@ -460,7 +523,7 @@ export default function CateringPage() {
                     max={activePackage.maxGuests || 150}
                     step={1}
                     value={guestCount}
-                    onChange={(e) => setGuestCount(parseInt(e.target.value) || activePackage.minGuests)}
+                    onChange={(e) => handleGuestCountChange(parseInt(e.target.value) || activePackage.minGuests)}
                     className="w-full h-2 bg-emerald-950 rounded-lg appearance-none cursor-pointer accent-amber-400"
                   />
                   <div className="flex justify-between text-[10px] text-emerald-200/60 mt-1">
@@ -653,6 +716,7 @@ export default function CateringPage() {
                       required
                       placeholder="Jan Novák / Název firmy"
                       value={formData.name}
+                      onFocus={handleFormFocus}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#4A7C59] focus:outline-none text-sm"
                     />
@@ -667,6 +731,7 @@ export default function CateringPage() {
                       required
                       placeholder="jan.novak@email.cz"
                       value={formData.email}
+                      onFocus={handleFormFocus}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#4A7C59] focus:outline-none text-sm"
                     />
