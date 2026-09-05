@@ -401,11 +401,18 @@ async function startServer() {
 
   // Admin Authorization Middleware Guard (RBAC)
   const requireAdminMiddleware = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    try {
       const adminSecret = req.headers["x-admin-secret"];
-      const configuredSecret = process.env.ADMIN_SECRET || "bezmasajidla-admin-secret-2026";
+      const configuredSecret = process.env.ADMIN_SECRET;
 
-      if (typeof adminSecret === "string" && adminSecret.length > 0 && adminSecret === configuredSecret) {
+      // In all environments, static header auth strictly requires a configured ADMIN_SECRET of at least 16 characters.
+      // No hardcoded repo fallbacks are permitted.
+      if (
+        typeof adminSecret === "string" &&
+        adminSecret.length > 0 &&
+        typeof configuredSecret === "string" &&
+        configuredSecret.trim().length >= 16 &&
+        adminSecret === configuredSecret
+      ) {
         return next();
       }
 
