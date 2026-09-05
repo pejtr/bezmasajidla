@@ -240,16 +240,18 @@ export default function CateringPage() {
       });
 
       const data = await res.json();
-      if (!res.ok || data.error) {
-        setServerError(data.error || "Chyba při odesílání poptávky.");
+      if (!res.ok || data.error || !data.leadCode) {
+        setServerError(data.error || "Chyba při odesílání poptávky. Zkuste to prosím znovu.");
       } else {
         setFormSubmitted(true);
         trackCateringEvent("inquiry_submitted", {
           leadCode: data.leadCode,
+          transaction_id: data.leadCode,
           packageId: activePackage.id,
           packageName: activePackage.name,
           guestCount,
           estimatedRevenue: data.estimatedRevenue || estimatedTotal,
+          value: data.estimatedRevenue || estimatedTotal,
           utmSource: utmParams.utmSource,
           utmMedium: utmParams.utmMedium,
           utmCampaign: utmParams.utmCampaign,
