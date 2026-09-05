@@ -95,13 +95,16 @@ export default function CateringPage() {
   const [includeGlassware, setIncludeGlassware] = useState<boolean>(false);
   const [includeStaff, setIncludeStaff] = useState<boolean>(false);
 
-  // Attribution tracking state
+  // Attribution tracking state (UTM + Google Click IDs)
   const [utmParams, setUtmParams] = useState({
     utmSource: "",
     utmMedium: "",
     utmCampaign: "",
     referrer: "",
     landingPage: "",
+    gclid: "",
+    gbraid: "",
+    wbraid: "",
   });
 
   // Form submission state
@@ -122,16 +125,33 @@ export default function CateringPage() {
   const [hasStartedCalculator, setHasStartedCalculator] = useState(false);
   const [hasStartedInquiry, setHasStartedInquiry] = useState(false);
 
-  // Load UTM & Attribution parameters on mount + track catering_view
+  // Load UTM & Google Click IDs on mount + track catering_view
   useEffect(() => {
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
+
+      // Extract & persist Google Click IDs
+      const rawGclid = urlParams.get("gclid");
+      const rawGbraid = urlParams.get("gbraid");
+      const rawWbraid = urlParams.get("wbraid");
+
+      if (rawGclid) sessionStorage.setItem("bj_gclid", rawGclid);
+      if (rawGbraid) sessionStorage.setItem("bj_gbraid", rawGbraid);
+      if (rawWbraid) sessionStorage.setItem("bj_wbraid", rawWbraid);
+
+      const gclid = rawGclid || sessionStorage.getItem("bj_gclid") || "";
+      const gbraid = rawGbraid || sessionStorage.getItem("bj_gbraid") || "";
+      const wbraid = rawWbraid || sessionStorage.getItem("bj_wbraid") || "";
+
       const utm = {
         utmSource: urlParams.get("utm_source") || "",
         utmMedium: urlParams.get("utm_medium") || "",
         utmCampaign: urlParams.get("utm_campaign") || "",
         referrer: document.referrer || "",
         landingPage: window.location.pathname,
+        gclid,
+        gbraid,
+        wbraid,
       };
       setUtmParams(utm);
 

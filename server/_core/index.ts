@@ -401,6 +401,7 @@ async function startServer() {
 
   // Admin Authorization Middleware Guard (RBAC)
   const requireAdminMiddleware = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
       const adminSecret = req.headers["x-admin-secret"];
       const configuredSecret = process.env.ADMIN_SECRET;
 
@@ -473,6 +474,9 @@ async function startServer() {
     utmCampaign?: string;
     referrer?: string;
     landingPage?: string;
+    gclid?: string;
+    gbraid?: string;
+    wbraid?: string;
     firstContactAt?: string;
     offerSentAt?: string;
     wonAt?: string;
@@ -510,7 +514,8 @@ async function startServer() {
       const {
         name, email, phone, date, notes,
         packageId, guestCount, includeDrinks, includeGlassware, includeStaff,
-        utmSource, utmMedium, utmCampaign, referrer, landingPage, isTest
+        utmSource, utmMedium, utmCampaign, referrer, landingPage,
+        gclid, gbraid, wbraid, isTest
       } = body;
 
       if (!name || !email || !phone || !packageId || !guestCount) {
@@ -578,6 +583,9 @@ async function startServer() {
         utmCampaign: utmCampaign || undefined,
         referrer: referrer || undefined,
         landingPage: landingPage || undefined,
+        gclid: gclid || undefined,
+        gbraid: gbraid || undefined,
+        wbraid: wbraid || undefined,
         createdAt: new Date().toISOString(),
       };
 
@@ -610,6 +618,9 @@ async function startServer() {
             utmCampaign: leadRecord.utmCampaign,
             referrer: leadRecord.referrer,
             landingPage: leadRecord.landingPage,
+            gclid: leadRecord.gclid,
+            gbraid: leadRecord.gbraid,
+            wbraid: leadRecord.wbraid,
           });
         }
       } catch (dbErr) {
@@ -622,6 +633,9 @@ async function startServer() {
       console.log(`Package: ${pkg.name} | Guests: ${numGuests}`);
       console.log(`Server-Calculated Estimated Revenue: ${estimatedRevenue} Kč`);
       console.log(`UTM: ${utmSource || 'direct'} / ${utmMedium || 'none'} / ${utmCampaign || 'none'}`);
+      if (gclid || gbraid || wbraid) {
+        console.log(`Google Click IDs: gclid=${gclid || 'none'} | gbraid=${gbraid || 'none'} | wbraid=${wbraid || 'none'}`);
+      }
       console.log("==================================================");
 
       return res.status(200).json({

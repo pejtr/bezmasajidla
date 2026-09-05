@@ -23,9 +23,13 @@ export interface CateringTrackingPayload {
   transaction_id?: string;
   value?: number;
   currency?: string;
+  estimated_pipeline_value?: number;
   utmSource?: string;
   utmMedium?: string;
   utmCampaign?: string;
+  gclid?: string;
+  gbraid?: string;
+  wbraid?: string;
   [key: string]: any;
 }
 
@@ -99,6 +103,7 @@ export function trackCateringEvent(
     timestamp: new Date().toISOString(),
     currency: "CZK",
     value: revenueValue,
+    estimated_pipeline_value: revenueValue,
     transaction_id: data.leadCode || undefined,
     consent_analytics: consent.analytics ? "granted" : "denied",
     consent_marketing: consent.marketing ? "granted" : "denied",

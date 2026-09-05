@@ -332,6 +332,11 @@ export const cateringLeads = mysqlTable(
     referrer: text("referrer"),
     landingPage: text("landingPage"),
 
+    // Google Ads Click Tracking IDs (for Offline Conversion Import / OCI)
+    gclid: varchar("gclid", { length: 256 }),
+    gbraid: varchar("gbraid", { length: 256 }),
+    wbraid: varchar("wbraid", { length: 256 }),
+
     // Sales Ops SLA Timestamps
     firstContactAt: timestamp("firstContactAt"),
     offerSentAt: timestamp("offerSentAt"),
