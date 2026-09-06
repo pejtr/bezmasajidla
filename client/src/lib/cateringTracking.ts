@@ -106,8 +106,6 @@ export function trackCateringEvent(
     page: "/catering",
     timestamp: new Date().toISOString(),
     currency: "CZK",
-    value: conversionValue,
-    estimated_pipeline_value: revenueEstimate,
     transaction_id: data.leadCode || undefined,
     consent_analytics: consent.analytics ? "granted" : "denied",
     consent_marketing: consent.marketing ? "granted" : "denied",
@@ -136,7 +134,7 @@ export function trackCateringEvent(
       window.umami.track(eventName, {
         package: data.packageName || data.packageId,
         guests: data.guestCount,
-        value: revenueValue,
+        value: revenueEstimate,
         lead: data.leadCode,
       });
     } catch (err) {
