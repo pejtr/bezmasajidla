@@ -95,19 +95,26 @@ export function trackCateringEvent(
   }
 
   const consent = getCookieConsentPrefs();
-  const revenueValue = data.estimatedRevenue || data.value || 0;
+  const revenueEstimate = data.estimated_pipeline_value || data.estimatedRevenue || 0;
+  // Economic correction: For initial lead inquiry, set unit value = 1 for Maximize Conversions.
+  // Never present unverified calculator estimates as actual revenue to Google Ads bidding!
+  // True revenue is only reported offline via Google Data Manager upon SETTLED status.
+  const conversionValue = eventName === "inquiry_submitted" ? (data.value !== undefined ? data.value : 1) : revenueEstimate;
 
   const eventPayload = {
     event: eventName,
     page: "/catering",
     timestamp: new Date().toISOString(),
     currency: "CZK",
-    value: revenueValue,
-    estimated_pipeline_value: revenueValue,
+    value: conversionValue,
+    estimated_pipeline_value: revenueEstimate,
     transaction_id: data.leadCode || undefined,
     consent_analytics: consent.analytics ? "granted" : "denied",
     consent_marketing: consent.marketing ? "granted" : "denied",
     ...data,
+    // Ensure value is strictly the normalized conversionValue
+    value: conversionValue,
+    estimated_pipeline_value: revenueEstimate,
   };
 
   // 1. Google Tag Manager / Google Ads DataLayer

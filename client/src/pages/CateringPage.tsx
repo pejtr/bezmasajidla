@@ -28,7 +28,7 @@ import {
   ShieldCheck,
   Check,
 } from "lucide-react";
-import { trackCateringEvent } from "@/lib/cateringTracking";
+import { trackCateringEvent, getCookieConsentPrefs } from "@/lib/cateringTracking";
 
 // ── 3 Standard Commercial Packages ──────────────────────────
 const CATERING_PACKAGES = [
@@ -130,18 +130,25 @@ export default function CateringPage() {
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
 
-      // Extract & persist Google Click IDs
+      // Extract & persist Google Click IDs (Strictly consent-gated: only persist custom advertising IDs if marketing consent is granted)
       const rawGclid = urlParams.get("gclid");
       const rawGbraid = urlParams.get("gbraid");
       const rawWbraid = urlParams.get("wbraid");
 
-      if (rawGclid) sessionStorage.setItem("bj_gclid", rawGclid);
-      if (rawGbraid) sessionStorage.setItem("bj_gbraid", rawGbraid);
-      if (rawWbraid) sessionStorage.setItem("bj_wbraid", rawWbraid);
+      const consentPrefs = getCookieConsentPrefs();
+      if (consentPrefs.marketing) {
+        if (rawGclid) sessionStorage.setItem("bj_gclid", rawGclid);
+        if (rawGbraid) sessionStorage.setItem("bj_gbraid", rawGbraid);
+        if (rawWbraid) sessionStorage.setItem("bj_wbraid", rawWbraid);
+      } else {
+        sessionStorage.removeItem("bj_gclid");
+        sessionStorage.removeItem("bj_gbraid");
+        sessionStorage.removeItem("bj_wbraid");
+      }
 
-      const gclid = rawGclid || sessionStorage.getItem("bj_gclid") || "";
-      const gbraid = rawGbraid || sessionStorage.getItem("bj_gbraid") || "";
-      const wbraid = rawWbraid || sessionStorage.getItem("bj_wbraid") || "";
+      const gclid = rawGclid || (consentPrefs.marketing ? sessionStorage.getItem("bj_gclid") || "" : "");
+      const gbraid = rawGbraid || (consentPrefs.marketing ? sessionStorage.getItem("bj_gbraid") || "" : "");
+      const wbraid = rawWbraid || (consentPrefs.marketing ? sessionStorage.getItem("bj_wbraid") || "" : "");
 
       const utm = {
         utmSource: urlParams.get("utm_source") || "",
@@ -263,18 +270,21 @@ export default function CateringPage() {
       if (!res.ok || data.error || !data.leadCode) {
         setServerError(data.error || "Chyba při odesílání poptávky. Zkuste to prosím znovu.");
       } else {
-        setFormSubmitted(true);
+        const estRevenue = data.estimatedRevenue || estimatedTotal;
         trackCateringEvent("inquiry_submitted", {
           leadCode: data.leadCode,
           transaction_id: data.leadCode,
           packageId: activePackage.id,
           packageName: activePackage.name,
           guestCount,
-          estimatedRevenue: data.estimatedRevenue || estimatedTotal,
-          value: data.estimatedRevenue || estimatedTotal,
+          value: 1,
+          estimated_pipeline_value: estRevenue,
           utmSource: utmParams.utmSource,
           utmMedium: utmParams.utmMedium,
           utmCampaign: utmParams.utmCampaign,
+          gclid: utmParams.gclid || undefined,
+          gbraid: utmParams.gbraid || undefined,
+          wbraid: utmParams.wbraid || undefined,
         });
       }
     } catch (err: any) {
