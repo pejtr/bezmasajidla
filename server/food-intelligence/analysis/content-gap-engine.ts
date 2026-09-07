@@ -101,6 +101,10 @@ export class ContentGapEngine {
       opportunities.push({
         concept: conceptName,
         score: scoreResult.score,
+        profitScore: scoreResult.profitScore,
+        decision: scoreResult.decision,
+        whyNow: scoreResult.whyNow,
+        revenueRoutes: scoreResult.revenueRoutes,
         reasons: scoreResult.reasons,
         ingredients,
         techniques,
@@ -131,9 +135,16 @@ export class ContentGapEngine {
 
     for (const item of inventory) {
       const itemTitleTokens = this.tokenize(item.title);
-
-      // Jaccard similarity on title tokens
-      const titleOverlap = this.jaccardSimilarity(conceptTokens, itemTitleTokens);
+      // Jaccard similarity & containment overlap on title tokens
+      let titleIntersection = 0;
+      const titleSet = new Set(itemTitleTokens);
+      conceptTokens.forEach(t => {
+        if (titleSet.has(t)) titleIntersection++;
+      });
+      const minLength = Math.min(conceptTokens.length, itemTitleTokens.length);
+      const containmentOverlap = minLength > 0 ? titleIntersection / minLength : 0;
+      const jaccard = this.jaccardSimilarity(conceptTokens, itemTitleTokens);
+      const titleOverlap = Math.max(jaccard, containmentOverlap * 0.85);
 
       // Tag / ingredient token overlap
       const itemTagTokens = item.tags.flatMap(t => this.tokenize(t));
@@ -142,10 +153,10 @@ export class ContentGapEngine {
       // Weighted similarity score
       const similarityScore = Math.min(
         1,
-        titleOverlap * 0.7 + tagOverlap * 0.3
+        titleOverlap * 0.75 + tagOverlap * 0.25
       );
 
-      if (similarityScore >= 0.25) {
+      if (similarityScore >= 0.20) {
         matches.push({
           slug: item.slug,
           title: item.title,

@@ -13,7 +13,12 @@ import {
 import { normalizeIngredient } from "./normalization/ingredient-normalizer";
 import { normalizeTechniques } from "./normalization/technique-normalizer";
 import { normalizeTags } from "./normalization/tag-normalizer";
-import { detectCraveSignals, calculateOpportunityScore } from "./analysis/signal-scorer";
+import {
+  detectCraveSignals,
+  calculateOpportunityScore,
+  evaluateProfitableContentScore,
+} from "./analysis/signal-scorer";
+import { runLocalProfitabilityEvaluation } from "./analysis/intelligence-runner";
 import { ContentGapEngine } from "./analysis/content-gap-engine";
 import {
   generateTranslationCacheKey,
@@ -328,6 +333,56 @@ describe("Omni Food Intelligence v0.1", () => {
 
       expect(tastyStatus).toBeDefined();
       expect(rapidStatus).toBeDefined();
+    });
+  });
+
+  // ── 8. Commercial Profitability & 10-Theme Evaluation ──────────
+  describe("War Mode v0.2: Profit Opportunity Score & 10 Themes", () => {
+    it("evaluates the 6 commercial pillars with weighted scores and quality multipliers", () => {
+      const result = evaluateProfitableContentScore({
+        concept: "Našlehaná feta s pečenými rajčaty",
+        frequency: 2,
+        craveSignals: ["CREAMY", "ROASTED", "GLOSSY", "SHARING"],
+        cuisine: "středomořská",
+        ingredients: ["feta", "cherry rajčata", "extra panenský olivový olej", "česnek", "bazalka"],
+        techniques: ["mixování", "pečení"],
+        existingMatches: [],
+        isVegetarian: true,
+      });
+
+      expect(result.score).toBeGreaterThanOrEqual(80);
+      expect(result.decision).toBe("CREATE");
+      expect(result.whyNow).toBeDefined();
+      expect(result.whyNow.length).toBeGreaterThan(10);
+      expect(result.revenueRoutes).toContain("Affiliate");
+      expect(result.revenueRoutes).toContain("Catering");
+      expect(result.disclaimer).toBe("HEURISTIC — NOT REVENUE FORECAST");
+    });
+
+    it("runs Local Profitability Intelligence Run on 10 themes and produces actionable decisions", async () => {
+      const results = await runLocalProfitabilityEvaluation();
+      expect(results).toHaveLength(10);
+
+      // Check that at least 3 opportunities are marked CREATE
+      const createCount = results.filter((r: any) => r.decision === "CREATE").length;
+      expect(createCount).toBeGreaterThanOrEqual(3);
+
+      // Verify each CREATE opportunity has WHY_NOW and originalContentBrief
+      results
+        .filter((r: any) => r.decision === "CREATE")
+        .forEach((r: any) => {
+          expect(r.whyNow).toBeDefined();
+          expect(r.whyNow.length).toBeGreaterThan(10);
+          expect(r.originalContentBrief).toBeDefined();
+          expect(r.originalContentBrief.publicationPolicy).toBe("ORIGINAL_CONTENT_REQUIRED");
+          expect(r.originalContentBrief.originalAngle.length).toBeGreaterThan(10);
+        });
+
+      // Verify duplicate concepts receive REVIEW or SKIP
+      const mushroomPasta = results.find((r: any) => r.concept.includes("lesních hub") || r.concept.includes("Těstoviny"));
+      expect(mushroomPasta).toBeDefined();
+      // Should not be CREATE because our catalog has 15+ pasta recipes
+      expect(["REVIEW", "SKIP"]).toContain(mushroomPasta.decision);
     });
   });
 });

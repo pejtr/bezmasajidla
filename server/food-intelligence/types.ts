@@ -142,11 +142,85 @@ export interface ExistingRecipeMatch {
 }
 
 /**
- * Content Gap Result: ContentOpportunity
+ * Action decision for content production
+ * 80-100: CREATE (immediate production)
+ * 60-79:  REVIEW (requires distinct authorial twist)
+ * 0-59:   SKIP (insufficient leverage or high duplication)
+ */
+export type OpportunityDecision = "CREATE" | "REVIEW" | "SKIP";
+
+/**
+ * 6 Commercial Monetization Pillars (War Mode v0.2)
+ * Weights:
+ * - Search Intent: 20%
+ * - Affiliate Potential: 20%
+ * - Social Visual: 20%
+ * - Catering Relevance: 15%
+ * - Cookbook Relevance: 15%
+ * - Newsletter Potential: 10%
+ */
+export interface CommercialScoreBreakdown {
+  searchIntent: number; // 20%
+  affiliatePotential: number; // 20%
+  socialVisual: number; // 20%
+  cateringRelevance: number; // 15%
+  cookbookRelevance: number; // 15%
+  newsletterPotential: number; // 10%
+  rawCommercialScore: number; // Weighted average (0-100)
+}
+
+/**
+ * Multipliers adjusting commercial score based on culinary execution feasibility and catalogue novelty
+ */
+export interface QualityModifiers {
+  contentQualityMultiplier: number; // Crave signals, CZ availability, seasonality (0.75 - 1.15)
+  noveltyMultiplier: number; // Inventory duplication penalty (0.30 - 1.05)
+  maxCatalogSimilarity: number;
+  matchedCatalogSlug?: string;
+}
+
+/**
+ * Standardized Profit Opportunity Score (HEURISTIC — NOT REVENUE FORECAST)
+ */
+export interface ProfitOpportunityScore {
+  score: number; // 0 - 100
+  decision: OpportunityDecision;
+  whyNow?: string; // Required for CREATE
+  revenueRoutes: string[]; // e.g. ["Affiliate", "Catering", "Social"]
+  commercialBreakdown: CommercialScoreBreakdown;
+  qualityModifiers: QualityModifiers;
+  disclaimer: "HEURISTIC — NOT REVENUE FORECAST";
+}
+
+/**
+ * Complete Original Content Brief for CREATE opportunities
+ */
+export interface OriginalContentBrief {
+  workingTitle: string;
+  craveSignals: CraveSignal[];
+  coreIngredients: string[];
+  originalAngle: string;
+  differentiationFromCatalog: string;
+  affiliateOpportunities: string[];
+  cateringUsage: string;
+  socialHook: string;
+  cookbookChapter: string;
+  newsletterHook: string;
+  seoIntent: string;
+  publicationPolicy: "ORIGINAL_CONTENT_REQUIRED";
+}
+
+/**
+ * Content Gap & Profit Opportunity Result
  */
 export interface ContentOpportunity {
   concept: string;
-  score: number;
+  score: number; // Main profit opportunity score (0 - 100)
+  profitScore?: ProfitOpportunityScore;
+  decision?: OpportunityDecision;
+  whyNow?: string;
+  revenueRoutes?: string[];
+  originalContentBrief?: OriginalContentBrief;
   reasons: string[];
   ingredients: string[];
   techniques: string[];
