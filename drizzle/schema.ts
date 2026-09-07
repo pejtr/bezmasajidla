@@ -356,4 +356,28 @@ export const cateringLeads = mysqlTable(
 export type CateringLead = typeof cateringLeads.$inferSelect;
 export type InsertCateringLead = typeof cateringLeads.$inferInsert;
 
+/**
+ * Internal Research Translation Cache
+ * Used exclusively by the food intelligence editorial research engine.
+ * NOT exposed through public SEO routes.
+ */
+export const foodTranslationCache = mysqlTable(
+  "food_translation_cache",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    cacheKey: varchar("cacheKey", { length: 64 }).notNull().unique(), // SHA-256 hash (64 hex characters)
+    provider: varchar("provider", { length: 64 }).notNull(),
+    sourceLanguage: varchar("sourceLanguage", { length: 16 }),
+    targetLanguage: varchar("targetLanguage", { length: 16 }).notNull(),
+    translatedText: text("translatedText").notNull(),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    expiresAt: timestamp("expiresAt").notNull(),
+  },
+  table => ({
+    cacheKeyIdx: uniqueIndex("food_translation_cache_cacheKey_uidx").on(table.cacheKey),
+    expiresAtIdx: index("food_translation_cache_expiresAt_idx").on(table.expiresAt),
+  })
+);
 
+export type FoodTranslationCacheRecord = typeof foodTranslationCache.$inferSelect;
+export type InsertFoodTranslationCache = typeof foodTranslationCache.$inferInsert;

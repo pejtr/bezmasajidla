@@ -10,6 +10,7 @@ import { subscribeToBrevo } from "./_core/brevo";
 import { createComgatePayment } from "./_core/comgate";
 import { notifyGoogleIndexing } from "./_core/google-indexing";
 import { affiliateRouter } from "./affiliate/router";
+import { foodIntelligenceRouter } from "./food-intelligence/food-intelligence-router";
 import {
   getSocialPublisherStatus,
   listSocialPosts,
@@ -398,6 +399,9 @@ export const appRouter = router({
 
   // ── Affiliate Commerce Engine ─────────────────────────────
   affiliate: affiliateRouter,
+
+  // ── Omni Food Intelligence v0.1 (Internal Editorial Research) ─
+  foodIntelligence: foodIntelligenceRouter,
 });
 
 export type AppRouter = typeof appRouter;

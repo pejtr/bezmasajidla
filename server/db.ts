@@ -5,6 +5,7 @@ import {
   reviews, InsertReview,
   favorites, InsertFavorite,
   userRecipes, InsertUserRecipe,
+  foodTranslationCache, InsertFoodTranslationCache, FoodTranslationCacheRecord,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -389,4 +390,79 @@ export async function adminDeleteReview(reviewId: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.delete(reviews).where(eq(reviews.id, reviewId));
+}
+
+// ── Food Intelligence Research Translation Cache ────────────
+const memoryTranslationCache = new Map<string, FoodTranslationCacheRecord>();
+
+export async function getCachedTranslation(
+  cacheKey: string
+): Promise<FoodTranslationCacheRecord | null> {
+  const now = new Date();
+  // Check in-memory fallback first if valid
+  const memCached = memoryTranslationCache.get(cacheKey);
+  if (memCached) {
+    if (new Date(memCached.expiresAt) > now) {
+      return memCached;
+    }
+    memoryTranslationCache.delete(cacheKey);
+  }
+
+  const db = await getDb();
+  if (!db) return null;
+
+  try {
+    const rows = await db
+      .select()
+      .from(foodTranslationCache)
+      .where(eq(foodTranslationCache.cacheKey, cacheKey))
+      .limit(1);
+
+    if (rows.length === 0) return null;
+    const record = rows[0];
+
+    // Check expiration
+    if (new Date(record.expiresAt) <= now) {
+      return null;
+    }
+
+    memoryTranslationCache.set(cacheKey, record);
+    return record;
+  } catch (err) {
+    console.warn("[Database] Failed to read foodTranslationCache:", err);
+    return null;
+  }
+}
+
+export async function upsertCachedTranslation(
+  record: InsertFoodTranslationCache
+): Promise<void> {
+  const normalizedRecord: FoodTranslationCacheRecord = {
+    id: 0,
+    cacheKey: record.cacheKey,
+    provider: record.provider,
+    sourceLanguage: record.sourceLanguage ?? null,
+    targetLanguage: record.targetLanguage,
+    translatedText: record.translatedText,
+    createdAt: new Date(),
+    expiresAt: record.expiresAt,
+  };
+  memoryTranslationCache.set(record.cacheKey, normalizedRecord);
+
+  const db = await getDb();
+  if (!db) return;
+
+  try {
+    await db
+      .insert(foodTranslationCache)
+      .values(record)
+      .onDuplicateKeyUpdate({
+        set: {
+          translatedText: record.translatedText,
+          expiresAt: record.expiresAt,
+        },
+      });
+  } catch (err) {
+    console.warn("[Database] Failed to upsert foodTranslationCache:", err);
+  }
 }
