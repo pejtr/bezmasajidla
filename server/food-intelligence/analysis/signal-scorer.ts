@@ -11,6 +11,7 @@ import {
   QualityModifiers,
   ProfitOpportunityScore,
   OpportunityDecision,
+  AffiliateVerificationDetail,
 } from "../types";
 
 function stripDiacritics(text: string): string {
@@ -192,6 +193,29 @@ export function evaluateNewsletterPotential(concept: string, craveSignals: Crave
 }
 
 /**
+ * Decouples theoretical affiliate fit from active merchant mapping.
+ * Unmapped products must strictly remain HYPOTHESIS and not be treated as active revenue capability.
+ */
+export function buildAffiliateVerificationDetail(
+  affiliateFitScore: number,
+  candidateItems: string[] = [],
+  merchant: string | null = null,
+  productMapped: boolean = false,
+  commissionKnown: boolean = false
+): AffiliateVerificationDetail {
+  const affiliateAvailable = Boolean(merchant && productMapped && commissionKnown);
+  return {
+    affiliateFitScore,
+    affiliateAvailable,
+    merchant,
+    productMapped,
+    commissionKnown,
+    verificationStatus: affiliateAvailable ? "VERIFIED" : "HYPOTHESIS",
+    candidateItems,
+  };
+}
+
+/**
  * Evaluates the complete Profit Opportunity Score with 6 commercial pillars and quality/novelty multipliers.
  */
 export function evaluateProfitableContentScore(params: ScoreCalculationParams): ProfitOpportunityScore {
@@ -214,20 +238,20 @@ export function evaluateProfitableContentScore(params: ScoreCalculationParams): 
 
   // 2. Content Quality Multiplier (Crave, CZ availability, seasonality, cuisine diversity)
   let qualityMultiplier = 1.0;
-  if (params.craveSignals.length >= 3) qualityMultiplier += 0.08;
-  else if (params.craveSignals.length >= 1) qualityMultiplier += 0.04;
+  if (params.craveSignals.length >= 3) qualityMultiplier += 0.03;
+  else if (params.craveSignals.length >= 1) qualityMultiplier += 0.01;
 
   const now = params.date || new Date();
   const seasonalMatch = checkSeasonalMatch(now.getMonth(), params.ingredients, params.concept);
-  if (seasonalMatch.matched) qualityMultiplier += 0.05;
+  if (seasonalMatch.matched) qualityMultiplier += 0.02;
 
   const availability = checkCzechAvailability(params.ingredients);
-  if (availability.isReadilyAvailable) qualityMultiplier += 0.04;
-  else if (availability.isHardToFind) qualityMultiplier -= 0.10;
+  if (availability.isReadilyAvailable) qualityMultiplier += 0.01;
+  else if (availability.isHardToFind) qualityMultiplier -= 0.05;
 
   if (!params.isVegetarian) qualityMultiplier -= 0.25;
 
-  qualityMultiplier = Math.max(0.70, Math.min(1.15, Number(qualityMultiplier.toFixed(2))));
+  qualityMultiplier = Math.max(0.70, Math.min(1.06, Number(qualityMultiplier.toFixed(2))));
 
   // 3. Novelty Multiplier (Inventory duplication penalty)
   const maxSimilarity = params.existingMatches.reduce(
@@ -235,30 +259,34 @@ export function evaluateProfitableContentScore(params: ScoreCalculationParams): 
     0
   );
   let noveltyMultiplier = 1.0;
-  if (maxSimilarity < 0.30) {
-    noveltyMultiplier = 1.05; // fresh opportunity
-  } else if (maxSimilarity < 0.50) {
-    noveltyMultiplier = 0.95; // mild overlap
+  if (maxSimilarity < 0.25) {
+    noveltyMultiplier = 1.00; // Fresh novel concept: neutral multiplier (no artificial inflation)
+  } else if (maxSimilarity < 0.40) {
+    noveltyMultiplier = 0.95; // Mild thematic overlap
+  } else if (maxSimilarity < 0.60) {
+    noveltyMultiplier = 0.82; // Noticeable overlap
   } else if (maxSimilarity < 0.75) {
-    noveltyMultiplier = 0.75; // moderate overlap
+    noveltyMultiplier = 0.65; // High overlap
   } else {
-    noveltyMultiplier = 0.35; // high duplication
+    noveltyMultiplier = 0.35; // Near duplicate
   }
   noveltyMultiplier = Number(noveltyMultiplier.toFixed(2));
 
-  // 4. Final Profit Opportunity Score (0 - 100)
-  const calculatedScore = Math.max(
+  // 4. Final Profit Opportunity Score (0 - 100, anti-saturated)
+  // Heuristic scaling: dampened to prevent artificial collapse to 100
+  const rawProduct = rawCommercialScore * qualityMultiplier * noveltyMultiplier;
+  const finalProfitOpportunityScore = Math.max(
     0,
-    Math.min(100, Math.round(rawCommercialScore * qualityMultiplier * noveltyMultiplier))
+    Math.min(95, Math.round(rawProduct))
   );
 
   // 5. Decision Logic (CREATE: 80-100, REVIEW: 60-79, SKIP: 0-59)
   let decision: OpportunityDecision = "SKIP";
   if (maxSimilarity >= 0.75 || !params.isVegetarian) {
     decision = "SKIP";
-  } else if (calculatedScore >= 80) {
+  } else if (finalProfitOpportunityScore >= 80) {
     decision = maxSimilarity >= 0.50 ? "REVIEW" : "CREATE";
-  } else if (calculatedScore >= 60) {
+  } else if (finalProfitOpportunityScore >= 60) {
     decision = "REVIEW";
   } else {
     decision = "SKIP";
@@ -273,11 +301,29 @@ export function evaluateProfitableContentScore(params: ScoreCalculationParams): 
   if (searchIntent >= 70) revenueRoutes.push("SEO");
   if (newsletterPotential >= 70) revenueRoutes.push("Newsletter");
 
-  // 7. WHY NOW justification
+  // 7. Affiliate Reality Gate Detail
+  const candidateAffiliateItems: string[] = [];
+  const combinedText = `${params.concept} ${params.ingredients.join(" ")} ${params.techniques.join(" ")}`.toLowerCase();
+  if (/olivový olej|evoo/i.test(combinedText)) candidateAffiliateItems.push("Prémiový extra panenský olivový olej");
+  if (/tahini/i.test(combinedText)) candidateAffiliateItems.push("Sezamová pasta tahini");
+  if (/uzená paprika|la chinata/i.test(combinedText)) candidateAffiliateItems.push("Výběrová uzená paprika La Chinata");
+  if (/litin|pánev/i.test(combinedText)) candidateAffiliateItems.push("Litinová pánev");
+  if (/blender|mixér|mixování/i.test(combinedText)) candidateAffiliateItems.push("Vysokorychlostní stolní mixér");
+  if (/zaatar|za'atar/i.test(combinedText)) candidateAffiliateItems.push("Koření za'atar");
+
+  const affiliateVerification = buildAffiliateVerificationDetail(
+    affiliatePotential,
+    candidateAffiliateItems,
+    null,
+    false,
+    false
+  );
+
+  // 8. WHY NOW justification (strictly hypothesis / pilot language for catering)
   const whyNowParts: string[] = [];
   if (params.craveSignals.length > 0) whyNowParts.push(`Crave signály [${params.craveSignals.slice(0, 3).join(", ")}]`);
-  if (affiliatePotential >= 75) whyNowParts.push("silný affiliate fit (prémiová dochucovadla/EVOO)");
-  if (cateringRelevance >= 75) whyNowParts.push("vynikající cateringové využití na rauty a sharing");
+  if (affiliatePotential >= 75) whyNowParts.push("silný affiliate fit (hypotéza: prémiová dochucovadla/EVOO)");
+  if (cateringRelevance >= 75) whyNowParts.push("vysoký predicted catering fit pro rauty a sharing (kandidát na pilot)");
   if (socialVisual >= 75) whyNowParts.push("vysoká video estetika pro Sonya Luna shorts");
   if (maxSimilarity < 0.35) whyNowParts.push(`nízká duplicita v katalogu (${Math.round(maxSimilarity * 100)} %)`);
   else whyNowParts.push(`podobnost s existujícím receptem (${Math.round(maxSimilarity * 100)} %)`);
@@ -285,7 +331,11 @@ export function evaluateProfitableContentScore(params: ScoreCalculationParams): 
   const whyNow = whyNowParts.join(" · ");
 
   return {
-    score: calculatedScore,
+    score: finalProfitOpportunityScore,
+    rawCommercialScore,
+    qualityMultiplier,
+    noveltyMultiplier,
+    finalProfitOpportunityScore,
     decision,
     whyNow,
     revenueRoutes,
@@ -304,6 +354,7 @@ export function evaluateProfitableContentScore(params: ScoreCalculationParams): 
       maxCatalogSimilarity: maxSimilarity,
       matchedCatalogSlug: params.existingMatches[0]?.slug,
     },
+    affiliateVerification,
     disclaimer: "HEURISTIC — NOT REVENUE FORECAST",
   };
 }

@@ -247,7 +247,7 @@ describe("Omni Food Intelligence v0.1", () => {
         date: new Date("2026-09-01"), // Autumn: pečení
       });
 
-      expect(scoreResult.score).toBeGreaterThanOrEqual(75);
+      expect(scoreResult.score).toBeGreaterThanOrEqual(70);
       expect(scoreResult.reasons.some(r => r.includes("Crave potenciál"))).toBe(true);
       expect(scoreResult.reasons.some(r => r.includes("korejská"))).toBe(true);
       expect(scoreResult.reasons.some(r => r.includes("nízká duplicita"))).toBe(true);
@@ -351,17 +351,68 @@ describe("Omni Food Intelligence v0.1", () => {
       });
 
       expect(result.score).toBeGreaterThanOrEqual(80);
+      expect(result.score).toBeLessThanOrEqual(95); // Anti-saturation check
+      expect(result.finalProfitOpportunityScore).toBe(result.score);
+      expect(result.rawCommercialScore).toBeGreaterThanOrEqual(75);
+      expect(result.qualityMultiplier).toBeGreaterThanOrEqual(1.0);
+      expect(result.noveltyMultiplier).toBe(1.0);
       expect(result.decision).toBe("CREATE");
       expect(result.whyNow).toBeDefined();
-      expect(result.whyNow.length).toBeGreaterThan(10);
+      expect(result.whyNow!.length).toBeGreaterThan(10);
       expect(result.revenueRoutes).toContain("Affiliate");
       expect(result.revenueRoutes).toContain("Catering");
       expect(result.disclaimer).toBe("HEURISTIC — NOT REVENUE FORECAST");
+
+      // Affiliate Reality Gate assertions
+      expect(result.affiliateVerification).toBeDefined();
+      expect(result.affiliateVerification.affiliateFitScore).toBeGreaterThanOrEqual(70);
+      expect(result.affiliateVerification.affiliateAvailable).toBe(false);
+      expect(result.affiliateVerification.productMapped).toBe(false);
+      expect(result.affiliateVerification.commissionKnown).toBe(false);
+      expect(result.affiliateVerification.verificationStatus).toBe("HYPOTHESIS");
     });
 
-    it("runs Local Profitability Intelligence Run on 10 themes and produces actionable decisions", async () => {
+    it("runs Local Profitability Intelligence Run on 10 themes and produces actionable, anti-saturated decisions", async () => {
       const results = await runLocalProfitabilityEvaluation();
       expect(results).toHaveLength(10);
+
+      // 1. Anti-saturation check: No top candidates should trivially collapse to 100
+      const perfect100s = results.filter((r: any) => (r.finalProfitOpportunityScore ?? r.score) === 100);
+      expect(perfect100s).toHaveLength(0);
+
+      // Check distinct scores among top 3
+      const top3Scores = results.slice(0, 3).map((r: any) => r.finalProfitOpportunityScore ?? r.score);
+      expect(new Set(top3Scores).size).toBe(3); // All 3 must be distinctly scored
+
+      // 2. Score transparency check
+      results.forEach((r: any) => {
+        expect(r.rawCommercialScore ?? r.profitScore?.rawCommercialScore).toBeDefined();
+        expect(r.qualityMultiplier ?? r.profitScore?.qualityMultiplier).toBeDefined();
+        expect(r.noveltyMultiplier ?? r.profitScore?.noveltyMultiplier).toBeDefined();
+        expect(r.finalProfitOpportunityScore ?? r.profitScore?.finalProfitOpportunityScore).toBeDefined();
+      });
+
+      // 3. Zero unproven catering claims check across all opportunities and briefs
+      results.forEach((r: any) => {
+        const textToAudit = `${r.concept} ${r.whyNow || ""} ${r.originalContentBrief?.cateringUsage || ""}`.toLowerCase();
+        expect(textToAudit).not.toMatch(/bestseller/i);
+        expect(textToAudit).not.toMatch(/základní kámen/i);
+        expect(textToAudit).not.toMatch(/drží texturu hodiny/i);
+        expect(textToAudit).not.toMatch(/klíčový produkt matoušova/i);
+
+        // If catering usage is present, verify hypothesis / pilot wording
+        if (r.originalContentBrief?.cateringUsage) {
+          expect(r.originalContentBrief.cateringUsage).toMatch(/hypotéza|pilot|predicted/i);
+        }
+      });
+
+      // 4. Affiliate Reality Gate: unmapped items must be HYPOTHESIS
+      results.forEach((r: any) => {
+        const aff = r.affiliateVerification || r.profitScore?.affiliateVerification;
+        expect(aff).toBeDefined();
+        expect(aff.verificationStatus).toBe("HYPOTHESIS");
+        expect(aff.affiliateAvailable).toBe(false);
+      });
 
       // Check that at least 3 opportunities are marked CREATE
       const createCount = results.filter((r: any) => r.decision === "CREATE").length;
@@ -372,7 +423,7 @@ describe("Omni Food Intelligence v0.1", () => {
         .filter((r: any) => r.decision === "CREATE")
         .forEach((r: any) => {
           expect(r.whyNow).toBeDefined();
-          expect(r.whyNow.length).toBeGreaterThan(10);
+          expect(r.whyNow!.length).toBeGreaterThan(10);
           expect(r.originalContentBrief).toBeDefined();
           expect(r.originalContentBrief.publicationPolicy).toBe("ORIGINAL_CONTENT_REQUIRED");
           expect(r.originalContentBrief.originalAngle.length).toBeGreaterThan(10);
@@ -381,7 +432,6 @@ describe("Omni Food Intelligence v0.1", () => {
       // Verify duplicate concepts receive REVIEW or SKIP
       const mushroomPasta = results.find((r: any) => r.concept.includes("lesních hub") || r.concept.includes("Těstoviny"));
       expect(mushroomPasta).toBeDefined();
-      // Should not be CREATE because our catalog has 15+ pasta recipes
       expect(["REVIEW", "SKIP"]).toContain(mushroomPasta.decision);
     });
   });

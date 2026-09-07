@@ -180,15 +180,34 @@ export interface QualityModifiers {
 }
 
 /**
+ * Affiliate Opportunity Reality Gate (War Mode v0.2)
+ * Decouples theoretical affiliate fit from active, mapped merchant availability.
+ */
+export interface AffiliateVerificationDetail {
+  affiliateFitScore: number; // 0–100 heuristic match
+  affiliateAvailable: boolean; // true ONLY if live in merchant feed & active
+  merchant: string | null; // e.g. "ekoclovek", "zazitky", or null
+  productMapped: boolean; // true ONLY if mapped to active product ID
+  commissionKnown: boolean; // true ONLY if commission rate contract is known
+  verificationStatus: "HYPOTHESIS" | "VERIFIED"; // Strictly HYPOTHESIS unless mapped & available
+  candidateItems?: string[]; // Potential items (e.g. EVOO, blender, cast iron)
+}
+
+/**
  * Standardized Profit Opportunity Score (HEURISTIC — NOT REVENUE FORECAST)
  */
 export interface ProfitOpportunityScore {
-  score: number; // 0 - 100
+  score: number; // 0 - 100 (= finalProfitOpportunityScore)
+  rawCommercialScore: number; // 0 - 100 weighted average
+  qualityMultiplier: number; // Calibrated culinary quality adjustment
+  noveltyMultiplier: number; // Inventory duplication penalty
+  finalProfitOpportunityScore: number; // 0 - 100 (anti-saturated)
   decision: OpportunityDecision;
   whyNow?: string; // Required for CREATE
   revenueRoutes: string[]; // e.g. ["Affiliate", "Catering", "Social"]
   commercialBreakdown: CommercialScoreBreakdown;
   qualityModifiers: QualityModifiers;
+  affiliateVerification: AffiliateVerificationDetail;
   disclaimer: "HEURISTIC — NOT REVENUE FORECAST";
 }
 
@@ -202,6 +221,7 @@ export interface OriginalContentBrief {
   originalAngle: string;
   differentiationFromCatalog: string;
   affiliateOpportunities: string[];
+  affiliateVerification?: AffiliateVerificationDetail;
   cateringUsage: string;
   socialHook: string;
   cookbookChapter: string;
@@ -216,10 +236,15 @@ export interface OriginalContentBrief {
 export interface ContentOpportunity {
   concept: string;
   score: number; // Main profit opportunity score (0 - 100)
+  rawCommercialScore?: number;
+  qualityMultiplier?: number;
+  noveltyMultiplier?: number;
+  finalProfitOpportunityScore?: number;
   profitScore?: ProfitOpportunityScore;
   decision?: OpportunityDecision;
   whyNow?: string;
   revenueRoutes?: string[];
+  affiliateVerification?: AffiliateVerificationDetail;
   originalContentBrief?: OriginalContentBrief;
   reasons: string[];
   ingredients: string[];
