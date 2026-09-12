@@ -1,5 +1,39 @@
 const RECIPE_IMAGE_ROOT = "/images/recipes";
 
+export const RECIPE_PLACEHOLDER_IMAGE =
+  "/images/placeholders/recipe-placeholder.svg";
+
+export function isTrustedRecipeImage(image: string | null | undefined) {
+  return Boolean(
+    image &&
+      (image.startsWith(`${RECIPE_IMAGE_ROOT}/`) ||
+        image === RECIPE_PLACEHOLDER_IMAGE)
+  );
+}
+
+export function hasVerifiedRecipeImage(
+  recipe: { image?: string | null; slug?: string } | null | undefined
+): boolean {
+  if (!recipe) return false;
+  const image =
+    (recipe.slug && recipeImageOverrides[recipe.slug]) || recipe.image;
+  if (!image || image === RECIPE_PLACEHOLDER_IMAGE) return false;
+  return isTrustedRecipeImage(image) && image !== RECIPE_PLACEHOLDER_IMAGE;
+}
+
+export function selectHomepageRecipes<
+  T extends { image?: string | null; slug?: string }
+>(candidates: T[], limit = 3): T[] {
+  const verified = candidates.filter(hasVerifiedRecipeImage);
+  if (verified.length >= limit) {
+    return verified.slice(0, limit);
+  }
+  const verifiedSlugs = new Set(verified.map(r => r.slug).filter(Boolean));
+  const fallback = candidates.filter(r => !r.slug || !verifiedSlugs.has(r.slug));
+  return [...verified, ...fallback].slice(0, limit);
+}
+
+
 /**
  * Curated, unique images for the imported recipe collection.
  * Keeping this mapping separate makes duplicate-image audits deterministic.

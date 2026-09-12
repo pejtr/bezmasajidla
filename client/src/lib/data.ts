@@ -3,8 +3,17 @@
 // "Zelená Metropole" design system
 // ============================================================
 
-import { recipeImageOverrides } from "./recipeImageOverrides";
+import {
+  hasVerifiedRecipeImage,
+  isTrustedRecipeImage,
+  RECIPE_PLACEHOLDER_IMAGE,
+  recipeImageOverrides,
+  selectHomepageRecipes,
+} from "./recipeImageOverrides";
+export { hasVerifiedRecipeImage, selectHomepageRecipes };
+
 import { expansionRecipes } from "./recipeExpansion";
+import { RESTAURANT_PLACEHOLDER, withImageFallback } from "./imageFallbacks";
 
 export type RestaurantType = "vegan" | "vegetarian" | "friendly" | "fastfood";
 
@@ -168,10 +177,7 @@ export function hasRecipeDietaryOption(
   });
 }
 
-const RESTAURANT_PLACEHOLDER =
-  "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/restaurant-placeholder-NfsuHQoJhFmyxCXwn7EygE.webp";
-
-export const restaurants: Restaurant[] = [
+const restaurantSource: Restaurant[] = [
   // ── Regional Expansion: BRNO ───────────────────────────────
   {
     id: "brno-1",
@@ -186,10 +192,12 @@ export const restaurants: Restaurant[] = [
     district: "Brno-střed",
     phone: "+420 777 444 888",
     website: "https://www.forkys.cz",
-    description: "Vlajková loď moderního českého veganského bistro konceptu Forky's. Nabízí burgery, superfood bowls, wraps a thajská curry.",
+    description:
+      "Vlajková loď moderního českého veganského bistro konceptu Forky's. Nabízí burgery, superfood bowls, wraps a thajská curry.",
     tags: ["Veganská", "Bistro", "Burgery", "Brno"],
     dietaryOptions: ["whole-food", "bezlepkové"],
-    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80",
+    image:
+      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80",
     lat: 49.1965,
     lng: 16.6083,
     priceLevel: 2,
@@ -207,10 +215,12 @@ export const restaurants: Restaurant[] = [
     address: "Běhounská 18, 602 00 Brno-střed",
     district: "Brno-střed",
     website: "https://beas-dhaba.cz",
-    description: "Tradiční samoobslužná vegetariánská a veganská restaurace se samoobslužným bufetem. Výborné indické dál, sabji a čerstvý chléb naan.",
+    description:
+      "Tradiční samoobslužná vegetariánská a veganská restaurace se samoobslužným bufetem. Výborné indické dál, sabji a čerstvý chléb naan.",
     tags: ["Vegetariánská", "Indická", "Bufet", "Brno"],
     dietaryOptions: ["bezlepkové", "ayurvédské"],
-    image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=80",
+    image:
+      "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=80",
     lat: 49.1972,
     lng: 16.6095,
     priceLevel: 1,
@@ -227,12 +237,14 @@ export const restaurants: Restaurant[] = [
     isPremium: false,
     address: "Orlí 27, 602 00 Brno-střed",
     district: "Brno-střed",
-    description: "Oblíbené veganské bistro a raw cukrárna s denním menu, čerstvými šťávami a bezlepkovými dorty bez přidaného cukru.",
+    description:
+      "Oblíbené veganské bistro a raw cukrárna s denním menu, čerstvými šťávami a bezlepkovými dorty bez přidaného cukru.",
     tags: ["Veganská", "Raw", "Kavárna", "Brno"],
     dietaryOptions: ["raw", "bezlepkové"],
-    image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+    image:
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
     lat: 49.1925,
-    lng: 16.6110,
+    lng: 16.611,
     priceLevel: 2,
     hours: "Po–Pá 08:30–18:00",
   },
@@ -247,10 +259,12 @@ export const restaurants: Restaurant[] = [
     isPremium: false,
     address: "Slovákova 10, 602 00 Brno-Veveří",
     district: "Brno-Veveří",
-    description: "Kultovní brněnský veganský pub a restaurace nabízející výborné české i mezinárodní bezmasé týdenní menu a řemeslná piva.",
+    description:
+      "Kultovní brněnský veganský pub a restaurace nabízející výborné české i mezinárodní bezmasé týdenní menu a řemeslná piva.",
     tags: ["Veganská", "Česká kuchyně", "Pub", "Brno"],
     dietaryOptions: ["whole-food"],
-    image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80",
+    image:
+      "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80",
     lat: 49.2001,
     lng: 16.6025,
     priceLevel: 1,
@@ -270,12 +284,14 @@ export const restaurants: Restaurant[] = [
     address: "Čs. legií 152/8, 702 00 Ostrava-centrum",
     district: "Ostrava-centrum",
     website: "https://blackkale.cz",
-    description: "Přední ostravský superfood bar nabízející 100% veganská teplá jídla, smoothies, açai bowls a raw bezlepkové dezerty.",
+    description:
+      "Přední ostravský superfood bar nabízející 100% veganská teplá jídla, smoothies, açai bowls a raw bezlepkové dezerty.",
     tags: ["Veganská", "Superfood", "Smoothie", "Ostrava"],
     dietaryOptions: ["raw", "bezlepkové", "high-protein"],
-    image: "https://images.unsplash.com/photo-1590301157890-4810ed352733?auto=format&fit=crop&w=800&q=80",
+    image:
+      "https://images.unsplash.com/photo-1590301157890-4810ed352733?auto=format&fit=crop&w=800&q=80",
     lat: 49.8355,
-    lng: 18.2910,
+    lng: 18.291,
     priceLevel: 2,
     hours: "Po–Pá 08:00–18:00",
   },
@@ -290,11 +306,13 @@ export const restaurants: Restaurant[] = [
     isPremium: false,
     address: "Vojanova 1, 702 00 Ostrava-centrum",
     district: "Ostrava-centrum",
-    description: "Příjemná samoobslužná vegetariánská restaurace v centru Ostravy zaměřená na zdravé obědy, luštěninové kari a čerstvé saláty.",
+    description:
+      "Příjemná samoobslužná vegetariánská restaurace v centru Ostravy zaměřená na zdravé obědy, luštěninové kari a čerstvé saláty.",
     tags: ["Vegetariánská", "Indická", "Obědy", "Ostrava"],
     dietaryOptions: ["bezlepkové"],
-    image: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=800&q=80",
-    lat: 49.8370,
+    image:
+      "https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=800&q=80",
+    lat: 49.837,
     lng: 18.2935,
     priceLevel: 1,
     hours: "Po–Pá 10:30–17:00",
@@ -312,12 +330,14 @@ export const restaurants: Restaurant[] = [
     isPremium: true,
     address: "Jungmannova 4, 301 00 Plzeň-město",
     district: "Plzeň-centrum",
-    description: "Nejstarší a nejznámější vegetariánská a veganská jídelna v Plzni se zdravým obědovým menu z lokálních bio surovin.",
+    description:
+      "Nejstarší a nejznámější vegetariánská a veganská jídelna v Plzni se zdravým obědovým menu z lokálních bio surovin.",
     tags: ["Vegetariánská", "BIO", "Obědy", "Plzeň"],
     dietaryOptions: ["bio", "bezlepkové"],
-    image: "https://images.unsplash.com/photo-1543353071-10c8ba85a904?auto=format&fit=crop&w=800&q=80",
-    lat: 49.7450,
-    lng: 13.3760,
+    image:
+      "https://images.unsplash.com/photo-1543353071-10c8ba85a904?auto=format&fit=crop&w=800&q=80",
+    lat: 49.745,
+    lng: 13.376,
     priceLevel: 1,
     hours: "Po–Pá 11:00–16:00",
   },
@@ -332,10 +352,12 @@ export const restaurants: Restaurant[] = [
     isPremium: false,
     address: "Sedláčkova 22, 301 00 Plzeň-město",
     district: "Plzeň-centrum",
-    description: "Útulné veganské bistro se zaměřením na rostlinné tortilly, poke bowls, falafel a domácí bezlepkové moučníky.",
+    description:
+      "Útulné veganské bistro se zaměřením na rostlinné tortilly, poke bowls, falafel a domácí bezlepkové moučníky.",
     tags: ["Veganská", "Poke Bowl", "Bezlepková", "Plzeň"],
     dietaryOptions: ["bezlepkové", "whole-food"],
-    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80",
+    image:
+      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80",
     lat: 49.7485,
     lng: 13.3745,
     priceLevel: 2,
@@ -2683,8 +2705,26 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
   },
 ];
 
-const RECIPE_PLACEHOLDER =
-  "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80";
+const RESTAURANT_IMAGE_PLACEHOLDER_SLUGS = new Set([
+  "forkys-brno",
+  "bistro-green-garden-plzen",
+]);
+
+export const restaurants: Restaurant[] = restaurantSource.map(restaurant => ({
+  ...restaurant,
+  image: RESTAURANT_IMAGE_PLACEHOLDER_SLUGS.has(restaurant.slug)
+    ? RESTAURANT_PLACEHOLDER
+    : withImageFallback(restaurant.image, RESTAURANT_PLACEHOLDER),
+  gallery: restaurant.gallery?.filter(
+    image => withImageFallback(image, "") !== ""
+  ),
+  fastFoodItems: restaurant.fastFoodItems?.map(item => ({
+    ...item,
+    image: item.image
+      ? withImageFallback(item.image, RESTAURANT_PLACEHOLDER)
+      : undefined,
+  })),
+}));
 
 const recipeSource: Recipe[] = [
   {
@@ -7043,27 +7083,51 @@ const recipeSource: Recipe[] = [
     cookTime: 18,
     servings: 2,
     difficulty: "snadný",
-    image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80",
+    image:
+      "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80",
     images: [
-      { url: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80", alt: "Florentínská pizza se špenátem, parmazánem a zapékanými vejci" },
-      { url: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=800&q=80", alt: "Detail tekutého žloutku a špenátu na křupavém těstě" }
+      {
+        url: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80",
+        alt: "Florentínská pizza se špenátem, parmazánem a zapékanými vejci",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=800&q=80",
+        alt: "Detail tekutého žloutku a špenátu na křupavém těstě",
+      },
     ],
-    description: "Tradiční toskánská pizza s omáčkou sugo, čerstvým podušeným špenátem, houbami, parmazánem a zastřenými vejci upečenými přímo na pizzovém těstě. Rychlé a chutné zpestření ze 6 ingrediencí.",
+    description:
+      "Tradiční toskánská pizza s omáčkou sugo, čerstvým podušeným špenátem, houbami, parmazánem a zastřenými vejci upečenými přímo na pizzovém těstě. Rychlé a chutné zpestření ze 6 ingrediencí.",
     storyTitle: "Toskánská specialita s krémovým vajíčkem",
     story: [
       "Florentínská pizza (Pizza Fiorentina) má své kořeny v toskánské Florencii. Jejím hlavním poznávacím znamením je čerstvý listový špenát a celá vejce, která se vyklepnou na pizzu ke konci pečení.",
-      "Když pizzu rozříznete, krémový tekutý žloutek spojený se špenátem a strouhaným parmazánem vytvoří bohatou přírodní omáčku. Příprava zabere jen několik minut a vyžaduje pouze 6 základních surovin."
+      "Když pizzu rozříznete, krémový tekutý žloutek spojený se špenátem a strouhaným parmazánem vytvoří bohatou přírodní omáčku. Příprava zabere jen několik minut a vyžaduje pouze 6 základních surovin.",
     ],
-    tags: ["Italská kuchyně", "Pizza", "Špenát", "Vejce", "Parmazán", "Vegetariánské"],
+    tags: [
+      "Italská kuchyně",
+      "Pizza",
+      "Špenát",
+      "Vejce",
+      "Parmazán",
+      "Vegetariánské",
+    ],
     isVegan: false,
     isGlutenFree: false,
-    macros: { calories: 568, protein: 40, carbs: 46, fiber: 3, fat: 31, sugars: 4 },
+    macros: {
+      calories: 568,
+      protein: 40,
+      carbs: 46,
+      fiber: 3,
+      fat: 31,
+      sugars: 4,
+    },
     editorialReview: {
-      summary: "Skvělý recept podle časopisu Apetit! Spojení jemného špenátu, parmazánu a zapečeného vajíčka na křupavém pizzovém základu je pro vegetariány dokonalý zážitek.",
-      bestFor: "Rychlou večeři ve dvou, víkendový oběd nebo milovníky italských pizz.",
+      summary:
+        "Skvělý recept podle časopisu Apetit! Spojení jemného špenátu, parmazánu a zapečeného vajíčka na křupavém pizzovém základu je pro vegetariány dokonalý zážitek.",
+      bestFor:
+        "Rychlou večeři ve dvou, víkendový oběd nebo milovníky italských pizz.",
       highlight: "Tekutý žloutek s podušeným špenátem a parmazánovou kůrkou.",
-      rating: 9.7
-    }
+      rating: 9.7,
+    },
   },
 ];
 
@@ -7072,15 +7136,25 @@ const recipeSource: Recipe[] = [
  * at the catalog boundary and apply the reviewed, recipe-specific photography.
  */
 export const recipes: Recipe[] = Array.from(
-  new Map([...recipeSource, ...expansionRecipes].map(recipe => [recipe.slug, recipe])).values()
+  new Map(
+    [...recipeSource, ...expansionRecipes].map(recipe => [recipe.slug, recipe])
+  ).values()
 ).map(recipe => {
-  const image = recipeImageOverrides[recipe.slug] || recipe.image;
-  const images = recipe.images && recipe.images.length > 0
-    ? [{ ...recipe.images[0], url: image }, ...recipe.images.slice(1)]
-    : [{ url: image, alt: recipe.title }];
+  const curatedImage = recipeImageOverrides[recipe.slug];
+  const image =
+    curatedImage ||
+    (isTrustedRecipeImage(recipe.image)
+      ? recipe.image
+      : RECIPE_PLACEHOLDER_IMAGE);
+  const trustedGalleryImages = (recipe.images || [])
+    .slice(1)
+    .filter(item => isTrustedRecipeImage(item.url));
+  const images = [
+    { url: image, alt: recipe.images?.[0]?.alt || recipe.title },
+    ...trustedGalleryImages,
+  ];
   return { ...recipe, image, images };
 });
-
 
 export const districts = [
   "Všechny čtvrti",
@@ -7119,7 +7193,11 @@ export const cuisineTags = [
   "Pekárna",
 ];
 
-export const dietaryOptionsConfig: { value: DietaryOption; label: string; icon: string }[] = [
+export const dietaryOptionsConfig: {
+  value: DietaryOption;
+  label: string;
+  icon: string;
+}[] = [
   { value: "bezlepkové", label: "Bezlepkové", icon: "🌾" },
   { value: "raw", label: "Raw food", icon: "🥦" },
   { value: "bio", label: "Bio / Organic", icon: "🌱" },
@@ -7129,25 +7207,37 @@ export const dietaryOptionsConfig: { value: DietaryOption; label: string; icon: 
 
 export const getTypeLabel = (type: RestaurantType): string => {
   switch (type) {
-    case "vegan": return "Veganská restaurace";
-    case "vegetarian": return "Vegetariánská restaurace";
-    case "friendly": return "Vegan-friendly";
-    case "fastfood": return "Fast Food";
-    default: return "Restaurace";
+    case "vegan":
+      return "Veganská restaurace";
+    case "vegetarian":
+      return "Vegetariánská restaurace";
+    case "friendly":
+      return "Vegan-friendly";
+    case "fastfood":
+      return "Fast Food";
+    default:
+      return "Restaurace";
   }
 };
 
 export const getTypeColor = (type: RestaurantType): string => {
   switch (type) {
-    case "vegan": return "bg-emerald-700 text-white";
-    case "vegetarian": return "bg-emerald-500 text-white";
-    case "friendly": return "bg-amber-400 text-amber-900";
-    case "fastfood": return "bg-orange-500 text-white";
-    default: return "bg-gray-400 text-white";
+    case "vegan":
+      return "bg-emerald-700 text-white";
+    case "vegetarian":
+      return "bg-emerald-500 text-white";
+    case "friendly":
+      return "bg-amber-400 text-amber-900";
+    case "fastfood":
+      return "bg-orange-500 text-white";
+    default:
+      return "bg-gray-400 text-white";
   }
 };
 
-export const renderStars = (rating: number): { filled: number; half: boolean; empty: number } => {
+export const renderStars = (
+  rating: number
+): { filled: number; half: boolean; empty: number } => {
   const filled = Math.floor(rating);
   const half = rating % 1 >= 0.5;
   const empty = 5 - filled - (half ? 1 : 0);

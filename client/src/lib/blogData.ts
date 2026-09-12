@@ -19,7 +19,9 @@ export interface BlogPost {
   content: string; // Markdown
 }
 
-export const blogPosts: BlogPost[] = [
+import { BLOG_PLACEHOLDER, withImageFallback } from "./imageFallbacks";
+
+const blogPostSource: BlogPost[] = [
   {
     id: "11",
     slug: "bezmasa-budapest-veganske-restaurace-ceny",
@@ -700,16 +702,20 @@ Pokud chcete připravit veganské vánoční pečivo doma, naše platforma nabí
   {
     id: "12",
     slug: "domaci-marmelada-dzem-rozdil-recepty",
-    title: "Domácí marmeláda vs. džem: Jaký je v nich rozdíl a 10 nejlepších receptů",
-    metaDescription: "Jaký je rozdíl mezi džemem, marmeládou a povidly? Návod na zavařování, pektin, méně cukru a recepty od meruňkové po Aperol.",
+    title:
+      "Domácí marmeláda vs. džem: Jaký je v nich rozdíl a 10 nejlepších receptů",
+    metaDescription:
+      "Jaký je rozdíl mezi džemem, marmeládou a povidly? Návod na zavařování, pektin, méně cukru a recepty od meruňkové po Aperol.",
     category: "Tipy & Návody",
     tags: ["zavařování", "džem", "marmeláda", "recepty", "ovoce", "domácí"],
     author: "Bezmasájídla.cz",
     publishedAt: "2026-08-01",
     readingTimeMin: 7,
-    coverImage: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&w=800&q=80",
+    coverImage:
+      "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&w=800&q=80",
     coverImageAlt: "Sklenice s domácím meruňkovým džemem a čerstvým ovocem",
-    excerpt: "Léto je v plném proudu a ovoce dozrává. Víte, jaký je přesný rozdíl mezi marmeládou, džemem a povidly podle legislativy i v praxi? Přinášíme velkého průvodce zavařováním a 10 receptů od meruňky po Aperol.",
+    excerpt:
+      "Léto je v plném proudu a ovoce dozrává. Víte, jaký je přesný rozdíl mezi marmeládou, džemem a povidly podle legislativy i v praxi? Přinášíme velkého průvodce zavařováním a 10 receptů od meruňky po Aperol.",
     content: `## Jaký je rozdíl mezi džemem, marmeládou a povidly?
 
 Při výrobě domácích sladkých zásob často používáme slova **marmeláda** a **džem** jako synonyma. Podle české i evropské legislativy je v nich ale zásadní rozdíl:
@@ -755,21 +761,32 @@ Zralé broskve zbavené slupky nakrájejte, ochuťte květnovým medem a vanilko
 Originální marmeláda pro dospělé! Křupavá kůra a dužina růžového grepfrutu v kombinaci s citrónovou šťávou a šplíchem Aperolu.
 
 ### 10. Borůvkový džem s kapkou rumu
-Divoké lesní borůvky svařené s trochou cukru a kapkou tuzemského rumu pro neodolatelnou vůni.`
+Divoké lesní borůvky svařené s trochou cukru a kapkou tuzemského rumu pro neodolatelnou vůni.`,
   },
   {
     id: "13",
     slug: "francouzsky-quiche-druhy-naplni-recept",
-    title: "Francouzský quiche: Jak na dokonalý slaný koláč a nejlepší bezmasé náplně",
-    metaDescription: "Velký průvodce francouzským slaným koláčem quiche: recept na křehké těsto pâte brisée, smetanovou zálivku a nejlepší vegetariánské náplně.",
+    title:
+      "Francouzský quiche: Jak na dokonalý slaný koláč a nejlepší bezmasé náplně",
+    metaDescription:
+      "Velký průvodce francouzským slaným koláčem quiche: recept na křehké těsto pâte brisée, smetanovou zálivku a nejlepší vegetariánské náplně.",
     category: "Tipy & Návody",
-    tags: ["quiche", "francouzská kuchyně", "slaný koláč", "špenát", "pórek", "vegetariánské"],
+    tags: [
+      "quiche",
+      "francouzská kuchyně",
+      "slaný koláč",
+      "špenát",
+      "pórek",
+      "vegetariánské",
+    ],
     author: "Bezmasájídla.cz",
     publishedAt: "2026-08-02",
     readingTimeMin: 8,
-    coverImage: "https://images.unsplash.com/photo-1554998171-7e599bc95ccd?auto=format&fit=crop&w=800&q=80",
+    coverImage:
+      "https://images.unsplash.com/photo-1554998171-7e599bc95ccd?auto=format&fit=crop&w=800&q=80",
     coverImageAlt: "Tradiční francouzský quiche se zeleninou a parmazánem",
-    excerpt: "Francouzský quiche je ideální volbou pro sytou snídani, lehký oběd i pohoštění pro návštěvu. Naučte se základní křehké těsto pâte brisée, sametovou vaječnou zálivku a inspirujte se pestrými vegetariánskými náplněmi.",
+    excerpt:
+      "Francouzský quiche je ideální volbou pro sytou snídani, lehký oběd i pohoštění pro návštěvu. Naučte se základní křehké těsto pâte brisée, sametovou vaječnou zálivku a inspirujte se pestrými vegetariánskými náplněmi.",
     content: `## Co je to francouzský quiche?
 
 **Quiche** (vyslovuje se *kiš*) je tradiční francouzský slaný koláč pocházející z regionu Lotrinsko (Quiche Lorraine). Jeho základ tvoří korpus z křehkého máslového těsta (*pâte brisée*) a bohatá náplň ze smetany, vajec a sýra.
@@ -817,9 +834,23 @@ Kostky dýně Hokkaido upečte v troubě s olivovým olejem a tymiánem. Zapečt
 4 velké cibule nakrájejte na plátky a karamelizujte na mírném ohni 20 minut. Vmíchejte špetku kmínu a zakysanou smetanu.
 
 ### Jarní chřestový quiche
-Zelený chřest krátce povařte ve slané vodě (2 minuty) a zchlaďte v ledové vodě. Naranžujte na korpus posypaný ricottou a parmazánem a zalijte vaječnou zálivkou.`
+Zelený chřest krátce povařte ve slané vodě (2 minuty) a zchlaďte v ledové vodě. Naranžujte na korpus posypaný ricottou a parmazánem a zalijte vaječnou zálivkou.`,
   },
 ];
+
+const BLOG_IMAGE_PLACEHOLDER_SLUGS = new Set([
+  "domaci-marmelada-dzem-rozdil-recepty",
+  "nejlepsi-veganske-brunche-praha",
+  "ceska-veganska-kuchyne-tradicni-jidla-bez-masa",
+  "francouzsky-quiche-druhy-naplni-recept",
+]);
+
+export const blogPosts: BlogPost[] = blogPostSource.map(post => ({
+  ...post,
+  coverImage: BLOG_IMAGE_PLACEHOLDER_SLUGS.has(post.slug)
+    ? BLOG_PLACEHOLDER
+    : withImageFallback(post.coverImage, BLOG_PLACEHOLDER),
+}));
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
   return blogPosts.find(p => p.slug === slug);

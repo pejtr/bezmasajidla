@@ -9,7 +9,6 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { startDailyRecipeCronJob } from "./ai-recipe";
-import { startSocialPublisher } from "./social-media";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -187,127 +186,128 @@ async function startServer() {
     try {
       const {
         verifyOmniForgeWebhookSignature,
+        parseOmniForgePublicationEvent,
         claimAndCheckWebhookEvent,
         markWebhookEventProcessed,
-        markWebhookEventFailed,
       } = await import("./omniforge-webhook");
       const { getOmniForgeConfig } = await import("./omniforge-client");
       const config = getOmniForgeConfig();
 
-      const signatureHeader =
-        (req.headers["x-omniforge-signature"] as string) ||
-        (req.headers["X-OmniForge-Signature"] as string);
-      const timestampHeader =
-        (req.headers["x-omniforge-timestamp"] as string) ||
-        (req.headers["X-OmniForge-Timestamp"] as string);
+      const signatureHeader = req.header("x-omniforge-signature");
+      const rawBody = (req as { rawBody?: Buffer }).rawBody;
+      if (!rawBody || !config.webhookSecret) {
+        return res.status(503).json({ error: "webhook_not_configured" });
+      }
 
-      const rawBody =
-        (req as any).rawBody ||
-        (typeof req.body === "string" ? req.body : JSON.stringify(req.body || {}));
+      const signatureCheck = verifyOmniForgeWebhookSignature({
+        signatureHeader,
+        rawBody,
+        secret: config.webhookSecret,
+      });
+      if (!signatureCheck.valid) {
+        console.warn(
+          "[OMNIFORGE Webhook] Security rejection:",
+          signatureCheck.reason
+        );
+        return res
+          .status(401)
+          .json({ error: signatureCheck.reason || "unauthorized_signature" });
+      }
 
-      // 1. HMAC Signature Verification & Timestamp Freshness
-      if (config.webhookSecret) {
-        const signatureCheck = verifyOmniForgeWebhookSignature({
-          signatureHeader,
-          timestampHeader,
-          rawBody,
-          secret: config.webhookSecret,
+      const { event, publication } = parseOmniForgePublicationEvent(req.body);
+      if (event.brandSlug !== config.brandSlug) {
+        return res.status(403).json({ error: "brand_mismatch" });
+      }
+      const headerEventId = req.header("x-omniforge-event-id");
+      if (headerEventId && headerEventId !== event.eventId) {
+        return res.status(400).json({ error: "event_id_mismatch" });
+      }
+
+      claimedEventId = event.eventId;
+      const claimResult = await claimAndCheckWebhookEvent({
+        eventId: event.eventId,
+        publicationId: publication?.publicationId,
+        eventType: event.type,
+        rawBody,
+      });
+      if (!claimResult.shouldProcess) {
+        return res.status(200).json({
+          received: true,
+          deduplicated: claimResult.isDuplicate,
+          processing: claimResult.isProcessing ?? false,
         });
-
-        if (!signatureCheck.valid) {
-          console.warn("[OMNIFORGE Webhook] Security rejection:", signatureCheck.reason);
-          return res.status(401).json({ error: signatureCheck.reason || "Unauthorized signature" });
-        }
       }
 
-      const payload = req.body || {};
-      const eventId = payload.eventId || payload.id;
-      const event = payload.event || payload.eventType;
-      const internalPostId = payload.metadata?.internalPostId || payload.internalPostId;
-      const publicationId = payload.publicationId || payload.metadata?.publicationId;
-      const providerPostId = payload.providerPostId;
-      const status = payload.status;
-
-      // 2. Durable Event Claim: Inserts 'received' status; if already 'processed', returns NO-OP
-      if (eventId) {
-        claimedEventId = eventId;
-        const claimResult = await claimAndCheckWebhookEvent({
-          eventId,
-          publicationId,
-          eventType: event,
-          rawBody,
-        });
-
-        if (!claimResult.shouldProcess && claimResult.isDuplicate) {
-          return res
-            .status(200)
-            .json({ received: true, deduplicated: true, message: "Duplicate event already processed" });
-        }
-      }
-
-      if (!internalPostId && !publicationId) {
-        return res.status(400).json({ error: "Missing internalPostId / publicationId in payload metadata" });
-      }
-
-      const { getDb } = await import("../db");
-      const { socialPosts } = await import("../../drizzle/schema");
-      const { eq } = await import("drizzle-orm");
-      const db = await getDb();
-
-      if (db) {
-        const whereClause = internalPostId
-          ? eq(socialPosts.id, Number(internalPostId))
-          : publicationId
-            ? eq(socialPosts.publicationId, String(publicationId))
-            : null;
-
-        if (whereClause) {
-          if (event === "publication.published" || status === "published") {
+      if (publication) {
+        const { getDb } = await import("../db");
+        const { socialPosts } = await import("../../drizzle/schema");
+        const { eq } = await import("drizzle-orm");
+        const db = await getDb();
+        if (db) {
+          const whereClause = eq(
+            socialPosts.publicationId,
+            publication.publicationId
+          );
+          if (event.type === "publication.started") {
+            await db
+              .update(socialPosts)
+              .set({ status: "publishing", lastError: null })
+              .where(whereClause);
+          } else if (event.type === "publication.succeeded") {
             await db
               .update(socialPosts)
               .set({
                 status: "published",
-                publishedAt: new Date(payload.publishedAt || Date.now()),
-                externalPostId: providerPostId || publicationId,
-                publicationId: publicationId || undefined,
+                publishedAt: new Date(
+                  publication.publishedAt || event.occurredAt
+                ),
+                externalPostId: publication.remotePostId,
                 lastError: null,
               })
               .where(whereClause);
-          } else if (event === "publication.failed" || status === "failed") {
+          } else if (event.type === "publication.failed") {
             await db
               .update(socialPosts)
               .set({
                 status: "failed",
-                publicationId: publicationId || undefined,
-                lastError: (payload.error || "Chyba publikace přes OMNIFORGE").slice(0, 2000),
+                attempts: publication.attempts ?? 0,
+                lastError: (
+                  publication.message || "Chyba publikace přes OMNIFORGE"
+                ).slice(0, 2_000),
               })
               .where(whereClause);
-          } else if (event === "publication.uncertain" || status === "uncertain") {
+          } else if (event.type === "reconciliation.required") {
             await db
               .update(socialPosts)
               .set({
                 status: "uncertain",
-                publicationId: publicationId || undefined,
-                lastError: "OMNIFORGE hlásí nejednoznačný stav (timeout API).",
+                lastError: (
+                  publication.message ||
+                  "OMNIFORGE vyžaduje ruční kontrolu výsledku publikace."
+                ).slice(0, 2_000),
               })
               .where(whereClause);
           }
         }
       }
 
-      // 3. Mark event as successfully processed in DB
-      if (claimedEventId) {
-        await markWebhookEventProcessed(claimedEventId);
-      }
+      await markWebhookEventProcessed(event.eventId);
 
-      return res.status(200).json({ received: true, event, internalPostId, publicationId });
+      return res.status(200).json({
+        received: true,
+        eventId: event.eventId,
+        eventType: event.type,
+        publicationId: publication?.publicationId ?? null,
+      });
     } catch (err) {
       console.error("[OMNIFORGE Webhook Error]", err);
       if (claimedEventId) {
         const { markWebhookEventFailed } = await import("./omniforge-webhook");
         await markWebhookEventFailed(claimedEventId, err);
       }
-      return res.status(500).json({ error: "Internal webhook processing error" });
+      return res
+        .status(500)
+        .json({ error: "Internal webhook processing error" });
     }
   });
 
@@ -829,11 +829,6 @@ async function startServer() {
     } catch (e) {
       console.error("[Background Cron Error]:", e);
     }
-    try {
-      startSocialPublisher();
-    } catch (e) {
-      console.error("[Background Social Publisher Error]:", e);
-    }
     import("../affiliate/sync")
       .then(({ startAffiliateSyncCronJob }) => {
         try {
@@ -850,3 +845,4 @@ startServer().catch(err => {
   console.error("Failed to start server:", err);
   process.exit(1);
 });
+

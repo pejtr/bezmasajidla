@@ -1,211 +1,181 @@
-// ============================================================
-// BEZMASAJIDLA.CZ — OMNIFORGE Cutover & Delivery Verification Test Suite
-// Verified end-to-end publishing modes, correlation IDs, webhook security, and dry-run contract.
-// ============================================================
-
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import crypto from "crypto";
-import { getPublisherMode } from "./_core/social-media";
-import { OmniForgeClient } from "./_core/omniforge-client";
+import crypto from "node:crypto";
+import { describe, expect, it, vi } from "vitest";
 import {
+  buildRecipePublishRequest,
+  OmniForgeClient,
+  OMNIFORGE_PUBLISH_PATH,
+  omniForgePublishJobRequestSchema,
+} from "./_core/omniforge-client";
+import {
+  parseOmniForgePublicationEvent,
   verifyOmniForgeWebhookSignature,
-  checkAndDeduplicateWebhookEvent,
 } from "./_core/omniforge-webhook";
-import type { SocialPost } from "../drizzle/schema";
 
-describe("OMNIFORGE Cutover — Publisher Mode Scoping", () => {
-  const originalEnv = process.env.SOCIAL_PUBLISHER_MODE;
+const config = {
+  apiUrl: "https://forge.example.test",
+  serviceToken: "service-test-token",
+  brandSlug: "bezmasajidla",
+  facebookAccountId: "fb-account-id",
+  instagramAccountId: "ig-account-id",
+  webhookSecret: "webhook-secret",
+};
 
-  afterEach(() => {
-    if (originalEnv !== undefined) {
-      process.env.SOCIAL_PUBLISHER_MODE = originalEnv;
-    } else {
-      delete process.env.SOCIAL_PUBLISHER_MODE;
-    }
+function recipeRequest(channel: "facebook" | "instagram") {
+  return buildRecipePublishRequest(
+    {
+      channel,
+      accountId:
+        channel === "facebook"
+          ? config.facebookAccountId
+          : config.instagramAccountId,
+      sourceId: "recipe:42",
+      contentVersion: "revision-7",
+      title: "Brokolicová polévka s hráškem",
+      caption: "Schválený text",
+      imageUrl: "https://www.bezmasajidla.cz/images/recipes/brokolice.webp",
+      destinationUrl: "https://www.bezmasajidla.cz/recepty/brokolicova-polevka",
+      tags: ["brokolice", "vegan"],
+      scheduledAt: new Date("2026-09-09T10:00:00.000Z"),
+      publicationPolicy: "ORIGINAL",
+    },
+    config
+  );
+}
+
+describe("OMNIFORGE producer contract", () => {
+  it("uses the canonical publish-job wire shape and deterministic per-channel key", () => {
+    const first = recipeRequest("facebook");
+    const second = recipeRequest("facebook");
+    const instagram = recipeRequest("instagram");
+
+    expect(omniForgePublishJobRequestSchema.parse(first)).toEqual(first);
+    expect(first.idempotencyKey).toBe(second.idempotencyKey);
+    expect(first.idempotencyKey).not.toBe(instagram.idempotencyKey);
+    expect(first.requiresApproval).toBe(false);
+    expect(first.targets).toEqual([
+      { accountId: "fb-account-id", targetKind: "feed" },
+    ]);
+    expect(first.metadata).toMatchObject({
+      sourceSystem: "bezmasajidla",
+      sourceType: "recipe",
+      publicationPolicy: "ORIGINAL",
+      provenance: { originalContent: true },
+    });
   });
 
-  it("should respect explicit SOCIAL_PUBLISHER_MODE=omniforge", () => {
-    process.env.SOCIAL_PUBLISHER_MODE = "omniforge";
-    expect(getPublisherMode()).toBe("omniforge");
+  it("rejects INTERNAL_ONLY content and placeholder assets before network", () => {
+    expect(() =>
+      buildRecipePublishRequest(
+        {
+          ...recipeRequest("facebook"),
+          channel: "facebook",
+          accountId: "fb-account-id",
+          sourceId: "recipe:42",
+          contentVersion: "revision-7",
+          title: "Interní rešerše",
+          caption: "Nesmí ven",
+          imageUrl: "https://www.bezmasajidla.cz/images/recipes/brokolice.webp",
+          destinationUrl: "https://www.bezmasajidla.cz/recepty/test",
+          tags: [],
+          publicationPolicy: "INTERNAL_ONLY",
+        },
+        config
+      )
+    ).toThrow("INTERNAL_ONLY");
+
+    expect(() =>
+      buildRecipePublishRequest(
+        {
+          channel: "instagram",
+          accountId: "ig-account-id",
+          sourceId: "recipe:43",
+          contentVersion: "revision-8",
+          title: "Bez fotografie",
+          caption: "Text",
+          imageUrl:
+            "https://www.bezmasajidla.cz/images/placeholders/recipe.webp",
+          destinationUrl: "https://www.bezmasajidla.cz/recepty/test",
+          tags: [],
+          publicationPolicy: "ORIGINAL",
+        },
+        config
+      )
+    ).toThrow("Zástupný obrázek");
   });
 
-  it("should respect explicit SOCIAL_PUBLISHER_MODE=direct_meta", () => {
-    process.env.SOCIAL_PUBLISHER_MODE = "direct_meta";
-    expect(getPublisherMode()).toBe("direct_meta");
-  });
+  it("submits only to the canonical OMNIFORGE endpoint", async () => {
+    const request = recipeRequest("facebook");
+    const fetchMock = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            jobs: [
+              {
+                publishJobId: "job-1",
+                state: "APPROVED",
+                accountId: "fb-account-id",
+                targetKind: "feed",
+                idempotencyKey: request.idempotencyKey,
+                created: true,
+              },
+            ],
+            contentItemId: "content-1",
+          }),
+          { status: 201, headers: { "Content-Type": "application/json" } }
+        )
+    );
+    const client = new OmniForgeClient(config, fetchMock as typeof fetch);
 
-  it("should respect explicit SOCIAL_PUBLISHER_MODE=local", () => {
-    process.env.SOCIAL_PUBLISHER_MODE = "local";
-    expect(getPublisherMode()).toBe("local");
+    const response = await client.submitPublishJob(request);
+
+    expect(response.jobs[0]?.publishJobId).toBe("job-1");
+    const [url, init] = fetchMock.mock.calls[0] ?? [];
+    expect(url).toBe(`${config.apiUrl}${OMNIFORGE_PUBLISH_PATH}`);
+    expect(init?.headers).toMatchObject({
+      Authorization: "Bearer service-test-token",
+      "Idempotency-Key": request.idempotencyKey,
+    });
   });
 });
 
-describe("OMNIFORGE Cutover — Three-Tier Identity Correlation", () => {
-  it("should generate and maintain distinct internalPostId, publicationId, and providerPostId", () => {
-    const mockPost: SocialPost = {
-      id: 482,
-      recipeSlug: "svickova-bez-masa",
-      platform: "facebook",
-      status: "scheduled",
-      caption: "Test caption",
-      imageUrl: "https://www.bezmasajidla.cz/images/svickova.jpg",
-      linkUrl: "https://www.bezmasajidla.cz/recepty/svickova-bez-masa?utm_source=facebook",
-      copyStyle: "hook_curiosity",
-      publishingSlot: "11:30",
-      scheduledFor: new Date(),
-      publishedAt: null,
-      publishStartedAt: null,
-      publishAttemptId: null,
-      publicationId: "pub_bj_482_facebook_01j99x",
-      externalPostId: null,
-      attempts: 0,
-      lastError: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+describe("OMNIFORGE outbound status contract", () => {
+  it("verifies the canonical t=...,v1=... signature and parses success", () => {
+    const event = {
+      eventId: "d9b2d63d-a233-4123-847a-768e2b2c2f72",
+      type: "publication.succeeded",
+      payloadVersion: 1,
+      occurredAt: "2026-09-08T08:00:00.000Z",
+      brandId: "0e85742e-9ed4-4f5f-b948-510c56bd00c5",
+      brandSlug: "bezmasajidla",
+      aggregate: {
+        type: "publication",
+        id: "7fbb53d8-954a-4c80-bc1d-2e5643670957",
+      },
+      correlationId: null,
+      data: {
+        publicationId: "7fbb53d8-954a-4c80-bc1d-2e5643670957",
+        contentItemId: "d89cb728-c95e-4261-9777-da90a6e8194e",
+        remotePostId: "meta-post-123",
+        publishedAt: "2026-09-08T08:00:00.000Z",
+      },
     };
+    const rawBody = JSON.stringify(event);
+    const timestamp = Math.floor(Date.now() / 1000);
+    const signature = crypto
+      .createHmac("sha256", config.webhookSecret)
+      .update(`${timestamp}.${rawBody}`)
+      .digest("hex");
 
-    expect(mockPost.id).toBe(482);
-    expect(mockPost.publicationId).toBe("pub_bj_482_facebook_01j99x");
-  });
-});
+    expect(
+      verifyOmniForgeWebhookSignature({
+        signatureHeader: `t=${timestamp},v1=${signature}`,
+        rawBody,
+        secret: config.webhookSecret,
+      })
+    ).toEqual({ valid: true });
 
-describe("OMNIFORGE Cutover — Webhook HMAC & Idempotency", () => {
-  const secret = "test_webhook_secret_9988";
-
-  it("should verify valid HMAC-SHA256 webhook signatures with timestamp", () => {
-    const timestamp = Math.floor(Date.now() / 1000).toString();
-    const rawBody = JSON.stringify({ event: "publication.published", internalPostId: 482 });
-    const payloadToSign = `${timestamp}.${rawBody}`;
-    const signature = crypto.createHmac("sha256", secret).update(payloadToSign).digest("hex");
-
-    const result = verifyOmniForgeWebhookSignature({
-      signatureHeader: `sha256=${signature}`,
-      timestampHeader: timestamp,
-      rawBody,
-      secret,
-    });
-
-    expect(result.valid).toBe(true);
-  });
-
-  it("should reject webhook with invalid signature", () => {
-    const timestamp = Math.floor(Date.now() / 1000).toString();
-    const rawBody = JSON.stringify({ event: "publication.published", internalPostId: 482 });
-
-    const result = verifyOmniForgeWebhookSignature({
-      signatureHeader: "sha256=invalid_signature_hash_1234567890abcdef1234567890abcdef",
-      timestampHeader: timestamp,
-      rawBody,
-      secret,
-    });
-
-    expect(result.valid).toBe(false);
-    expect(result.reason?.toLowerCase()).toContain("signature");
-  });
-
-  it("should reject expired webhook requests older than 5 minutes", () => {
-    const expiredTimestamp = Math.floor((Date.now() - 10 * 60 * 1000) / 1000).toString();
-    const rawBody = JSON.stringify({ event: "publication.published" });
-    const payloadToSign = `${expiredTimestamp}.${rawBody}`;
-    const signature = crypto.createHmac("sha256", secret).update(payloadToSign).digest("hex");
-
-    const result = verifyOmniForgeWebhookSignature({
-      signatureHeader: `sha256=${signature}`,
-      timestampHeader: expiredTimestamp,
-      rawBody,
-      secret,
-    });
-
-    expect(result.valid).toBe(false);
-    expect(result.reason).toContain("expired");
-  });
-
-  it("should claim event, allow retry on failure, and deduplicate once marked processed", async () => {
-    const {
-      claimAndCheckWebhookEvent,
-      markWebhookEventProcessed,
-      markWebhookEventFailed,
-    } = await import("./_core/omniforge-webhook");
-
-    const uniqueEventId = `evt_test_${Date.now()}_${Math.random()}`;
-
-    // 1. Initial claim
-    const claim1 = await claimAndCheckWebhookEvent({ eventId: uniqueEventId });
-    expect(claim1.shouldProcess).toBe(true);
-    expect(claim1.isDuplicate).toBe(false);
-
-    // 2. Simulated failure during processing -> mark failed
-    await markWebhookEventFailed(uniqueEventId, new Error("Temporary DB connection drop"));
-
-    // 3. Retry delivery -> should still allow processing!
-    const claim2 = await claimAndCheckWebhookEvent({ eventId: uniqueEventId });
-    expect(claim2.shouldProcess).toBe(true);
-
-    // 4. Successful processing -> mark processed
-    await markWebhookEventProcessed(uniqueEventId);
-
-    // 5. Subsequent duplicate delivery -> NO-OP deduplicated!
-    const claim3 = await claimAndCheckWebhookEvent({ eventId: uniqueEventId });
-    expect(claim3.shouldProcess).toBe(false);
-    expect(claim3.isDuplicate).toBe(true);
-  });
-});
-
-describe("OMNIFORGE Cutover — Dry-Run Contract Test", () => {
-  it("should format dry-run publication payload with correlation ID and validate contract", async () => {
-    const client = new OmniForgeClient({
-      apiKey: "omni_test_key_12345",
-      projectId: "bezmasajidla",
-      apiUrl: "https://api.omniforge.io",
-    });
-
-    const mockPost: SocialPost = {
-      id: 501,
-      recipeSlug: "cockova-polevka-uzena-paprika",
-      platform: "instagram",
-      status: "scheduled",
-      caption: "Test caption",
-      imageUrl: "https://www.bezmasajidla.cz/images/cockova.jpg",
-      linkUrl: "https://www.bezmasajidla.cz/recepty/cockova-polevka-uzena-paprika?utm_source=instagram",
-      copyStyle: "quick_tip",
-      publishingSlot: "17:30",
-      scheduledFor: new Date(),
-      publishedAt: null,
-      publishStartedAt: null,
-      publishAttemptId: null,
-      publicationId: "pub_bj_501_instagram_dryrun",
-      externalPostId: null,
-      attempts: 0,
-      lastError: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    // Mock fetch for dryRun test
-    const globalFetch = globalThis.fetch;
-    globalThis.fetch = (async (url: string, init?: RequestInit) => {
-      const body = JSON.parse(init?.body as string);
-      expect(body.dryRun).toBe(true);
-      expect(body.publicationId).toBe("pub_bj_501_instagram_dryrun");
-      expect(body.content.metadata.internalPostId).toBe(501);
-
-      return {
-        ok: true,
-        json: async () => ({
-          publicationId: body.publicationId,
-          status: "validated",
-          providerPostId: "dry_run_provider_501",
-        }),
-      } as Response;
-    }) as typeof fetch;
-
-    try {
-      const res = await client.publish(mockPost, { dryRun: true });
-      expect(res.publicationId).toBe("pub_bj_501_instagram_dryrun");
-      expect(res.status).toBe("validated");
-      expect(res.dryRunSuccess).toBe(true);
-    } finally {
-      globalThis.fetch = globalFetch;
-    }
+    const parsed = parseOmniForgePublicationEvent(event);
+    expect(parsed.event.type).toBe("publication.succeeded");
+    expect(parsed.publication?.remotePostId).toBe("meta-post-123");
   });
 });

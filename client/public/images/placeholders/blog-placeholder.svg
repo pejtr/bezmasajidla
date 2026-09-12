@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+  <title id="title">Titulní fotografie se připravuje</title>
+  <desc id="description">Neutrální zástupný obrázek článku</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#064e3b"/>
+      <stop offset="1" stop-color="#047857"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#background)"/>
+  <path d="M475 175h250v280H475z" fill="#fff" opacity=".96"/>
+  <path d="M520 240h160M520 290h160M520 340h120" stroke="#10b981" stroke-linecap="round" stroke-width="16"/>
+  <text x="600" y="535" text-anchor="middle" fill="#fff" font-family="Arial, sans-serif" font-size="42" font-weight="700">Bezmasá jídla</text>
+</svg>

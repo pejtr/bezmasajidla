@@ -38,12 +38,19 @@ const sampleBrownies: RecipeSocialCandidate = {
 };
 
 describe("Social Auto-Pilot — Catalog & Copywriting Engine", () => {
-  it("loads all curated recipes as candidates", () => {
+  it("loads only recipes with reviewed images as candidates", () => {
     const candidates = getAllCuratedCandidates();
-    expect(candidates.length).toBeGreaterThanOrEqual(70);
-    const svickova = candidates.find(c => c.slug === "svickova-bez-masa");
-    expect(svickova).toBeDefined();
-    expect(svickova?.title).toContain("Svíčková");
+    expect(candidates.length).toBeGreaterThanOrEqual(50);
+    expect(
+      candidates.every(candidate => !candidate.image?.includes("placeholder"))
+    ).toBe(true);
+    expect(
+      candidates.every(candidate =>
+        candidate.image?.startsWith(
+          "https://www.bezmasajidla.cz/images/recipes/"
+        )
+      )
+    ).toBe(true);
   });
 
   it("formats Czech hashtags cleanly without special characters or illegal symbols", () => {
@@ -56,8 +63,14 @@ describe("Social Auto-Pilot — Catalog & Copywriting Engine", () => {
   });
 
   it("builds valid UTM tracked social links", () => {
-    const url = buildTrackedSocialUrl("svickova-bez-masa", "instagram", "comfort_classic");
-    expect(url).toContain("https://www.bezmasajidla.cz/recepty/svickova-bez-masa");
+    const url = buildTrackedSocialUrl(
+      "svickova-bez-masa",
+      "instagram",
+      "comfort_classic"
+    );
+    expect(url).toContain(
+      "https://www.bezmasajidla.cz/recepty/svickova-bez-masa"
+    );
     expect(url).toContain("utm_source=instagram");
     expect(url).toContain("utm_medium=social_autopilot");
     expect(url).toContain("utm_campaign=comfort_classic");
@@ -79,20 +92,22 @@ describe("Social Auto-Pilot — Catalog & Copywriting Engine", () => {
       sampleRecipe,
       "instagram",
       "comfort_classic",
-      "https://www.bezmasajidla.cz/recepty/svickova-bez-masa?utm_source=instagram",
+      "https://www.bezmasajidla.cz/recepty/svickova-bez-masa?utm_source=instagram"
     );
 
     expect(igCaption).toContain("Svíčková na smetaně bez masa");
     expect(igCaption).toContain("Tradiční chuť");
     expect(igCaption).toContain("👉 Celý recept");
     expect(igCaption).toContain("#bezmasajidla");
-    expect(igCaption).toContain("https://www.bezmasajidla.cz/recepty/svickova-bez-masa");
+    expect(igCaption).toContain(
+      "https://www.bezmasajidla.cz/recepty/svickova-bez-masa"
+    );
 
     const fbCaption = generateSocialCaption(
       sampleBrownies,
       "facebook",
       "sweet_weekend",
-      "https://www.bezmasajidla.cz/recepty/veganske-brownies?utm_source=facebook",
+      "https://www.bezmasajidla.cz/recepty/veganske-brownies?utm_source=facebook"
     );
 
     expect(fbCaption).toContain("Víkendové pečení");

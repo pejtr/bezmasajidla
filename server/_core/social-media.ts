@@ -1,68 +1,49 @@
-import { and, asc, desc, eq, lte, sql } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import {
   socialPosts,
   userRecipes,
-  type SocialPost,
   type UserRecipe,
 } from "../../drizzle/schema";
+import { recipes } from "../../client/src/lib/data";
 import { getDb, getUserRecipeById } from "../db";
+import {
+  buildRecipePublishRequest,
+  getOmniForgeConfig,
+  isOmniForgeConfigured,
+  OmniForgeClient,
+  sha256Hex,
+  type OmniForgeChannel,
+  type PublicationPolicy,
+} from "./omniforge-client";
 
-export type SocialPlatform = "facebook" | "instagram";
+export type SocialPlatform = OmniForgeChannel;
 
-type FetchLike = typeof fetch;
-
-type MetaApiResponse = {
-  id?: string;
-  post_id?: string;
-  status_code?: string;
-  error?: {
-    message?: string;
-    type?: string;
-    code?: number;
-    error_subcode?: number;
-  };
-};
-
-export type SocialPublisherConfig = {
-  enabled: boolean;
-  graphApiVersion: string;
-  accessToken: string;
-  facebookPageId: string;
-  instagramAccountId: string;
-  publicBaseUrl: string;
-};
-
-export function getSocialPublisherConfig(): SocialPublisherConfig {
-  return {
-    enabled: process.env.META_AUTO_PUBLISH_ENABLED === "true",
-    graphApiVersion: process.env.META_GRAPH_API_VERSION || "v24.0",
-    accessToken: process.env.META_ACCESS_TOKEN || "",
-    facebookPageId: process.env.META_FACEBOOK_PAGE_ID || "",
-    instagramAccountId: process.env.META_INSTAGRAM_ACCOUNT_ID || "",
-    publicBaseUrl: (
-      process.env.PUBLIC_BASE_URL || "https://www.bezmasajidla.cz"
-    ).replace(/\/+$/, ""),
-  };
+function publicBaseUrl(): string {
+  return (process.env.PUBLIC_BASE_URL || "https://www.bezmasajidla.cz").replace(
+    /\/+$/,
+    ""
+  );
 }
 
 export function getSocialPublisherStatus() {
-  const config = getSocialPublisherConfig();
+  const config = getOmniForgeConfig();
   return {
-    enabled: config.enabled,
-    graphApiVersion: config.graphApiVersion,
-    facebookConfigured: Boolean(
-      config.accessToken && config.facebookPageId,
-    ),
-    instagramConfigured: Boolean(
-      config.accessToken && config.instagramAccountId,
-    ),
-    publicBaseUrl: config.publicBaseUrl,
+    executionOwner: "omniforge" as const,
+    localPublisherEnabled: false,
+    configured: isOmniForgeConfigured(),
+    apiUrl: config.apiUrl || null,
+    brandSlug: config.brandSlug,
+    facebookConfigured: Boolean(config.facebookAccountId),
+    instagramConfigured: Boolean(config.instagramAccountId),
+    webhookConfigured: Boolean(config.webhookSecret),
+    publishContractReady: true,
+    publishEndpointObserved: false,
+    publicBaseUrl: publicBaseUrl(),
   };
 }
 
 function parseRecipeTags(tags: string | null): string[] {
   if (!tags) return [];
-
   try {
     const parsed: unknown = JSON.parse(tags);
     return Array.isArray(parsed)
@@ -84,7 +65,7 @@ function asHashtag(value: string): string {
 export function buildSocialCaption(
   recipe: Pick<UserRecipe, "title" | "description" | "tags">,
   platform: SocialPlatform,
-  linkUrl: string,
+  linkUrl: string
 ): string {
   const description = recipe.description?.trim();
   const intro = `🌱 Nový recept: ${recipe.title}`;
@@ -100,199 +81,234 @@ export function buildSocialCaption(
     .filter(Boolean)
     .slice(0, 6);
   const hashtags = Array.from(
-    new Set(["#bezmasajidla", "#vegetarianske", "#vegan", ...recipeTags]),
+    new Set(["#bezmasajidla", "#vegetarianske", "#vegan", ...recipeTags])
   ).join(" ");
 
   return `${intro}\n\n${body}\n\n${callToAction}\n\n${hashtags}`;
 }
 
-export class MetaGraphClient {
-  constructor(
-    private readonly config: SocialPublisherConfig,
-    private readonly fetchImpl: FetchLike = fetch,
-  ) {}
-
-  async publish(post: SocialPost): Promise<string> {
-    if (!this.config.accessToken) {
-      throw new Error("Chybí META_ACCESS_TOKEN.");
-    }
-
-    if (post.platform === "facebook") {
-      return this.publishFacebook(post);
-    }
-
-    return this.publishInstagram(post);
-  }
-
-  private async request(
-    path: string,
-    body?: URLSearchParams,
-  ): Promise<MetaApiResponse> {
-    const response = await this.fetchImpl(
-      `https://graph.facebook.com/${this.config.graphApiVersion}/${path}`,
-      body
-        ? {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body,
-            signal: AbortSignal.timeout(20_000),
-          }
-        : {
-            headers: {
-              Authorization: `Bearer ${this.config.accessToken}`,
-            },
-            signal: AbortSignal.timeout(20_000),
-          },
-    );
-    const payload = (await response.json()) as MetaApiResponse;
-
-    if (!response.ok || payload.error) {
-      const metaMessage = payload.error?.message || response.statusText;
-      const metaCode = payload.error?.code
-        ? ` (Meta kód ${payload.error.code})`
-        : "";
-      throw new Error(`${metaMessage}${metaCode}`);
-    }
-
-    return payload;
-  }
-
-  private async publishFacebook(post: SocialPost): Promise<string> {
-    if (!this.config.facebookPageId) {
-      throw new Error("Chybí META_FACEBOOK_PAGE_ID.");
-    }
-
-    const body = new URLSearchParams({
-      access_token: this.config.accessToken,
-      message: post.caption,
-    });
-    let endpoint = `${this.config.facebookPageId}/feed`;
-
-    if (post.imageUrl) {
-      endpoint = `${this.config.facebookPageId}/photos`;
-      body.set("url", post.imageUrl);
-      body.set("published", "true");
-    } else {
-      body.set("link", post.linkUrl);
-    }
-
-    const payload = await this.request(endpoint, body);
-    const externalId = payload.post_id || payload.id;
-    if (!externalId) {
-      throw new Error("Facebook nevrátil ID publikovaného příspěvku.");
-    }
-    return externalId;
-  }
-
-  private async publishInstagram(post: SocialPost): Promise<string> {
-    if (!this.config.instagramAccountId) {
-      throw new Error("Chybí META_INSTAGRAM_ACCOUNT_ID.");
-    }
-    if (!post.imageUrl || !/^https:\/\//i.test(post.imageUrl)) {
-      throw new Error(
-        "Instagram vyžaduje veřejně dostupný obrázek přes HTTPS.",
-      );
-    }
-
-    const createPayload = await this.request(
-      `${this.config.instagramAccountId}/media`,
-      new URLSearchParams({
-        access_token: this.config.accessToken,
-        image_url: post.imageUrl,
-        caption: post.caption,
-      }),
-    );
-    if (!createPayload.id) {
-      throw new Error("Instagram nevytvořil publikační kontejner.");
-    }
-
-    await this.waitForInstagramContainer(createPayload.id);
-
-    const publishPayload = await this.request(
-      `${this.config.instagramAccountId}/media_publish`,
-      new URLSearchParams({
-        access_token: this.config.accessToken,
-        creation_id: createPayload.id,
-      }),
-    );
-    if (!publishPayload.id) {
-      throw new Error("Instagram nevrátil ID publikovaného příspěvku.");
-    }
-    return publishPayload.id;
-  }
-
-  private async waitForInstagramContainer(containerId: string): Promise<void> {
-    for (let attempt = 0; attempt < 5; attempt += 1) {
-      const payload = await this.request(
-        `${containerId}?fields=status_code&access_token=${encodeURIComponent(
-          this.config.accessToken,
-        )}`,
-      );
-
-      if (payload.status_code === "FINISHED") return;
-      if (payload.status_code === "ERROR" || payload.status_code === "EXPIRED") {
-        throw new Error(
-          `Instagram kontejner skončil stavem ${payload.status_code}.`,
-        );
-      }
-      await new Promise(resolve => setTimeout(resolve, 1_000));
-    }
-
-    throw new Error("Instagram obrázek nebyl včas připraven k publikování.");
-  }
+function buildTrackedLink(
+  recipeSlug: string,
+  platform: SocialPlatform
+): string {
+  const url = new URL(`/recepty/${recipeSlug}`, publicBaseUrl());
+  url.searchParams.set("utm_source", platform);
+  url.searchParams.set("utm_medium", "social");
+  url.searchParams.set("utm_campaign", "recipe_distribution");
+  return url.toString();
 }
 
-export async function scheduleRecipeForSocialMedia(
-  recipeId: number,
-  scheduledFor = new Date(),
-) {
+function recipeContentVersion(recipe: UserRecipe): string {
+  return sha256Hex({
+    title: recipe.title,
+    slug: recipe.slug,
+    description: recipe.description,
+    category: recipe.category,
+    difficulty: recipe.difficulty,
+    prepTime: recipe.prepTime,
+    servings: recipe.servings,
+    image: recipe.image,
+    ingredients: recipe.ingredients,
+    steps: recipe.steps,
+    tags: recipe.tags,
+  });
+}
+
+type MirrorStatus =
+  | "scheduled"
+  | "publishing"
+  | "published"
+  | "failed"
+  | "uncertain";
+
+function mirrorStatus(
+  state:
+    | "DRAFT"
+    | "APPROVED"
+    | "QUEUED"
+    | "PUBLISHING"
+    | "PUBLISHED"
+    | "FAILED"
+    | "CANCELLED"
+): MirrorStatus {
+  if (state === "PUBLISHING") return "publishing";
+  if (state === "PUBLISHED") return "published";
+  if (state === "FAILED" || state === "CANCELLED") return "failed";
+  return "scheduled";
+}
+
+async function upsertStatusMirror(input: {
+  recipe: UserRecipe;
+  platform: SocialPlatform;
+  caption: string;
+  imageUrl: string;
+  linkUrl: string;
+  scheduledFor: Date;
+  status: MirrorStatus;
+  publicationId?: string | null;
+  lastError?: string | null;
+}) {
   const db = await getDb();
-  if (!db) throw new Error("Database not available");
-
-  const recipe = await getUserRecipeById(recipeId);
-  if (!recipe) throw new Error("Recept nebyl nalezen.");
-  if (!recipe.isApproved) {
-    throw new Error("Publikovat lze pouze schválený recept.");
-  }
-
-  const config = getSocialPublisherConfig();
-  const linkUrl = `${config.publicBaseUrl}/recepty/${recipe.slug}`;
-  const imageUrl = recipe.image?.startsWith("/")
-    ? `${config.publicBaseUrl}${recipe.image}`
-    : recipe.image;
-  const platforms: SocialPlatform[] = ["facebook", "instagram"];
+  if (!db) return;
 
   await db
     .insert(socialPosts)
-    .values(
-      platforms.map(platform => ({
-        recipeId: recipe.id,
-        platform,
-        caption: buildSocialCaption(recipe, platform, linkUrl),
+    .values({
+      recipeId: input.recipe.id,
+      recipeSlug: input.recipe.slug,
+      platform: input.platform,
+      status: input.status,
+      caption: input.caption,
+      imageUrl: input.imageUrl,
+      linkUrl: input.linkUrl,
+      copyStyle: "editorial",
+      scheduledFor: input.scheduledFor,
+      publicationId: input.publicationId,
+      attempts: 0,
+      lastError: input.lastError,
+    })
+    .onDuplicateKeyUpdate({
+      set: {
+        recipeSlug: input.recipe.slug,
+        status: input.status,
+        caption: input.caption,
+        imageUrl: input.imageUrl,
+        linkUrl: input.linkUrl,
+        scheduledFor: input.scheduledFor,
+        publicationId: input.publicationId,
+        attempts: 0,
+        lastError: input.lastError,
+      },
+    });
+}
+
+export interface SocialHandoffOptions {
+  scheduledFor?: Date;
+  channels?: SocialPlatform[];
+  publicationPolicy: PublicationPolicy;
+}
+
+/**
+ * Performs one immediate producer-to-control-plane handoff.
+ *
+ * There is deliberately no local queue, timer, provider call, or retry here.
+ * OMNIFORGE owns every transition after its API accepts the request.
+ */
+export async function scheduleRecipeForSocialMedia(
+  recipeId: number,
+  options: SocialHandoffOptions
+) {
+  const recipe = await getUserRecipeById(recipeId);
+  if (!recipe) throw new Error("Recept nebyl nalezen.");
+  if (!recipe.isApproved) {
+    throw new Error("Do OMNIFORGE lze předat pouze schválený recept.");
+  }
+  if (options.publicationPolicy !== "ORIGINAL") {
+    throw new Error("INTERNAL_ONLY obsah nesmí být předán k publikaci.");
+  }
+  if (!recipe.image || recipe.image.includes("/images/placeholders/")) {
+    throw new Error("Recept nemá schválenou publikační fotografii.");
+  }
+
+  const requestedChannels: SocialPlatform[] = options.channels?.length
+    ? options.channels
+    : ["facebook", "instagram"];
+  const channels = Array.from(new Set<SocialPlatform>(requestedChannels));
+  if (!isOmniForgeConfigured(channels)) {
+    throw new Error(
+      "OMNIFORGE není kompletně nakonfigurován pro zvolené kanály."
+    );
+  }
+
+  const config = getOmniForgeConfig();
+  const imageUrl = recipe.image.startsWith("/")
+    ? `${publicBaseUrl()}${recipe.image}`
+    : recipe.image;
+  const contentVersion = recipeContentVersion(recipe);
+  const client = new OmniForgeClient(config);
+  const scheduledFor = options.scheduledFor ?? new Date();
+
+  const submissions = [];
+  for (const channel of channels) {
+    const accountId =
+      channel === "facebook"
+        ? config.facebookAccountId
+        : config.instagramAccountId;
+    if (!accountId) continue;
+
+    const linkUrl = buildTrackedLink(recipe.slug, channel);
+    const caption = buildSocialCaption(recipe, channel, linkUrl);
+    const request = buildRecipePublishRequest(
+      {
+        channel,
+        accountId,
+        sourceId: `recipe:${recipe.id}`,
+        contentVersion,
+        title: recipe.title,
+        caption,
+        imageUrl,
+        destinationUrl: linkUrl,
+        tags: parseRecipeTags(recipe.tags),
+        scheduledAt: scheduledFor,
+        publicationPolicy: options.publicationPolicy,
+      },
+      config
+    );
+
+    try {
+      const response = await client.submitPublishJob(request);
+      const job = response.jobs.find(item => item.accountId === accountId);
+      if (!job) {
+        throw new Error("OMNIFORGE nevrátil job pro požadovaný účet.");
+      }
+      await upsertStatusMirror({
+        recipe,
+        platform: channel,
+        caption,
         imageUrl,
         linkUrl,
         scheduledFor,
-      })),
-    )
-    .onDuplicateKeyUpdate({
-      set: {
-        updatedAt: sql`CURRENT_TIMESTAMP`,
-      },
-    });
+        status: mirrorStatus(job.state),
+        publicationId: job.publishJobId,
+        lastError: null,
+      });
+      submissions.push({
+        channel,
+        accepted: true as const,
+        created: job.created,
+        publishJobId: job.publishJobId,
+        contentItemId: response.contentItemId,
+        state: job.state,
+        idempotencyKey: request.idempotencyKey,
+      });
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Neznámá chyba OMNIFORGE.";
+      await upsertStatusMirror({
+        recipe,
+        platform: channel,
+        caption,
+        imageUrl,
+        linkUrl,
+        scheduledFor,
+        status: "failed",
+        publicationId: null,
+        lastError: message.slice(0, 2_000),
+      });
+      submissions.push({
+        channel,
+        accepted: false as const,
+        error: message,
+        idempotencyKey: request.idempotencyKey,
+      });
+    }
+  }
 
-  return db
-    .select()
-    .from(socialPosts)
-    .where(eq(socialPosts.recipeId, recipeId));
+  return { contentVersion, submissions };
 }
 
-import { ensureAutonomousQueue, getAllCuratedCandidates } from "./social-autopilot";
-import { recipes } from "../../client/src/lib/data";
-
 const recipeTitleLookup = new Map<string, string>();
-recipes.forEach(r => recipeTitleLookup.set(r.slug, r.title));
+recipes.forEach(recipe => recipeTitleLookup.set(recipe.slug, recipe.title));
 
 export async function listSocialPosts() {
   const db = await getDb();
@@ -312,6 +328,7 @@ export async function listSocialPosts() {
       linkUrl: socialPosts.linkUrl,
       scheduledFor: socialPosts.scheduledFor,
       publishedAt: socialPosts.publishedAt,
+      publicationId: socialPosts.publicationId,
       externalPostId: socialPosts.externalPostId,
       attempts: socialPosts.attempts,
       lastError: socialPosts.lastError,
@@ -322,320 +339,12 @@ export async function listSocialPosts() {
     .leftJoin(userRecipes, eq(socialPosts.recipeId, userRecipes.id))
     .orderBy(desc(socialPosts.scheduledFor));
 
-  return rawPosts.map(p => ({
-    ...p,
-    recipeTitle: p.userRecipeTitle || (p.recipeSlug ? recipeTitleLookup.get(p.recipeSlug) : undefined) || p.recipeSlug || "Bezmasý recept",
+  return rawPosts.map(post => ({
+    ...post,
+    recipeTitle:
+      post.userRecipeTitle ||
+      (post.recipeSlug ? recipeTitleLookup.get(post.recipeSlug) : undefined) ||
+      post.recipeSlug ||
+      "Bezmasý recept",
   }));
 }
-
-export async function retrySocialPost(id: number) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-
-  await db
-    .update(socialPosts)
-    .set({
-      status: "scheduled",
-      scheduledFor: new Date(),
-      attempts: 0,
-      lastError: null,
-      publishAttemptId: null,
-      publishStartedAt: null,
-    })
-    .where(
-      and(
-        eq(socialPosts.id, id),
-        sql`${socialPosts.status} IN ('failed', 'uncertain')`,
-      ),
-    );
-}
-
-export async function reconcileUncertainPost(
-  id: number,
-  resolution: "published" | "failed" | "scheduled",
-  externalPostId?: string,
-) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-
-  if (resolution === "published") {
-    await db
-      .update(socialPosts)
-      .set({
-        status: "published",
-        publishedAt: new Date(),
-        externalPostId: externalPostId || `rec_manual_${id}`,
-        lastError: null,
-      })
-      .where(eq(socialPosts.id, id));
-  } else if (resolution === "scheduled") {
-    await db
-      .update(socialPosts)
-      .set({
-        status: "scheduled",
-        scheduledFor: new Date(),
-        attempts: 0,
-        lastError: null,
-      })
-      .where(eq(socialPosts.id, id));
-  } else {
-    await db
-      .update(socialPosts)
-      .set({
-        status: "failed",
-        lastError: "Manuálně označeno jako neúspěšné po kontrole Meta API.",
-      })
-      .where(eq(socialPosts.id, id));
-  }
-}
-
-async function claimPost(id: number): Promise<{ success: boolean; attemptId: string }> {
-  const db = await getDb();
-  if (!db) return { success: false, attemptId: "" };
-
-  const attemptId = `att_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
-  const result = await db
-    .update(socialPosts)
-    .set({
-      status: "publishing",
-      publishAttemptId: attemptId,
-      publishStartedAt: new Date(),
-    })
-    .where(
-      and(eq(socialPosts.id, id), eq(socialPosts.status, "scheduled")),
-    );
-  const resultValue: unknown = result;
-  const header = Array.isArray(resultValue) ? resultValue[0] : resultValue;
-  const success = Number((header as { affectedRows?: number }).affectedRows || 0) > 0;
-  return { success, attemptId };
-}
-
-async function dispatchWebhookNotification(post: SocialPost, externalPostId: string) {
-  const webhookUrl = process.env.SOCIAL_WEBHOOK_URL;
-  if (!webhookUrl) return;
-
-  try {
-    await fetch(webhookUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        event: "social_post_published",
-        postId: post.id,
-        recipeSlug: post.recipeSlug,
-        platform: post.platform,
-        caption: post.caption,
-        imageUrl: post.imageUrl,
-        linkUrl: post.linkUrl,
-        externalPostId,
-        publishedAt: new Date().toISOString(),
-      }),
-      signal: AbortSignal.timeout(5000),
-    });
-  } catch (err) {
-    console.warn("[Social Webhook] Failed to dispatch webhook:", err);
-  }
-}
-
-export type PublisherMode = "local" | "direct_meta" | "omniforge";
-
-export function getPublisherMode(): PublisherMode {
-  const envMode = process.env.SOCIAL_PUBLISHER_MODE?.toLowerCase();
-  if (envMode === "omniforge") return "omniforge";
-  if (envMode === "direct_meta") return "direct_meta";
-  if (envMode === "local") return "local";
-
-  // Auto-detect mode if SOCIAL_PUBLISHER_MODE is not explicitly set
-  if (process.env.OMNIFORGE_API_KEY && process.env.OMNIFORGE_API_KEY.length > 5) {
-    return "omniforge";
-  }
-  if (
-    process.env.META_ACCESS_TOKEN &&
-    (process.env.META_FACEBOOK_PAGE_ID || process.env.META_INSTAGRAM_ACCOUNT_ID)
-  ) {
-    return "direct_meta";
-  }
-  return "local";
-}
-
-async function finishPost(
-  post: SocialPost,
-  result: {
-    externalPostId?: string;
-    publicationId?: string;
-    error?: unknown;
-    isUncertain?: boolean;
-  },
-) {
-  const db = await getDb();
-  if (!db) return;
-
-  const attempts = post.attempts + 1;
-  const publicationId = result.publicationId || post.publicationId;
-
-  if (result.externalPostId) {
-    await db
-      .update(socialPosts)
-      .set({
-        status: "published",
-        publishedAt: new Date(),
-        externalPostId: result.externalPostId,
-        publicationId,
-        attempts,
-        lastError: null,
-      })
-      .where(eq(socialPosts.id, post.id));
-
-    void dispatchWebhookNotification(post, result.externalPostId);
-    return;
-  }
-
-  if (result.isUncertain) {
-    // Timeout or network ambiguity: mark as 'uncertain' (never blindly re-publish to avoid duplicate posts!)
-    await db
-      .update(socialPosts)
-      .set({
-        status: "uncertain",
-        publicationId,
-        attempts,
-        lastError: "Publikace skončila timeoutem nebo nejednoznačnou odpovědí sítě. Vyžaduje ruční kontrolu.",
-      })
-      .where(eq(socialPosts.id, post.id));
-    return;
-  }
-
-  const message =
-    result.error instanceof Error
-      ? result.error.message
-      : "Neznámá chyba při publikování.";
-  const shouldRetry = attempts < 4;
-  const retryDelayMinutes = Math.min(60, 2 ** attempts * 5);
-
-  await db
-    .update(socialPosts)
-    .set({
-      status: shouldRetry ? "scheduled" : "failed",
-      scheduledFor: shouldRetry
-        ? new Date(Date.now() + retryDelayMinutes * 60_000)
-        : post.scheduledFor,
-      publicationId,
-      attempts,
-      lastError: message.slice(0, 2_000),
-    })
-    .where(eq(socialPosts.id, post.id));
-}
-
-export async function runSocialPublisherOnce(limit = 4) {
-  const config = getSocialPublisherConfig();
-  const mode = getPublisherMode();
-  const db = await getDb();
-  if (!db) return { processed: 0, disabled: false, mode };
-
-  const duePosts = await db
-    .select()
-    .from(socialPosts)
-    .where(
-      and(
-        eq(socialPosts.status, "scheduled"),
-        lte(socialPosts.scheduledFor, new Date()),
-      ),
-    )
-    .orderBy(asc(socialPosts.scheduledFor))
-    .limit(limit);
-
-  if (duePosts.length === 0) {
-    return { processed: 0, disabled: !config.enabled, mode };
-  }
-
-  const metaClient = new MetaGraphClient(config);
-  let processed = 0;
-
-  for (const post of duePosts) {
-    const { success } = await claimPost(post.id);
-    if (!success) continue;
-
-    try {
-      if (mode === "omniforge") {
-        // Mode A: OMNIFORGE Central Publishing Hub (No auto-fallback to direct_meta!)
-        const { isOmniForgeConfigured, OmniForgeClient } = await import("./omniforge-client");
-        if (!isOmniForgeConfigured()) {
-          throw new Error("SOCIAL_PUBLISHER_MODE=omniforge configured, but OMNIFORGE_API_KEY is missing");
-        }
-        const omniClient = new OmniForgeClient();
-        const res = await omniClient.publish(post);
-        await finishPost(post, {
-          externalPostId: res.externalPostId,
-          publicationId: res.publicationId,
-        });
-      } else if (mode === "direct_meta") {
-        // Mode B: Direct Meta Graph API integration
-        if (!config.accessToken) {
-          throw new Error("SOCIAL_PUBLISHER_MODE=direct_meta configured, but META_ACCESS_TOKEN is missing");
-        }
-        const externalPostId = await metaClient.publish(post);
-        await finishPost(post, { externalPostId });
-      } else {
-        // Mode C: Local Simulation Mode
-        const simId = `sim_${post.platform}_${post.id}_${Date.now().toString(36)}`;
-        const publicationId = `pub_bj_${post.id}_${post.platform}_${Date.now().toString(36)}`;
-        console.log(
-          `[Social Auto-Pilot (local mode)] Published (${post.platform}): "${post.caption.slice(0, 60)}..." -> ID: ${simId}`,
-        );
-        await finishPost(post, { externalPostId: simId, publicationId });
-      }
-    } catch (error) {
-      console.error(
-        `[Social Media Publisher] (${mode} mode) ${post.platform} post ${post.id} failed:`,
-        error,
-      );
-      const isTimeout =
-        error instanceof Error &&
-        (error.name === "AbortError" ||
-          error.message.toLowerCase().includes("timeout") ||
-          error.message.toLowerCase().includes("econnreset"));
-      await finishPost(post, { error, isUncertain: isTimeout });
-    }
-    processed += 1;
-  }
-
-  return { processed, disabled: false, mode };
-}
-
-let publisherTimer: ReturnType<typeof setInterval> | undefined;
-let publisherRunning = false;
-
-export function startSocialPublisher() {
-  if (publisherTimer) return;
-
-  // Immediately ensure autonomous queue has at least 14 days of content
-  void ensureAutonomousQueue(14).catch(err => {
-    console.warn("[Social Auto-Pilot] Initial queue refill warning:", err);
-  });
-
-  const tick = async () => {
-    if (publisherRunning) return;
-    publisherRunning = true;
-    try {
-      await runSocialPublisherOnce();
-    } finally {
-      publisherRunning = false;
-    }
-  };
-
-  const intervalMs = Math.max(
-    30_000,
-    Number(process.env.SOCIAL_PUBLISH_INTERVAL_MS) || 60_000,
-  );
-
-  void tick();
-  publisherTimer = setInterval(tick, intervalMs);
-  publisherTimer.unref?.();
-
-  // Periodic queue refill every 6 hours
-  const refillInterval = setInterval(() => {
-    void ensureAutonomousQueue(14).catch(console.error);
-  }, 6 * 60 * 60 * 1000);
-  refillInterval.unref?.();
-
-  console.log(`[Social Media] 100% Autonomous Auto-Pilot Engine active (publisher interval ${intervalMs} ms, perpetual 14-day queue feeder active).`);
-}
-

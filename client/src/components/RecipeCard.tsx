@@ -8,6 +8,7 @@ import { Clock, Users, ChefHat, Bookmark } from "lucide-react";
 import { hasRecipeDietaryOption, Recipe } from "@/lib/data";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import OptimizedImage from "@/components/OptimizedImage";
+import { RECIPE_PLACEHOLDER_IMAGE } from "@/lib/recipeImageOverrides";
 
 interface Props {
   recipe: Recipe;
@@ -40,6 +41,7 @@ export default function RecipeCard({ recipe }: Props) {
             alt={recipe.images?.[0]?.alt || recipe.title}
             className="w-full h-full group-hover:scale-105 transition-transform duration-300"
             placeholderColor="#d1fae5"
+            fallbackSrc={RECIPE_PLACEHOLDER_IMAGE}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
           {recipe.isVegan ? (
@@ -56,7 +58,9 @@ export default function RecipeCard({ recipe }: Props) {
               Bez lepku
             </span>
           )}
-          <span className={`absolute top-3 right-3 text-xs font-semibold px-2 py-0.5 rounded-full ${difficultyColor}`}>
+          <span
+            className={`absolute top-3 right-3 text-xs font-semibold px-2 py-0.5 rounded-full ${difficultyColor}`}
+          >
             {recipe.difficulty}
           </span>
           {/* Bookmark button */}
@@ -75,7 +79,9 @@ export default function RecipeCard({ recipe }: Props) {
 
         {/* Content */}
         <div className="p-4">
-          <p className="text-xs text-emerald-600 font-medium mb-1">{recipe.category}</p>
+          <p className="text-xs text-emerald-600 font-medium mb-1">
+            {recipe.category}
+          </p>
           <h3
             className="font-semibold text-gray-900 text-base leading-snug mb-3 group-hover:text-emerald-700 transition-colors"
             style={{ fontFamily: "'DM Serif Display', serif" }}

@@ -7,48 +7,56 @@ import { nanoid } from "nanoid";
  * For demonstration, this mocks the OpenAI API call.
  */
 export async function generateDailyAIRecipe() {
-    console.log("[AI Recipe] Starting daily AI recipe generation...");
+  console.log("[AI Recipe] Starting daily AI recipe generation...");
 
-    try {
-        const db = await getDb();
-        if (!db) {
-            console.warn("[AI Recipe] Database not available, skipping generation.");
-            return;
-        }
-        // TBD: use real OpenAI fetch here using fetch() to api.openai.com
-        // Mocked AI output
-        const mockGeneratedRecipe: InsertUserRecipe = {
-            userId: 1, // Admin user ID or system user ID
-            title: "AI Vygenerovaný Veganský Zázrak: Quinoa s Pečenou Zeleninou",
-            slug: `quinoa-pecena-zelenina-${nanoid(6)}`,
-            description: "Tento jednoduchý a zdravý recept byl navržen umělou inteligencí pro maximální výživu a skvělou chuť. Plný proteinu a barev!",
-            category: "Hlavní jídla",
-            difficulty: "snadný",
-            prepTime: "15",
-            servings: 2,
-            isApproved: false, // Wait for admin approval
-            ingredients: JSON.stringify([
-                "200g quinoy",
-                "1 batát",
-                "1 paprika",
-                "2 lžíce olivového oleje",
-                "Sůl, pepř a kurkuma"
-            ]),
-            steps: JSON.stringify([
-                "Uvařte quinou dle návodu.",
-                "Zeleninu nakrájejte a upečte v troubě s olejem a kořením.",
-                "Vše smíchejte a podávejte."
-            ]),
-            tags: JSON.stringify(["Vegan", "AI Recept", "Zdravé", "Do 30 min", "Bezlepkové"]),
-            image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/restaurant-placeholder-NfsuHQoJhFmyxCXwn7EygE.webp" // Placeholder until explicitly generated via DALL-E
-        };
-
-        await db.insert(userRecipes).values(mockGeneratedRecipe);
-        console.log("[AI Recipe] Successfully generated and stored a draft AI recipe.");
-
-    } catch (error) {
-        console.error("[AI Recipe] Failed to generate AI recipe", error);
+  try {
+    const db = await getDb();
+    if (!db) {
+      console.warn("[AI Recipe] Database not available, skipping generation.");
+      return;
     }
+    // TBD: use real OpenAI fetch here using fetch() to api.openai.com
+    // Mocked AI output
+    const mockGeneratedRecipe: InsertUserRecipe = {
+      userId: 1, // Admin user ID or system user ID
+      title: "AI Vygenerovaný Veganský Zázrak: Quinoa s Pečenou Zeleninou",
+      slug: `quinoa-pecena-zelenina-${nanoid(6)}`,
+      description:
+        "Tento jednoduchý a zdravý recept byl navržen umělou inteligencí pro maximální výživu a skvělou chuť. Plný proteinu a barev!",
+      category: "Hlavní jídla",
+      difficulty: "snadný",
+      prepTime: "15",
+      servings: 2,
+      isApproved: false, // Wait for admin approval
+      ingredients: JSON.stringify([
+        "200g quinoy",
+        "1 batát",
+        "1 paprika",
+        "2 lžíce olivového oleje",
+        "Sůl, pepř a kurkuma",
+      ]),
+      steps: JSON.stringify([
+        "Uvařte quinou dle návodu.",
+        "Zeleninu nakrájejte a upečte v troubě s olejem a kořením.",
+        "Vše smíchejte a podávejte.",
+      ]),
+      tags: JSON.stringify([
+        "Vegan",
+        "AI Recept",
+        "Zdravé",
+        "Do 30 min",
+        "Bezlepkové",
+      ]),
+      image: "/images/placeholders/recipe-placeholder.svg", // Placeholder until a matching image is reviewed.
+    };
+
+    await db.insert(userRecipes).values(mockGeneratedRecipe);
+    console.log(
+      "[AI Recipe] Successfully generated and stored a draft AI recipe."
+    );
+  } catch (error) {
+    console.error("[AI Recipe] Failed to generate AI recipe", error);
+  }
 }
 
 /**
@@ -57,7 +65,9 @@ export async function generateDailyAIRecipe() {
 export function startDailyRecipeCronJob() {
   // Only run in production to avoid spamming dev databases
   if (process.env.NODE_ENV !== "production") {
-    console.log("[CRON] Skipping daily AI recipe generator in non-production mode.");
+    console.log(
+      "[CRON] Skipping daily AI recipe generator in non-production mode."
+    );
     return;
   }
 

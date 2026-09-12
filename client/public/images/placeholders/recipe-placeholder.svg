@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title description">
+  <title id="title">Fotografie receptu se připravuje</title>
+  <desc id="description">Neutrální zástupný obrázek Bezmasá jídla</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ecfdf5"/>
+      <stop offset="1" stop-color="#d1fae5"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#background)"/>
+  <circle cx="600" cy="330" r="132" fill="#ffffff" stroke="#047857" stroke-width="12"/>
+  <path d="M544 378c-7-90 44-156 137-174-2 96-48 156-137 174Z" fill="#10b981"/>
+  <path d="M538 391c49-61 91-99 143-151" fill="none" stroke="#047857" stroke-linecap="round" stroke-width="14"/>
+  <text x="600" y="535" text-anchor="middle" fill="#064e3b" font-family="Arial, sans-serif" font-size="48" font-weight="700">Fotografie se připravuje</text>
+  <text x="600" y="595" text-anchor="middle" fill="#047857" font-family="Arial, sans-serif" font-size="28">Bezmasá jídla</text>
+</svg>

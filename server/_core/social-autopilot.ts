@@ -1,7 +1,5 @@
-import { desc, eq, gte } from "drizzle-orm";
-import { socialPosts, type InsertSocialPost, type SocialPost } from "../../drizzle/schema";
-import { getDb } from "../db";
 import { recipes, type Recipe } from "../../client/src/lib/data";
+import { RECIPE_PLACEHOLDER_IMAGE } from "../../client/src/lib/recipeImageOverrides";
 
 export type SocialPlatform = "facebook" | "instagram";
 
@@ -50,7 +48,7 @@ export function createPragueDateTime(
   monthOrHour?: number,
   dayOrMinute?: number,
   hour?: number,
-  minute?: number,
+  minute?: number
 ): Date {
   let targetYear: number;
   let targetMonth: number;
@@ -74,7 +72,15 @@ export function createPragueDateTime(
   }
 
   let utcGuess = new Date(
-    Date.UTC(targetYear, targetMonth - 1, targetDay, targetHour, targetMinute, 0, 0),
+    Date.UTC(
+      targetYear,
+      targetMonth - 1,
+      targetDay,
+      targetHour,
+      targetMinute,
+      0,
+      0
+    )
   );
 
   const dtf = new Intl.DateTimeFormat("en-US", {
@@ -90,7 +96,8 @@ export function createPragueDateTime(
 
   for (let i = 0; i < 3; i++) {
     const parts = dtf.formatToParts(utcGuess);
-    const getPart = (type: string) => Number(parts.find(p => p.type === type)?.value || 0);
+    const getPart = (type: string) =>
+      Number(parts.find(p => p.type === type)?.value || 0);
     const pYear = getPart("year");
     const pMonth = getPart("month");
     const pDay = getPart("day");
@@ -98,7 +105,13 @@ export function createPragueDateTime(
     const pMinute = getPart("minute");
 
     const diffMinutes =
-      (Date.UTC(targetYear, targetMonth - 1, targetDay, targetHour, targetMinute) -
+      (Date.UTC(
+        targetYear,
+        targetMonth - 1,
+        targetDay,
+        targetHour,
+        targetMinute
+      ) -
         Date.UTC(pYear, pMonth - 1, pDay, pHour, pMinute)) /
       (60 * 1000);
 
@@ -129,7 +142,8 @@ export function getPragueDateParts(d: Date): {
     hourCycle: "h23",
   });
   const parts = dtf.formatToParts(d);
-  const getPart = (type: string) => Number(parts.find(p => p.type === type)?.value || 0);
+  const getPart = (type: string) =>
+    Number(parts.find(p => p.type === type)?.value || 0);
   return {
     year: getPart("year"),
     month: getPart("month"),
@@ -143,7 +157,12 @@ export function getPragueDateParts(d: Date): {
  * Standardizes hashtags for Czech plant-based gastronomy
  */
 export function formatHashtags(recipe: RecipeSocialCandidate): string {
-  const baseTags = ["#bezmasajidla", "#vegetarianskerecepty", "#vegancz", "#dnesvarim"];
+  const baseTags = [
+    "#bezmasajidla",
+    "#vegetarianskerecepty",
+    "#vegancz",
+    "#dnesvarim",
+  ];
 
   const specificTags: string[] = [];
 
@@ -165,9 +184,14 @@ export function formatHashtags(recipe: RecipeSocialCandidate): string {
   ) {
     specificTags.push("#rychlevecere", "#veceredomu", "#zdravavecere");
   }
-  if (recipe.cuisine?.toLowerCase().includes("česk")) specificTags.push("#ceskakuchyne", "#tradicnerecepty");
-  if (recipe.cuisine?.toLowerCase().includes("italsk")) specificTags.push("#italskakuchyne", "#pasta");
-  if (recipe.cuisine?.toLowerCase().includes("indick") || recipe.cuisine?.toLowerCase().includes("kari")) {
+  if (recipe.cuisine?.toLowerCase().includes("česk"))
+    specificTags.push("#ceskakuchyne", "#tradicnerecepty");
+  if (recipe.cuisine?.toLowerCase().includes("italsk"))
+    specificTags.push("#italskakuchyne", "#pasta");
+  if (
+    recipe.cuisine?.toLowerCase().includes("indick") ||
+    recipe.cuisine?.toLowerCase().includes("kari")
+  ) {
     specificTags.push("#indickakuchyne", "#kari");
   }
 
@@ -184,7 +208,10 @@ export function formatHashtags(recipe: RecipeSocialCandidate): string {
     });
   }
 
-  const unique = Array.from(new Set([...baseTags, ...specificTags])).slice(0, 10);
+  const unique = Array.from(new Set([...baseTags, ...specificTags])).slice(
+    0,
+    10
+  );
   return unique.join(" ");
 }
 
@@ -202,7 +229,7 @@ export function buildTrackedSocialUrl(
       },
   platformArg?: SocialPlatform,
   styleArg?: CopywritingStyle,
-  postIdArg?: number,
+  postIdArg?: number
 ): string {
   let slug: string;
   let platform: SocialPlatform;
@@ -228,7 +255,10 @@ export function buildTrackedSocialUrl(
 /**
  * Selects an optimal copywriting style based on recipe category, cuisine, and day of week
  */
-export function determineCopyStyle(recipe: RecipeSocialCandidate, targetDate: Date): CopywritingStyle {
+export function determineCopyStyle(
+  recipe: RecipeSocialCandidate,
+  targetDate: Date
+): CopywritingStyle {
   const dayOfWeek = targetDate.getDay(); // 0 = Sunday, 1 = Monday...
   const category = (recipe.category || "").toLowerCase();
   const title = (recipe.title || "").toLowerCase();
@@ -282,13 +312,19 @@ export function generateSocialCaption(
   recipe: RecipeSocialCandidate,
   platform: SocialPlatform,
   style: CopywritingStyle,
-  linkUrl: string,
+  linkUrl: string
 ): string {
   const hashtags = formatHashtags(recipe);
-  const timeInfo = recipe.prepTime ? `⏱️ Příprava: ${recipe.prepTime} minut` : "";
-  const categoryInfo = recipe.category ? `🥗 Kategorie: ${recipe.category}` : "";
+  const timeInfo = recipe.prepTime
+    ? `⏱️ Příprava: ${recipe.prepTime} minut`
+    : "";
+  const categoryInfo = recipe.category
+    ? `🥗 Kategorie: ${recipe.category}`
+    : "";
   const cuisineInfo = recipe.cuisine ? `🌍 Kuchyně: ${recipe.cuisine}` : "";
-  const details = [categoryInfo, cuisineInfo, timeInfo].filter(Boolean).join(" | ");
+  const details = [categoryInfo, cuisineInfo, timeInfo]
+    .filter(Boolean)
+    .join(" | ");
 
   let hook = "";
   let body = "";
@@ -332,25 +368,27 @@ export function generateSocialCaption(
  * Returns all 72+ curated recipes formatted as social candidates
  */
 export function getAllCuratedCandidates(): RecipeSocialCandidate[] {
-  return recipes.map((r: Recipe) => {
-    let imageUrl = r.image;
-    if (imageUrl && imageUrl.startsWith("/")) {
-      imageUrl = `${BASE_PUBLIC_URL}${imageUrl}`;
-    }
-    return {
-      id: r.id || r.slug,
-      slug: r.slug,
-      title: r.title,
-      description: r.description,
-      category: r.category,
-      cuisine: r.cuisine,
-      prepTime: r.prepTime + (r.cookTime || 0),
-      cookTime: r.cookTime,
-      image: imageUrl,
-      tags: r.tags,
-      isVegan: r.isVegan,
-    };
-  });
+  return recipes
+    .filter((r: Recipe) => r.image !== RECIPE_PLACEHOLDER_IMAGE)
+    .map((r: Recipe) => {
+      let imageUrl = r.image;
+      if (imageUrl && imageUrl.startsWith("/")) {
+        imageUrl = `${BASE_PUBLIC_URL}${imageUrl}`;
+      }
+      return {
+        id: r.id || r.slug,
+        slug: r.slug,
+        title: r.title,
+        description: r.description,
+        category: r.category,
+        cuisine: r.cuisine,
+        prepTime: r.prepTime + (r.cookTime || 0),
+        cookTime: r.cookTime,
+        image: imageUrl,
+        tags: r.tags,
+        isVegan: r.isVegan,
+      };
+    });
 }
 
 export interface ScheduleSlot {
@@ -361,194 +399,51 @@ export interface ScheduleSlot {
 /**
  * Returns optimal posting schedule slots (11:30 and 17:30 Europe/Prague time) for next N days
  */
-export function generateScheduleSlots(daysAhead = 14, startDate = new Date()): ScheduleSlot[] {
+export function generateScheduleSlots(
+  daysAhead = 14,
+  startDate = new Date()
+): ScheduleSlot[] {
   const slots: ScheduleSlot[] = [];
   const basePrague = getPragueDateParts(startDate);
 
   for (let dayOffset = 0; dayOffset < daysAhead; dayOffset++) {
     // Reference date for Prague day
-    const dayRef = new Date(Date.UTC(basePrague.year, basePrague.month - 1, basePrague.day + dayOffset, 12, 0, 0));
+    const dayRef = new Date(
+      Date.UTC(
+        basePrague.year,
+        basePrague.month - 1,
+        basePrague.day + dayOffset,
+        12,
+        0,
+        0
+      )
+    );
     const parts = getPragueDateParts(dayRef);
 
     // Slot 1: 11:30 Prague
-    const slotLunch = createPragueDateTime(parts.year, parts.month, parts.day, 11, 30);
+    const slotLunch = createPragueDateTime(
+      parts.year,
+      parts.month,
+      parts.day,
+      11,
+      30
+    );
     if (slotLunch > startDate) {
       slots.push({ date: slotLunch, slotLabel: "11:30" });
     }
 
     // Slot 2: 17:30 Prague
-    const slotDinner = createPragueDateTime(parts.year, parts.month, parts.day, 17, 30);
+    const slotDinner = createPragueDateTime(
+      parts.year,
+      parts.month,
+      parts.day,
+      17,
+      30
+    );
     if (slotDinner > startDate) {
       slots.push({ date: slotDinner, slotLabel: "17:30" });
     }
   }
 
   return slots.sort((a, b) => a.date.getTime() - b.date.getTime());
-}
-
-/**
- * Autonomous Queue Maintenance:
- * Ensures there are always scheduled posts for both Facebook and Instagram for the next N days.
- * Prevents recipe duplicates within 30 days.
- * Stamps each post with its distinct socialPublicationId and Europe/Prague slot.
- */
-export async function ensureAutonomousQueue(daysAhead = 14): Promise<{
-  scheduledCount: number;
-  existingCount: number;
-  totalCandidates: number;
-}> {
-  const db = await getDb();
-  const allCandidates = getAllCuratedCandidates();
-  if (!db || allCandidates.length === 0) {
-    return { scheduledCount: 0, existingCount: 0, totalCandidates: allCandidates.length };
-  }
-
-  const now = new Date();
-  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-
-  // 1. Fetch recently published & currently scheduled posts
-  const recentPosts = await db
-    .select({
-      id: socialPosts.id,
-      recipeSlug: socialPosts.recipeSlug,
-      scheduledFor: socialPosts.scheduledFor,
-      platform: socialPosts.platform,
-      status: socialPosts.status,
-    })
-    .from(socialPosts)
-    .where(gte(socialPosts.scheduledFor, thirtyDaysAgo));
-
-  const scheduledTimeStamps = new Set(
-    recentPosts
-      .filter(p => p.status === "scheduled" && p.scheduledFor >= now)
-      .map(p => `${p.scheduledFor.toISOString().slice(0, 13)}_${p.platform}`),
-  );
-
-  const recentlyUsedSlugs = new Set(
-    recentPosts.map(p => p.recipeSlug).filter(Boolean),
-  );
-
-  // 2. Determine target slots for the next `daysAhead` days
-  const targetSlots = generateScheduleSlots(daysAhead, now);
-  const platforms: SocialPlatform[] = ["facebook", "instagram"];
-  let newlyScheduledCount = 0;
-
-  let candidateIndex = 0;
-  let availableCandidates = allCandidates.filter(c => !recentlyUsedSlugs.has(c.slug));
-  if (availableCandidates.length < targetSlots.length) {
-    availableCandidates = [...allCandidates];
-  }
-
-  for (const slot of targetSlots) {
-    for (const platform of platforms) {
-      const slotKey = `${slot.date.toISOString().slice(0, 13)}_${platform}`;
-      if (scheduledTimeStamps.has(slotKey)) {
-        continue; // Already scheduled
-      }
-
-      const recipe = availableCandidates[candidateIndex % availableCandidates.length];
-      candidateIndex++;
-
-      const style = determineCopyStyle(recipe, slot.date);
-      const initialLinkUrl = buildTrackedSocialUrl(recipe.slug, platform, style);
-      const initialCaption = generateSocialCaption(recipe, platform, style, initialLinkUrl);
-
-      // Insert initial record to obtain distinct publication ID
-      const insertResult = await db.insert(socialPosts).values({
-        recipeSlug: recipe.slug,
-        platform,
-        status: "scheduled",
-        copyStyle: style,
-        publishingSlot: slot.slotLabel,
-        caption: initialCaption,
-        imageUrl: recipe.image || `${BASE_PUBLIC_URL}/images/og-default.jpg`,
-        linkUrl: initialLinkUrl,
-        scheduledFor: slot.date,
-      });
-
-      const rawInsert: unknown = insertResult;
-      const header = Array.isArray(rawInsert) ? rawInsert[0] : rawInsert;
-      const insertedId = (header as { insertId?: number })?.insertId;
-
-      if (insertedId) {
-        // Stamp authoritative post_<id> into the linkUrl and caption
-        const finalLinkUrl = buildTrackedSocialUrl(recipe.slug, platform, style, insertedId);
-        const finalCaption = generateSocialCaption(recipe, platform, style, finalLinkUrl);
-
-        await db
-          .update(socialPosts)
-          .set({
-            linkUrl: finalLinkUrl,
-            caption: finalCaption,
-          })
-          .where(eq(socialPosts.id, insertedId));
-      }
-
-      scheduledTimeStamps.add(slotKey);
-      newlyScheduledCount++;
-    }
-  }
-
-  if (newlyScheduledCount > 0) {
-    console.log(
-      `[Autonomous Social Engine] Scheduled ${newlyScheduledCount} new posts across ${daysAhead} days (Europe/Prague slots).`,
-    );
-  }
-
-  const totalScheduled =
-    recentPosts.filter(p => p.status === "scheduled" && p.scheduledFor >= now).length +
-    newlyScheduledCount;
-
-  return {
-    scheduledCount: newlyScheduledCount,
-    existingCount: totalScheduled,
-    totalCandidates: allCandidates.length,
-  };
-}
-
-/**
- * Exports next scheduled social posts as CSV for Meta Business Suite / Buffer bulk upload
- */
-export async function exportSocialCalendarCsv(limit = 60): Promise<string> {
-  const db = await getDb();
-  if (!db) return "Date,Time,Platform,Recipe,Slot,Style,Caption,Link,Image\n";
-
-  const posts = await db
-    .select()
-    .from(socialPosts)
-    .orderBy(desc(socialPosts.scheduledFor))
-    .limit(limit);
-
-  const headers = [
-    "Date",
-    "Time",
-    "Platform",
-    "Recipe Slug",
-    "Publishing Slot",
-    "Copy Style",
-    "Caption",
-    "Link URL",
-    "Image URL",
-    "Status",
-  ];
-  const rows = posts.map(p => {
-    const d = new Date(p.scheduledFor);
-    const dateStr = d.toISOString().split("T")[0];
-    const timeStr = d.toTimeString().split(" ")[0].slice(0, 5);
-    const safeCaption = `"${(p.caption || "").replace(/"/g, '""')}"`;
-    return [
-      dateStr,
-      timeStr,
-      p.platform,
-      p.recipeSlug || "",
-      p.publishingSlot || "",
-      p.copyStyle || "",
-      safeCaption,
-      p.linkUrl,
-      p.imageUrl || "",
-      p.status,
-    ].join(",");
-  });
-
-  return [headers.join(","), ...rows].join("\n");
 }

@@ -4,27 +4,57 @@
 // ============================================================
 
 import crypto from "crypto";
+import { z } from "zod";
 
 const processedEventIds = new Set<string>();
 const activeProcessingEventIds = new Set<string>();
 const MAX_EVENT_CACHE_SIZE = 10000;
 
-export interface OmniForgeWebhookPayload {
-  eventId: string;
-  eventType: "publication.published" | "publication.failed" | "publication.uncertain" | string;
-  timestamp: string | number;
-  publicationId: string;
-  providerPostId?: string;
-  publishedAt?: string;
-  status?: string;
-  error?: string;
-  metadata?: {
-    internalPostId?: number;
-    recipeSlug?: string;
-    copyStyle?: string;
-    publishingSlot?: string;
-    publicationId?: string;
-  };
+const publicationEventDataSchema = z.object({
+  publicationId: z.uuid(),
+  contentItemId: z.uuid(),
+  remotePostId: z.string().min(1).optional(),
+  permalinkUrl: z.url().nullable().optional(),
+  publishedAt: z.iso.datetime().optional(),
+  errorKind: z.string().optional(),
+  message: z.string().optional(),
+  attempts: z.number().int().nonnegative().optional(),
+});
+
+export const omniForgeDomainEventSchema = z.object({
+  eventId: z.uuid(),
+  type: z.enum([
+    "publication.created",
+    "publication.started",
+    "publication.succeeded",
+    "publication.failed",
+    "reconciliation.required",
+    "reconciliation.resolved",
+    "intake.received",
+  ]),
+  payloadVersion: z.literal(1),
+  occurredAt: z.iso.datetime(),
+  brandId: z.uuid(),
+  brandSlug: z.string().min(1),
+  aggregate: z.object({
+    type: z.enum(["publication", "content_item"]),
+    id: z.uuid(),
+  }),
+  correlationId: z.string().nullable(),
+  data: z.record(z.string(), z.unknown()),
+});
+
+export type OmniForgeDomainEvent = z.infer<typeof omniForgeDomainEventSchema>;
+
+export function parseOmniForgePublicationEvent(value: unknown) {
+  const event = omniForgeDomainEventSchema.parse(value);
+  if (
+    !event.type.startsWith("publication.") &&
+    event.type !== "reconciliation.required"
+  ) {
+    return { event, publication: null };
+  }
+  return { event, publication: publicationEventDataSchema.parse(event.data) };
 }
 
 /**
@@ -32,52 +62,59 @@ export interface OmniForgeWebhookPayload {
  */
 export function verifyOmniForgeWebhookSignature(params: {
   signatureHeader?: string;
-  timestampHeader?: string;
   rawBody: string | Buffer;
   secret: string;
 }): { valid: boolean; reason?: string } {
-  const { signatureHeader, timestampHeader, rawBody, secret } = params;
+  const { signatureHeader, rawBody, secret } = params;
 
   if (!secret) {
-    // Secret not configured: return valid in development/unconfigured mode
-    return { valid: true };
+    return {
+      valid: false,
+      reason: "OMNIFORGE webhook secret is not configured",
+    };
   }
 
   if (!signatureHeader) {
-    return { valid: false, reason: "Missing X-OmniForge-Signature header" };
+    return { valid: false, reason: "malformed_header" };
   }
 
-  const timestamp = timestampHeader || "";
-  if (timestamp) {
-    const timeMs = Number(timestamp) * (timestamp.length === 10 ? 1000 : 1);
-    if (!isNaN(timeMs)) {
-      const diffMs = Math.abs(Date.now() - timeMs);
-      if (diffMs > 5 * 60 * 1000) {
-        return { valid: false, reason: "Webhook timestamp expired (> 5 minutes)" };
-      }
-    }
+  let timestamp: number | null = null;
+  let signature: string | null = null;
+  for (const part of signatureHeader.split(",")) {
+    const [rawKey, ...rest] = part.split("=");
+    const key = rawKey?.trim();
+    const value = rest.join("=").trim();
+    if (key === "t") timestamp = Number(value);
+    if (key === "v1") signature = value;
+  }
+  if (timestamp === null || !Number.isInteger(timestamp) || !signature) {
+    return { valid: false, reason: "malformed_header" };
+  }
+  const signedTimestamp = timestamp;
+  if (Math.abs(Math.floor(Date.now() / 1000) - signedTimestamp) > 300) {
+    return { valid: false, reason: "stale_timestamp" };
   }
 
-  const payloadToSign = timestamp ? `${timestamp}.${rawBody.toString("utf8")}` : rawBody.toString("utf8");
+  const payloadToSign = `${String(signedTimestamp)}.${rawBody.toString("utf8")}`;
   const expectedSignature = crypto
     .createHmac("sha256", secret)
     .update(payloadToSign)
     .digest("hex");
 
-  const cleanSignature = signatureHeader.replace(/^sha256=/, "").trim();
-
   try {
-    const signatureBuffer = Buffer.from(cleanSignature, "hex");
-    const expectedBuffer = Buffer.from(expectedSignature, "hex");
+    const signatureBuffer = Buffer.from(signature, "utf8");
+    const expectedBuffer = Buffer.from(expectedSignature, "utf8");
 
     if (signatureBuffer.length !== expectedBuffer.length) {
       return { valid: false, reason: "Signature length mismatch" };
     }
 
     const isMatch = crypto.timingSafeEqual(signatureBuffer, expectedBuffer);
-    return isMatch ? { valid: true } : { valid: false, reason: "Invalid HMAC-SHA256 signature" };
-  } catch (err) {
-    return { valid: false, reason: "Signature parsing error" };
+    return isMatch
+      ? { valid: true }
+      : { valid: false, reason: "signature_mismatch" };
+  } catch {
+    return { valid: false, reason: "signature_mismatch" };
   }
 }
 
@@ -94,7 +131,11 @@ export async function claimAndCheckWebhookEvent(params: {
   publicationId?: string;
   eventType?: string;
   rawBody?: string | Buffer;
-}): Promise<{ shouldProcess: boolean; isDuplicate: boolean; isProcessing?: boolean }> {
+}): Promise<{
+  shouldProcess: boolean;
+  isDuplicate: boolean;
+  isProcessing?: boolean;
+}> {
   const { eventId, publicationId, eventType, rawBody } = params;
   if (!eventId) return { shouldProcess: true, isDuplicate: false };
 
@@ -119,7 +160,11 @@ export async function claimAndCheckWebhookEvent(params: {
 
       if (existing.length === 0) {
         const payloadHash = rawBody
-          ? crypto.createHash("sha256").update(rawBody).digest("hex").slice(0, 64)
+          ? crypto
+              .createHash("sha256")
+              .update(rawBody)
+              .digest("hex")
+              .slice(0, 64)
           : null;
 
         try {
@@ -149,7 +194,10 @@ export async function claimAndCheckWebhookEvent(params: {
           and(
             eq(omniforgeWebhookEvents.eventId, eventId),
             or(
-              inArray(omniforgeWebhookEvents.processingStatus, ["received", "failed"]),
+              inArray(omniforgeWebhookEvents.processingStatus, [
+                "received",
+                "failed",
+              ]),
               and(
                 eq(omniforgeWebhookEvents.processingStatus, "processing"),
                 lt(omniforgeWebhookEvents.processingStartedAt, leaseExpiry)
@@ -158,7 +206,10 @@ export async function claimAndCheckWebhookEvent(params: {
           )
         );
 
-      const affectedRows = (updateResult as any)?.[0]?.affectedRows ?? (updateResult as any)?.affectedRows ?? 1;
+      const affectedRows =
+        (updateResult as any)?.[0]?.affectedRows ??
+        (updateResult as any)?.affectedRows ??
+        1;
 
       if (affectedRows > 0) {
         return { shouldProcess: true, isDuplicate: false };

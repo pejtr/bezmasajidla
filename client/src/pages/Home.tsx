@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import RestaurantCard from "@/components/RestaurantCard";
 import RecipeCard from "@/components/RecipeCard";
-import { restaurants, recipes } from "@/lib/data";
+import { restaurants, recipes, selectHomepageRecipes } from "@/lib/data";
 import { blogPosts } from "@/lib/blogData";
 import NewsletterBanner from "@/components/NewsletterBanner";
 import { WebsiteJsonLd } from "@/components/JsonLd";
@@ -18,16 +18,30 @@ const HERO_VIDEO = "https://cdn.coverr.co/videos/coverr-preparing-a-salad-5437/1
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const latestRecipes = [...recipes].slice(0, 3);
-  const czechClassics = [...recipes]
-    .filter(
+  const latestRecipes = selectHomepageRecipes(recipes, 3);
+  const czechClassics = selectHomepageRecipes(
+    recipes.filter(
       (r) =>
         r.editorialCollections?.includes("czech-classics") ||
-        r.cuisine?.toLowerCase().includes("česká")
-    )
-    .slice(0, 3);
-  const veganRecipes = [...recipes].filter((r) => r.isVegan).slice(0, 3);
-  const quickDinners = [...recipes].filter((r) => r.prepTime + r.cookTime <= 30).slice(0, 3);
+        r.cuisine?.toLowerCase().includes("česká") ||
+        r.tags.some(
+          (t) =>
+            t.toLowerCase() === "česká kuchyně" ||
+            t.toLowerCase() === "česká klasika" ||
+            t.toLowerCase() === "česká bezmasá jídla"
+        )
+    ),
+    3
+  );
+  const veganRecipes = selectHomepageRecipes(
+    recipes.filter((r) => r.isVegan),
+    3
+  );
+  const quickDinners = selectHomepageRecipes(
+    recipes.filter((r) => r.prepTime + r.cookTime <= 30),
+    3
+  );
+
 
   const vegetarianRestaurants = [...restaurants].filter((r) => r.type === "vegetarian").slice(0, 3);
   const veganRestaurants = [...restaurants].filter((r) => r.type === "vegan").slice(0, 3);

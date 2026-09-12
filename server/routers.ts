@@ -14,8 +14,6 @@ import { foodIntelligenceRouter } from "./food-intelligence/food-intelligence-ro
 import {
   getSocialPublisherStatus,
   listSocialPosts,
-  retrySocialPost,
-  runSocialPublisherOnce,
   scheduleRecipeForSocialMedia,
 } from "./_core/social-media";
 import {
@@ -192,7 +190,6 @@ export const appRouter = router({
         const recipe = await getUserRecipeById(input.recipeId);
         if (recipe) {
           await approveUserRecipe(input.recipeId);
-          await scheduleRecipeForSocialMedia(recipe.id);
           // Ping Google Instant Indexing API v3
           await notifyGoogleIndexing(`/recepty/${recipe.slug}`);
         }
@@ -220,7 +217,7 @@ export const appRouter = router({
       .mutation(({ input }) => adminDeleteReview(input.reviewId)),
 
     socialPublisherStatus: adminProcedure.query(() =>
-      getSocialPublisherStatus(),
+      getSocialPublisherStatus()
     ),
 
     socialPosts: adminProcedure.query(() => listSocialPosts()),
@@ -230,32 +227,27 @@ export const appRouter = router({
         z.object({
           recipeId: z.number(),
           scheduledFor: z.date().optional(),
-        }),
+          channels: z
+            .array(z.enum(["facebook", "instagram"]))
+            .min(1)
+            .optional(),
+          publicationPolicy: z.enum(["ORIGINAL", "INTERNAL_ONLY"]),
+        })
       )
       .mutation(({ input }) =>
-        scheduleRecipeForSocialMedia(input.recipeId, input.scheduledFor),
+        scheduleRecipeForSocialMedia(input.recipeId, {
+          scheduledFor: input.scheduledFor,
+          channels: input.channels,
+          publicationPolicy: input.publicationPolicy,
+        })
       ),
-
-    refillSocialQueue: adminProcedure
-      .input(z.object({ days: z.number().min(1).max(60).default(14) }).optional())
-      .mutation(async ({ input }) => {
-        const { ensureAutonomousQueue } = await import("./_core/social-autopilot");
-        return await ensureAutonomousQueue(input?.days || 14);
-      }),
-
-    exportSocialCsv: adminProcedure
-      .input(z.object({ limit: z.number().min(1).max(300).default(60) }).optional())
-      .query(async ({ input }) => {
-        const { exportSocialCalendarCsv } = await import("./_core/social-autopilot");
-        return await exportSocialCalendarCsv(input?.limit || 60);
-      }),
 
     previewSocialPost: adminProcedure
       .input(
         z.object({
           recipeSlug: z.string(),
           platform: z.enum(["facebook", "instagram"]).default("instagram"),
-        }),
+        })
       )
       .query(async ({ input }) => {
         const {
@@ -266,12 +258,26 @@ export const appRouter = router({
         } = await import("./_core/social-autopilot");
 
         const candidates = getAllCuratedCandidates();
-        const found = candidates.find(c => c.slug === input.recipeSlug) || candidates[0];
-        if (!found) throw new TRPCError({ code: "NOT_FOUND", message: "Recept nebyl nalezen" });
+        const found =
+          candidates.find(c => c.slug === input.recipeSlug) || candidates[0];
+        if (!found)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Recept nebyl nalezen",
+          });
 
         const style = determineCopyStyle(found, new Date());
-        const linkUrl = buildTrackedSocialUrl(found.slug, input.platform, style);
-        const caption = generateSocialCaption(found, input.platform, style, linkUrl);
+        const linkUrl = buildTrackedSocialUrl(
+          found.slug,
+          input.platform,
+          style
+        );
+        const caption = generateSocialCaption(
+          found,
+          input.platform,
+          style,
+          linkUrl
+        );
 
         return {
           recipeSlug: found.slug,
@@ -283,14 +289,6 @@ export const appRouter = router({
           caption,
         };
       }),
-
-    retrySocialPost: adminProcedure
-      .input(z.object({ id: z.number() }))
-      .mutation(({ input }) => retrySocialPost(input.id)),
-
-    runSocialPublisher: adminProcedure.mutation(() =>
-      runSocialPublisherOnce(),
-    ),
   }),
 
   // ── Newsletter ───────────────────────────────────────────
@@ -405,3 +403,4 @@ export const appRouter = router({
 });
 
 export type AppRouter = typeof appRouter;
+
