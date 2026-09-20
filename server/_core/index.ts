@@ -147,12 +147,17 @@ async function startServer() {
       const socialPostId = rawSocialPostId ? parseInt(rawSocialPostId, 10) : undefined;
       const attributionSessionId = req.query.attributionSessionId as string | undefined;
 
-      if (merchant !== "ekoclovek" && merchant !== "zazitky") {
+      if (
+        merchant !== "ekoclovek" &&
+        merchant !== "zazitky" &&
+        merchant !== "rohlik" &&
+        merchant !== "kosik"
+      ) {
         return res.status(400).send("Invalid merchant");
       }
 
       const { recordAffiliateEvent } = await import("../affiliate/storage");
-      const { getSafeAffiliateUrl } = await import("../affiliate/links");
+      const { isWhitelistedDomain, getSafeAffiliateUrl } = await import("../affiliate/links");
 
       // Record exactly ONE internal click event with server-authoritative attribution
       await recordAffiliateEvent({
@@ -165,6 +170,22 @@ async function startServer() {
         attributionSessionId,
         referrer: req.headers.referer,
       });
+
+      if (merchant === "rohlik") {
+        const target =
+          destUrl && isWhitelistedDomain(destUrl)
+            ? destUrl
+            : "https://www.rohlik.cz/";
+        return res.redirect(302, target);
+      }
+
+      if (merchant === "kosik") {
+        const target =
+          destUrl && isWhitelistedDomain(destUrl)
+            ? destUrl
+            : "https://www.kosik.cz/";
+        return res.redirect(302, target);
+      }
 
       const safeUrl = await getSafeAffiliateUrl({
         merchant: merchant as "ekoclovek" | "zazitky",
