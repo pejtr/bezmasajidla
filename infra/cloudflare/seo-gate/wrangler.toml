@@ -1,0 +1,8 @@
+name = "bezmasajidla-seo-gate"
+main = "src/index.js"
+compatibility_date = "2026-09-21"
+
+routes = [
+  { pattern = "bezmasajidla.cz/*", zone_name = "bezmasajidla.cz" },
+  { pattern = "www.bezmasajidla.cz/*", zone_name = "bezmasajidla.cz" }
+]

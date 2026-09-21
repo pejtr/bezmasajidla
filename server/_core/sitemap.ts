@@ -1,4 +1,4 @@
-import { restaurants, recipes } from "../../client/src/lib/data";
+import { restaurants, recipes, hasVerifiedRecipeImage } from "../../client/src/lib/data";
 import { blogPosts } from "../../client/src/lib/blogData";
 import { getApprovedUserRecipes } from "../db";
 
@@ -7,6 +7,15 @@ const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 
 let cachedXml: string | null = null;
 let lastGeneratedAt = 0;
+
+function escapeXml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
 
 export async function generateSitemap(): Promise<string> {
   const now = Date.now();
@@ -20,6 +29,7 @@ export async function generateSitemap(): Promise<string> {
     changefreq: string;
     priority: string;
   }[] = [];
+  const seenUrls = new Set<string>();
 
   const addUrl = (
     path: string,
@@ -27,8 +37,12 @@ export async function generateSitemap(): Promise<string> {
     changefreq = "weekly",
     lastmod?: Date | string
   ) => {
+    const loc = new URL(path, BASE_URL).toString();
+    if (seenUrls.has(loc)) return;
+    seenUrls.add(loc);
+
     urls.push({
-      loc: `${BASE_URL}${path}`,
+      loc,
       ...(lastmod
         ? { lastmod: lastmod instanceof Date ? lastmod.toISOString() : lastmod }
         : {}),
@@ -88,8 +102,9 @@ export async function generateSitemap(): Promise<string> {
     addUrl(`/restaurace/${restaurant.slug}`, "0.8", "monthly");
   }
 
-  // Default Recipes
+  // Default Recipes — only quality-gated pages with verified imagery.
   for (const recipe of recipes) {
+    if (!hasVerifiedRecipeImage(recipe)) continue;
     addUrl(`/recepty/${recipe.slug}`, "0.7", "monthly");
   }
 
@@ -98,10 +113,15 @@ export async function generateSitemap(): Promise<string> {
     addUrl(`/blog/${post.slug}`, "0.7", "monthly", post.publishedAt);
   }
 
-  // DB Approved User / AI Recipes
+  // DB Approved User / AI Recipes — keep thin or placeholder content out of the sitemap.
   try {
     const dbRecipes = await getApprovedUserRecipes();
     for (const recipe of dbRecipes) {
+      const image = recipe.image?.trim() || "";
+      const description = recipe.description?.trim() || "";
+      if (!image || image.includes("/images/placeholders/") || description.length < 80) {
+        continue;
+      }
       addUrl(
         `/recepty/${recipe.slug}`,
         "0.7",
@@ -119,7 +139,7 @@ export async function generateSitemap(): Promise<string> {
       .map(
         url => `
   <url>
-    <loc>${url.loc}</loc>${url.lastmod ? `\n    <lastmod>${url.lastmod}</lastmod>` : ""}
+    <loc>${escapeXml(url.loc)}</loc>${url.lastmod ? `\n    <lastmod>${escapeXml(url.lastmod)}</lastmod>` : ""}
     <changefreq>${url.changefreq}</changefreq>
     <priority>${url.priority}</priority>
   </url>`

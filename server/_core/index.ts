@@ -61,7 +61,7 @@ async function startServer() {
   app.get("/robots.txt", (_req, res) => {
     res.header("Content-Type", "text/plain");
     res.send(
-      `User-agent: *\nAllow: /\nDisallow: /assets/\nDisallow: /api/\nSitemap: https://www.bezmasajidla.cz/sitemap.xml\n`
+      `User-agent: *\nAllow: /\nDisallow: /api/\nSitemap: https://www.bezmasajidla.cz/sitemap.xml\n`
     );
   });
 

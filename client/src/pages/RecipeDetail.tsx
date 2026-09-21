@@ -9,7 +9,7 @@ import { Clock, Users, ChefHat, ArrowLeft, Leaf, ChevronLeft, ChevronRight, Shop
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { recipes, type Recipe } from "@/lib/data";
+import { hasVerifiedRecipeImage, recipes, type Recipe } from "@/lib/data";
 import SEOHead from "@/components/SEOHead";
 import OptimizedImage from "@/components/OptimizedImage";
 import { getRohlikLink, getKosikLink, getScukLink, getTescoLink, trackAffiliateClick, trackAffiliateIntent } from "@/lib/affiliates";
@@ -1506,6 +1506,7 @@ export default function RecipeDetail() {
         ogImage={recipe.images?.[0]?.url || recipe.image}
         ogType="recipe"
         ogUrl={`https://www.bezmasajidla.cz/recepty/${recipe.slug}`}
+        noIndex={!hasVerifiedRecipeImage(recipe)}
         recipeMeta={{
           prepTime: `PT${recipe.prepTime}M`,
           cookTime: `PT${recipe.cookTime}M`,

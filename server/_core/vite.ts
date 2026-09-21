@@ -5,7 +5,7 @@ import { nanoid } from "nanoid";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import viteConfig from "../../vite.config";
-import { injectMetaTags } from "./seo";
+import { getSeoHttpStatus, injectMetaTags } from "./seo";
 
 export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
@@ -41,7 +41,11 @@ export async function setupVite(app: Express, server: Server) {
       );
       const page = await vite.transformIndexHtml(url, template);
       const injectedPage = await injectMetaTags(page, url);
-      res.status(200).set({ "Content-Type": "text/html" }).end(injectedPage);
+      const status = await getSeoHttpStatus(url);
+      if (status === 404) {
+        res.set("X-Robots-Tag", "noindex, nofollow");
+      }
+      res.status(status).set({ "Content-Type": "text/html" }).end(injectedPage);
     } catch (e) {
       vite.ssrFixStacktrace(e as Error);
       next(e);
@@ -70,7 +74,11 @@ export function serveStatic(app: Express) {
         cachedIndexHtml = fs.readFileSync(path.resolve(distPath, "index.html"), "utf-8");
       }
       const injectedPage = await injectMetaTags(cachedIndexHtml, req.originalUrl);
-      res.status(200).set({ "Content-Type": "text/html" }).end(injectedPage);
+      const status = await getSeoHttpStatus(req.originalUrl);
+      if (status === 404) {
+        res.set("X-Robots-Tag", "noindex, nofollow");
+      }
+      res.status(status).set({ "Content-Type": "text/html" }).end(injectedPage);
     } catch (err) {
       console.error(err);
       res.sendFile(path.resolve(distPath, "index.html"));

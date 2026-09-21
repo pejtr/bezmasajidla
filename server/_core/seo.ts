@@ -1,4 +1,4 @@
-import { restaurants, recipes } from "../../client/src/lib/data";
+import { restaurants, recipes, hasVerifiedRecipeImage } from "../../client/src/lib/data";
 import { getBlogPostBySlug } from "../../client/src/lib/blogData";
 import { getUserRecipeBySlug } from "../db";
 
@@ -30,6 +30,7 @@ type SeoMeta = {
   image: string;
   canonicalPath: string;
   noIndex?: boolean;
+  status?: 200 | 404;
   jsonLd?: Record<string, unknown>;
 };
 
@@ -61,8 +62,14 @@ function organizationSchema() {
 
 async function resolveMeta(url: string): Promise<SeoMeta> {
   const parsed = new URL(url, BASE_URL);
-  const path = parsed.pathname;
-  const canonicalPath = `${path}${parsed.search}`;
+  const encodedPath = parsed.pathname;
+  let path = encodedPath;
+  try {
+    path = decodeURIComponent(encodedPath);
+  } catch {
+    // Keep the encoded path when malformed percent-encoding is received.
+  }
+  const canonicalPath = `${encodedPath}${parsed.search}`;
 
   const cached = seoCache.get(canonicalPath);
   if (cached && Date.now() - cached.cachedAt < SEO_CACHE_TTL_MS) {
@@ -73,12 +80,14 @@ async function resolveMeta(url: string): Promise<SeoMeta> {
     return { ...defaultMeta, canonicalPath: "/" };
   }
 
-  if (["/profil", "/admin", "/pridat-recept", "/404"].includes(path)) {
+  if (["/profil", "/admin", "/pridat-recept", "/platba/uspech", "/platba/zruseno", "/404"].includes(path)) {
     const privateTitles: Record<string, string> = {
       "/profil": "Profil",
       "/admin": "Administrace",
       "/pridat-recept": "Přidat recept",
-      "/404": "Recept nenalezen",
+      "/platba/uspech": "Platba dokončena",
+      "/platba/zruseno": "Platba zrušena",
+      "/404": "Stránka nenalezena",
     };
     return {
       ...defaultMeta,
@@ -420,7 +429,8 @@ async function resolveMeta(url: string): Promise<SeoMeta> {
         title: `${recipe.title} | Bezmasé recepty`,
         description: recipe.description,
         image: recipe.images?.[0]?.url || recipe.image,
-        canonicalPath: path,
+        canonicalPath,
+        noIndex: !hasVerifiedRecipeImage(recipe),
         jsonLd: {
           "@type": "Recipe",
           name: recipe.title,
@@ -464,7 +474,11 @@ async function resolveMeta(url: string): Promise<SeoMeta> {
         title: `${userRecipe.title} | Bezmasé recepty`,
         description: userRecipe.description || "Ověřený recept bez masa.",
         image: userRecipe.image || DEFAULT_IMAGE,
-        canonicalPath: path,
+        canonicalPath,
+        noIndex:
+          !userRecipe.image ||
+          userRecipe.image.includes("/images/placeholders/") ||
+          (userRecipe.description?.trim().length || 0) < 80,
         jsonLd: {
           "@type": "Recipe",
           name: userRecipe.title,
@@ -558,13 +572,57 @@ async function resolveMeta(url: string): Promise<SeoMeta> {
       description:
         "Recepty, restaurace a ověřené průvodce bezmasým jídlem v Česku i Evropě, včetně aktuálních cen a praktických tipů.",
     },
+    "/catering": {
+      title: "Vegetariánský catering Praha | Bezmasá Jídla",
+      description:
+        "Bezmasý catering pro firemní akce, oslavy a soukromé večeře v Praze. Prohlédněte si balíčky a orientační kalkulaci.",
+    },
+    "/o-nas": {
+      title: "O projektu Bezmasá Jídla | Recepty a restaurace bez masa",
+      description:
+        "Poznejte projekt Bezmasá Jídla, který propojuje recepty, restaurace a praktickou inspiraci pro vaření bez masa.",
+    },
+    "/inzerce": {
+      title: "Inzerce pro restaurace a gastro projekty | Bezmasá Jídla",
+      description:
+        "Možnosti prezentace a spolupráce pro vegetariánské, veganské a další gastro projekty na BezmasáJídla.cz.",
+    },
+    "/podminky": {
+      title: "Obchodní podmínky | Bezmasá Jídla",
+      description: "Obchodní podmínky služeb BezmasáJídla.cz.",
+    },
+    "/ochrana-soukromi": {
+      title: "Ochrana soukromí | Bezmasá Jídla",
+      description: "Informace o ochraně osobních údajů a soukromí na BezmasáJídla.cz.",
+    },
+    "/kontakt": {
+      title: "Kontakt | Bezmasá Jídla",
+      description: "Kontaktujte tým BezmasáJídla.cz kvůli obsahu, spolupráci nebo provozním dotazům.",
+    },
+    "/varianty-nakladaneho-hermelinu": {
+      title: "Varianty nakládaného hermelínu | Recepty a inspirace",
+      description:
+        "Inspirace na originální varianty nakládaného hermelínu, koření, náplně a vhodné oleje od české klasiky po světové chutě.",
+    },
   };
-  const result = {
-    ...(staticPages[path] || defaultMeta),
+  const staticMeta = staticPages[path];
+  if (staticMeta) {
+    return {
+      ...staticMeta,
+      image: DEFAULT_IMAGE,
+      canonicalPath,
+    };
+  }
+
+  return {
+    ...defaultMeta,
+    title: "Stránka nenalezena | Bezmasá Jídla",
+    description: "Požadovaná stránka na BezmasáJídla.cz neexistuje.",
     image: DEFAULT_IMAGE,
     canonicalPath,
+    noIndex: true,
+    status: 404,
   };
-  return result;
 }
 
 function injectHead(html: string, meta: SeoMeta) {
@@ -614,6 +672,15 @@ function injectHead(html: string, meta: SeoMeta) {
     <script data-seo-server="true" type="application/ld+json">${jsonLd}</script>
   `;
   return html.replace(/<\/head>/i, `${headTags}\n  </head>`);
+}
+
+export async function getSeoHttpStatus(url: string): Promise<200 | 404> {
+  try {
+    const meta = await resolveMeta(url);
+    return meta.status ?? 200;
+  } catch {
+    return 200;
+  }
 }
 
 export async function injectMetaTags(
