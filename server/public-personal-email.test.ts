@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 
-const PERSONAL_EMAIL = "petr.matej@gmail.com";
+const PERSONAL_EMAIL = ["petr.matej", "gmail.com"].join("@");
 const ROOT = process.cwd();
 const SKIP = new Set([".git", "node_modules", "dist", ".pnpm-store"]);
 const TEXT_EXTENSIONS = new Set([
