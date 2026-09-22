@@ -4,7 +4,7 @@
 // ============================================================
 
 import { useState } from "react";
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle } from "lucide-react";
+import { Mail, MapPin, Clock, Send, CheckCircle, MessageSquareText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,10 +17,10 @@ import { trpc } from "@/lib/trpc";
 
 const contactInfo = [
   {
-    icon: Mail,
-    label: "E-mail",
-    value: "petr.matej@gmail.com",
-    href: "mailto:petr.matej@gmail.com",
+    icon: MessageSquareText,
+    label: "Kontakt",
+    value: "Napište nám přes formulář",
+    href: "#kontaktni-formular",
   },
   {
     icon: MapPin,
@@ -187,6 +187,7 @@ export default function KontaktPage() {
               </div>
             ) : (
               <form
+                id="kontaktni-formular"
                 onSubmit={handleSubmit}
                 className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 flex flex-col gap-5"
               >
