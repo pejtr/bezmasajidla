@@ -7,7 +7,7 @@
 
 import { useState, useEffect } from "react";
 import { Link, useSearch } from "wouter";
-import { Heart, Bookmark, MapPin, Star, Clock, Users, Trash2, ChefHat, ArrowRight, BookOpen, LogIn } from "lucide-react";
+import { Heart, Bookmark, MapPin, Star, Clock, Users, Trash2, ChefHat, ArrowRight, BookOpen, LogIn, Leaf, ShieldCheck } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -50,6 +50,11 @@ export default function ProfilePage() {
   });
   const { data: userRecipesList = [] } = trpc.userRecipes.myRecipes.useQuery(undefined, {
     enabled: isAuthenticated,
+  });
+
+  const { data: vegIdentity } = trpc.oIdentity.me.useQuery(undefined, {
+    enabled: isAuthenticated,
+    retry: false,
   });
 
   const deleteReview = trpc.reviews.delete.useMutation({
@@ -159,6 +164,34 @@ export default function ProfilePage() {
 
       {/* Content */}
       <div className="container py-8 flex-1">
+        {isAuthenticated && vegIdentity && (
+          <section className="mb-8 rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
+                  <Leaf className="h-5 w-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="font-semibold text-gray-900">vegID</h2>
+                    <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
+                      o_ID connected
+                    </span>
+                  </div>
+                  <p className="mt-0.5 text-sm text-gray-500">
+                    {vegIdentity.profile?.publicHandle
+                      ? `@${vegIdentity.profile.publicHandle}`
+                      : "Soukromá food identita"}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-gray-500">
+                <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                Root o_ID zůstává neveřejné
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* === FAVORITES TAB === */}
         {activeTab === "favorites" && (
