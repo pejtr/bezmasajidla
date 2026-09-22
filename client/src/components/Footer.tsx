@@ -15,6 +15,8 @@ const partnerProjects = [
     href: "https://www.lastminutedovolene.cz",
     image:
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900&h=600&fit=crop&q=82",
+    visual: "photo",
+    mark: "✦",
   },
   {
     name: "Akční letenky",
@@ -24,24 +26,28 @@ const partnerProjects = [
     href: "https://www.akcni-letenky.com",
     image:
       "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=900&h=600&fit=crop&q=82",
+    visual: "photo",
+    mark: "↗",
   },
   {
     name: "Katastr Online",
     domain: "KATASTR-ONLINE",
     suffix: ".CZ",
-    description: "Nemovitosti přehledně online",
+    description: "Data o nemovitostech bez zbytečných kroků",
     href: "https://www.katastr-online.cz",
-    image:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=900&h=600&fit=crop&q=82",
+    image: null,
+    visual: "katastr",
+    mark: "⌂",
   },
   {
     name: "Čajovny Praha",
     domain: "CAJOVNY-PRAHA",
     suffix: ".CZ",
-    description: "Oázy klidu uprostřed Prahy",
+    description: "Vyberte si čajovnu podle nálady a čaje",
     href: "https://www.cajovny-praha.cz",
-    image:
-      "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=900&h=600&fit=crop&q=82",
+    image: null,
+    visual: "tea",
+    mark: "茶",
   },
   {
     name: "Do Itálie",
@@ -51,15 +57,18 @@ const partnerProjects = [
     href: "https://www.do-italie.cz",
     image:
       "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=900&h=600&fit=crop&q=82",
+    visual: "photo",
+    mark: "IT",
   },
   {
-    name: "Human Design",
+    name: "Human Design Mapa",
     domain: "HUMANDESIGNMAPA",
     suffix: ".CZ",
-    description: "Objevte mapu svého já",
+    description: "Vaše mapa, typ, autorita a profil",
     href: "https://www.humandesignmapa.cz",
-    image:
-      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=900&h=600&fit=crop&q=82",
+    image: null,
+    visual: "human",
+    mark: "◉",
   },
 ] as const;
 
@@ -80,15 +89,22 @@ function PartnerProjectCard({
       }
       aria-hidden={duplicate || undefined}
       tabIndex={duplicate ? -1 : undefined}
-      className="partner-project-card group"
+      className={`partner-project-card partner-project-card--${project.visual} group`}
     >
-      <img
-        src={project.image}
-        alt=""
-        loading="lazy"
-        className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-      />
-      <span className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/5" />
+      {project.image && (
+        <img
+          src={project.image}
+          alt=""
+          loading="lazy"
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+      )}
+      {project.visual !== "photo" && (
+        <span className="partner-project-card__generated-art" aria-hidden="true">
+          <span className="partner-project-card__mark">{project.mark}</span>
+        </span>
+      )}
+      <span className="partner-project-card__shade absolute inset-0" />
 
       <span className="absolute left-4 top-4 inline-flex overflow-hidden rounded-full bg-white shadow-sm">
         <span className="px-3 py-1.5 text-[10px] font-bold tracking-wide text-slate-700">
@@ -389,12 +405,12 @@ export default function Footer() {
                 </a>
               </p>
             </div>
-            <a
-              href="mailto:inzerce@bezmasajidla.cz"
+            <Link
+              href="/kontakt"
               className="flex-shrink-0 inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-600 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
             >
               Napište nám
-            </a>
+            </Link>
           </div>
         </div>
 
