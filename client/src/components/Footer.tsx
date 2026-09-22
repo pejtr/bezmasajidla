@@ -352,7 +352,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/premium"
+                  href="/inzerce/pridat-podnik"
                   className="hover:text-white transition-colors"
                 >
                   Prémiový profil
