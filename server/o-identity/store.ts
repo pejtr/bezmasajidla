@@ -33,11 +33,11 @@ function isDuplicateEntry(error: unknown): boolean {
   );
 }
 
-async function loadExistingIdentity(userId: number) {
+async function loadExistingIdentity(user: Pick<User, "id" | "openId">) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
-  const providerSubject = String(userId);
+  const providerSubject = user.openId;
   const links = await db
     .select()
     .from(identityLinks)
@@ -102,9 +102,9 @@ async function mirrorLegacyFavorites(userId: number, vegSubjectId: string) {
  * Root o_ID is intentionally not returned by the public router.
  */
 export async function ensureVegIdentityForUser(
-  user: Pick<User, "id" | "name">,
+  user: Pick<User, "id" | "name" | "openId">,
 ) {
-  const existing = await loadExistingIdentity(user.id);
+  const existing = await loadExistingIdentity(user);
   if (existing) {
     return existing;
   }
@@ -126,7 +126,7 @@ export async function ensureVegIdentityForUser(
       await tx.insert(identityLinks).values({
         oIdentityId,
         provider: LEGACY_PROVIDER,
-        providerSubject: String(user.id),
+        providerSubject: user.openId,
       });
 
       await tx.insert(domainIdentities).values({
@@ -156,7 +156,7 @@ export async function ensureVegIdentityForUser(
   } catch (error) {
     if (!isDuplicateEntry(error)) throw error;
 
-    const raced = await loadExistingIdentity(user.id);
+    const raced = await loadExistingIdentity(user);
     if (!raced) throw error;
     return raced;
   }
@@ -166,7 +166,7 @@ export async function ensureVegIdentityForUser(
   return { oIdentityId, vegSubjectId };
 }
 
-export async function getVegProfileForUser(user: Pick<User, "id" | "name">) {
+export async function getVegProfileForUser(user: Pick<User, "id" | "name" | "openId">) {
   const identity = await ensureVegIdentityForUser(user);
   const db = await getDb();
   if (!db) throw new Error("Database not available");
@@ -184,7 +184,7 @@ export async function getVegProfileForUser(user: Pick<User, "id" | "name">) {
 }
 
 export async function updateVegProfileForUser(
-  user: Pick<User, "id" | "name">,
+  user: Pick<User, "id" | "name" | "openId">,
   input: {
     displayName?: string | null;
     publicHandle?: string | null;
@@ -220,7 +220,7 @@ export async function updateVegProfileForUser(
 }
 
 export async function listInteractionsForUser(
-  user: Pick<User, "id" | "name">,
+  user: Pick<User, "id" | "name" | "openId">,
   filters?: {
     targetType?: InteractionTarget;
     action?: InteractionAction;
@@ -246,7 +246,7 @@ export async function listInteractionsForUser(
 }
 
 export async function setInteractionForUser(
-  user: Pick<User, "id" | "name">,
+  user: Pick<User, "id" | "name" | "openId">,
   input: {
     targetType: InteractionTarget;
     targetId: string;
