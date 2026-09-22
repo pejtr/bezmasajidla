@@ -156,7 +156,7 @@ export default function Header() {
                     bezmasá<span className="text-emerald-600">jídla</span><span className="text-amber-500 text-sm font-bold">.cz</span>
                   </span>
                   <span className="text-[10px] font-bold text-emerald-800/80 tracking-wider uppercase mt-0.5">
-                    Průvodce bezmasou Prahou
+                    Průvodce bezmasou stravou
                   </span>
                 </div>
               </Link>
