@@ -4,7 +4,7 @@
 // ============================================================
 
 import { useState } from "react";
-import { Mail, MapPin, Clock, Send, CheckCircle, MessageSquareText } from "lucide-react";
+import { Mail, MapPin, Clock, Send, CheckCircle, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,7 +17,7 @@ import { trpc } from "@/lib/trpc";
 
 const contactInfo = [
   {
-    icon: MessageSquareText,
+    icon: MessageSquare,
     label: "Kontakt",
     value: "Napište nám přes formulář",
     href: "#kontaktni-formular",
