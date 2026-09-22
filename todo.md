@@ -74,7 +74,7 @@
 - [ ] Vygenerovat originální AI náhledové obrázky pro všech 10 blogových článků
 - [ ] Nahrát blog obrázky na CDN a aktualizovat URL v blogData.ts
 - [ ] Vytvořit stránku Kontakt s kontaktním formulářem (jméno, email, zpráva)
-- [ ] Nastavit odesílání kontaktních zpráv na petr.matej@gmail.com
+- [ ] Nastavit odesílání kontaktních zpráv na interní kontaktní adresu redakce
 - [ ] Přidat Kontakt do navigace a footeru
 - [ ] Přidat Bageterie Boulevard do fast-food sekce (bagety, vegetariánské/veganské možnosti)
 - [ ] Přidat UGO do fast-food sekce (fresh džusy, saláty, smoothie bowls)
@@ -171,7 +171,7 @@
 - [x] Přidat vizuální FAQ accordion sekci na stránku /o-nas
 - [x] Vytvořit stránku /blog s přehledem článků, thumbnaily a daty
 - [x] Vygenerovat originální AI náhledové obrázky pro všech 5 blogových článků a aktualizovat URL
-- [ ] Vytvořit tRPC endpoint pro odesílání kontaktního formuláře na petr.matej@gmail.com
+- [ ] Vytvořit tRPC endpoint pro odesílání kontaktního formuláře na interní kontaktní adresu redakce
 - [ ] Vytvořit stránku /kontakt s formulářem (jméno, e-mail, zpráva)
 - [ ] Přidat Kontakt do navigace (Header) a footeru
 - [x] Opravit chybějící mezery v H1 nadpisu na homepage
