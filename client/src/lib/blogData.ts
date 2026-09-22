@@ -1,6 +1,6 @@
 // ============================================================
 // BEZMASAJIDLA.CZ — Blog Data
-// 5 SEO-optimalizovaných článků o veganských restauracích v Praze
+// Editorial + SEO hub: restaurace, recepty, long-tail guides a cestování
 // ============================================================
 
 export interface BlogPost {
@@ -22,6 +22,175 @@ export interface BlogPost {
 import { BLOG_PLACEHOLDER, withImageFallback } from "./imageFallbacks";
 
 const blogPostSource: BlogPost[] = [
+  {
+    "id": "14",
+    "slug": "bezmasa-jidla-na-obed",
+    "title": "Bezmasá jídla na oběd: rychlá, sytá a bez nudy",
+    "metaDescription": "Tipy na bezmasá jídla na oběd: rychlé recepty, syté luštěniny, tofu, česká klasika i lehčí misky. Vyberte podle času a chuti.",
+    "category": "Recepty",
+    "tags": [
+      "bezmasá jídla",
+      "oběd",
+      "rychlé recepty",
+      "vegetariánské recepty",
+      "vegan"
+    ],
+    "author": "Sofie — virtuální food & lifestyle redaktorka",
+    "publishedAt": "2026-09-22",
+    "readingTimeMin": 9,
+    "coverImage": "/images/recipes/grilovana-zelenina-a-tofu-s-hummusovym-dipem.webp",
+    "coverImageAlt": "Bezmasý oběd s grilovanou zeleninou, tofu a hummusem",
+    "excerpt": "Když chcete oběd bez masa, který opravdu zasytí, rozhoduje hlavně kombinace bílkovin, přílohy, zeleniny a výrazné chuti. Tady je praktický výběr podle času i nálady.",
+    "content": "## Bezmasý oběd nemusí znamenat „něco místo masa“\n\nNejlepší bezmasá jídla na oběd nejsou náhražka. Jsou to normální, plnohodnotná jídla postavená na chuti, struktuře a sytosti. Když nechcete po obědě za hodinu znovu hledat svačinu, pomáhá myslet na čtyři věci: zdroj bílkovin, přílohu, zeleninu a omáčku nebo koření, které celé jídlo spojí.\n\n### Když máte do 20 minut\n\nZačněte jídly, kde není dlouhé pečení ani několik hrnců. [Vegánská míchaná vajíčka z tofu](/recepty/veganska-michana-vajicka-z-tofu) zvládnete přibližně za 20 minut a hodí se i jako rychlý slaný oběd. [Veganské krevety se zeleninou](/recepty/veganske-krevety-se-zeleninou) jsou další rychlá varianta a [grilovaná zelenina s tofu a hummusovým dipem](/recepty/grilovana-zelenina-a-tofu-s-hummusovym-dipem) funguje dobře ve chvíli, kdy chcete něco lehčího, ale ne jen salát.\n\n### Když chcete něco opravdu sytého\n\nPro větší hlad fungují jídla s tofu, tempehem, luštěninami nebo rostlinnou alternativou masa. Z našich receptů zkuste [veganskou kachnu se špenátem a bramborovým knedlíkem](/recepty/veganska-kachna-se-spenatem-a-knedlikem), [veganské kuře na paprice s těstovinami](/recepty/veganske-kure-na-paprice-s-testovinami) nebo [plněné bramborové knedlíky s uzeným tofu](/recepty/plnene-bramborove-knedliky-s-uzenym-tofu).\n\nPokud máte raději luštěniny, dobrým základem je [čočka s kořenovou zeleninou](/recepty/cocka-s-korenovou-zeleninou), [falafel a hummus v pita chlebu](/recepty/falafel-a-hummus-v-pita-chlebu) nebo [fazolová polévka s veganským chorizem](/recepty/fazolova-polevka-s-veganskym-chorizem).\n\n### Oběd do krabičky\n\nDo práce nebo školy jsou praktická jídla, která drží tvar a chutnají i po několika hodinách. Výborně funguje [celozrnný těstovinový salát se sušenými rajčaty a tofu](/recepty/celozrnny-testovinovy-salat-se-susenymi-rajcaty-a-tofu), [pohankový salát s tempehem a grilovanou zeleninou](/recepty/pohankovy-salat-s-tempehem-a-grilovanou-zeleninou) nebo [tabbouleh z celozrnného bulguru s marinovaným tofu](/recepty/salat-tabbouleh-z-celozrnneho-bulguru-s-marinovanym-tofu).\n\n### Český oběd bez masa\n\nPokud nechcete bowl ani hummus, bezmasý oběd může být úplně klasický. [Pravá krkonošská kulajda](/recepty/prava-krkonosska-kulajda), [bramboračka s lesními houbami](/recepty/bramboracka-s-lesnimi-houbami) nebo [veganský kuřecí řízek s bramborovou kaší](/recepty/vegansky-kureci-rizek-s-bramborovou-kasi) jsou přesně ten typ jídla, který nepůsobí jako dietní kompromis.\n\n## Jak si vybrat oběd podle toho, co dnes potřebujete\n\n- **Do 20 minut:** tofu scramble, rychlá pánev, salát s tofu.\n- **Na velký hlad:** luštěniny, tempeh, seitan, tofu a vydatná příloha.\n- **Do krabičky:** obilovinový nebo těstovinový salát, bowl, pita.\n- **Česká chuť:** polévky, knedlíky, omáčky a bramborová jídla.\n- **Lehčí oběd:** zelenina + hummus/tahini + tofu nebo tempeh.\n\nDalší recepty najdete v našem hlavním přehledu [bezmasých jídel a receptů](/recepty). Pokud chcete plánovat dopředu, otevřete si také [týdenní bezmasý jídelníček](/tydenni-planovac-receptu)."
+  },
+  {
+    "id": "15",
+    "slug": "bezmasa-jidla-pro-deti",
+    "title": "Bezmasá jídla pro děti: co vařit, když nechcete boj u stolu",
+    "metaDescription": "Bezmasá jídla pro děti: známé chutě, jednoduché textury, recepty do školy i na rodinný oběd. Praktické tipy bez moralizování.",
+    "category": "Rodiny",
+    "tags": [
+      "bezmasá jídla pro děti",
+      "děti",
+      "rodina",
+      "oběd",
+      "vegetariánské recepty"
+    ],
+    "author": "Sofie — virtuální food & lifestyle redaktorka",
+    "publishedAt": "2026-09-22",
+    "readingTimeMin": 9,
+    "coverImage": "/images/recipes/pohankove-livance-s-jahodami.webp",
+    "coverImageAlt": "Bezmasé jídlo pro děti v podobě lívanců s jahodami",
+    "excerpt": "U dětí často nevyhrává nejzdravěji vypadající talíř, ale známá forma, jednoduchá chuť a možnost vybrat si. Bezmasé jídlo se tomu může přizpůsobit bez zbytečných triků.",
+    "content": "## U dětí začněte známou formou, ne přednáškou\n\nKdyž dítě odmítne nové jídlo, obvykle nepomůže vysvětlovat, proč je čočka zdravá. Mnohem praktičtější je nabídnout známý formát: placičku, těstoviny, tortillu, polévku, kaši nebo něco, co si může samo poskládat.\n\nBezmasé vaření pro děti proto nemusí být o „náhradách“. Často stačí upravit jídla, která už rodina zná.\n\n### Snídaně nebo lehký oběd\n\n[Pohankové lívance s jahodami](/recepty/pohankove-livance-s-jahodami), [kynuté lívance v americkém duchu](/recepty/kynute-livance-v-americkem-duchu) nebo [chia ovesná kaše s borůvkami](/recepty/pres-noc-namocena-chia-ovesna-kase-s-boruvkami) mají pro děti výhodu: jejich forma je známá a jednotlivé toppingy lze servírovat zvlášť.\n\n### Jídla, která se dají držet v ruce\n\nDobře fungují jídla, která dítě nemusí složitě krájet. [Falafel a hummus v pita chlebu](/recepty/falafel-a-hummus-v-pita-chlebu) můžete servírovat po jednotlivých částech. Podobně funguje [bagetka s uzeným tofu a karamelizovanou cibulkou](/recepty/bagetka-s-uzenym-tofu-a-karamelizovanou-cibulkou) — u menších dětí jen zjednodušte množství výrazných ingrediencí.\n\n### Když dítě chce „normální jídlo“\n\nTo je úplně v pořádku. [Veganský kuřecí řízek s bramborovou kaší](/recepty/vegansky-kureci-rizek-s-bramborovou-kasi), [veganské kuře na paprice s těstovinami](/recepty/veganske-kure-na-paprice-s-testovinami) nebo [bramborový salát s domácí sójanézou](/recepty/bramborovy-salat-s-domaci-sojanezou) pracují s tvarem a chutí, které jsou v české domácnosti běžné.\n\n### Polévky jako bezpečná cesta k zelenině a luštěninám\n\nU hladkých polévek dítě nemusí řešit jednotlivé kousky zeleniny. Zkuste [brokolicovou polévku s hráškem](/recepty/brokolicova-polevka-s-hraskem), [krémovou cizrnovou polévku](/recepty/kremova-cizrnova-polevka) nebo [lehce pikantní dýňovou polévku](/recepty/lehce-pikantni-dynova-polevka-s-dynovym-olejem). Pálivost samozřejmě upravte podle věku a zvyku dítěte.\n\n## Pět pravidel, která v běžné rodině pomáhají\n\n1. **Nedávejte na talíř deset novinek najednou.** Jedna nová surovina vedle známého jídla je snazší začátek.\n2. **Servírujte některé části zvlášť.** Dítě si může samo přidat hummus, zeleninu nebo omáčku.\n3. **Nechte dítě pomáhat.** Míchání těsta, skládání pity nebo zdobení kaše zvyšuje zájem o výsledek.\n4. **Myslete na sytost.** Bezmasý talíř není jen zelenina; přidejte luštěniny, tofu, vejce, mléčný výrobek nebo jiný vhodný zdroj bílkovin podle stylu rodiny.\n5. **Neoznačujte jídlo jako „speciální vegan verzi“, pokud to není potřeba.** Pro dítě je důležitější, zda mu chutná.\n\n### Do školy a do krabičky\n\nDo krabičky se hodí [kuskusový salát s brusinkami a mandlemi](/recepty/kuskusovy-salat-s-brusinkami-a-mandlemi), [celozrnný těstovinový salát s tofu](/recepty/celozrnny-testovinovy-salat-se-susenymi-rajcaty-a-tofu) nebo domácí hummus s pečivem a zeleninou.\n\nPokud hledáte další inspiraci, pokračujte na [bezmasá jídla na oběd](/blog/bezmasa-jidla-na-obed) nebo do hlavního přehledu [receptů bez masa](/recepty)."
+  },
+  {
+    "id": "16",
+    "slug": "bezmasa-jidla-plna-bilkovin",
+    "title": "Bezmasá jídla plná bílkovin: konkrétní recepty a čísla",
+    "metaDescription": "Bezmasá jídla plná bílkovin: tofu, luštěniny, tempeh a další recepty. U vybraných jídel uvádíme protein podle našich receptových výpočtů.",
+    "category": "Výživa",
+    "tags": [
+      "bílkoviny",
+      "protein",
+      "bezmasá jídla",
+      "tofu",
+      "luštěniny",
+      "fitness"
+    ],
+    "author": "Sofie — virtuální food & lifestyle redaktorka",
+    "publishedAt": "2026-09-22",
+    "readingTimeMin": 10,
+    "coverImage": "/images/recipes/veganska-michana-vajicka-z-tofu.webp",
+    "coverImageAlt": "Vegánská míchaná vajíčka z tofu jako bezmasé jídlo plné bílkovin",
+    "excerpt": "Bílkoviny bez masa nejsou problém, když jídlo nestavíte jen na zelenině. Vybrali jsme konkrétní recepty s tofu, luštěninami a rostlinnými alternativami.",
+    "content": "## Kde vzít bílkoviny, když jídlo nestavíte na mase\n\nBezmasý talíř může mít dost bílkovin, ale nevznikne to automaticky. Salát z listové zeleniny je skvělá příloha; jako hlavní jídlo potřebuje něco navíc. Praktickým základem jsou tofu, tempeh, luštěniny, seitan, vejce a mléčné výrobky podle toho, zda jíte vegansky nebo vegetariánsky.\n\n**Čísla níže vycházejí z nutričních výpočtů uvedených u našich receptů.** Reálná hodnota se může měnit podle značek surovin a velikosti porce.\n\n| Recept | Bílkoviny podle receptu |\n|---|---:|\n| [Veganská kachna se špenátem a knedlíkem](/recepty/veganska-kachna-se-spenatem-a-knedlikem) | 26 g |\n| [Sport smoothie s plant-based proteinem](/recepty/sport-smoothie-s-proteinem) | 25 g |\n| [Veganské kuřecí špízy se třemi omáčkami](/recepty/veganske-kureci-spizy-se-tremi-omacami) | 24 g |\n| [Veganský Burger XXL](/recepty/vegansky-burger-xxl) | 24 g |\n| [Rýžové nudle s veganským kuřecím masem a teriyaki](/recepty/ryzove-nudle-s-veganskym-kurecim-masem-a-teriyaki) | 22 g |\n| [Veganské kuře na paprice s těstovinami](/recepty/veganske-kure-na-paprice-s-testovinami) | 22 g |\n| [Veganský kuřecí řízek s bramborovou kaší](/recepty/vegansky-kureci-rizek-s-bramborovou-kasi) | 20 g |\n| [Čočka s kořenovou zeleninou](/recepty/cocka-s-korenovou-zeleninou) | 19 g |\n| [Osso Buco z marinovaného tofu](/recepty/osso-buco-z-marinovaneho-tofu) | 19 g |\n| [Vegánská míchaná vajíčka z tofu](/recepty/veganska-michana-vajicka-z-tofu) | 18 g |\n| [Falafel a hummus v pita chlebu](/recepty/falafel-a-hummus-v-pita-chlebu) | 18 g |\n| [Plněné bramborové knedlíky s uzeným tofu](/recepty/plnene-bramborove-knedliky-s-uzenym-tofu) | 18 g |\n\n### Tofu: nejjednodušší univerzální základ\n\nTofu může být snídaně, rychlá pánev, náplň i hlavní chod. Pokud vám připadá bez chuti, problém obvykle není tofu samotné, ale způsob přípravy. Marinování, opečení do křupava a výrazná omáčka udělají velký rozdíl.\n\nZačněte [míchaným tofu](/recepty/veganska-michana-vajicka-z-tofu), [grilovanou zeleninou s tofu a hummusem](/recepty/grilovana-zelenina-a-tofu-s-hummusovym-dipem) nebo [Osso Buco z marinovaného tofu](/recepty/osso-buco-z-marinovaneho-tofu).\n\n### Luštěniny: levné a praktické\n\nČočka, fazole a cizrna přidávají nejen bílkoviny, ale i vlákninu a objem. Praktická je [čočka s kořenovou zeleninou](/recepty/cocka-s-korenovou-zeleninou), [fazolová polévka s veganským chorizem](/recepty/fazolova-polevka-s-veganskym-chorizem) nebo [krémová cizrnová polévka](/recepty/kremova-cizrnova-polevka).\n\n### Bílkoviny nejsou jediná metrika\n\nVyšší číslo není automaticky lepší jídlo. Dává smysl hlídat i zeleninu, vlákninu, energii, tuky a hlavně to, zda vám jídlo dlouhodobě vyhovuje.\n\nPro další výběr pokračujte na [bezmasá jídla na oběd](/blog/bezmasa-jidla-na-obed) nebo filtrujte kompletní [databázi receptů](/recepty)."
+  },
+  {
+    "id": "17",
+    "slug": "bezmasa-jidla-z-jednoho-hrnce",
+    "title": "Bezmasá jídla z jednoho hrnce: minimum nádobí, maximum chuti",
+    "metaDescription": "Bezmasá jídla z jednoho hrnce: polévky, luštěniny a jednoduché večeře, které šetří čas i nádobí. Praktické tipy a recepty.",
+    "category": "Recepty",
+    "tags": [
+      "z jednoho hrnce",
+      "one pot",
+      "bezmasá jídla",
+      "rychlá večeře",
+      "oběd"
+    ],
+    "author": "Sofie — virtuální food & lifestyle redaktorka",
+    "publishedAt": "2026-09-22",
+    "readingTimeMin": 8,
+    "coverImage": "/images/recipes/cocka-s-korenovou-zeleninou.webp",
+    "coverImageAlt": "Čočka s kořenovou zeleninou jako bezmasé jídlo z jednoho hrnce",
+    "excerpt": "Když nechcete po vaření uklízet půl kuchyně, one-pot jídla jsou jednoduché řešení. Nejlépe fungují polévky, luštěniny, kari a dušená zelenina.",
+    "content": "## Proč fungují jídla z jednoho hrnce\n\nOne-pot vaření není jen trend. Je to dobrý systém pro všední den: jedna nádoba, méně kroků a možnost nechat suroviny vařit společně tak, aby se chutě propojily.\n\nNejlépe se pro tento styl hodí polévky, luštěniny, kari, ragú a dušená zelenina.\n\n### Luštěniny jako základ\n\n[Čočka s kořenovou zeleninou](/recepty/cocka-s-korenovou-zeleninou) je přesně typ receptu, který nepotřebuje komplikovanou sestavu nádobí. Podobně funguje [fazolová polévka s veganským chorizem](/recepty/fazolova-polevka-s-veganskym-chorizem) nebo [krémová cizrnová polévka](/recepty/kremova-cizrnova-polevka).\n\n### Krémové polévky\n\nPokud chcete minimum práce, polévka je skoro ideální. Zkuste [brokolicovou polévku s hráškem](/recepty/brokolicova-polevka-s-hraskem), [dýňovou polévku s dýňovým olejem](/recepty/lehce-pikantni-dynova-polevka-s-dynovym-olejem), [veganskou kulajdu s hříbky a koprem](/recepty/veganska-kulajda-s-hribky-a-koprem) nebo [bramboračku s lesními houbami](/recepty/bramboracka-s-lesnimi-houbami).\n\n### Jeden hrnec neznamená jednu chuť\n\nRozdíl dělá pořadí. Nejprve rozvoňte cibuli a koření, pak přidejte pevnější zeleninu, tekutinu a nakonec suroviny, které potřebují jen krátce prohřát. U smetanových nebo kokosových jídel přidávejte krémovou složku až ke konci.\n\n### Co mít doma pro one-pot večeře\n\nDobrá základní zásoba je jednoduchá: konzerva cizrny nebo fazolí, čočka, rajčata, kokosové mléko, vývar, cibule, česnek a několik směsí koření. Z čerstvých věcí pak stačí přidat to, co máte právě v lednici.\n\nPokud vás zajímá hlavně rychlost, pokračujte také na [bezmasá jídla na oběd](/blog/bezmasa-jidla-na-obed) a [rychlé bezmasé večeře](/recepty/rychle-bezmase-vecere)."
+  },
+  {
+    "id": "18",
+    "slug": "bezmasa-jidla-z-testovin",
+    "title": "Bezmasá jídla z těstovin: co uvařit podle toho, co máte doma",
+    "metaDescription": "Bezmasá jídla z těstovin: rychlé omáčky, tofu, zelenina, saláty i sytější varianty. Praktický přehled podle surovin v lednici.",
+    "category": "Ingredience",
+    "tags": [
+      "těstoviny",
+      "bezmasá jídla",
+      "rychlé recepty",
+      "oběd",
+      "večeře"
+    ],
+    "author": "Sofie — virtuální food & lifestyle redaktorka",
+    "publishedAt": "2026-09-22",
+    "readingTimeMin": 8,
+    "coverImage": "/images/recipes/veganske-kure-na-paprice-s-testovinami.webp",
+    "coverImageAlt": "Veganské kuře na paprice s těstovinami",
+    "excerpt": "Těstoviny jsou nejlepší záchrana ve chvíli, kdy doma není plán. Místo jednoho univerzálního receptu se vyplatí vybírat podle toho, co už máte v lednici.",
+    "content": "## Máte těstoviny. Co k nim?\n\nTěstoviny jsou skvělý základ právě proto, že se nemusíte držet jedné kuchyně. Rajčata, houby, špenát, tofu, luštěniny i krémová omáčka umí vytvořit úplně jiné jídlo.\n\n### Když máte tofu\n\nTofu přidejte opečené do křupava nebo rozdrobené do omáčky. Inspirací může být [veganské kuře na paprice s těstovinami](/recepty/veganske-kure-na-paprice-s-testovinami), kde je rostlinná bílkovina součástí hlavního chodu, ne jen doplněk.\n\n### Když chcete studený oběd do krabičky\n\n[Celozrnný těstovinový salát se sušenými rajčaty a tofu](/recepty/celozrnny-testovinovy-salat-se-susenymi-rajcaty-a-tofu) funguje jako oběd do práce i jako příloha na piknik. Výhodou je, že nepotřebuje ohřívání.\n\n### Rajčatová omáčka\n\nZáklad z cibule, česneku a rajčat je nejjednodušší způsob, jak těstoviny rychle dostat na stůl. Pro větší sytost přidejte cizrnu, čočku nebo opečené tofu. Pro intenzivnější chuť pomohou sušená rajčata, olivy, kapary nebo chilli.\n\n### Houby\n\nHouby potřebují dostatečně rozpálenou pánev, aby se opékaly a nezačaly se jen dusit ve vlastní vodě. Pak je spojte se smetanovou nebo rostlinnou omáčkou, česnekem a pepřem.\n\n### Špenát a zelené omáčky\n\nŠpenát je rychlý: stačí několik minut. Funguje s česnekem, citronem a krémovým základem. Pro více bílkovin přidejte tofu nebo luštěninovou pomazánku rozředěnou trochou vody z těstovin.\n\n### Jak udělat omáčku lepší bez dalšího receptu\n\nNež slijete těstoviny, nechte si stranou hrnek škrobové vody. Po lžících ji vmíchejte do omáčky. Pomůže propojit tuk, koření a omáčku s těstovinami a často udělá větší rozdíl než další ingredience.\n\nDalší inspiraci najdete v přehledu [bezmasých jídel na oběd](/blog/bezmasa-jidla-na-obed) a v kompletní databázi [receptů bez masa](/recepty)."
+  },
+  {
+    "id": "19",
+    "slug": "bezmasa-jidla-z-brambor",
+    "title": "Bezmasá jídla z brambor: levná, sytá a poctivá inspirace",
+    "metaDescription": "Bezmasá jídla z brambor: polévky, saláty, knedlíky i hlavní chody. Inspirace pro levný a sytý oběd bez masa.",
+    "category": "Ingredience",
+    "tags": [
+      "brambory",
+      "bezmasá jídla",
+      "levná jídla",
+      "česká kuchyně",
+      "oběd"
+    ],
+    "author": "Zakladatel BezmasáJídla.cz",
+    "publishedAt": "2026-09-22",
+    "readingTimeMin": 8,
+    "coverImage": "/images/recipes/plnene-bramborove-knedliky-s-uzenym-tofu.webp",
+    "coverImageAlt": "Plněné bramborové knedlíky s uzeným tofu",
+    "excerpt": "Brambory jsou možná obyčejné, ale právě v bezmasé kuchyni umí být jeden z nejuniverzálnějších základů: polévka, salát, kaše, knedlíky i hlavní chod.",
+    "content": "## Brambory nejsou příloha. Klidně mohou být hlavní jídlo.\n\nKdyž mám doma brambory, nepřemýšlím automaticky nad tím, co k nim přidat za maso. Mnohem zajímavější je rozhodnout se, jestli z nich chci udělat něco křupavého, krémového, plněného nebo úplně klasického.\n\n### Plněné a knedlíkové varianty\n\n[Plněné bramborové knedlíky s uzeným tofu](/recepty/plnene-bramborove-knedliky-s-uzenym-tofu) jsou přesně příklad jídla, kde maso vůbec nechybí. Uzené tofu dodá výraznou chuť a bramborové těsto udělá z jídla plnohodnotný oběd.\n\n### Brambory v české polévce\n\n[Bramboračka s lesními houbami](/recepty/bramboracka-s-lesnimi-houbami) stojí na bramborách, kořenové zelenině a houbách. Není potřeba ji „veganizovat“ složitou náhražkou; stačí dobrý základ a správné koření.\n\n### Salát bez klasické majonézy\n\n[Bramborový salát s domácí sójanézou](/recepty/bramborovy-salat-s-domaci-sojanezou) ukazuje, že i velmi známé jídlo jde posunout jinam bez ztráty jeho charakteru.\n\n### Bramborová kaše jako základ sytého talíře\n\nU [veganského kuřecího řízku s bramborovou kaší](/recepty/vegansky-kureci-rizek-s-bramborovou-kasi) je bramborová část stejně důležitá jako hlavní protein. Když do kaše přidáte kvalitní tuk, dobře ji osolíte a nepřepracujete ji, není to „jen příloha“.\n\n### Co ještě z brambor\n\nBrambory můžete péct s kořenovou zeleninou, udělat z nich placky, noky, kaši, zapečenou směs nebo základ husté polévky. Pokud chcete jídlo s vyšším obsahem bílkovin, kombinujte je s tofu, tempehem, luštěninami, vejci nebo mléčnými výrobky podle toho, jak se stravujete.\n\nDalší českou inspiraci najdete v [bezmasých receptech](/recepty) a v článku [bezmasá jídla na oběd](/blog/bezmasa-jidla-na-obed)."
+  },
+  {
+    "id": "20",
+    "slug": "bezmasy-jidelnicek-na-7-dni",
+    "title": "Bezmasý jídelníček na 7 dní: 14 jídel a jednoduchý nákupní systém",
+    "metaDescription": "Bezmasý jídelníček na 7 dní: snídaně, obědy a večeře z receptů BezmasáJídla.cz. Praktický plán a cesta k nákupnímu seznamu.",
+    "category": "Jídelníček",
+    "tags": [
+      "jídelníček",
+      "7 dní",
+      "meal prep",
+      "bezmasá jídla",
+      "nákupní seznam"
+    ],
+    "author": "Sofie — virtuální food & lifestyle redaktorka",
+    "publishedAt": "2026-09-22",
+    "readingTimeMin": 10,
+    "coverImage": "/images/recipes/pohankovy-salat-s-tempehem-a-grilovanou-zeleninou.webp",
+    "coverImageAlt": "Bezmasý týdenní jídelníček s tempehem, zeleninou a přílohami",
+    "excerpt": "Nejtěžší na vaření často není recept, ale rozhodnutí co dnes uvařit. Tady je týdenní plán, který střídá rychlá jídla, českou klasiku i krabičky.",
+    "content": "## Jeden plán je lepší než sedm večerních rozhodnutí\n\nBezmasý jídelníček nemusí znamenat sedm dní salátu. Smyslem týdne je střídat luštěniny, tofu, zeleninu, obiloviny a jídla, která jsou prostě dobrá.\n\nPro přesné plánování můžete použít náš [Týdenní plánovač receptů](/tydenni-planovac-receptu). Níže je jednoduchý startovní návrh.\n\n| Den | Hlavní jídlo | Druhé jídlo / krabička |\n|---|---|---|\n| Pondělí | [Čočka s kořenovou zeleninou](/recepty/cocka-s-korenovou-zeleninou) | [Chia ovesná kaše s borůvkami](/recepty/pres-noc-namocena-chia-ovesna-kase-s-boruvkami) |\n| Úterý | [Rýžové nudle s teriyaki](/recepty/ryzove-nudle-s-veganskym-kurecim-masem-a-teriyaki) | [Kuskusový salát](/recepty/kuskusovy-salat-s-brusinkami-a-mandlemi) |\n| Středa | [Veganské kuře na paprice](/recepty/veganske-kure-na-paprice-s-testovinami) | [Brokolicová polévka s hráškem](/recepty/brokolicova-polevka-s-hraskem) |\n| Čtvrtek | [Falafel a hummus v pita chlebu](/recepty/falafel-a-hummus-v-pita-chlebu) | [Pohankový salát s tempehem](/recepty/pohankovy-salat-s-tempehem-a-grilovanou-zeleninou) |\n| Pátek | [Veganský Burger XXL](/recepty/vegansky-burger-xxl) | [Krémová cizrnová polévka](/recepty/kremova-cizrnova-polevka) |\n| Sobota | [Veganská kachna se špenátem a knedlíkem](/recepty/veganska-kachna-se-spenatem-a-knedlikem) | [Pohankové lívance s jahodami](/recepty/pohankove-livance-s-jahodami) |\n| Neděle | [Grilovaná zelenina a tofu s hummusem](/recepty/grilovana-zelenina-a-tofu-s-hummusovym-dipem) | [Celozrnný těstovinový salát](/recepty/celozrnny-testovinovy-salat-se-susenymi-rajcaty-a-tofu) |\n\n### Jak z toho udělat nákup, ne chaos\n\nNejprve si projděte spíž. Rýže, těstoviny, luštěniny, koření a olej není potřeba kupovat znovu každý týden. Pak spojte čerstvé položky napříč recepty: jedna várka mrkve může jít do čočky, polévky i salátu; tofu se dá rozdělit mezi dvě jídla.\n\n### Uvařte některé věci dvakrát\n\nLuštěninová jídla, polévky a saláty do krabičky se vyplatí dělat ve větší dávce. Nejde o to jíst celý týden totéž, ale mít jeden nebo dva hotové základy, když není čas.\n\n### Nakoupit celý týden\n\nNa [Týdenním plánovači](/tydenni-planovac-receptu) postupně propojujeme recepty s nákupním košíkem. Cíl je jednoduchý: vybrat týden, upravit jídla a převést ingredience do jednoho nákupního seznamu.\n\nPokud nechcete plánovat celý týden, začněte jen článkem [bezmasá jídla na oběd](/blog/bezmasa-jidla-na-obed)."
+  },
+  {
+    "id": "21",
+    "slug": "bezmasa-jidla-do-skolni-jidelny",
+    "title": "Bezmasá jídla do školní jídelny: co musí fungovat nutričně i provozně",
+    "metaDescription": "Bezmasá jídla do školní jídelny: bílkoviny, známé chutě, velkoobjemová příprava a inspirace na jídla, která lze přizpůsobit školnímu provozu.",
+    "category": "Školní jídelna",
+    "tags": [
+      "školní jídelna",
+      "bezmasá jídla",
+      "děti",
+      "bílkoviny",
+      "hromadné stravování"
+    ],
+    "author": "Redakce BezmasáJídla.cz",
+    "publishedAt": "2026-09-22",
+    "readingTimeMin": 10,
+    "coverImage": "/images/recipes/cocka-s-korenovou-zeleninou.webp",
+    "coverImageAlt": "Čočkové bezmasé jídlo vhodné jako inspirace pro školní stravování",
+    "excerpt": "Školní jídelna potřebuje něco jiného než instagramový recept: jídlo musí být výživově smysluplné, cenově zvládnutelné, škálovatelné a pro děti srozumitelné.",
+    "content": "## Ve školní jídelně nerozhoduje jen recept\n\nBezmasé jídlo pro školní provoz musí projít několika filtry najednou: výživová hodnota, cena surovin, dostupnost, práce kuchyně, alergeny, přijetí dětmi a pravidla školního stravování. Proto není dobrý nápad jen vzít domácí recept a vynásobit ho stem.\n\nTento článek je inspirace pro skladbu jídel; konkrétní jídelníček musí vždy odpovídat aktuálním pravidlům školního stravování a odbornému nutričnímu posouzení.\n\n### 1. Stavte jídlo kolem skutečného zdroje bílkovin\n\nU bezmasého oběda nestačí odstranit maso z omáčky. Použít lze luštěniny, tofu, tempeh, vejce nebo mléčné výrobky podle typu jídla a režimu jídelny.\n\nJako inspirace funguje [čočka s kořenovou zeleninou](/recepty/cocka-s-korenovou-zeleninou), [krémová cizrnová polévka](/recepty/kremova-cizrnova-polevka) nebo [fazolová polévka s veganským chorizem](/recepty/fazolova-polevka-s-veganskym-chorizem). Pro domácí měřítko mají jasnou strukturu, kterou lze technologicky dále upravit pro velkokapacitní kuchyni.\n\n### 2. Známá forma snižuje odpor\n\nDětem může být bližší známý tvar nebo omáčka než úplně nové jídlo. Inspirací může být [veganský řízek s bramborovou kaší](/recepty/vegansky-kureci-rizek-s-bramborovou-kasi) nebo [veganské kuře na paprice s těstovinami](/recepty/veganske-kure-na-paprice-s-testovinami). Pro školní provoz je samozřejmě nutné zvolit vhodnou surovinu, technologii a porci.\n\n### 3. Luštěniny zavádějte chytře\n\nMísto velké porce čistých luštěnin lze začít polévkami, pomazánkami, směsmi nebo jídly, kde je luštěnina součástí známého celku. Pomoci může i [cizrnový hummus](/recepty/cikrnovy-hummus-na-mnoho-zpusobu).\n\n### 4. Myslete na logistiku\n\nPro školní kuchyni je výhodné, když jídlo:\n- lze připravit ve velké dávce,\n- dobře drží kvalitu při výdeji,\n- nevyžaduje desítky individuálních dokončovacích kroků,\n- má jasně zvládnutelné alergeny,\n- používá dostupné suroviny.\n\nZ tohoto pohledu bývají praktičtější polévky, luštěninová ragú, omáčky, pečená jídla a některé obilovinové směsi než komplikované minutky.\n\n### 5. Ptejte se dětí\n\nNejlepší jídelníček nevznikne jen od stolu. Malé ochutnávky, hlasování mezi dvěma variantami nebo sledování skutečných zbytků mohou ukázat víc než obecné představy o tom, co děti „mají rády“.\n\nPro domácí inspiraci rodičům doporučujeme také článek [bezmasá jídla pro děti](/blog/bezmasa-jidla-pro-deti). Pro jídelny chceme postupně připravit samostatnou databázi receptur vhodných k velkoobjemovému provozu, oddělenou od běžných domácích receptů."
+  },
   {
     id: "11",
     slug: "bezmasa-budapest-veganske-restaurace-ceny",

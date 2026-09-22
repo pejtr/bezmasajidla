@@ -39,8 +39,8 @@ const cuisines = [
 
 const categorySEO: Record<string, { title: string; desc: string }> = {
   Vše: {
-    title: "Bezmasé a vegetariánské recepty, veganské jídlo | Bezmasajidla.cz",
-    desc: "Objevte skvělé bezmasé recepty a vegetariánské recepty. Od rychlého oběda bez masa pro vegan krabičkovou dietu až po českou klasiku a veganské jídlo.",
+    title: "Bezmasá jídla: 100+ receptů na oběd i večeři | BezmasáJídla.cz",
+    desc: "Bezmasá jídla a recepty pro každý den: rychlé obědy, večeře, jídla pro děti, recepty plné bílkovin, těstoviny, brambory i česká klasika.",
   },
   "Hlavní jídla": {
     title: "Hlavní Bezmasá Jídla — Veganské a Vegetariánské Recepty",
@@ -67,6 +67,17 @@ const categorySEO: Record<string, { title: string; desc: string }> = {
     desc: "Smoothie plné vitamínů, čerstvé džusy a hřejivé nápoje pro podporu imunity.",
   },
 };
+
+const seoGuides = [
+  { href: "/blog/bezmasa-jidla-na-obed", title: "Bezmasá jídla na oběd", text: "Rychlá, sytá i krabičková inspirace." },
+  { href: "/blog/bezmasa-jidla-pro-deti", title: "Bezmasá jídla pro děti", text: "Známé chutě a praktické rodinné recepty." },
+  { href: "/blog/bezmasa-jidla-plna-bilkovin", title: "Jídla plná bílkovin", text: "Tofu, luštěniny, tempeh a konkrétní čísla." },
+  { href: "/blog/bezmasa-jidla-z-jednoho-hrnce", title: "Z jednoho hrnce", text: "Méně nádobí, víc chuti." },
+  { href: "/blog/bezmasa-jidla-z-testovin", title: "Jídla z těstovin", text: "Co uvařit podle toho, co máte doma." },
+  { href: "/blog/bezmasa-jidla-z-brambor", title: "Jídla z brambor", text: "Levná, sytá a poctivá klasika." },
+  { href: "/blog/bezmasy-jidelnicek-na-7-dni", title: "Jídelníček na 7 dní", text: "Hotový týdenní plán a nákupní systém." },
+  { href: "/blog/bezmasa-jidla-do-skolni-jidelny", title: "Do školní jídelny", text: "Nutriční a provozní pohled na bezmasá jídla." },
+];
 
 export default function Recipes() {
   const [location] = useLocation();
@@ -421,6 +432,30 @@ export default function Recipes() {
           </div>
         )}
       </div>
+
+      <section className="border-t border-emerald-100 bg-white">
+        <div className="container py-12">
+          <div className="mb-6 max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Praktické průvodce</p>
+            <h2 className="mt-2 text-2xl font-semibold text-gray-900" style={{ fontFamily: "'DM Serif Display', serif" }}>
+              SEO průvodci podle toho, co právě hledáte
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-gray-600">
+              Nechcete procházet stovku receptů? Vyberte si podle situace, suroviny nebo toho, pro koho vaříte.
+            </p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {seoGuides.map(guide => (
+              <Link key={guide.href} href={guide.href}>
+                <div className="h-full rounded-xl border border-emerald-100 bg-emerald-50/40 p-4 transition hover:-translate-y-0.5 hover:border-emerald-300 hover:bg-emerald-50">
+                  <h3 className="font-semibold text-gray-900">{guide.title}</h3>
+                  <p className="mt-1 text-sm leading-5 text-gray-600">{guide.text}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <Footer />
     </div>
