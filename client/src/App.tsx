@@ -146,6 +146,7 @@ function Router() {
         <Route path="/admin" component={AdminPage} />
         <Route path="/blog" component={BlogPage} />
         <Route path="/blog/:slug" component={BlogDetail} />
+        <Route path="/premium" component={B2BListingPage} />
         <Route path="/inzerce" component={InzercePage} />
         <Route path="/inzerce/pridat-podnik" component={B2BListingPage} />
         <Route path="/podminky" component={PodminkyPage} />
