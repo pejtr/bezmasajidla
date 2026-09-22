@@ -7,17 +7,18 @@
 
 import { useState, useEffect } from "react";
 import { Link, useSearch } from "wouter";
-import { Heart, Bookmark, MapPin, Star, Clock, Users, Trash2, ChefHat, ArrowRight, BookOpen, LogIn, Leaf, ShieldCheck } from "lucide-react";
+import { Heart, Bookmark, MapPin, Star, Clock, Users, Trash2, ChefHat, ArrowRight, BookOpen, LogIn, Leaf, ShieldCheck, Compass } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { restaurants, recipes, getTypeColor } from "@/lib/data";
+import { blogPosts } from "@/lib/blogData";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { getLoginUrl } from "@/const";
 
-type Tab = "favorites" | "reviews" | "recipes";
+type Tab = "favorites" | "plans" | "reviews" | "recipes";
 
 export default function ProfilePage() {
   const searchString = useSearch();
@@ -25,13 +26,15 @@ export default function ProfilePage() {
   const tabParam = params.get("tab");
 
   const [activeTab, setActiveTab] = useState<Tab>(() => {
+    if (tabParam === "plans") return "plans";
     if (tabParam === "reviews") return "reviews";
     if (tabParam === "recipes") return "recipes";
     return "favorites";
   });
 
   useEffect(() => {
-    if (tabParam === "reviews") setActiveTab("reviews");
+    if (tabParam === "plans") setActiveTab("plans");
+    else if (tabParam === "reviews") setActiveTab("reviews");
     else if (tabParam === "recipes") setActiveTab("recipes");
     else if (tabParam === "favorites") setActiveTab("favorites");
   }, [tabParam]);
@@ -56,6 +59,18 @@ export default function ProfilePage() {
     enabled: isAuthenticated,
     retry: false,
   });
+  const { data: visitPlans = [] } = trpc.oIdentity.interactions.list.useQuery(
+    { targetType: "venue", action: "want_to_visit" },
+    { enabled: isAuthenticated },
+  );
+  const { data: cookPlans = [] } = trpc.oIdentity.interactions.list.useQuery(
+    { targetType: "recipe", action: "want_to_cook" },
+    { enabled: isAuthenticated },
+  );
+  const { data: savedArticles = [] } = trpc.oIdentity.interactions.list.useQuery(
+    { targetType: "article", action: "saved" },
+    { enabled: isAuthenticated },
+  );
 
   const deleteReview = trpc.reviews.delete.useMutation({
     onSuccess: () => {
@@ -68,6 +83,11 @@ export default function ProfilePage() {
     },
   });
   const utils = trpc.useUtils();
+  const setInteraction = trpc.oIdentity.interactions.set.useMutation({
+    onSuccess: () => {
+      utils.oIdentity.interactions.list.invalidate();
+    },
+  });
 
   const savedRestaurants = restaurants.filter((r) =>
     favoriteRestaurants.includes(r.slug)
@@ -77,6 +97,17 @@ export default function ProfilePage() {
   );
 
   const totalSaved = favoriteRestaurants.length + favoriteRecipes.length;
+  const plannedRestaurants = restaurants.filter(restaurant =>
+    visitPlans.some(item => item.targetId === restaurant.slug),
+  );
+  const plannedRecipes = recipes.filter(recipe =>
+    cookPlans.some(item => item.targetId === recipe.slug),
+  );
+  const plannedArticles = blogPosts.filter(post =>
+    savedArticles.some(item => item.targetId === post.slug),
+  );
+  const totalPlans =
+    plannedRestaurants.length + plannedRecipes.length + plannedArticles.length;
 
   const tabs: { key: Tab; label: string; icon: React.ReactNode; count?: number }[] = [
     {
@@ -84,6 +115,12 @@ export default function ProfilePage() {
       label: "Oblíbené",
       icon: <Heart className="w-4 h-4" />,
       count: totalSaved > 0 ? totalSaved : undefined,
+    },
+    {
+      key: "plans",
+      label: "Moje plány",
+      icon: <Compass className="w-4 h-4" />,
+      count: totalPlans > 0 ? totalPlans : undefined,
     },
     {
       key: "reviews",
@@ -303,6 +340,135 @@ export default function ProfilePage() {
                       })}
                     </div>
                   </div>
+                )}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* === PLANS TAB === */}
+        {activeTab === "plans" && (
+          <>
+            {!isAuthenticated ? (
+              <LoginPrompt message="Pro ukládání plánů se prosím přihlaste." />
+            ) : totalPlans === 0 ? (
+              <EmptyState
+                icon={<Compass className="w-10 h-10 text-emerald-300" />}
+                title="Zatím žádné plány"
+                description="U receptů použijte „Chci uvařit“, u restaurací „Chci navštívit“ a články si můžete uložit na později."
+                cta={{ label: "Procházet recepty", href: "/recepty" }}
+              />
+            ) : (
+              <div className="space-y-8">
+                {plannedRestaurants.length > 0 && (
+                  <section>
+                    <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900" style={{ fontFamily: "'DM Serif Display', serif" }}>
+                      <MapPin className="h-5 w-5 text-emerald-600" />
+                      Chci navštívit ({plannedRestaurants.length})
+                    </h3>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {plannedRestaurants.map(restaurant => (
+                        <div key={restaurant.slug} className="flex items-center gap-3 rounded-xl border border-emerald-100 bg-white p-3">
+                          <img src={restaurant.image} alt={restaurant.name} className="h-16 w-16 rounded-lg object-cover" />
+                          <div className="min-w-0 flex-1">
+                            <Link href={`/restaurace/${restaurant.slug}`}>
+                              <p className="truncate font-semibold text-gray-900 hover:text-emerald-700">{restaurant.name}</p>
+                            </Link>
+                            <p className="truncate text-xs text-gray-500">{restaurant.district}</p>
+                          </div>
+                          <button
+                            type="button"
+                            title="Odebrat z plánu"
+                            onClick={() =>
+                              setInteraction.mutate({
+                                targetType: "venue",
+                                targetId: restaurant.slug,
+                                action: "want_to_visit",
+                                active: false,
+                              })
+                            }
+                            className="rounded-lg p-2 text-gray-400 hover:bg-red-50 hover:text-red-500"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                {plannedRecipes.length > 0 && (
+                  <section>
+                    <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900" style={{ fontFamily: "'DM Serif Display', serif" }}>
+                      <ChefHat className="h-5 w-5 text-amber-500" />
+                      Chci uvařit ({plannedRecipes.length})
+                    </h3>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {plannedRecipes.map(recipe => (
+                        <div key={recipe.slug} className="flex items-center gap-3 rounded-xl border border-emerald-100 bg-white p-3">
+                          <img src={recipe.image} alt={recipe.title} className="h-16 w-16 rounded-lg object-cover" />
+                          <div className="min-w-0 flex-1">
+                            <Link href={`/recepty/${recipe.slug}`}>
+                              <p className="truncate font-semibold text-gray-900 hover:text-emerald-700">{recipe.title}</p>
+                            </Link>
+                            <p className="text-xs text-gray-500">{recipe.prepTime + recipe.cookTime} min</p>
+                          </div>
+                          <button
+                            type="button"
+                            title="Odebrat z plánu"
+                            onClick={() =>
+                              setInteraction.mutate({
+                                targetType: "recipe",
+                                targetId: recipe.slug,
+                                action: "want_to_cook",
+                                active: false,
+                              })
+                            }
+                            className="rounded-lg p-2 text-gray-400 hover:bg-red-50 hover:text-red-500"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                {plannedArticles.length > 0 && (
+                  <section>
+                    <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900" style={{ fontFamily: "'DM Serif Display', serif" }}>
+                      <Bookmark className="h-5 w-5 text-emerald-600" />
+                      Uložené články ({plannedArticles.length})
+                    </h3>
+                    <div className="space-y-3">
+                      {plannedArticles.map(post => (
+                        <div key={post.slug} className="flex items-center gap-3 rounded-xl border border-emerald-100 bg-white p-3">
+                          <img src={post.coverImage} alt={post.coverImageAlt} className="h-16 w-20 rounded-lg object-cover" />
+                          <div className="min-w-0 flex-1">
+                            <Link href={`/blog/${post.slug}`}>
+                              <p className="line-clamp-2 font-semibold text-gray-900 hover:text-emerald-700">{post.title}</p>
+                            </Link>
+                            <p className="text-xs text-gray-500">{post.readingTimeMin} min čtení</p>
+                          </div>
+                          <button
+                            type="button"
+                            title="Odebrat z uložených"
+                            onClick={() =>
+                              setInteraction.mutate({
+                                targetType: "article",
+                                targetId: post.slug,
+                                action: "saved",
+                                active: false,
+                              })
+                            }
+                            className="rounded-lg p-2 text-gray-400 hover:bg-red-50 hover:text-red-500"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
                 )}
               </div>
             )}
