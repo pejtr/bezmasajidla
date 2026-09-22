@@ -142,6 +142,12 @@ export default function BlogDetail() {
             </span>
           </div>
 
+          {post.author.toLowerCase().includes("virtuální") && (
+            <div className="mb-6 rounded-xl border border-emerald-100 bg-emerald-50/60 px-4 py-3 text-sm leading-6 text-gray-600">
+              <strong className="text-gray-900">{post.author.split(" — ")[0]}</strong> je virtuální redaktorka BezmasáJídla.cz. Pracuje s redakčně připravenými podklady a odkazy; osobní zkušenost uvádíme jen tam, kde skutečně proběhla návštěva nebo ochutnávka.
+            </div>
+          )}
+
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mb-6">
             {post.tags.map(tag => (

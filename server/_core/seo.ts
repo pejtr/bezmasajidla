@@ -506,9 +506,9 @@ async function resolveMeta(url: string): Promise<SeoMeta> {
     return {
       title: isIndexableCategory
         ? `${category} | Bezmasé recepty`
-        : "Bezmasé recepty | Veganské a vegetariánské recepty",
+        : "Bezmasá jídla: 100+ receptů na oběd i večeři | BezmasáJídla.cz",
       description:
-        "Jednoduché veganské a vegetariánské recepty bez masa. Filtrování podle kategorie, obtížnosti, času a dietních omezení.",
+        "Bezmasá jídla a recepty pro každý den: rychlé obědy, večeře, jídla pro děti, recepty plné bílkovin, těstoviny, brambory i česká klasika.",
       image: DEFAULT_IMAGE,
       canonicalPath: normalizedCanonicalPath,
       noIndex: parsed.search.length > 0 && !isIndexableCategory,
@@ -532,7 +532,7 @@ async function resolveMeta(url: string): Promise<SeoMeta> {
           image: [absoluteMediaUrl(post.coverImage)],
           datePublished: post.publishedAt,
           dateModified: post.publishedAt,
-          author: organizationSchema(),
+          author: { "@type": "Person", name: post.author },
           publisher: organizationSchema(),
           articleSection: post.category,
           keywords: post.tags.join(", "),
