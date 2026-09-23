@@ -27,6 +27,9 @@ import {
   GlassWater,
   ShieldCheck,
   Check,
+  Camera,
+  Eye,
+  X,
 } from "lucide-react";
 import { trackCateringEvent, getCookieConsentPrefs } from "@/lib/cateringTracking";
 
@@ -42,6 +45,8 @@ const CATERING_PACKAGES = [
     badge: "Pro Firmy & Workshopy",
     description: "Lehká a zdravá bezmasá jídla pro porady, týmové snídaně, teambuildingy a workshopy.",
     color: "border-emerald-500 bg-emerald-50/40 text-emerald-800",
+    image: "/images/catering/matous-cateringovy-raut-kanapky.jpg",
+    imageAlt: "Rautový tác plný kanapek a bruschett od šéfkuchaře Matouše",
     features: [
       "4× Studený finger food (jednohubky & tapas)",
       "2× Sezónní salát nebo tartař z pečlivě vybrané zeleniny",
@@ -59,6 +64,8 @@ const CATERING_PACKAGES = [
     badge: "DOPORUČUJEME",
     description: "Kompletní zážitkové menu. Vyvážená kombinace teplých i studených chodů s prémiovým servisem.",
     color: "border-amber-500 bg-amber-50/40 text-amber-950 ring-2 ring-amber-400/30",
+    image: "/images/catering/matous-glazovany-steak-repne-pyre.jpg",
+    imageAlt: "Glazovaný zeleninový steak na řepném pyré od šéfkuchaře Matouše",
     features: [
       "6× Studené tapas & bruschetty (hummus, pečený lilek, sušená rajčata)",
       "3× Teplé signature chody (květákový steak, seitanový goulash, varenyky)",
@@ -77,12 +84,147 @@ const CATERING_PACKAGES = [
     badge: "VIP Degustace",
     description: "Komorní fine-dining pro 6 až 15 osob s osobní účastí šéfkuchaře Matouše.",
     color: "border-purple-600 bg-purple-50/40 text-purple-950",
+    image: "/images/catering/matous-rostlinny-tatarak-toast.jpg",
+    imageAlt: "Fine-dining rostlinný tatarák se žloutkem od šéfkuchaře Matouše",
     features: [
       "5 Chodové degustační menu připravené přímo před hosty",
       "Párování se signature nealko mošty, kombuchami a výběrovou kávou",
       "Osobní příprava a komentované servírování šéfkuchařem",
       "Plný skleněný & porcelánový servis v ceně",
     ],
+  },
+];
+
+interface GalleryItem {
+  id: string;
+  title: string;
+  category: "raut" | "teple" | "tapas" | "dezerty" | "polevky";
+  categoryLabel: string;
+  image: string;
+  description: string;
+}
+
+const GALLERY_CATEGORIES = [
+  { id: "all", label: "Všechny ukázky" },
+  { id: "raut", label: "Raut & Kanapky" },
+  { id: "teple", label: "Teplé chody & steaky" },
+  { id: "tapas", label: "Předkrmy & Tapas" },
+  { id: "dezerty", label: "Autorské dezerty" },
+  { id: "polevky", label: "Polévky & Nápoje" },
+];
+
+const MATOUS_GALLERY_ITEMS: GalleryItem[] = [
+  {
+    id: "raut-kanapky",
+    title: "Cateringový rautový podnos kanapek & bruschett",
+    category: "raut",
+    categoryLabel: "Raut & Fingerfood",
+    image: "/images/catering/matous-cateringovy-raut-kanapky.jpg",
+    description: "Desítky pestrých bruschett s domácími pomazánkami, marinovanou zeleninou a černým sezamem pro firemní akce.",
+  },
+  {
+    id: "rostlinny-tatarak",
+    title: "Autorský rostlinný tatarák s toasty",
+    category: "tapas",
+    categoryLabel: "Předkrmy & Tapas",
+    image: "/images/catering/matous-rostlinny-tatarak-toast.jpg",
+    description: "Fine-dining rostlinný tatarák se žloutkem, nakládaným hořčičným semínkem, perličkami a křupavým chlebem.",
+  },
+  {
+    id: "glazovany-steak",
+    title: "Glazovaný zeleninový steak na řepném pyré",
+    category: "teple",
+    categoryLabel: "Teplé chody",
+    image: "/images/catering/matous-glazovany-steak-repne-pyre.jpg",
+    description: "Pečený zeleninový steak na hedvábném řepném pyré s restovanou cibulkou a pečenou sezónní zeleninou.",
+  },
+  {
+    id: "mezze-labneh",
+    title: "Středomořský krémový talíř s cizrnou",
+    category: "tapas",
+    categoryLabel: "Předkrmy & Tapas",
+    image: "/images/catering/matous-mezze-labneh-cizrna.jpg",
+    description: "Labneh krém zalitý extra panenským olivovým olejem, posypaný cizrnou, granátovým jablkem a jarní cibulkou.",
+  },
+  {
+    id: "seitanove-medailonky",
+    title: "Křupavé seitanové medailonky s kaší",
+    category: "teple",
+    categoryLabel: "Teplé chody",
+    image: "/images/catering/matous-seitanove-medailonky-kase.jpg",
+    description: "Poctivá česká kuchyně v moderním hávu: křupavé medailonky, sametová bramborová kaše a pečená řepa.",
+  },
+  {
+    id: "seitan-dynovy-krem",
+    title: "Orestovaný seitan na dýňovém krému",
+    category: "teple",
+    categoryLabel: "Teplé chody",
+    image: "/images/catering/matous-seitan-dynovy-krem.jpg",
+    description: "Šťavnaté seitanové kousky na voňavém dýňovém krému se salátem z červeného zelí a praženými semínky.",
+  },
+  {
+    id: "pecena-kukurice-kvetak",
+    title: "Pečená baby kukuřice a květák na pyré",
+    category: "teple",
+    categoryLabel: "Teplé chody",
+    image: "/images/catering/matous-pecena-kukurice-kvetak-pyre.jpg",
+    description: "Jemné bílé pyré s pečenou kukuřicí, květákem a svěžím křupavým salátkem s ředkvičkami.",
+  },
+  {
+    id: "dezerty-violky",
+    title: "Skleničkové dezerty s květy violek",
+    category: "dezerty",
+    categoryLabel: "Autorské dezerty",
+    image: "/images/catering/matous-dezerty-violky-sklenicky.jpg",
+    description: "Lehký vanilkový krém ve skleničkách s čokoládovým crumblem a jedlými květy z lokální produkce.",
+  },
+  {
+    id: "brownies-zmrzlina",
+    title: "Čokoládové brownies na břidlici s hruškou",
+    category: "dezerty",
+    categoryLabel: "Autorské dezerty",
+    image: "/images/catering/matous-brownies-zmrzlina-hruska.jpg",
+    description: "Hutné čokoládové brownies servírované s kopečkem vanilkové zmrzliny, pošírovanou hruškou a dýňovými semínky.",
+  },
+  {
+    id: "brownies-raut",
+    title: "Degustační čokoládové brownies s broskví",
+    category: "dezerty",
+    categoryLabel: "Autorské dezerty",
+    image: "/images/catering/matous-cokoladove-brownies-raut.jpg",
+    description: "Rautové porce brownies s plátkem zralé broskve a jemným kakaovým přelivem pro firemní akce.",
+  },
+  {
+    id: "peceny-syr-hermelin",
+    title: "Pečený sýr se semínky a baby špenátem",
+    category: "tapas",
+    categoryLabel: "Předkrmy & Tapas",
+    image: "/images/catering/matous-peceny-syr-hermelin.jpg",
+    description: "Zapečený sýr s křupavými semínky, restovanou paprikou, baby špenátem a opečeným kváskovým chlebem.",
+  },
+  {
+    id: "staroceska-kulajda",
+    title: "Staročeská vegetariánská kulajda",
+    category: "polevky",
+    categoryLabel: "Polévky & Nápoje",
+    image: "/images/catering/matous-staroceska-kulajda.jpg",
+    description: "Tradiční krémová kulajda s lesními houbami, čerstvým koprem, vejcem natvrdo a nočkem zakysané smetany.",
+  },
+  {
+    id: "dynovy-krem",
+    title: "Sametový dýňový krém se semínky",
+    category: "polevky",
+    categoryLabel: "Polévky & Nápoje",
+    image: "/images/catering/matous-dynovy-krem-seminka.jpg",
+    description: "Hustý dýňový krém z pečené dýně s praženými semínky a kapkou limetkové šťávy.",
+  },
+  {
+    id: "signature-drink",
+    title: "Signature osvěžující letní drink s levandulí",
+    category: "polevky",
+    categoryLabel: "Polévky & Nápoje",
+    image: "/images/catering/matous-signature-letni-drink.jpg",
+    description: "Autorský nealko aperitiv plný ledu s plátkem pomeranče, physalisem a kvetoucí levandulí.",
   },
 ];
 
@@ -94,6 +236,14 @@ export default function CateringPage() {
   const [includeDrinks, setIncludeDrinks] = useState<boolean>(true);
   const [includeGlassware, setIncludeGlassware] = useState<boolean>(false);
   const [includeStaff, setIncludeStaff] = useState<boolean>(false);
+
+  // Gallery state
+  const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [lightboxItem, setLightboxItem] = useState<GalleryItem | null>(null);
+
+  const filteredGalleryItems = activeCategory === "all"
+    ? MATOUS_GALLERY_ITEMS
+    : MATOUS_GALLERY_ITEMS.filter((item) => item.category === activeCategory);
 
   // Attribution tracking state (UTM + Google Click IDs)
   const [utmParams, setUtmParams] = useState({
@@ -443,6 +593,19 @@ export default function CateringPage() {
                   </div>
                 )}
 
+                {/* Real Food Image Thumbnail */}
+                <div className="relative h-44 -mx-2 -mt-2 mb-5 rounded-2xl overflow-hidden border border-emerald-950/10 shadow-xs">
+                  <img
+                    src={pkg.image}
+                    alt={pkg.imageAlt}
+                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                    loading="lazy"
+                  />
+                  <span className="absolute bottom-2.5 left-2.5 bg-black/60 backdrop-blur-xs text-white text-[10px] font-medium px-2 py-0.5 rounded-md">
+                    Foto z realizace
+                  </span>
+                </div>
+
                 <div>
                   <span className="text-xs font-bold text-[#4A7C59] uppercase tracking-wider block mb-1">
                     {pkg.tagline}
@@ -494,6 +657,134 @@ export default function CateringPage() {
               </div>
             ))}
           </div>
+        </section>
+
+        {/* Section: Autorská Galerie & Skutečné Realizace Šéfkuchaře Matouše */}
+        <section id="galerie" className="mb-20">
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <div className="inline-flex items-center gap-2 bg-emerald-100/60 text-[#4A7C59] px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+              <Camera className="w-3.5 h-3.5" />
+              <span>Portfolio & Realizace</span>
+            </div>
+            <h2 className="text-3xl font-extrabold text-[#1C2826] font-serif">
+              Autorská tvorba šéfkuchaře Matouše
+            </h2>
+            <p className="text-sm text-[#5A685D] mt-2">
+              Podívejte se na reálné pokrmy, rauty a servírování z našich bezmasých cateringů a degustací.
+            </p>
+
+            {/* Filter Buttons */}
+            <div className="flex flex-wrap items-center justify-center gap-2 mt-6">
+              {GALLERY_CATEGORIES.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveCategory(cat.id)}
+                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                    activeCategory === cat.id
+                      ? "bg-[#4A7C59] text-white shadow-sm"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Gallery Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredGalleryItems.map((item) => (
+              <div
+                key={item.id}
+                onClick={() => setLightboxItem(item)}
+                className="group bg-white rounded-3xl overflow-hidden border border-gray-200/80 shadow-xs hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col"
+              >
+                <div className="relative h-60 overflow-hidden bg-gray-100">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    loading="lazy"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-xs text-[#1C2826] font-bold text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full shadow-xs">
+                    {item.categoryLabel}
+                  </div>
+                  <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <span className="bg-white/95 text-gray-900 text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-md">
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>Zvětšit detail</span>
+                    </span>
+                  </div>
+                </div>
+                <div className="p-5 flex flex-col flex-1 justify-between">
+                  <div>
+                    <h3 className="text-base font-bold text-gray-900 group-hover:text-[#4A7C59] transition-colors leading-snug mb-1 font-serif">
+                      {item.title}
+                    </h3>
+                    <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">
+                      {item.description}
+                    </p>
+                  </div>
+                  <span className="text-[11px] font-semibold text-[#4A7C59] mt-3 inline-flex items-center gap-1">
+                    ✨ Matouš × BezmasáJídla.cz
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Lightbox Modal */}
+          {lightboxItem && (
+            <div
+              onClick={() => setLightboxItem(null)}
+              className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+            >
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="bg-white rounded-3xl overflow-hidden max-w-3xl w-full shadow-2xl border border-white/20 relative"
+              >
+                <button
+                  onClick={() => setLightboxItem(null)}
+                  className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black transition-colors"
+                  aria-label="Zavřít"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+                <div className="max-h-[65vh] overflow-hidden bg-black flex items-center justify-center">
+                  <img
+                    src={lightboxItem.image}
+                    alt={lightboxItem.title}
+                    className="w-full h-auto max-h-[65vh] object-contain"
+                  />
+                </div>
+                <div className="p-6">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="bg-emerald-100 text-[#4A7C59] text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
+                      {lightboxItem.categoryLabel}
+                    </span>
+                    <span className="text-xs text-gray-400">Autorská tvorba šéfkuchaře Matouše</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2 font-serif">
+                    {lightboxItem.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 leading-relaxed mb-4">
+                    {lightboxItem.description}
+                  </p>
+                  <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
+                    <span className="text-xs text-gray-500">Máte zájem o tento chod na vaší akci?</span>
+                    <a
+                      href="#kalkulacka"
+                      onClick={() => setLightboxItem(null)}
+                      className="px-4 py-2 bg-[#4A7C59] hover:bg-[#3D6649] text-white text-xs font-bold rounded-xl transition-all inline-flex items-center gap-1.5"
+                    >
+                      <span>Přejít ke kalkulaci</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </section>
 
         {/* Section 2: Interactive Real-Time Price Calculator */}
@@ -573,7 +864,13 @@ export default function CateringPage() {
 
                   <label className="flex items-center justify-between p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 cursor-pointer transition-colors">
                     <div className="flex items-center gap-3">
-                      <Wine className="w-4 h-4 text-amber-300" />
+                      <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 border border-amber-300/30">
+                        <img
+                          src="/images/catering/matous-signature-letni-drink.jpg"
+                          alt="Signature letní drink šéfkuchaře Matouše"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
                       <div>
                         <span className="text-xs font-semibold block">Signature Nealko Bar</span>
                         <span className="text-[10px] text-emerald-200/70">Domácí mošty, kombuchy & limonády (+150 Kč/os)</span>

@@ -14,6 +14,7 @@ export async function subscribeToBrevo(opts: {
   name?: string;
   source?: string;
   listIds?: number[];
+  attributes?: Record<string, any>;
 }): Promise<{ success: boolean; message?: string }> {
   try {
     const response = await fetch(`${BREVO_API_URL}/contacts`, {
@@ -29,6 +30,7 @@ export async function subscribeToBrevo(opts: {
         attributes: {
           FIRSTNAME: opts.name || "",
           SOURCE: opts.source || "bezmasajidla.cz",
+          ...(opts.attributes || {}),
         },
         ...(opts.listIds && opts.listIds.length > 0 ? { listIds: opts.listIds } : {}),
       }),

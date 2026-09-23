@@ -6,7 +6,7 @@ import { rateLimitMiddleware } from "./_core/rateLimit";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { notifyOwner } from "./_core/notification";
-import { subscribeToBrevo } from "./_core/brevo";
+import { subscribeToBrevo, sendBrevoEmail } from "./_core/brevo";
 import { createComgatePayment } from "./_core/comgate";
 import { notifyGoogleIndexing } from "./_core/google-indexing";
 import { affiliateRouter } from "./affiliate/router";
@@ -295,23 +295,87 @@ export const appRouter = router({
   newsletter: router({
     subscribe: publicProcedure
       .use(rateLimitMiddleware({ windowMs: 60_000, max: 5 }))
-      .input(z.object({ email: z.string().email("Neplatný e-mail").max(320) }))
+      .input(
+        z.object({
+          email: z.string().email("Neplatný e-mail").max(320),
+          source: z.string().max(100).optional(),
+          landingPage: z.string().max(500).optional(),
+          utmSource: z.string().max(100).optional(),
+          utmMedium: z.string().max(100).optional(),
+          utmCampaign: z.string().max(100).optional(),
+          utmContent: z.string().max(100).optional(),
+          consent: z.boolean().optional(),
+        })
+      )
       .mutation(async ({ input }) => {
-        const { email } = input;
+        const { email, source, landingPage, utmSource, utmMedium, utmCampaign, utmContent, consent } = input;
+        const normalizedSource = source || "bezmasajidla.cz_newsletter";
+        const submittedAt = new Date().toISOString();
 
-        // Brevo API integration (formerly Sendinblue)
-        const brevoResult = await subscribeToBrevo({ email, source: "bezmasajidla.cz_newsletter" });
+        // Brevo API integration (formerly Sendinblue) - safe deduplication and attribute updating
+        const brevoResult = await subscribeToBrevo({
+          email,
+          source: normalizedSource,
+          attributes: {
+            SOURCE: normalizedSource,
+            LANDING_PAGE: landingPage || "",
+            UTM_SOURCE: utmSource || "",
+            UTM_MEDIUM: utmMedium || "",
+            UTM_CAMPAIGN: utmCampaign || "",
+            UTM_CONTENT: utmContent || "",
+            CONSENT_DATE: submittedAt,
+            CONSENT_STATE: consent !== false ? "GRANTED" : "OPT_OUT",
+          },
+        });
         if (!brevoResult.success) {
           console.warn("[Newsletter] Brevo subscription status:", brevoResult.message);
         }
 
+        // For Hermelin E-book: deliver PDF download link via transactional email
+        if (normalizedSource === "hermelin_ebook") {
+          try {
+            await sendBrevoEmail({
+              toEmail: email,
+              subject: "Váš e-book: Hermelín Around the World (15 autorských receptů)",
+              htmlContent: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; color: #1C2826; line-height: 1.6;">
+                  <h1 style="color: #064E3B; font-size: 22px; margin-bottom: 16px;">Váš e-book je připraven ke stažení! 🧀</h1>
+                  <p>Dobrý den,</p>
+                  <p>děkujeme za váš zájem o degustační kuchařku <strong>Hermelín Around the World: 15 variant nakládaného hermelínu</strong>.</p>
+                  <div style="text-align: center; margin: 28px 0;">
+                    <a href="https://www.bezmasajidla.cz/ebooks/hermelin_around_the_world_ebook.pdf"
+                       style="background-color: #059669; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block; font-size: 16px;">
+                      👉 Stáhnout e-book v PDF
+                    </a>
+                  </div>
+                  <p style="font-size: 14px; color: #4B5563;">
+                    Přímý odkaz pro stažení:<br />
+                    <a href="https://www.bezmasajidla.cz/ebooks/hermelin_around_the_world_ebook.pdf" style="color: #059669;">https://www.bezmasajidla.cz/ebooks/hermelin_around_the_world_ebook.pdf</a>
+                  </p>
+                  <hr style="border: none; border-top: 1px solid #E5E7EB; margin: 28px 0;" />
+                  <p style="font-size: 12px; color: #9CA3AF;">
+                    Tento e-mail jste obdrželi na základě žádosti o stažení e-booku na webu BezmasáJídla.cz.
+                  </p>
+                </div>
+              `,
+            });
+          } catch (mailErr) {
+            console.warn("[Newsletter] Brevo confirmation mail send error:", mailErr);
+          }
+        }
+
         // Always notify owner about new subscriber
         await notifyOwner({
-          title: `📧 Nový odběratel newsletteru`,
-          content: `E-mail: **${email}**\n\n*Přihlášen z bezmasajidla.cz*`,
+          title: normalizedSource === "hermelin_ebook"
+            ? `🧀 Nový zájemce o e-book: Hermelín Around the World`
+            : `📧 Nový odběratel newsletteru`,
+          content: `E-mail: **${email}**\n\nZdroj: ${normalizedSource}\nLanding: ${landingPage || "home"}\nUTM: ${utmSource || "direct"} / ${utmMedium || "-"} / ${utmCampaign || "-"}`,
         });
 
-        return { success: true };
+        return {
+          success: true,
+          downloadUrl: "/ebooks/hermelin_around_the_world_ebook.pdf",
+        };
       }),
   }),
 

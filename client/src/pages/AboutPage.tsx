@@ -81,10 +81,10 @@ export default function AboutPage() {
             <h1
               className="text-4xl sm:text-6xl font-extrabold text-white mb-6 leading-tight font-serif"
             >
-              Průvodce Bezmasou Prahou
+              Vegetariánské recepty a restaurace
             </h1>
             <p className="text-base sm:text-lg text-emerald-100/90 leading-relaxed max-w-2xl font-light mb-8">
-              Jsme nezávislá česká platforma pro všechny milovníky rostlinné a vegetariánské stravy. Spojujeme objevování skvělých restaurací v Praze s inspirací na poctivá domácí bezmasá jídla.
+              Jsme nezávislá česká platforma pro všechny milovníky rostlinné a vegetariánské stravy. Spojujeme objevování skvělých restaurací po celé ČR s inspirací na poctivá domácí bezmasá jídla.
             </p>
 
             {/* Key Metrics / Stats Badges */}

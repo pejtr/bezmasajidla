@@ -77,7 +77,7 @@ const receptyMegaMenu = {
     desc: "Gruzínský chlebový člun se sýrem a žloutkem — trendy recept roku 2026",
     href: "/recepty/adzarsky-khachapuri",
     badge: "🔥 Trending",
-    image: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/khachapuri-adjarsky-1-NvBcPLYARE4yt6W5ZF6pmt.webp",
+    image: "https://images.unsplash.com/photo-1758714068469-75887ca0b8c3?auto=format&fit=crop&w=800&q=80",
   },
 };
 
@@ -156,7 +156,7 @@ export default function Header() {
                     bezmasá<span className="text-emerald-600">jídla</span><span className="text-amber-500 text-sm font-bold">.cz</span>
                   </span>
                   <span className="text-[10px] font-bold text-emerald-800/80 tracking-wider uppercase mt-0.5">
-                    Průvodce bezmasou stravou
+                    Vegetariánské recepty a restaurace
                   </span>
                 </div>
               </Link>

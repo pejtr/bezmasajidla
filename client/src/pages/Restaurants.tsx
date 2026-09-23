@@ -305,8 +305,8 @@ export default function Restaurants() {
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAF6]">
       <SEOHead
-        title="Veganské a vegetariánské restaurace v Praze | Bezmasé jídlo"
-        description="Kompletní přehled pro veganské jídlo a bezmasé jídlo v Praze. Najděte ty nejlepší veganské, vegetariánské a vegan-friendly restaurace v Praze."
+        title="Veganské a vegetariánské restaurace v ČR | Bezmasá Jídla"
+        description="Kompletní přehled veganských a vegetariánských restaurací v Praze, Brně, Ostravě a celé ČR. Objevte nejlepší bezmasé podniky."
         ogUrl="https://www.bezmasajidla.cz/restaurace"
         canonicalUrl="https://www.bezmasajidla.cz/restaurace"
         noIndex={hasUrlFilters}
@@ -334,10 +334,10 @@ export default function Restaurants() {
             className="text-4xl font-bold text-white mb-2"
             style={{ fontFamily: "'DM Serif Display', serif" }}
           >
-            Veganské & Vegetariánské Restaurace v Praze
+            Veganské & Vegetariánské Restaurace
           </h1>
           <p className="text-emerald-200 text-sm">
-            {restaurants.length} restaurací v databázi · Aktualizováno 2026
+            {restaurants.length} restaurací v databázi · Praha, Brno, Ostrava, Plzeň a celá ČR
           </p>
         </div>
       </div>

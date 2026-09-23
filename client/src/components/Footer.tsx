@@ -153,8 +153,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-sm text-emerald-300 leading-relaxed">
-              Největší český průvodce veganskými a vegetariánskými restauracemi
-              v Praze.
+              Největší český průvodce pro vegetariánské recepty a restaurace.
             </p>
             <div className="flex gap-3 mt-4">
               <a

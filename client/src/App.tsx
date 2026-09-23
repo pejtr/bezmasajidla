@@ -57,6 +57,7 @@ const CateringPage = lazy(() => import("./pages/CateringPage"));
 
 const DistrictPillarPage = lazy(() => import("./pages/DistrictPillarPage"));
 const IngredientPillarPage = lazy(() => import("./pages/IngredientPillarPage"));
+const HermelinPillarPage = lazy(() => import("./pages/HermelinPillarPage"));
 
 function PageFallback() {
   return <div className="min-h-screen bg-[#F8FAF6]" aria-busy="true" />;
@@ -138,6 +139,10 @@ function Router() {
         <Route path="/platba/zruseno">
           {() => <PaymentResultPage status="cancelled" />}
         </Route>
+        <Route
+          path="/varianty-nakladaneho-hermelinu"
+          component={HermelinPillarPage}
+        />
         <Route path="/recepty/:slug" component={RecipeDetail} />
         <Route path="/mapa" component={MapPage} />
         <Route path="/profil" component={ProfilePage} />

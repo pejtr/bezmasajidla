@@ -13,7 +13,7 @@ import { Link, useLocation } from "wouter";
 import SEOHead from "@/components/SEOHead";
 
 const RECIPE_HERO =
-  "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/recipe-hero-kAEk42WS8auJkLKnU8C6NV.webp";
+  "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=1600&q=80";
 
 const categories = [
   "Vše",

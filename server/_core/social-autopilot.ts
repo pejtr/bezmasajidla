@@ -369,7 +369,7 @@ export function generateSocialCaption(
  */
 export function getAllCuratedCandidates(): RecipeSocialCandidate[] {
   return recipes
-    .filter((r: Recipe) => r.image !== RECIPE_PLACEHOLDER_IMAGE)
+    .filter((r: Recipe) => r.image.startsWith("/images/recipes/"))
     .map((r: Recipe) => {
       let imageUrl = r.image;
       if (imageUrl && imageUrl.startsWith("/")) {

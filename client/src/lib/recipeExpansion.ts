@@ -56,10 +56,10 @@ export const expansionRecipes: Recipe[] = [
     cookTime: 20,
     servings: 4,
     difficulty: "snadný",
-    image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1596560314766-08c0c6890024?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=80",
+        url: "https://images.unsplash.com/photo-1596560314766-08c0c6890024?auto=format&fit=crop&w=800&q=80",
         alt: "Krémový indický dál z červené čočky s kokosovým mlékem a čerstvým koriandrem",
       },
     ],
@@ -96,10 +96,10 @@ export const expansionRecipes: Recipe[] = [
     cookTime: 15,
     servings: 2,
     difficulty: "snadný",
-    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1635452066377-6df9b3529b33?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80",
+        url: "https://images.unsplash.com/photo-1635452066377-6df9b3529b33?auto=format&fit=crop&w=800&q=80",
         alt: "Zlatavě opékané tofu obalené v kukuřičném škrobu s krémovou arašídovou omáčkou",
       },
     ],

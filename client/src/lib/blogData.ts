@@ -629,7 +629,7 @@ Naše interaktivní mapa umožňuje najít veganské restaurace v okolí vaší 
     publishedAt: "2026-03-10",
     readingTimeMin: 7,
     coverImage:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-bezlepkove-vegan-SefXVKQybptc8Ls93vCwzz.webp",
+      "https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?auto=format&fit=crop&w=800&q=80",
     coverImageAlt:
       "Bezlepkové veganské jídlo — barevné misky se zeleninou a quinoou",
     excerpt:
@@ -701,7 +701,7 @@ Pokud chcete vařit bezlepkově a veganské doma, naše platforma nabízejí řa
     publishedAt: "2026-03-10",
     readingTimeMin: 5,
     coverImage:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-levne-obedy-vegan-ijQXPMPHrYYAdU5T2q6Sbw.webp",
+      "https://images.unsplash.com/photo-1543352632-5a4b24e4d2a6?auto=format&fit=crop&w=800&q=80",
     coverImageAlt:
       "Zdravý veganský oběd — barevný talíř se zeleninou a lugtěninami",
     excerpt:
@@ -763,7 +763,7 @@ Pokud chcete ušetřit ještě více, vařte doma. Naše platforma nabízejí st
     publishedAt: "2026-03-10",
     readingTimeMin: 6,
     coverImage:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-veganska-pizza-9ZMbWEbZpUc5ABmuG3mxrY.webp",
+      "https://images.unsplash.com/photo-1594007654729-407eedc4be65?auto=format&fit=crop&w=800&q=80",
     coverImageAlt: "Veganská pizza s barevnými toppingy na dřevěném prkně",
     excerpt:
       "Veganská pizza už není kompromis. Praha nabízejí řadu pizzerií, kde si dáte skutečnou italskou pizzu s veganským sýrem a čerstvými toppingy.",
@@ -821,7 +821,7 @@ Pokud chcete veganskou pizzu připravit doma, naše platforma nabízejí několi
     publishedAt: "2026-03-10",
     readingTimeMin: 5,
     coverImage:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/blog-veganske-vanoce-QxpuKksnQFmbBZtpuJJukm.webp",
+      "https://images.unsplash.com/photo-1610562275255-03b7fa0d4655?auto=format&fit=crop&w=800&q=80",
     coverImageAlt:
       "Veganské jídlo na adventním trhu — teplou polevá a pečené kaštany",
     excerpt:

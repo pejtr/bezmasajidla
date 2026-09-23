@@ -78,7 +78,7 @@ export default function KontaktPage() {
       <SEOHead
         title="Kontakt — Bezmasá Jídla"
         description="Máte dotaz, chcete přidat restauraci nebo nahlásit chybu? Napište nám přes kontaktní formulář. Odpovídáme do 24–48 hodin."
-        ogImage="https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hero-bg-8DsoJ9QpVxJTndww9Yv7SZ.webp"
+        ogImage="https://www.bezmasajidla.cz/images/logo.png"
       />
       <Header />
 

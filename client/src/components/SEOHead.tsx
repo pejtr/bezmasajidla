@@ -200,7 +200,7 @@ export default function SEOHead({
 
     // Cleanup: restore defaults on unmount
     return () => {
-      document.title = `${SITE_NAME} — Veganské a Vegetariánské Restaurace v Praze`;
+      document.title = `${SITE_NAME} — Vegetariánské recepty a restaurace`;
     };
   }, [title, description, ogTitle, ogDescription, ogImage, ogType, ogUrl, canonicalUrl, noIndex, recipeMeta]);
 

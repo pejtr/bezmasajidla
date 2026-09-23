@@ -83,6 +83,7 @@ export async function generateSitemap(): Promise<string> {
   addUrl("/recepty/ceska-klasika-bez-masa", "0.9", "monthly");
   addUrl("/recepty/rychle-bezmase-vecere", "0.9", "monthly");
   addUrl("/recepty/bezlepkove-recepty", "0.9", "monthly");
+  addUrl("/varianty-nakladaneho-hermelinu", "0.9", "monthly");
 
   // Core Categories
   const categories = [

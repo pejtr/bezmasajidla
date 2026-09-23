@@ -5,6 +5,7 @@
 
 import { useState } from "react";
 import { ShoppingBag, ShoppingCart, CheckCircle2, ExternalLink, Sparkles, ShieldCheck } from "lucide-react";
+import { getRohlikLink, getKosikLink } from "@/lib/affiliates";
 
 interface RecipeGroceryWidgetProps {
   recipeTitle: string;
@@ -40,18 +41,22 @@ export default function RecipeGroceryWidget({
   const estimatedTotalCzk = Math.round(estimatedCostPerServingCzk * servings);
 
   const getAffiliateUrl = (merchant: "rohlik" | "kosik" | "ekoclovek") => {
-    const baseUrl =
-      merchant === "ekoclovek"
-        ? "https://www.ekoclovek.cz/"
-        : merchant === "rohlik"
-          ? "https://www.rohlik.cz/"
-          : "https://www.kosik.cz/";
+    const activeIngredients = ingredients
+      .filter((_, idx) => selectedIngredients[idx] ?? true)
+      .map(i => i.name);
+
+    let targetUrl = "https://www.ekoclovek.cz/";
+    if (merchant === "rohlik") {
+      targetUrl = getRohlikLink(recipeTitle, activeIngredients);
+    } else if (merchant === "kosik") {
+      targetUrl = getKosikLink(recipeTitle, activeIngredients);
+    }
 
     const params = new URLSearchParams({
       merchant,
       recipeSlug,
       placement: "recipe_grocery_widget",
-      url: baseUrl,
+      url: targetUrl,
     });
 
     return `/api/affiliate/redirect?${params.toString()}`;

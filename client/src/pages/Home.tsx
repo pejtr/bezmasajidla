@@ -361,24 +361,89 @@ export default function Home() {
 
       {/* ── CATERING BRAND SECTION (MATOUŠ × BEZMASÁJÍDLA) ── */}
       <section className="py-12 container">
-        <div className="bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-950 text-white rounded-3xl p-8 md:p-12 border border-emerald-800 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div className="space-y-3 max-w-2xl">
-            <div className="inline-flex items-center gap-2 bg-amber-400/20 text-amber-400 font-extrabold text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-              🌿 MATOUŠ × BEZMASÁJÍDLA.CZ
+        <div className="bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-950 text-white rounded-3xl p-8 md:p-12 border border-emerald-800 shadow-xl space-y-8">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="space-y-3 max-w-2xl">
+              <div className="inline-flex items-center gap-2 bg-amber-400/20 text-amber-400 font-extrabold text-xs px-3 py-1 rounded-full uppercase tracking-wider">
+                🌿 MATOUŠ × BEZMASÁJÍDLA.CZ
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: "'DM Serif Display', serif" }}>
+                Plánujete firemní akci nebo oslavu bez masa?
+              </h2>
+              <p className="text-emerald-200 text-sm leading-relaxed">
+                Prémiový bezmasý fingerfood, rauty a fine-dining menu od šéfkuchaře Matouše pro 15 až 200+ hostů. Autorské receptury z čerstvých sezónních surovin.
+              </p>
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: "'DM Serif Display', serif" }}>
-              Plánujete firemní akci nebo oslavu bez masa?
-            </h2>
-            <p className="text-emerald-200 text-sm leading-relaxed">
-              Prémiový bezmasý fingerfood, rauty a fine-dining menu od šéfkuchaře Matouše pro 15 až 200+ hostů. Spočítejte si nezávaznou kalkulaci během 1 minuty.
-            </p>
+
+            <Link href="/catering">
+              <Button className="bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold text-base px-7 py-6 rounded-xl shadow-xl transition transform hover:-translate-y-0.5 whitespace-nowrap cursor-pointer">
+                Spočítat kalkulaci cateringu →
+              </Button>
+            </Link>
           </div>
 
-          <Link href="/catering">
-            <Button className="bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold text-base px-7 py-6 rounded-xl shadow-xl transition transform hover:-translate-y-0.5 whitespace-nowrap">
-              Spočítat kalkulaci cateringu →
-            </Button>
-          </Link>
+          {/* 4 Photo Showcase from Matouš's real catering */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-emerald-800/80">
+            <Link href="/catering#galerie" className="group block">
+              <div className="relative h-40 sm:h-48 rounded-2xl overflow-hidden border border-emerald-700/60 shadow-md">
+                <img
+                  src="/images/catering/matous-cateringovy-raut-kanapky.jpg"
+                  alt="Rautový podnos kanapek od šéfkuchaře Matouše"
+                  loading="lazy"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-3 flex flex-col justify-end">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300">Raut & Fingerfood</span>
+                  <span className="text-xs font-semibold text-white truncate">Kanapky a bruschetty</span>
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/catering#galerie" className="group block">
+              <div className="relative h-40 sm:h-48 rounded-2xl overflow-hidden border border-emerald-700/60 shadow-md">
+                <img
+                  src="/images/catering/matous-glazovany-steak-repne-pyre.jpg"
+                  alt="Glazovaný zeleninový steak na řepném pyré"
+                  loading="lazy"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-3 flex flex-col justify-end">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300">Signature Teplý Chod</span>
+                  <span className="text-xs font-semibold text-white truncate">Glazovaný steak na pyré</span>
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/catering#galerie" className="group block">
+              <div className="relative h-40 sm:h-48 rounded-2xl overflow-hidden border border-emerald-700/60 shadow-md">
+                <img
+                  src="/images/catering/matous-rostlinny-tatarak-toast.jpg"
+                  alt="Fine-dining rostlinný tatarák"
+                  loading="lazy"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-3 flex flex-col justify-end">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300">Fine-Dining Tapas</span>
+                  <span className="text-xs font-semibold text-white truncate">Rostlinný tatarák</span>
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/catering#galerie" className="group block">
+              <div className="relative h-40 sm:h-48 rounded-2xl overflow-hidden border border-emerald-700/60 shadow-md">
+                <img
+                  src="/images/catering/matous-dezerty-violky-sklenicky.jpg"
+                  alt="Skleničkové dezerty s violkami"
+                  loading="lazy"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-3 flex flex-col justify-end">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300">Autorský Dezert</span>
+                  <span className="text-xs font-semibold text-white truncate">Dezerty s jedlými květy</span>
+                </div>
+              </div>
+            </Link>
+          </div>
         </div>
       </section>
 

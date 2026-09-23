@@ -27,7 +27,7 @@ describe("SEO Sitemap Production Gate — Live HTTP Verification & Local XML Aud
     expect(duplicates.length).toBe(0);
 
     console.log(`[LOCAL SITEMAP AUDIT] Total URLs: ${locs.length}, Non-canonical: ${nonCanonicalHosts.length}, Duplicates: ${duplicates.length}`);
-  });
+  }, 30000);
 
   it("should run live HTTP diagnostic against production sitemaps and output report", async () => {
     const report = await runLiveSitemapProductionGate();

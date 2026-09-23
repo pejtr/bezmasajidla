@@ -7,6 +7,9 @@ export function isTrustedRecipeImage(image: string | null | undefined) {
   return Boolean(
     image &&
       (image.startsWith(`${RECIPE_IMAGE_ROOT}/`) ||
+        image.startsWith("/images/") ||
+        image.startsWith("https://images.unsplash.com/") ||
+        image.startsWith("https://plus.unsplash.com/") ||
         image === RECIPE_PLACEHOLDER_IMAGE)
   );
 }
@@ -18,7 +21,10 @@ export function hasVerifiedRecipeImage(
   const image =
     (recipe.slug && recipeImageOverrides[recipe.slug]) || recipe.image;
   if (!image || image === RECIPE_PLACEHOLDER_IMAGE) return false;
-  return isTrustedRecipeImage(image) && image !== RECIPE_PLACEHOLDER_IMAGE;
+  return Boolean(
+    image.startsWith(`${RECIPE_IMAGE_ROOT}/`) ||
+      (recipe.slug && Boolean(recipeImageOverrides[recipe.slug]))
+  );
 }
 
 export function selectHomepageRecipes<

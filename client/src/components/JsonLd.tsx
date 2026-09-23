@@ -217,7 +217,7 @@ export function RecipeJsonLd({
       url: "https://www.bezmasajidla.cz",
       logo: {
         "@type": "ImageObject",
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/logo-cropped_d7cd6ecf.png",
+        url: "https://www.bezmasajidla.cz/images/logo.png",
       },
     },
     prepTime: `PT${recipe.prepTime}M`,
@@ -281,7 +281,7 @@ export function WebsiteJsonLd() {
     name: "Bezmasá Jídla",
     url: "https://www.bezmasajidla.cz",
     description:
-      "Průvodce veganskými a vegetariánskými restauracemi v Praze. Recepty, recenze a mapa bezmasých podniků.",
+      "Vegetariánské recepty a restaurace — průvodce bezmasou gastronomií v České republice.",
     inLanguage: "cs",
     publisher: {
       "@type": "Organization",
@@ -289,7 +289,7 @@ export function WebsiteJsonLd() {
       url: "https://www.bezmasajidla.cz",
       logo: {
         "@type": "ImageObject",
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/logo-cropped_d7cd6ecf.png",
+        url: "https://www.bezmasajidla.cz/images/logo.png",
       },
     },
     potentialAction: {
@@ -338,8 +338,8 @@ export function OrganizationJsonLd() {
     "@id": "https://www.bezmasajidla.cz/#organization",
     name: "Bezmasá Jídla",
     url: "https://www.bezmasajidla.cz",
-    logo: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/logo-cropped_d7cd6ecf.png",
-    description: "Největší český adresář veganských a vegetariánských restaurací v Praze.",
+    logo: "https://www.bezmasajidla.cz/images/logo.png",
+    description: "Největší český průvodce pro vegetariánské recepty a restaurace.",
     sameAs: [
       "https://www.instagram.com/bezmasajidla",
       "https://www.facebook.com/bezmasajidla",

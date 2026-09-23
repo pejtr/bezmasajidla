@@ -5,15 +5,15 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+      content="width=device-width, initial-scale=1.0" />
 
-    <!-- Google Consent Mode v2 (Default Denied for Marketing until User Consents) -->
+    <!-- Google Consent Mode v2 (Default Denied for Analytics & Marketing until User Consents) -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
 
       (function() {
-        var analyticsConsent = true;
+        var analyticsConsent = false;
         var marketingConsent = false;
         try {
           var stored = localStorage.getItem("bezmasajidla_cookie_consent");
@@ -46,23 +46,22 @@
     </script>
 
     <!-- Primary Meta -->
-    <title>Bezmasá Jídla — Veganské a Vegetariánské Restaurace v Praze</title>
-    <meta name="description" content="Největší český průvodce veganskými a vegetariánskými restauracemi v Praze. Najdi nejlepší bezmasá jídla, přečti recenze a objevuj nové recepty." />
-    <meta name="keywords" content="veganská restaurace Praha, vegetariánská restaurace Praha, bezmasá jídla, vegan Praha, vegetarián Praha, bezmasé recepty" />
+    <title>Bezmasá Jídla — Vegetariánské recepty a restaurace</title>
+    <meta name="description" content="Největší český průvodce pro vegetariánské recepty a restaurace. Objevte veganské a vegetariánské restaurace v Praze, Brně, Ostravě a ověřené bezmasé recepty." />
     <meta name="author" content="bezmasajidla.cz" />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://www.bezmasajidla.cz/" />
 
-    <!-- Favicon — Logo Variant B (dark green badge with bowl) -->
-    <link rel="icon" type="image/png" href="https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/logo-variant-b-8rWb7ZRakZgKyBWqh3HymW.webp" />
-    <link rel="apple-touch-icon" href="https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/logo-variant-b-nRLxsJiHgADDUbMofdh7hM.png" />
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/images/logo.png" />
     <link rel="alternate" type="application/rss+xml" href="https://www.bezmasajidla.cz/rss.xml" title="Bezmasá Jídla — RSS Feed" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.bezmasajidla.cz/" />
-    <meta property="og:title" content="Bezmasá Jídla — Průvodce bezmasou Prahou" />
-    <meta property="og:description" content="Největší český adresář veganských a vegetariánských restaurací v Praze. Recenze, mapy, recepty — vše na jednom místě." />
+    <meta property="og:title" content="Bezmasá Jídla — Vegetariánské recepty a restaurace" />
+    <meta property="og:description" content="Největší český průvodce pro vegetariánské recepty a restaurace. Recenze, mapy, inspirace — vše na jednom místě." />
     <meta property="og:image" content="https://www.bezmasajidla.cz/og-preview.png" />
     <meta property="og:image:secure_url" content="https://www.bezmasajidla.cz/og-preview.png" />
     <meta property="og:image:type" content="image/png" />
@@ -73,8 +72,8 @@
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Bezmasá Jídla — Průvodce bezmasou Prahou" />
-    <meta name="twitter:description" content="Největší český adresář veganských a vegetariánských restaurací v Praze. Recenze, mapy, recepty." />
+    <meta name="twitter:title" content="Bezmasá Jídla — Vegetariánské recepty a restaurace" />
+    <meta name="twitter:description" content="Největší český průvodce pro vegetariánské recepty a restaurace v ČR. Recenze, mapy, recepty." />
     <meta name="twitter:image" content="https://www.bezmasajidla.cz/og-preview.png" />
     <meta name="twitter:site" content="@bezmasajidla" />
 
@@ -85,76 +84,39 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
-
-    <!-- LeadOS Universal Traffic Pixel -->
-    <script>
-      (function() {
-        const PROJECT_KEY = "bezmasajidla"; // např. proj_hdm, proj_dsr, proj_italie
-        const INGEST_URL = "https://leados.cz/api/ingest";
-
-        // Persistentní Visitor ID & Session ID
-        function getCookie(name) {
-          const value = `; ${document.cookie}`;
-          const parts = value.split(`; ${name}=`);
-          if (parts.length === 2) return parts.pop().split(';').shift();
-        }
-        
-        let visitorId = getCookie("los_vid");
-        if (!visitorId) {
-          visitorId = 'v_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
-          document.cookie = "los_vid=" + visitorId + "; max-age=63072000; path=/; SameSite=Lax";
-        }
-        
-        let sessionId = sessionStorage.getItem("los_sid");
-        if (!sessionId) {
-          sessionId = 's_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
-          sessionStorage.setItem("los_sid", sessionId);
-        }
-
-        // Získání UTM parametrů
-        const urlParams = new URLSearchParams(window.location.search);
-        
-        // Odeslání události
-        function trackEvent(eventName, eventData = {}) {
-          const payload = {
-            eventType: eventName,
-            visitorId: visitorId,
-            sessionId: sessionId,
-            pageUrl: window.location.href,
-            path: window.location.pathname,
-            referrer: document.referrer || null,
-            deviceType: /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
-            utmSource: urlParams.get('utm_source') || null,
-            utmMedium: urlParams.get('utm_medium') || null,
-            utmCampaign: urlParams.get('utm_campaign') || null,
-            metadata: eventData
-          };
-
-          fetch(INGEST_URL, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "x-project-key": PROJECT_KEY
-            },
-            body: JSON.stringify(payload),
-            keepalive: true
-          }).catch(err => console.warn("[LeadOS Analytics Error]", err));
-        }
-
-        // Automatické měření zobrazení stránky
-        window.addEventListener("DOMContentLoaded", () => trackEvent("page_view"));
-        
-        // Expozice pro vlastní události (nákup, registraci, proklik)
-        window.losTrack = trackEvent;
-      })();
-    </script>
   </head>
 
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <!-- Umami Analytics -->
-    <script defer src="https://cloud.umami.is/script.js" data-website-id="63caf352-806f-48fd-a829-97486b1e385d"></script>
+    <!-- Umami Analytics (Consent-Gated: loads strictly after user consent) -->
+    <script>
+      (function() {
+        function loadUmami() {
+          if (document.getElementById("umami-script")) return;
+          var s = document.createElement("script");
+          s.id = "umami-script";
+          s.defer = true;
+          s.src = "https://cloud.umami.is/script.js";
+          s.setAttribute("data-website-id", "63caf352-806f-48fd-a829-97486b1e385d");
+          document.body.appendChild(s);
+        }
+        try {
+          var stored = localStorage.getItem("bezmasajidla_cookie_consent");
+          if (stored) {
+            var parsed = JSON.parse(stored);
+            if (parsed && parsed.prefs && parsed.prefs.analytics) {
+              loadUmami();
+            }
+          }
+        } catch (e) {}
+        window.addEventListener("cookieConsentUpdated", function(e) {
+          if (e.detail && e.detail.analytics) {
+            loadUmami();
+          }
+        });
+      })();
+    </script>
   </body>
 
 </html>

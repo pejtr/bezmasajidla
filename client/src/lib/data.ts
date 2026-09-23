@@ -357,7 +357,7 @@ const restaurantSource: Restaurant[] = [
     tags: ["Veganská", "Poke Bowl", "Bezlepková", "Plzeň"],
     dietaryOptions: ["bezlepkové", "whole-food"],
     image:
-      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1597958792579-bd3517df6399?auto=format&fit=crop&w=800&q=80",
     lat: 49.7485,
     lng: 13.3745,
     priceLevel: 2,
@@ -381,7 +381,7 @@ const restaurantSource: Restaurant[] = [
     tags: ["Česká kuchyně", "Americká", "Fast food", "Pivo/Víno", "Evropská"],
     dietaryOptions: ["whole-food"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/shromazdiste-vegansky-gastropub-praha_a3a92b07.webp",
+      "/images/restaurants/shromazdistepraha.webp",
     lat: 50.082,
     lng: 14.4501,
     priceLevel: 2,
@@ -440,7 +440,7 @@ Jedinou výhradou je popularita — Shromaždiště je vždy plné a bez rezerva
     ],
     dietaryOptions: ["bezlepkové", "bio"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/dosa-dosa-veganska-indicka-restaurace-praha_abaf4fdb.webp",
+      "https://images.unsplash.com/photo-1588644525273-f37b60d78512?auto=format&fit=crop&w=800&q=80",
     lat: 50.0833,
     lng: 14.4033,
     priceLevel: 2,
@@ -464,7 +464,7 @@ Jedinou výhradou je popularita — Shromaždiště je vždy plné a bez rezerva
     tags: ["Pekárna", "Catering", "Snídaně", "Rozvoz", "S sebou"],
     dietaryOptions: ["bez-soji"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/share-sweet-espresso-bar-veganska-kavarna-praha_4bf2fb66.webp",
+      "https://images.unsplash.com/photo-1574966739987-65e38db0f7ce?auto=format&fit=crop&w=800&q=80",
     lat: 50.0897,
     lng: 14.4282,
     priceLevel: 1,
@@ -489,7 +489,7 @@ Jedinou výhradou je popularita — Shromaždiště je vždy plné a bez rezerva
     tags: ["Italská", "Středomořská", "Pivo/Víno", "Snídaně", "S sebou"],
     dietaryOptions: ["whole-food"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/chutnej-rostlinna-restaurace-praha_b5acba19.webp",
+      "https://images.unsplash.com/photo-1651981075280-9a9e01acbff0?auto=format&fit=crop&w=800&q=80",
     lat: 50.1012,
     lng: 14.4201,
     priceLevel: 2,
@@ -537,7 +537,7 @@ Chutnej je místo pro speciální příležitosti i pro pravidelné brunchové v
     tags: ["Americká", "Mezinárodní", "Pivo/Víno", "Catering", "Rozvoz"],
     dietaryOptions: ["whole-food"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/eaternia-veganska-restaurace-praha_dc6d1126.webp",
+      "https://images.unsplash.com/photo-1777502286570-2725dff09ce5?auto=format&fit=crop&w=800&q=80",
     lat: 50.0701,
     lng: 14.4052,
     priceLevel: 2,
@@ -562,7 +562,7 @@ Chutnej je místo pro speciální příležitosti i pro pravidelné brunchové v
     tags: ["Organická", "Pivo/Víno", "Pekárna", "Španělská", "Česká", "Fusion"],
     dietaryOptions: ["bio", "whole-food"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/palo-verde-rostlinne-bistro-praha_e6b9150c.webp",
+      "https://images.unsplash.com/photo-1763297104069-41bf64564c86?auto=format&fit=crop&w=800&q=80",
     lat: 50.0762,
     lng: 14.4261,
     priceLevel: 2,
@@ -607,13 +607,8 @@ Palo Verde je ideální pro pracovní obědy, brunch o víkendu nebo klidný ve�
     tags: ["Mezinárodní", "Pivo/Víno", "Catering", "Česká"],
     dietaryOptions: ["whole-food"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strecha-restaurant_d68817c7.jpg",
-    gallery: [
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strecha-food-1_03d247fc.png",
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strecha-food-2_767bb434.png",
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strecha-food-3_dff7cfc6.png",
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strecha-food-4_a4641250.png",
-    ],
+      "https://images.unsplash.com/photo-1718203817319-8e1ca8a0d233?auto=format&fit=crop&w=800&q=80",
+    gallery: [],
     lat: 50.0788,
     lng: 14.4181,
     priceLevel: 1,
@@ -639,7 +634,7 @@ Palo Verde je ideální pro pracovní obědy, brunch o víkendu nebo klidný ve�
     tags: ["Asijská", "Vietnamská", "Organická"],
     dietaryOptions: ["bio", "bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/koko-organic-vegetarianska-vietnamska-praha_dcd9552c.webp",
+      "https://images.unsplash.com/photo-1565976469782-7c92daebc42e?auto=format&fit=crop&w=800&q=80",
     lat: 50.0901,
     lng: 14.4361,
     priceLevel: 1,
@@ -663,7 +658,7 @@ Palo Verde je ideální pro pracovní obědy, brunch o víkendu nebo klidný ve�
     tags: ["Mezinárodní", "Pivo/Víno", "Asijská", "Vietnamská", "Bezlepková"],
     dietaryOptions: ["bezlepkové", "raw"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/linh-veganska-vietnamska-restaurace-praha_5960b1ac.webp",
+      "https://images.unsplash.com/photo-1565976469791-9cbef1241c1f?auto=format&fit=crop&w=800&q=80",
     lat: 50.0762,
     lng: 14.4401,
     priceLevel: 2,
@@ -713,7 +708,7 @@ Linh je místo, které dokazuje, že veganská kuchyně může být stejně dobr
     tags: ["Mezinárodní", "Organická", "Raw", "Juice bar", "Česká"],
     dietaryOptions: ["raw", "bio"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegans-prague-veganska-restaurace-prazsky-hrad_3d77a5ec.webp",
+      "https://images.unsplash.com/photo-1760930112378-580fc4e53649?auto=format&fit=crop&w=800&q=80",
     lat: 50.0882,
     lng: 14.4001,
     priceLevel: 2,
@@ -762,7 +757,7 @@ Vegan's Prague je ideální pro turisty, kteří hledají veganské jídlo blíz
     tags: ["Pivo/Víno", "Česká", "Mezinárodní"],
     dietaryOptions: [],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/belzepub-vegansky-bar-praha_be8b8170.webp",
+      "https://images.unsplash.com/photo-1758243488349-2f37274e06e1?auto=format&fit=crop&w=800&q=80",
     lat: 50.0741,
     lng: 14.4421,
     priceLevel: 2,
@@ -790,7 +785,7 @@ Vegan's Prague je ideální pro turisty, kteří hledají veganské jídlo blíz
     tags: ["Snídaně", "Pekárna", "Káva"],
     dietaryOptions: ["whole-food"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/herbivore-veganske-bistro-vinohrady_33d3ebdb.webp",
+      "https://images.unsplash.com/photo-1693743387915-7d190a0e636f?auto=format&fit=crop&w=800&q=80",
     lat: 50.0752,
     lng: 14.4441,
     priceLevel: 1,
@@ -814,7 +809,7 @@ Vegan's Prague je ideální pro turisty, kteří hledají veganské jídlo blíz
     tags: ["Česká", "Mezinárodní", "Organická", "Sezónní"],
     dietaryOptions: ["bio", "whole-food"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pastva-vegetarianska-restaurace-praha_f522d5e0.webp",
+      "https://images.unsplash.com/photo-1574578831425-41dbec20aa5c?auto=format&fit=crop&w=800&q=80",
     lat: 50.0731,
     lng: 14.4461,
     priceLevel: 2,
@@ -864,7 +859,7 @@ Pastva je místo, které se vrací k základům — dobře připravené jídlo z
     tags: ["Japonská", "Asijská", "S sebou"],
     dietaryOptions: ["bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/onigirazu-japonske-jidlo-praha_c417c073.webp",
+      "https://images.unsplash.com/photo-1630257527668-c27eb6a427a4?auto=format&fit=crop&w=800&q=80",
     lat: 50.0771,
     lng: 14.4381,
     priceLevel: 1,
@@ -887,7 +882,7 @@ Pastva je místo, které se vrací k základům — dobře připravené jídlo z
     tags: ["Asijská", "Mezinárodní", "Rozvoz", "S sebou"],
     dietaryOptions: ["bez-soji"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/loving-hut_4a7767b9.jpg",
+      "https://images.unsplash.com/photo-1565976469618-061774653bee?auto=format&fit=crop&w=800&q=80",
     lat: 50.0921,
     lng: 14.4341,
     priceLevel: 1,
@@ -919,7 +914,7 @@ Pastva je místo, které se vrací k základům — dobře připravené jídlo z
     ],
     dietaryOptions: ["bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/maitrea-vegetarianska-fine-dining-praha_0f9d6be3.webp",
+      "https://images.unsplash.com/photo-1578554224526-91d308d3948b?auto=format&fit=crop&w=800&q=80",
     lat: 50.0878,
     lng: 14.4241,
     priceLevel: 3,
@@ -972,7 +967,7 @@ Maitrea je jednou z mála restaurací v Praze, kde se vegetariánské jídlo cí
     tags: ["Vegetariánská", "Vegan-friendly", "Tapas", "Džusy", "Sezónní menu"],
     dietaryOptions: ["bezlepkové", "raw"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/lehka-hlava-vegetarianska-restaurace-praha_38480d56.webp",
+      "https://images.unsplash.com/photo-1763142165112-4b1cb90a9821?auto=format&fit=crop&w=800&q=80",
     lat: 50.0848,
     lng: 14.4138,
     priceLevel: 2,
@@ -1032,7 +1027,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     ],
     dietaryOptions: ["bezlepkové", "raw"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/natureza-vegetarianska-restaurace-zahrada-praha_39ff3a7f.webp",
+      "https://images.unsplash.com/photo-1750506446249-18bc94a1242d?auto=format&fit=crop&w=800&q=80",
     lat: 50.0789,
     lng: 14.4031,
     priceLevel: 2,
@@ -1056,7 +1051,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Veganská", "Bufet", "Bezlepkové", "Samoobslužný", "Vinohrady"],
     dietaryOptions: ["bezlepkové", "whole-food"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/sandokan-veganske-bistro-vinohrady_01ae168e.webp",
+      "https://images.unsplash.com/photo-1777891734004-4eeb16ccb8ae?auto=format&fit=crop&w=800&q=80",
     lat: 50.0752,
     lng: 14.4412,
     priceLevel: 1,
@@ -1088,7 +1083,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     ],
     dietaryOptions: ["bio", "whole-food", "bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/country-life_5ff4ebe4.png",
+      "https://images.unsplash.com/photo-1780805664675-d478703ae915?auto=format&fit=crop&w=800&q=80",
     lat: 50.0851,
     lng: 14.4201,
     priceLevel: 1,
@@ -1119,7 +1114,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     ],
     dietaryOptions: ["bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+      "https://images.unsplash.com/photo-1589778655375-3e622a9fc91c?auto=format&fit=crop&w=800&q=80",
     lat: 50.0795,
     lng: 14.4227,
     priceLevel: 2,
@@ -1147,12 +1142,8 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Bistro", "Tempeh", "Karlín", "Vege jídla", "Moderní kuchyně"],
     dietaryOptions: [],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kro-kitchen-thumb-padded_3714a399.webp",
-    gallery: [
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kro-food-1_c5b22f71.png",
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kro-food-2_3f771f9a.png",
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kro-food-3_9ee441ba.png",
-    ],
+      "https://images.unsplash.com/photo-1514326640560-7d063ef2aed5?auto=format&fit=crop&w=800&q=80",
+    gallery: [],
     lat: 50.0921,
     lng: 14.4567,
     priceLevel: 2,
@@ -1178,7 +1169,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné", "S sebou"],
     dietaryOptions: ["bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+      "https://images.unsplash.com/photo-1559561724-732dbca7be1e?auto=format&fit=crop&w=800&q=80",
     lat: 50.0901,
     lng: 14.4321,
     priceLevel: 1,
@@ -1202,7 +1193,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné", "Staré Město"],
     dietaryOptions: ["bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+      "https://images.unsplash.com/photo-1542367592-8849eb950fd8?auto=format&fit=crop&w=800&q=80",
     lat: 50.0878,
     lng: 14.423,
     priceLevel: 1,
@@ -1226,7 +1217,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné"],
     dietaryOptions: ["bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+      "https://images.unsplash.com/photo-1742281257687-092746ad6021?auto=format&fit=crop&w=800&q=80",
     lat: 50.0818,
     lng: 14.426,
     priceLevel: 1,
@@ -1250,7 +1241,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné", "Lucerna"],
     dietaryOptions: ["bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+      "https://images.unsplash.com/photo-1536305030588-45dc07a2a372?auto=format&fit=crop&w=800&q=80",
     lat: 50.0801,
     lng: 14.4255,
     priceLevel: 1,
@@ -1274,7 +1265,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Indická", "Vegetariánská", "Bufet", "OC", "Na Příkopě"],
     dietaryOptions: ["bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+      "https://images.unsplash.com/photo-1743674453123-93356ade2891?auto=format&fit=crop&w=800&q=80",
     lat: 50.0849,
     lng: 14.4282,
     priceLevel: 1,
@@ -1299,7 +1290,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné", "Vinohrady"],
     dietaryOptions: ["bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+      "https://images.unsplash.com/photo-1742281258189-3b933879867a?auto=format&fit=crop&w=800&q=80",
     lat: 50.0731,
     lng: 14.431,
     priceLevel: 1,
@@ -1323,7 +1314,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné", "Nádraží"],
     dietaryOptions: ["bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+      "https://images.unsplash.com/photo-1742281257707-0c7f7e5ca9c6?auto=format&fit=crop&w=800&q=80",
     lat: 50.0833,
     lng: 14.4348,
     priceLevel: 1,
@@ -1347,7 +1338,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné"],
     dietaryOptions: ["bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+      "https://images.unsplash.com/photo-1565556250026-9ba22083e3e0?auto=format&fit=crop&w=800&q=80",
     lat: 50.0754,
     lng: 14.4184,
     priceLevel: 1,
@@ -1371,7 +1362,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné", "Pankrác"],
     dietaryOptions: ["bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+      "https://images.unsplash.com/photo-1581546085212-f25477a9d4fb?auto=format&fit=crop&w=800&q=80",
     lat: 50.053,
     lng: 14.438,
     priceLevel: 1,
@@ -1395,7 +1386,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné"],
     dietaryOptions: ["bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+      "https://images.unsplash.com/photo-1723062894486-7dc1f62494a6?auto=format&fit=crop&w=800&q=80",
     lat: 50.0445,
     lng: 14.4505,
     priceLevel: 1,
@@ -1419,7 +1410,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Indická", "Vegetariánská", "Kavárna", "Snídaně", "Nusle"],
     dietaryOptions: ["bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+      "https://images.unsplash.com/photo-1711153419402-336ee48f2138?auto=format&fit=crop&w=800&q=80",
     lat: 50.063,
     lng: 14.434,
     priceLevel: 1,
@@ -1443,7 +1434,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné", "Nusle"],
     dietaryOptions: ["bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+      "https://images.unsplash.com/photo-1723531852127-3940f26225ef?auto=format&fit=crop&w=800&q=80",
     lat: 50.0632,
     lng: 14.4342,
     priceLevel: 1,
@@ -1467,7 +1458,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Indická", "Vegetariánská", "Bufet", "Nejlevnější", "Smíchov"],
     dietaryOptions: ["bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+      "https://images.unsplash.com/photo-1505253758473-96b7015fcd40?auto=format&fit=crop&w=800&q=80",
     lat: 50.07,
     lng: 14.402,
     priceLevel: 1,
@@ -1491,7 +1482,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Indická", "Vegetariánská", "Bufet", "OC", "Nový Smíchov"],
     dietaryOptions: ["bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+      "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80",
     lat: 50.072,
     lng: 14.4,
     priceLevel: 1,
@@ -1516,7 +1507,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné", "Dejvice"],
     dietaryOptions: ["bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+      "https://images.unsplash.com/photo-1683533761804-5fc12be0f684?auto=format&fit=crop&w=800&q=80",
     lat: 50.0995,
     lng: 14.392,
     priceLevel: 1,
@@ -1540,7 +1531,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné"],
     dietaryOptions: ["bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+      "https://images.unsplash.com/photo-1560260330-727f7f5c0277?auto=format&fit=crop&w=800&q=80",
     lat: 50.0935,
     lng: 14.451,
     priceLevel: 1,
@@ -1564,7 +1555,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné", "Karlín"],
     dietaryOptions: ["bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+      "https://images.unsplash.com/photo-1788601988466-9f361c34c6cb?auto=format&fit=crop&w=800&q=80",
     lat: 50.0928,
     lng: 14.453,
     priceLevel: 1,
@@ -1588,7 +1579,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Indická", "Vegetariánská", "Bufet", "Levné", "Libeň"],
     dietaryOptions: ["bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+      "https://images.unsplash.com/photo-1697155406055-2db32d47ca07?auto=format&fit=crop&w=800&q=80",
     lat: 50.106,
     lng: 14.459,
     priceLevel: 1,
@@ -1612,7 +1603,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Indická", "Vegetariánská", "Bufet", "OC", "Harfa"],
     dietaryOptions: ["bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+      "https://images.unsplash.com/photo-1668236534990-73c4ed23043c?auto=format&fit=crop&w=800&q=80",
     lat: 50.1035,
     lng: 14.474,
     priceLevel: 1,
@@ -1637,7 +1628,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Indická", "Vegetariánská", "Bufet", "OC", "Butovice"],
     dietaryOptions: ["bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beas-dhaba-sign_94735dc1.png",
+      "https://images.unsplash.com/photo-1728910156510-77488f19b152?auto=format&fit=crop&w=800&q=80",
     lat: 50.051,
     lng: 14.352,
     priceLevel: 1,
@@ -1663,7 +1654,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Flexitariánská", "Bio", "Vegan-friendly", "Bezlepkové", "Karlín"],
     dietaryOptions: ["bio", "bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spojka-karlin-flexitarianska-restaurace-praha_b80f1b8b.webp",
+      "https://images.unsplash.com/photo-1761095596572-0ef14d814500?auto=format&fit=crop&w=800&q=80",
     lat: 50.0931,
     lng: 14.4512,
     priceLevel: 2,
@@ -1691,7 +1682,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     ],
     dietaryOptions: ["whole-food"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/plavecka-polevka_66e369bb.jpg",
+      "https://images.unsplash.com/photo-1786103253097-1939a8211405?auto=format&fit=crop&w=800&q=80",
     lat: 50.0688,
     lng: 14.4225,
     priceLevel: 2,
@@ -1722,7 +1713,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     ],
     dietaryOptions: ["whole-food", "bezlepkové"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/puzzlesalads_f57f6896.jpg",
+      "https://images.unsplash.com/photo-1778690103044-88ad0e274e32?auto=format&fit=crop&w=800&q=80",
     lat: 50.0899,
     lng: 14.4256,
     priceLevel: 2,
@@ -1745,7 +1736,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Veganská", "Bufet", "Letná", "Dezerty", "S sebou"],
     dietaryOptions: ["whole-food"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganland-express-veganske-bistro-letna_c31564da.webp",
+      "https://images.unsplash.com/photo-1768573490990-eacfd6c1e04f?auto=format&fit=crop&w=800&q=80",
     lat: 50.1001,
     lng: 14.4201,
     priceLevel: 1,
@@ -1767,7 +1758,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Veganská", "Asijská", "Samoobslužný", "Dejvice", "S sebou"],
     dietaryOptions: [],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegetka-veganska-restaurace-dejvice_11b4e04b.webp",
+      "https://images.unsplash.com/photo-1547928576-a4a33237cbc3?auto=format&fit=crop&w=800&q=80",
     lat: 50.1021,
     lng: 14.3921,
     priceLevel: 1,
@@ -1790,7 +1781,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Veganská", "Raw food", "Smoothie", "Dezerty", "Kavárna", "Centrum"],
     dietaryOptions: ["raw", "bezlepkové", "whole-food"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/myraw-cafe-raw-veganska-kavarna-praha_166573b7.webp",
+      "https://images.unsplash.com/photo-1771830938007-8f5a36b8aaa6?auto=format&fit=crop&w=800&q=80",
     lat: 50.0821,
     lng: 14.4161,
     priceLevel: 2,
@@ -1812,7 +1803,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Veganská", "Bio", "Fine dining", "Centrum"],
     dietaryOptions: ["bio"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/chef-co-veganske-fine-dining-praha_98257ea9.webp",
+      "https://images.unsplash.com/photo-1771532447027-e826e58cc93d?auto=format&fit=crop&w=800&q=80",
     lat: 50.0871,
     lng: 14.4131,
     priceLevel: 3,
@@ -1834,7 +1825,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Veganská", "Asijská", "Bufet", "Pankrác", "Dostupné ceny"],
     dietaryOptions: [],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/loving-hut_4a7767b9.jpg",
+      "https://images.unsplash.com/photo-1498601761256-9e93c6f5c181?auto=format&fit=crop&w=800&q=80",
     lat: 50.0631,
     lng: 14.4321,
     priceLevel: 1,
@@ -1856,7 +1847,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Veganská", "Rostlinná strava", "Dezerty", "Košíře"],
     dietaryOptions: ["whole-food"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/bistro-pod-kavalirkou-rostlinne-bistro-kosire_676ba9f1.webp",
+      "https://images.unsplash.com/photo-1749937393049-d0a0dbaed903?auto=format&fit=crop&w=800&q=80",
     lat: 50.0701,
     lng: 14.3901,
     priceLevel: 1,
@@ -1881,7 +1872,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Veganská", "Asijská", "Bufet", "OC Quadrio", "Dostupné ceny"],
     dietaryOptions: [],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/loving-hut_4a7767b9.jpg",
+      "https://images.unsplash.com/photo-1788536441971-50e7c6a5aa96?auto=format&fit=crop&w=800&q=80",
     lat: 50.0803,
     lng: 14.4199,
     priceLevel: 1,
@@ -1906,7 +1897,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Veganská", "Asijská", "Bufet", "OC Nový Smíchov", "Dostupné ceny"],
     dietaryOptions: [],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/loving-hut_4a7767b9.jpg",
+      "https://images.unsplash.com/photo-1788536442033-abf6a485fef7?auto=format&fit=crop&w=800&q=80",
     lat: 50.072,
     lng: 14.403,
     priceLevel: 1,
@@ -1931,7 +1922,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Veganská", "Asijská", "Bufet", "OC Zličín", "Dostupné ceny"],
     dietaryOptions: [],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/loving-hut_4a7767b9.jpg",
+      "https://images.unsplash.com/photo-1598973442976-4d62ed2a3138?auto=format&fit=crop&w=800&q=80",
     lat: 50.053,
     lng: 14.289,
     priceLevel: 1,
@@ -1956,7 +1947,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Veganská", "Asijská", "Bufet", "Vinohrady", "Dostupné ceny"],
     dietaryOptions: [],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/loving-hut_4a7767b9.jpg",
+      "https://images.unsplash.com/photo-1730162191706-d2c230c4902e?auto=format&fit=crop&w=800&q=80",
     lat: 50.077,
     lng: 14.437,
     priceLevel: 1,
@@ -1980,7 +1971,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Veganská", "Asijská", "Bufet", "Budějovická", "Dostupné ceny"],
     dietaryOptions: [],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/loving-hut_4a7767b9.jpg",
+      "https://images.unsplash.com/photo-1565976469488-8e7ec433aed2?auto=format&fit=crop&w=800&q=80",
     lat: 50.0445,
     lng: 14.449,
     priceLevel: 1,
@@ -2003,7 +1994,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Veganská", "Thajská", "Vietnamská", "Bufet", "OC Chodov"],
     dietaryOptions: [],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganland-express-veganske-bistro-letna_c31564da.webp",
+      "https://images.unsplash.com/photo-1565976469640-8c764ce9721c?auto=format&fit=crop&w=800&q=80",
     lat: 50.031,
     lng: 14.491,
     priceLevel: 1,
@@ -2028,7 +2019,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Vegetariánská", "Bio", "Zdravá výživa", "Centrum", "S sebou"],
     dietaryOptions: ["bio", "raw"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/country-life_5ff4ebe4.png",
+      "https://images.unsplash.com/photo-1760783320025-471f331b5d93?auto=format&fit=crop&w=800&q=80",
     lat: 50.0845,
     lng: 14.4195,
     priceLevel: 2,
@@ -2052,7 +2043,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Vegetariánská", "Bio", "Bufet", "Centrum", "Zdravá výživa"],
     dietaryOptions: ["bio", "raw"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/country-life_5ff4ebe4.png",
+      "https://images.unsplash.com/photo-1786042614364-98b9b2abbf2d?auto=format&fit=crop&w=800&q=80",
     lat: 50.081,
     lng: 14.423,
     priceLevel: 2,
@@ -2076,7 +2067,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Vegetariánská", "Bio", "Bufet", "Centrum", "Zdravá výživa"],
     dietaryOptions: ["bio", "raw"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/country-life_5ff4ebe4.png",
+      "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=80",
     lat: 50.0818,
     lng: 14.4175,
     priceLevel: 2,
@@ -2099,7 +2090,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Veganská", "Bufet", "OC Chodov", "Asijská", "Dostupné ceny"],
     dietaryOptions: ["whole-food"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganland-express-veganske-bistro-letna_c31564da.webp",
+      "https://images.unsplash.com/photo-1524859880053-f595797051c2?auto=format&fit=crop&w=800&q=80",
     lat: 50.0315,
     lng: 14.4905,
     priceLevel: 1,
@@ -2166,7 +2157,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     ],
     dietaryOptions: ["whole-food"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/dobra-cajovna-praha-exterior_be6b556c.jpg",
+      "https://images.unsplash.com/photo-1782971302687-6632a2adac33?auto=format&fit=crop&w=800&q=80",
     lat: 50.0808,
     lng: 14.4264,
     priceLevel: 1,
@@ -2231,12 +2222,8 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     ],
     dietaryOptions: [],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kro-kitchen-thumb-padded_3714a399.webp",
-    gallery: [
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kro-food-1_c5b22f71.png",
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kro-food-2_3f771f9a.png",
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kro-food-3_9ee441ba.png",
-    ],
+      "https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?auto=format&fit=crop&w=800&q=80",
+    gallery: [],
     lat: 50.0756,
     lng: 14.4432,
     priceLevel: 2,
@@ -2285,12 +2272,8 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Bistro", "Brunch", "Libeň", "Vege jídla", "Tempeh"],
     dietaryOptions: [],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kro-kitchen-thumb-padded_3714a399.webp",
-    gallery: [
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kro-food-1_c5b22f71.png",
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kro-food-2_3f771f9a.png",
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kro-food-3_9ee441ba.png",
-    ],
+      "https://images.unsplash.com/photo-1627858034922-72a657d6b3c2?auto=format&fit=crop&w=800&q=80",
+    gallery: [],
     lat: 50.1012,
     lng: 14.4678,
     priceLevel: 1,
@@ -2323,7 +2306,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     ],
     dietaryOptions: [],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/bageterie-boulevard-thumb-400_f8c2a6c8.webp",
+      "https://images.unsplash.com/photo-1728670212431-ac192413f4b1?auto=format&fit=crop&w=800&q=80",
     lat: 50.0815,
     lng: 14.4278,
     priceLevel: 1,
@@ -2336,7 +2319,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
         isVegan: false,
         price: "129 Kč",
         image:
-          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/caprese-bageta-thumb_2de34491.webp",
+          "https://images.unsplash.com/photo-1639667852145-466e29aa49fd?auto=format&fit=crop&w=800&q=80",
       },
       {
         name: "Švýcarská bageta",
@@ -2345,7 +2328,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
         isVegan: false,
         price: "139 Kč",
         image:
-          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/svycarska-bageta-thumb_7faae822.webp",
+          "https://images.unsplash.com/photo-1550507992-eb63ffee0847?auto=format&fit=crop&w=800&q=80",
       },
       {
         name: "Caprese wrap",
@@ -2354,7 +2337,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
         isVegan: false,
         price: "150 Kč",
         image:
-          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/caprese-wrap-thumb_ecf66324.webp",
+          "https://images.unsplash.com/photo-1666493243525-cd8ad9d26a86?auto=format&fit=crop&w=800&q=80",
       },
     ],
   },
@@ -2383,7 +2366,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     ],
     dietaryOptions: ["bezlepkové", "raw"],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/ugo-thumb-400_883ebbf4.webp",
+      "https://images.unsplash.com/photo-1686225143293-b2c466cee3d0?auto=format&fit=crop&w=800&q=80",
     lat: 50.0878,
     lng: 14.4312,
     priceLevel: 1,
@@ -2396,7 +2379,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
         isVegan: true,
         price: "149 Kč",
         image:
-          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/smoothie-bowl-thumb_1be292f5.webp",
+          "https://images.unsplash.com/photo-1615478503562-ec2d8aa0e24e?auto=format&fit=crop&w=800&q=80",
       },
       {
         name: "Buddha bowl",
@@ -2405,7 +2388,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
         isVegan: true,
         price: "169 Kč",
         image:
-          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/buddha-bowl-thumb_1d6285da.webp",
+          "https://images.unsplash.com/photo-1505576633757-0ac1084af824?auto=format&fit=crop&w=800&q=80",
       },
       {
         name: "Fresh pomerančový džus",
@@ -2414,7 +2397,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
         isVegan: true,
         price: "79 Kč",
         image:
-          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/orange-juice-thumb_d86c2d1a.webp",
+          "https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=800&q=80",
       },
       {
         name: "Zeleninová polévka",
@@ -2423,7 +2406,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
         isVegan: true,
         price: "89 Kč",
         image:
-          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/zeleninova-polevka-thumb_ce4a8a5d.webp",
+          "https://images.unsplash.com/photo-1643786661490-966f1877effa?auto=format&fit=crop&w=800&q=80",
       },
     ],
   },
@@ -2448,7 +2431,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Fast Food", "Burger", "Rostlinné měso", "Vegan-friendly"],
     dietaryOptions: [],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/burger-king-logo_09874561.webp",
+      "https://images.unsplash.com/photo-1762922425552-286e2de063db?auto=format&fit=crop&w=800&q=80",
     lat: 50.0875,
     lng: 14.4278,
     priceLevel: 1,
@@ -2461,7 +2444,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
         isVegan: false,
         price: "149 Kč",
         image:
-          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/rebel-whopper-thumb_e76b188b.webp",
+          "https://images.unsplash.com/photo-1661529515593-bba89f12e8de?auto=format&fit=crop&w=800&q=80",
       },
       {
         name: "Plant-Based Nuggets (9 ks)",
@@ -2470,7 +2453,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
         isVegan: true,
         price: "99 Kč",
         image:
-          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/plant-based-nuggets-thumb_2ad90c11.webp",
+          "https://images.unsplash.com/photo-1582981760753-b52aae38f237?auto=format&fit=crop&w=800&q=80",
       },
       {
         name: "Veggie King",
@@ -2479,7 +2462,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
         isVegan: false,
         price: "129 Kč",
         image:
-          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veggie-king-thumb_0e9a0443.webp",
+          "https://images.unsplash.com/photo-1520072959219-c595dc870360?auto=format&fit=crop&w=800&q=80",
       },
       {
         name: "Onion Rings",
@@ -2516,7 +2499,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Fast Food", "Burger", "Beyond Meat", "Vegan-friendly"],
     dietaryOptions: [],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/mcdonalds-logo_78917cae.webp",
+      "https://images.unsplash.com/photo-1761515397046-44035db91504?auto=format&fit=crop&w=800&q=80",
     lat: 50.0823,
     lng: 14.4248,
     priceLevel: 1,
@@ -2529,7 +2512,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
         isVegan: true,
         price: "149 Kč",
         image:
-          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/mcplant-thumb_7b4c92e8.webp",
+          "https://images.unsplash.com/photo-1596956470007-2bf6095e7e16?auto=format&fit=crop&w=800&q=80",
       },
       {
         name: "McVeggie",
@@ -2538,7 +2521,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
         isVegan: false,
         price: "109 Kč",
         image:
-          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/mcveggie-thumb_fb0318c9.webp",
+          "https://images.unsplash.com/photo-1513185158878-8d8c2a2a3da3?auto=format&fit=crop&w=800&q=80",
       },
       {
         name: "Hranolky",
@@ -2547,7 +2530,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
         isVegan: true,
         price: "49 Kč",
         image:
-          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/mcdonalds-fries-thumb_f232d340.webp",
+          "https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?auto=format&fit=crop&w=800&q=80",
       },
       {
         name: "Apple Slices",
@@ -2590,7 +2573,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Fast Food", "Sendvič", "Vegetariánské", "Vegan-friendly", "Zdravé"],
     dietaryOptions: [],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/subway-logo_1e7b41ae.webp",
+      "https://images.unsplash.com/photo-1642694358592-e4df77878e6d?auto=format&fit=crop&w=800&q=80",
     lat: 50.0854,
     lng: 14.4265,
     priceLevel: 1,
@@ -2603,7 +2586,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
         isVegan: true,
         price: "129 Kč",
         image:
-          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/subway-veggie-delite-thumb_ff3cf959.webp",
+          "https://images.unsplash.com/photo-1554433607-66b5efe9d304?auto=format&fit=crop&w=800&q=80",
       },
       {
         name: "Veggie Patty",
@@ -2612,7 +2595,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
         isVegan: false,
         price: "149 Kč",
         image:
-          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/subway-veggie-patty-thumb_9f11fd7f.webp",
+          "https://images.unsplash.com/photo-1655279562015-047c3da9a271?auto=format&fit=crop&w=800&q=80",
       },
       {
         name: "Beyond Meatball Marinara",
@@ -2621,7 +2604,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
         isVegan: true,
         price: "169 Kč",
         image:
-          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/beyond-meatball-marinara-thumb_57307927.webp",
+          "https://images.unsplash.com/photo-1705131187470-9458824c0d79?auto=format&fit=crop&w=800&q=80",
       },
       {
         name: "Avocado",
@@ -2657,7 +2640,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
     tags: ["Fast Food", "Pizza", "Veganský sýr", "Vegetariánské", "Doručení"],
     dietaryOptions: [],
     image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pizza-hut-logo_bde18ab4.webp",
+      "https://images.unsplash.com/photo-1564936281403-f92f66f89ee0?auto=format&fit=crop&w=800&q=80",
     lat: 50.0796,
     lng: 14.4278,
     priceLevel: 2,
@@ -2670,7 +2653,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
         isVegan: true,
         price: "249 Kč",
         image:
-          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pizza-hut-margherita-thumb_ab7f99bc.webp",
+          "https://images.unsplash.com/photo-1600028068383-ea11a7a101f3?auto=format&fit=crop&w=800&q=80",
       },
       {
         name: "Veggie Supreme",
@@ -2679,7 +2662,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
         isVegan: true,
         price: "289 Kč",
         image:
-          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pizza-hut-veggie-supreme-thumb_2eaee646.webp",
+          "https://images.unsplash.com/photo-1788600018968-f759dbe30c9a?auto=format&fit=crop&w=800&q=80",
       },
       {
         name: "Mushroom Lovers",
@@ -2687,7 +2670,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
         isVegan: false,
         price: "279 Kč",
         image:
-          "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pizza-hut-mushroom-lovers-thumb_65e6bbb0.webp",
+          "https://images.unsplash.com/photo-1572552635104-daf938e0aa1f?auto=format&fit=crop&w=800&q=80",
       },
       {
         name: "Garlic Bread",
@@ -2705,10 +2688,7 @@ Lehká Hlava je místo, které stále patří k nejlepším vegetariánským res
   },
 ];
 
-const RESTAURANT_IMAGE_PLACEHOLDER_SLUGS = new Set([
-  "forkys-brno",
-  "bistro-green-garden-plzen",
-]);
+const RESTAURANT_IMAGE_PLACEHOLDER_SLUGS = new Set<string>([]);
 
 export const restaurants: Restaurant[] = restaurantSource.map(restaurant => ({
   ...restaurant,
@@ -2786,20 +2766,11 @@ const recipeSource: Recipe[] = [
     cookTime: 90,
     servings: 4,
     difficulty: "střední",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-svickova-na-smetane-hlavni-jidlo_0fe2740b.webp",
+    image: "https://images.unsplash.com/photo-1582650365183-fefb14c26acd?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-svickova-na-smetane-hlavni-jidlo_0fe2740b.webp",
+        url: "https://images.unsplash.com/photo-1582650365183-fefb14c26acd?auto=format&fit=crop&w=800&q=80",
         alt: "Veganská svíčková na smetaně — hotové jídlo se seitanem, houskový knedlík a brusinkový dresink",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-svickova-kremova-omacka-detail_6962c182.webp",
-        alt: "Detail krémové omáčky veganské svíčkové z kořenové zeleniny",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-svickova-suroviny-priprava_a3ca2a3e.webp",
-        alt: "Suroviny na veganskou svíčkovou — kořenová zelenina, seitan, kešu ořechy a brusinky",
       },
     ],
     description:
@@ -2824,20 +2795,11 @@ const recipeSource: Recipe[] = [
     cookTime: 30,
     servings: 4,
     difficulty: "snadný",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cockova-polevka-uzena-paprika-miska_132d5585.webp",
+    image: "https://images.unsplash.com/photo-1620791144170-8a443bf37a33?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cockova-polevka-uzena-paprika-miska_132d5585.webp",
+        url: "https://images.unsplash.com/photo-1620791144170-8a443bf37a33?auto=format&fit=crop&w=800&q=80",
         alt: "Miska čočkové polévky s uzenou paprikou a chlebem",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cockova-polevka-detail-textura-cocky_b71178dc.webp",
-        alt: "Detail textury čočkové polévky s bylinkami a olivovým olejem",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cockova-polevka-suroviny-na-stole_9683e532.webp",
-        alt: "Suroviny na čočkovou polévku — červená čočka, uzená paprika, cibule a rajčata",
       },
     ],
     description:
@@ -2863,20 +2825,11 @@ const recipeSource: Recipe[] = [
     cookTime: 25,
     servings: 2,
     difficulty: "snadný",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/buddha-bowl-pecena-zelenina-barevna-miska_22ddaee1.webp",
+    image: "https://images.unsplash.com/photo-1602881916963-5daf2d97c06e?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/buddha-bowl-pecena-zelenina-barevna-miska_22ddaee1.webp",
+        url: "https://images.unsplash.com/photo-1602881916963-5daf2d97c06e?auto=format&fit=crop&w=800&q=80",
         alt: "Barevná buddha bowl miska s pečenou zeleninou, quinoou a avokádem",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/buddha-bowl-detail-textury-zeleniny_624cb334.webp",
-        alt: "Detail textur buddha bowlu — křupavá cizrna, krémové avokádo a pečená zelenina",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/buddha-bowl-priprava-ingredience_6887656e.webp",
-        alt: "Příprava ingrediencí na buddha bowl — misky s quinoou, zeleninou a tahini",
       },
     ],
     description:
@@ -2902,20 +2855,11 @@ const recipeSource: Recipe[] = [
     cookTime: 60,
     servings: 4,
     difficulty: "střední",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-gulas-s-knedliky-cesky-talir_2cfd8972.webp",
+    image: "https://images.unsplash.com/photo-1608500218987-0f2b3be34b47?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-gulas-s-knedliky-cesky-talir_2cfd8972.webp",
+        url: "https://images.unsplash.com/photo-1608500218987-0f2b3be34b47?auto=format&fit=crop&w=800&q=80",
         alt: "Veganský guláš s houskovými knedlíky na tradičním českém talíři",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-gulas-detail-omacka-houby_3ec9d3d6.webp",
-        alt: "Detail paprikové omáčky veganského guláše s houbami a seitanem",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-gulas-suroviny-na-dreve_ab7d9793.webp",
-        alt: "Suroviny na veganský guláš — houby, seitan, paprika, cibule a kmín",
       },
     ],
     description:
@@ -2940,20 +2884,11 @@ const recipeSource: Recipe[] = [
     cookTime: 20,
     servings: 2,
     difficulty: "snadný",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-palacinky-tofu-ricotta-talir_80a4da3d.webp",
+    image: "https://images.unsplash.com/photo-1578367622663-5b44691c3493?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-palacinky-tofu-ricotta-talir_80a4da3d.webp",
+        url: "https://images.unsplash.com/photo-1578367622663-5b44691c3493?auto=format&fit=crop&w=800&q=80",
         alt: "Špenátové palačinky plněné tofu ricottou na bílém talíři",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-palacinky-detail-naplne_782670bc.webp",
-        alt: "Detail krémové tofu ricotta náplně uvnitř špenátové palačinky",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-palacinky-priprava-kuchyne_111cdf12.webp",
-        alt: "Příprava špenátových palačinek v kuchyni — pánev, špenát a tofu ricotta",
       },
     ],
     description:
@@ -2978,20 +2913,11 @@ const recipeSource: Recipe[] = [
     cookTime: 35,
     servings: 3,
     difficulty: "střední",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-kesu-parmezan-servir_1c17bb71.webp",
+    image: "https://images.unsplash.com/photo-1609770424775-39ec362f2d94?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-kesu-parmezan-servir_1c17bb71.webp",
+        url: "https://images.unsplash.com/photo-1609770424775-39ec362f2d94?auto=format&fit=crop&w=800&q=80",
         alt: "Houbové rizoto s veganským parmezánem z kešu ořechů a čerstvým tymiánem",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-detail-houby-kremove_8426c27a.webp",
-        alt: "Detail krémového houbového rizota s plátky lesních hub",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-suroviny-ingredience_7651caca.webp",
-        alt: "Suroviny na houbové rizoto — arborio rýže, lesní houby, kešu ořechy a tymián",
       },
     ],
     description:
@@ -3022,20 +2948,11 @@ const recipeSource: Recipe[] = [
     cookTime: 15,
     servings: 4,
     difficulty: "snadný",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganske-palacinky-recept-1_139cd8ea.webp",
+    image: "https://images.unsplash.com/photo-1528207776546-365bb710ee93?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganske-palacinky-recept-1_139cd8ea.webp",
+        url: "https://images.unsplash.com/photo-1528207776546-365bb710ee93?auto=format&fit=crop&w=800&q=80",
         alt: "Veganské palačinky s čerstvým ovocem a javorovým sirupem na talíři",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganske-palacinky-recept-2_767391fb.webp",
-        alt: "Příprava těsta na veganské palačinky — míchání ingrediencí v misce",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganske-palacinky-recept-3_27d8ee75.webp",
-        alt: "Smažení veganských palačinek na pánvi — zlatavá barva",
       },
     ],
     description:
@@ -3060,20 +2977,11 @@ const recipeSource: Recipe[] = [
     cookTime: 25,
     servings: 6,
     difficulty: "snadný",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegetariansky-bramborovy-salat-1_34c89298.webp",
+    image: "https://images.unsplash.com/photo-1593895648796-9139c6bee45c?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegetariansky-bramborovy-salat-1_34c89298.webp",
+        url: "https://images.unsplash.com/photo-1593895648796-9139c6bee45c?auto=format&fit=crop&w=800&q=80",
         alt: "Vegetariánský bramborový salát v míse — tradiční český recept bez masa",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegetariansky-bramborovy-salat-2_7aa3e080.webp",
-        alt: "Detail bramborového salátu s nakládanými okurkami a majonézou",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegetariansky-bramborovy-salat-3_e71ef266.webp",
-        alt: "Suroviny na vegetariánský bramborový salát — brambory, mrkev, hrášek, okurky",
       },
     ],
     description:
@@ -3099,20 +3007,11 @@ const recipeSource: Recipe[] = [
     cookTime: 25,
     servings: 12,
     difficulty: "snadný",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganske-brownies-cokoladove-1_0992400b.webp",
+    image: "https://images.unsplash.com/photo-1636743715220-d8f8dd900b87?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganske-brownies-cokoladove-1_0992400b.webp",
+        url: "https://images.unsplash.com/photo-1636743715220-d8f8dd900b87?auto=format&fit=crop&w=800&q=80",
         alt: "Veganské čokoládové brownies nakrájené na čtverečky na prkénku",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganske-brownies-cokoladove-2_e1c0254a.webp",
-        alt: "Detail veganského brownie — vlhká čokoládová textura s ořechy",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganske-brownies-cokoladove-3_40904c10.webp",
-        alt: "Příprava těsta na veganské brownies — míchání kakaa a mouky",
       },
     ],
     description:
@@ -3138,20 +3037,11 @@ const recipeSource: Recipe[] = [
     cookTime: 30,
     servings: 4,
     difficulty: "střední",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-s-parmazanem-1_31f82fa5.webp",
+    image: "https://images.unsplash.com/photo-1669216284093-a975043a4645?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-s-parmazanem-1_31f82fa5.webp",
+        url: "https://images.unsplash.com/photo-1669216284093-a975043a4645?auto=format&fit=crop&w=800&q=80",
         alt: "Krémové houbové rizoto s veganským parmezánem a čerstvým tymiánem",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-s-parmazanem-2_bfb8e4b6.webp",
-        alt: "Detail houbového rizota — arborio rýže s lesními houbami",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/houbove-rizoto-s-parmazanem-3_2491cde6.webp",
-        alt: "Suroviny na houbové rizoto — houby, arborio rýže, bílé víno, tymián",
       },
     ],
     description:
@@ -3176,20 +3066,11 @@ const recipeSource: Recipe[] = [
     cookTime: 50,
     servings: 10,
     difficulty: "snadný",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-babovka-cokoladova-1_9deb75a4.webp",
+    image: "https://images.unsplash.com/photo-1703876086193-5d29f099205c?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-babovka-cokoladova-1_9deb75a4.webp",
+        url: "https://images.unsplash.com/photo-1703876086193-5d29f099205c?auto=format&fit=crop&w=800&q=80",
         alt: "Veganská čokoládová bábovka s polevou na talíři",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-babovka-cokoladova-2_5b6d333f.webp",
-        alt: "Řez veganskou bábovkou — vláčná čokoládová textura",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/veganska-babovka-cokoladova-3_15c7156d.webp",
-        alt: "Příprava veganské bábovky — míchání těsta v míse",
       },
     ],
     description:
@@ -3214,20 +3095,11 @@ const recipeSource: Recipe[] = [
     cookTime: 15,
     servings: 2,
     difficulty: "střední",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-pad-thai-tofu-1_64db4e8f.webp",
+    image: "https://images.unsplash.com/photo-1553621043-f607bfbf6640?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-pad-thai-tofu-1_64db4e8f.webp",
+        url: "https://images.unsplash.com/photo-1553621043-f607bfbf6640?auto=format&fit=crop&w=800&q=80",
         alt: "Veganský pad thai s křupavým tofu a arašídy v misce",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-pad-thai-tofu-2_3fd91944.webp",
-        alt: "Detail pad thai nudlí s tamarindovou omáčkou a limetkou",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-pad-thai-tofu-3_2aeab09b.webp",
-        alt: "Příprava veganského pad thai — wok s nudlemi a zeleninou",
       },
     ],
     description:
@@ -3252,20 +3124,11 @@ const recipeSource: Recipe[] = [
     cookTime: 15,
     servings: 4,
     difficulty: "střední",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/domaci-vegetarianska-pizza-1_8ac3d05a.webp",
+    image: "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/domaci-vegetarianska-pizza-1_8ac3d05a.webp",
+        url: "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?auto=format&fit=crop&w=800&q=80",
         alt: "Domácí vegetariánská pizza s čerstvou zeleninou a mozzarellou",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/domaci-vegetarianska-pizza-2_3071ba71.webp",
-        alt: "Příprava těsta na domácí pizzu — hnětení a tvarování",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/domaci-vegetarianska-pizza-3_9f91afc6.webp",
-        alt: "Vegetariánská pizza v peci — křupavý okraj a rozteklý sýr",
       },
     ],
     description:
@@ -3290,20 +3153,11 @@ const recipeSource: Recipe[] = [
     cookTime: 0,
     servings: 8,
     difficulty: "střední",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-cheesecake-boruvky-1_35845e39.webp",
+    image: "https://images.unsplash.com/photo-1702925614886-50ad13c88d3f?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-cheesecake-boruvky-1_35845e39.webp",
+        url: "https://images.unsplash.com/photo-1702925614886-50ad13c88d3f?auto=format&fit=crop&w=800&q=80",
         alt: "Veganský cheesecake s borůvkovou polevou na talíři",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-cheesecake-boruvky-2_4bbe6e4a.webp",
-        alt: "Řez veganským cheesecakem — krémová kešu náplň a sušenková spodní vrstva",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/vegansky-cheesecake-boruvky-3_1983f24c.webp",
-        alt: "Příprava veganského cheesecaku — mixování kešu krému",
       },
     ],
     description:
@@ -3329,20 +3183,11 @@ const recipeSource: Recipe[] = [
     cookTime: 10,
     servings: 4,
     difficulty: "snadný",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tortilla-grilovana-zelenina-1_76225e56.webp",
+    image: "https://images.unsplash.com/photo-1752095809096-f09d22c466c5?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tortilla-grilovana-zelenina-1_76225e56.webp",
+        url: "https://images.unsplash.com/photo-1752095809096-f09d22c466c5?auto=format&fit=crop&w=800&q=80",
         alt: "Tortilla wrap s grilovanou zeleninou, hummusem a čerstvými bylinkami",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tortilla-grilovana-zelenina-2_78625efe.webp",
-        alt: "Detail tortilly — grilovaná paprika, cuketa a avokádo",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tortilla-grilovana-zelenina-3_49591b2b.webp",
-        alt: "Příprava tortilly s grilovanou zeleninou — plnění a rolování",
       },
     ],
     description:
@@ -3367,20 +3212,11 @@ const recipeSource: Recipe[] = [
     cookTime: 55,
     servings: 8,
     difficulty: "snadný",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/bananovy-chleb-banana-bread-1_41c76e3c.webp",
+    image: "https://images.unsplash.com/photo-1569762404472-026308ba6b64?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/bananovy-chleb-banana-bread-1_41c76e3c.webp",
+        url: "https://images.unsplash.com/photo-1569762404472-026308ba6b64?auto=format&fit=crop&w=800&q=80",
         alt: "Veganský banánový chléb nakrájený na plátky na dřevěném prkénku",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/bananovy-chleb-banana-bread-2_aad010a5.webp",
-        alt: "Detail banánového chleba — vláčná textura s kousky vlašských ořechů",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/bananovy-chleb-banana-bread-3_16bff2e6.webp",
-        alt: "Suroviny na banánový chléb — zralé banány, mouka, ořechy a koření",
       },
     ],
     description:
@@ -3405,20 +3241,11 @@ const recipeSource: Recipe[] = [
     cookTime: 0,
     servings: 2,
     difficulty: "snadný",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/smoothie-bowl-ovoce-granola-1_96e77639.webp",
+    image: "https://images.unsplash.com/photo-1654923064926-be7e64267a31?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/smoothie-bowl-ovoce-granola-1_96e77639.webp",
+        url: "https://images.unsplash.com/photo-1654923064926-be7e64267a31?auto=format&fit=crop&w=800&q=80",
         alt: "Smoothie bowl s čerstvým ovocem, granolou a kokosem v misce",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/smoothie-bowl-ovoce-granola-2_e797df42.webp",
-        alt: "Detail smoothie bowlu — borůvky, banán, chia semínka a med",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/smoothie-bowl-ovoce-granola-3_1cfa3c1d.webp",
-        alt: "Příprava smoothie bowlu — mixování ovoce a zdobení toppingy",
       },
     ],
     description:
@@ -3444,20 +3271,11 @@ const recipeSource: Recipe[] = [
     cookTime: 25,
     servings: 4,
     difficulty: "snadný",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatova-polevka-brambory-1_114b941f.webp",
+    image: "https://images.unsplash.com/photo-1594756202469-9ff9799b2e4e?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatova-polevka-brambory-1_114b941f.webp",
+        url: "https://images.unsplash.com/photo-1594756202469-9ff9799b2e4e?auto=format&fit=crop&w=800&q=80",
         alt: "Krémová špenátová polévka s brambory v misce s kapkou smetany",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatova-polevka-brambory-2_38529bf4.webp",
-        alt: "Detail špenátové polévky — sytě zelená barva s krutony",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatova-polevka-brambory-3_4fac738f.webp",
-        alt: "Suroviny na špenátovou polévku — čerstvý špenát, brambory, česnek",
       },
     ],
     description:
@@ -3483,20 +3301,11 @@ const recipeSource: Recipe[] = [
     cookTime: 25,
     servings: 4,
     difficulty: "snadný",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kvetakova-polevka-zazvor-1_ad157bb7.webp",
+    image: "https://images.unsplash.com/photo-1510627498534-cf7e9002facc?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kvetakova-polevka-zazvor-1_ad157bb7.webp",
+        url: "https://images.unsplash.com/photo-1510627498534-cf7e9002facc?auto=format&fit=crop&w=800&q=80",
         alt: "Krémová květáková polévka se zázvorem a pečeným květákem navrch",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kvetakova-polevka-zazvor-2_59388acd.webp",
-        alt: "Detail květákové polévky — hedvábná textura s dýňovým olejem",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kvetakova-polevka-zazvor-3_5f488d82.webp",
-        alt: "Suroviny na květákovou polévku — květák, zázvor, cibule, kokosové mléko",
       },
     ],
     description:
@@ -3522,20 +3331,11 @@ const recipeSource: Recipe[] = [
     cookTime: 25,
     servings: 4,
     difficulty: "snadný",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cizrnove-curry-kokosove-mleko-1_e91d2994.webp",
+    image: "https://images.unsplash.com/photo-1516714435131-44d6b64dc6a2?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cizrnove-curry-kokosove-mleko-1_e91d2994.webp",
+        url: "https://images.unsplash.com/photo-1516714435131-44d6b64dc6a2?auto=format&fit=crop&w=800&q=80",
         alt: "Cizrnové curry s kokosovým mlékem a rýží v misce",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cizrnove-curry-kokosove-mleko-2_1d4be672.webp",
-        alt: "Detail cizrnového curry — krémová omáčka s koriandrem",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/cizrnove-curry-kokosove-mleko-3_1c03b8da.webp",
-        alt: "Suroviny na cizrnové curry — cizrna, kokosové mléko, rajčata, koření",
       },
     ],
     description:
@@ -3561,20 +3361,11 @@ const recipeSource: Recipe[] = [
     cookTime: 10,
     servings: 2,
     difficulty: "snadný",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tofu-stir-fry-zelenina-1_8ff0e75d.webp",
+    image: "https://images.unsplash.com/photo-1634864572865-1cf8ff8bd23d?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tofu-stir-fry-zelenina-1_8ff0e75d.webp",
+        url: "https://images.unsplash.com/photo-1634864572865-1cf8ff8bd23d?auto=format&fit=crop&w=800&q=80",
         alt: "Tofu stir-fry s barevnou zeleninou ve woku",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tofu-stir-fry-zelenina-2_c9639675.webp",
-        alt: "Detail křupavého tofu se sezamem a sójovou omáčkou",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tofu-stir-fry-zelenina-3_b3942374.webp",
-        alt: "Příprava tofu stir-fry — smažení ve woku s paprikou a brokolicí",
       },
     ],
     description:
@@ -3601,20 +3392,11 @@ const recipeSource: Recipe[] = [
     cookTime: 30,
     servings: 4,
     difficulty: "snadný",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/mexicke-fazole-ryze-1_a4b8d6fb.webp",
+    image: "https://images.unsplash.com/photo-1632370382707-dcd0ec55d0ab?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/mexicke-fazole-ryze-1_a4b8d6fb.webp",
+        url: "https://images.unsplash.com/photo-1632370382707-dcd0ec55d0ab?auto=format&fit=crop&w=800&q=80",
         alt: "Mexické fazole s rýží, avokádem a limetkou v misce",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/mexicke-fazole-ryze-2_808622ef.webp",
-        alt: "Detail mexických fazolí — rajčatová omáčka s kukuřicí a paprikou",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/mexicke-fazole-ryze-3_e068aa50.webp",
-        alt: "Suroviny na mexické fazole — černé fazole, rajčata, kukuřice, koření",
       },
     ],
     description:
@@ -3640,20 +3422,11 @@ const recipeSource: Recipe[] = [
     cookTime: 15,
     servings: 2,
     difficulty: "snadný",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-testoviny-ricotta-1_14bb37c3.webp",
+    image: "https://images.unsplash.com/photo-1616299908398-9af1134ad522?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-testoviny-ricotta-1_14bb37c3.webp",
+        url: "https://images.unsplash.com/photo-1616299908398-9af1134ad522?auto=format&fit=crop&w=800&q=80",
         alt: "Špenátové těstoviny s ricottou a parmezánem na talíři",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-testoviny-ricotta-2_07559177.webp",
-        alt: "Detail špenátových těstovin — krémová omáčka s čerstvým špenátem",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/spenatove-testoviny-ricotta-3_56647e06.webp",
-        alt: "Příprava špenátových těstovin — míchání ricotty se špenátem v pánvi",
       },
     ],
     description:
@@ -3678,20 +3451,11 @@ const recipeSource: Recipe[] = [
     cookTime: 20,
     servings: 4,
     difficulty: "snadný",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hraskova-polevka-mata-1_5fadcd06.webp",
+    image: "https://images.unsplash.com/photo-1644704170910-a0cdf183649b?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hraskova-polevka-mata-1_5fadcd06.webp",
+        url: "https://images.unsplash.com/photo-1644704170910-a0cdf183649b?auto=format&fit=crop&w=800&q=80",
         alt: "Krémová hráškova polévka s mátou a kapkou olivového oleje",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hraskova-polevka-mata-2_c89f6376.webp",
-        alt: "Detail hráškové polévky — sytě zelená barva s krutony",
-      },
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hraskova-polevka-mata-3_239744d7.webp",
-        alt: "Suroviny na hráškovou polévku — hrášek, máta, cibule, česnek",
       },
     ],
     description:
@@ -3717,11 +3481,10 @@ const recipeSource: Recipe[] = [
     cookTime: 35,
     servings: 4,
     difficulty: "střední",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strudel-modry-syr-1-Umae7NNHEu6pX3bWRHv8zv.webp",
+    image: "https://images.unsplash.com/photo-1608582037152-adefa9decb70?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strudel-modry-syr-1-Umae7NNHEu6pX3bWRHv8zv.webp",
+        url: "https://images.unsplash.com/photo-1608582037152-adefa9decb70?auto=format&fit=crop&w=800&q=80",
         alt: "Zlatavý štrůdl s modrým sýrem, karamelizovanou cibulí a vlašskými ořechy",
       },
     ],
@@ -3753,11 +3516,10 @@ const recipeSource: Recipe[] = [
     cookTime: 40,
     servings: 4,
     difficulty: "snadný",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strudel-zeli-1-MMUaNTmswd6G4jpzMdDu9x.webp",
+    image: "https://images.unsplash.com/photo-1650917331384-1fd06afa3230?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strudel-zeli-1-MMUaNTmswd6G4jpzMdDu9x.webp",
+        url: "https://images.unsplash.com/photo-1650917331384-1fd06afa3230?auto=format&fit=crop&w=800&q=80",
         alt: "Zlatavý štrůdl se zelím a kmínem, podávaný s kysanou smetanou a koprem",
       },
     ],
@@ -3789,11 +3551,10 @@ const recipeSource: Recipe[] = [
     cookTime: 30,
     servings: 4,
     difficulty: "střední",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strudel-spinat-ricotta-1-fYUJYXvZHXeu6uc9LkPEfM.webp",
+    image: "https://images.unsplash.com/photo-1614205569927-1f104e088eee?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/strudel-spinat-ricotta-1-fYUJYXvZHXeu6uc9LkPEfM.webp",
+        url: "https://images.unsplash.com/photo-1614205569927-1f104e088eee?auto=format&fit=crop&w=800&q=80",
         alt: "Štrůdl se špenátem a ricottou na břidlicovém prkénku s cherry rajčátky a bazalkou",
       },
     ],
@@ -3825,11 +3586,10 @@ const recipeSource: Recipe[] = [
     cookTime: 20,
     servings: 2,
     difficulty: "střední",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/khachapuri-adjarsky-1-NvBcPLYARE4yt6W5ZF6pmt.webp",
+    image: "https://images.unsplash.com/photo-1758714068469-75887ca0b8c3?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/khachapuri-adjarsky-1-NvBcPLYARE4yt6W5ZF6pmt.webp",
+        url: "https://images.unsplash.com/photo-1758714068469-75887ca0b8c3?auto=format&fit=crop&w=800&q=80",
         alt: "Adžarský chačapuri — gruzínský chlebový člun s roztaveným sýrem a žloutkem",
       },
     ],
@@ -3861,11 +3621,10 @@ const recipeSource: Recipe[] = [
     cookTime: 25,
     servings: 4,
     difficulty: "střední",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/lobiani-1-4m66YSLSxPNowD4gsGQQui.webp",
+    image: "https://images.unsplash.com/photo-1777315387772-bde80ddce03b?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/lobiani-1-4m66YSLSxPNowD4gsGQQui.webp",
+        url: "https://images.unsplash.com/photo-1777315387772-bde80ddce03b?auto=format&fit=crop&w=800&q=80",
         alt: "Gruzínský lobiani — kulatý chléb plněný kořeněnými fazolemi, přeříznutý napůl",
       },
     ],
@@ -3891,11 +3650,10 @@ const recipeSource: Recipe[] = [
     cookTime: 5,
     servings: 4,
     difficulty: "snadný",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pkhali-1-XjsrP3Atqzccz3DLLCAaCS.webp",
+    image: "https://images.unsplash.com/photo-1624789582533-8f0dd2d774fb?auto=format&fit=crop&w=800&q=80",
     images: [
       {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pkhali-1-XjsrP3Atqzccz3DLLCAaCS.webp",
+        url: "https://images.unsplash.com/photo-1624789582533-8f0dd2d774fb?auto=format&fit=crop&w=800&q=80",
         alt: "Gruzínské pchali — sytě zelené kuličky ze špenátu a vlašských ořechů zdobené granátovým jablkem",
       },
     ],
@@ -3929,8 +3687,7 @@ const recipeSource: Recipe[] = [
     images: [],
     description:
       "Krémové italské risotto s porcini houbami, čerstvou petrželí a parmazánem. Klasika severní Itálie.",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/risotto-funghi-1-ksjQMpQMEp8dGQAcr6fG9M.webp",
+    image: "https://images.unsplash.com/photo-1633964913295-ceb43826e7c9?auto=format&fit=crop&w=800&q=80",
     category: "Hlavní jídla",
     prepTime: 10,
     cookTime: 30,
@@ -3967,8 +3724,7 @@ const recipeSource: Recipe[] = [
     images: [],
     description:
       "Jednoduchá italská klasika — špagety s čerstvou rajčatovou omáčkou, bazalkou a olivovým olejem. Méně je více.",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pasta-pomodoro-1-LmE9iJ7FjMiNRVfY5VyFP8.webp",
+    image: "https://images.unsplash.com/photo-1622973536968-3ead9e780960?auto=format&fit=crop&w=800&q=80",
     category: "Hlavní jídla",
     prepTime: 5,
     cookTime: 20,
@@ -3997,8 +3753,7 @@ const recipeSource: Recipe[] = [
     images: [],
     description:
       "Klasické italské tiramisu v plně veganské verzi — s kokosovým krémem, kávou a kakao posypem. Nerozpoznatelné od originálu.",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/tiramisu-vegan-1-BKTsooD6vc2bhmxzsAnkKh.webp",
+    image: "https://images.unsplash.com/photo-1714385905983-6f8e06fffae1?auto=format&fit=crop&w=800&q=80",
     category: "Dezerty",
     prepTime: 30,
     cookTime: 0,
@@ -4027,8 +3782,7 @@ const recipeSource: Recipe[] = [
     images: [],
     description:
       "Neapolská pizza s tenkým křupavým těstem, rajčatovou omáčkou, veganskou mozzarellou a čerstvou bazalkou.",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/pizza-margherita-vegan-1-MtdQyAwLVrA2ozU9GS8evH.webp",
+    image: "https://images.unsplash.com/photo-1571997478779-2adcbbe9ab2f?auto=format&fit=crop&w=800&q=80",
     category: "Hlavní jídla",
     prepTime: 20,
     cookTime: 12,
@@ -4053,8 +3807,7 @@ const recipeSource: Recipe[] = [
     images: [],
     description:
       "Tradiční maďarský guláš bez masa — bohatá papriková omáčka se zeleninou, bramborami a mrkví. Servírujeme s chlebem.",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hungarian-goulash-veg-1-SsdSmcJhRsvG7n5NELsgzF.webp",
+    image: "https://images.unsplash.com/photo-1708782344198-3c8ea86e6df4?auto=format&fit=crop&w=800&q=80",
     category: "Hlavní jídla",
     prepTime: 15,
     cookTime: 50,
@@ -4091,8 +3844,7 @@ const recipeSource: Recipe[] = [
     images: [],
     description:
       "Maďarský smažený chléb — lángos — s veganským česnekovým krémem a strouhaným sýrem. Pouliční jídlo z Budapešti.",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/langos-vegan-1-9XEFSVtSQCTXoPGKUQH2ep.webp",
+    image: "https://images.unsplash.com/photo-1678527051201-db85050003d9?auto=format&fit=crop&w=800&q=80",
     category: "Snídaně",
     prepTime: 30,
     cookTime: 20,
@@ -4127,8 +3879,7 @@ const recipeSource: Recipe[] = [
     images: [],
     description:
       "Tenké maďarské palačinky plněné mletými vlašskými ořechy s meruňkovým džemem a vanilkovým cukrem.",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/hungarian-palacsinky-1-VR2fW7Dya3MHHQHAPVjSXD.webp",
+    image: "https://images.unsplash.com/photo-1661295469956-ebde4fb31910?auto=format&fit=crop&w=800&q=80",
     category: "Dezerty",
     prepTime: 15,
     cookTime: 20,
@@ -4159,8 +3910,7 @@ const recipeSource: Recipe[] = [
     images: [],
     description:
       "Národní jídlo Slovenska — bramborové halušky s bryndzou (ovčím sýrem) a karamelizovanou cibulkou. Bez slaniny.",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/bryndzove-halusky-1-87dV8sLBQrTwBUWTAk3mvm.webp",
+    image: "https://images.unsplash.com/photo-1588527600707-dfe2fb1f5520?auto=format&fit=crop&w=800&q=80",
     category: "Hlavní jídla",
     prepTime: 20,
     cookTime: 20,
@@ -4197,8 +3947,7 @@ const recipeSource: Recipe[] = [
     images: [],
     description:
       "Tradiční slovenská vánoční polévka s kysaným zelím a houbami. Veganská verze bez klobásy — stejně sytá a aromatická.",
-    image:
-      "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/kapustnica-1-KvQyJYTPAfQQqePoNLtGWP.webp",
+    image: "https://images.unsplash.com/photo-1695089027936-465ca9835017?auto=format&fit=crop&w=800&q=80",
     category: "Polévky",
     prepTime: 15,
     cookTime: 45,
