@@ -84,7 +84,7 @@ function setHreflang(url: string) {
   });
 }
 
-const DEFAULT_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310419663032296198/Aob2jK5cbkwX7S9ZSrk5FR/logo-variant-a-dJFXR9MBPW8QsrZquQfzwN.png";
+const DEFAULT_IMAGE = "https://www.bezmasajidla.cz/og-preview.png";
 const SITE_NAME = "Bezmasá Jídla";
 const BASE_URL = "https://www.bezmasajidla.cz";
 
