@@ -15,6 +15,16 @@ import SEOHead from "@/components/SEOHead";
 const HERO_POSTER = "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1920&q=80";
 const HERO_VIDEO = "https://cdn.coverr.co/videos/coverr-preparing-a-salad-5437/1080p.mp4";
 
+const HOMEPAGE_BLOG_SLUGS = [
+  "bezmasa-jidla-na-obed",
+  "top-10-veganskych-restauraci-praha-2026",
+  "zdrave-obedy-do-200-kc-vegan-praha",
+] as const;
+
+const homepageBlogPosts = HOMEPAGE_BLOG_SLUGS
+  .map((slug) => blogPosts.find((post) => post.slug === slug))
+  .filter((post): post is (typeof blogPosts)[number] => Boolean(post));
+
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -385,7 +395,7 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {blogPosts.slice(0, 3).map((post) => (
+            {homepageBlogPosts.map((post) => (
               <Link key={post.id} href={`/blog/${post.slug}`}>
                 <div className="group bg-white rounded-2xl overflow-hidden border border-emerald-100 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer h-full flex flex-col">
                   <div className="relative overflow-hidden h-48 flex-shrink-0">
