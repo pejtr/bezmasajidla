@@ -53,8 +53,13 @@ export default function Home() {
   );
 
 
-  const vegetarianRestaurants = [...restaurants].filter((r) => r.type === "vegetarian").slice(0, 3);
-  const veganRestaurants = [...restaurants].filter((r) => r.type === "vegan").slice(0, 3);
+  const isPragueRestaurant = (r: (typeof restaurants)[number]) => /Praha/i.test(r.address);
+  const vegetarianRestaurants = [...restaurants]
+    .filter((r) => r.type === "vegetarian" && isPragueRestaurant(r))
+    .slice(0, 3);
+  const veganRestaurants = [...restaurants]
+    .filter((r) => r.type === "vegan" && isPragueRestaurant(r))
+    .slice(0, 3);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
