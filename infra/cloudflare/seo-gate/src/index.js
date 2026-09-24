@@ -66,6 +66,8 @@ const UNVERIFIED_RECIPE_PATHS = new Set([
 ]);
 
 const EXTRA_VALID_PATHS = new Set([
+  "/recepty/cockova-polevka-uzena-paprika",
+  "/recepty/spenatove-palacinky-tofu-ricottou",
   "/",
   "/o-nas",
   "/inzerce",
