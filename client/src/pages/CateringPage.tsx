@@ -453,7 +453,7 @@ export default function CateringPage() {
         description="Autorský bezmasý catering od šéfkuchaře Matouše. Prémiový fingerfood, rauty a fine-dining menu pro firmy i soukromé akce v Praze. Spočtěte si kalkulaci online."
         ogTitle="Bezmasý Catering v Praze — Signature Catering by Matouš × BezmasáJídla.cz"
         ogDescription="Autorský bezmasý catering od šéfkuchaře Matouše. Prémiový fingerfood, rauty a fine-dining menu pro firmy i soukromé akce v Praze. Spočtěte si kalkulaci online."
-        ogImage="https://www.bezmasajidla.cz/images/catering/matous-chef-profil.jpg"
+        ogImage="https://www.bezmasajidla.cz/images/catering/matous-catering-og.jpg"
         ogType="website"
         ogUrl="https://www.bezmasajidla.cz/catering"
       />
