@@ -1,11 +1,13 @@
+[Reading 1000 lines from start (total: 1407 lines, 407 remaining)]
+
 // ============================================================
-// BEZMASAJIDLA.CZ — Commercial Signature Catering Engine
-// MATOUŠ × BEZMASÁJÍDLA.CZ
-// 3 Standard Packages, Server-Validated Calculator & Revenue Gate
+// BEZMASAJIDLA.CZ — MATOUŠ SIGNATURE B2B CATERING FUNNEL
+// Premium Corporate Sales Page & Conversion Engine
+// Matouš Signature: od 1 190 Kč / osoba bez DPH (12–80 hostů)
+// Obsluha, inventář a kompletní servis v ceně
 // ============================================================
 
 import { useState, useId, useEffect } from "react";
-import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { BreadcrumbJsonLd } from "@/components/JsonLd";
@@ -15,383 +17,140 @@ import {
   Calendar,
   Users,
   CheckCircle2,
-  Phone,
   Mail,
   ArrowRight,
   ChefHat,
-  Award,
   Leaf,
   Send,
   Calculator,
   Wine,
-  GlassWater,
   ShieldCheck,
   Check,
-  Camera,
-  Eye,
+  MapPin,
+  Clock,
+  Building2,
+  ChevronDown,
+  ChevronUp,
+  FileText,
+  BadgeCheck,
+  Award,
+  Globe2,
+  HelpCircle,
+  Menu,
   X,
-  Instagram,
 } from "lucide-react";
-import { trackCateringEvent, getCookieConsentPrefs } from "@/lib/cateringTracking";
+import { trackCateringEvent } from "@/lib/cateringTracking";
 
-// ── 3 Standard Commercial Packages ──────────────────────────
-const CATERING_PACKAGES = [
-  {
-    id: "office",
-    name: "GREEN OFFICE",
-    pricePerPerson: 590,
-    minGuests: 15,
-    maxGuests: 150,
-    tagline: "Svěží & Lehké",
-    badge: "Pro Firmy & Workshopy",
-    description: "Lehká a zdravá bezmasá jídla pro porady, týmové snídaně, teambuildingy a workshopy.",
-    color: "border-emerald-500 bg-emerald-50/40 text-emerald-800",
-    image: "/images/catering/matous-cateringovy-raut-kanapky.jpg",
-    imageAlt: "Rautový tác plný kanapek a bruschett od šéfkuchaře Matouše",
-    features: [
-      "4× Studený finger food (jednohubky & tapas)",
-      "2× Sezónní salát nebo tartař z pečlivě vybrané zeleniny",
-      "1× Lehký dezert (chia pudink / bezlepkový koláč)",
-      "1× Domácí osvěžující limonáda (máta/citrón)",
-    ],
-  },
-  {
-    id: "signature",
-    name: "MATOUŠ SIGNATURE",
-    pricePerPerson: 950,
-    minGuests: 10,
-    maxGuests: 150,
-    tagline: "Kurátorovaný Raut",
-    badge: "DOPORUČUJEME",
-    description: "Kompletní zážitkové menu. Vyvážená kombinace teplých i studených chodů s prémiovým servisem.",
-    color: "border-amber-500 bg-amber-50/40 text-amber-950 ring-2 ring-amber-400/30",
-    image: "/images/catering/matous-glazovany-steak-repne-pyre.jpg",
-    imageAlt: "Glazovaný zeleninový steak na řepném pyré od šéfkuchaře Matouše",
-    features: [
-      "6× Studené tapas & bruschetty (hummus, pečený lilek, sušená rajčata)",
-      "3× Teplé signature chody (květákový steak, seitanový goulash, varenyky)",
-      "2× Autorský dezert Matouše",
-      "Signature nealko bar & ovocné limonády v ceně",
-      "Kompletní servírovací rautové nádobí",
-    ],
-  },
-  {
-    id: "privatetable",
-    name: "PRIVATE TABLE BY MATOUŠ",
-    pricePerPerson: 1800,
-    minGuests: 6,
-    maxGuests: 15,
-    tagline: "Osobní Chef Experience",
-    badge: "VIP Degustace",
-    description: "Komorní fine-dining pro 6 až 15 osob s osobní účastí šéfkuchaře Matouše.",
-    color: "border-purple-600 bg-purple-50/40 text-purple-950",
-    image: "/images/catering/matous-rostlinny-tatarak-toast.jpg",
-    imageAlt: "Fine-dining rostlinný tatarák se žloutkem od šéfkuchaře Matouše",
-    features: [
-      "5 Chodové degustační menu připravené přímo před hosty",
-      "Párování se signature nealko mošty, kombuchami a výběrovou kávou",
-      "Osobní příprava a komentované servírování šéfkuchařem",
-      "Plný skleněný & porcelánový servis v ceně",
-    ],
-  },
-];
+// ── B2B Event Types ──────────────────────────────────────────
+const EVENT_TYPES = [
+  { id: "workshop", label: "Workshop" },
+  { id: "board-lunch", label: "Board lunch" },
+  { id: "client-raut", label: "Client raut" },
+  { id: "jina-akce", label: "Jiná akce" },
+] as const;
 
-interface GalleryItem {
-  id: string;
-  title: string;
-  category: "raut" | "teple" | "tapas" | "dezerty" | "polevky";
-  categoryLabel: string;
-  image: string;
-  description: string;
-}
+type EventTypeId = (typeof EVENT_TYPES)[number]["id"];
 
-const GALLERY_CATEGORIES = [
-  { id: "all", label: "Všechny ukázky" },
-  { id: "raut", label: "Raut & Kanapky" },
-  { id: "teple", label: "Teplé chody & steaky" },
-  { id: "tapas", label: "Předkrmy & Tapas" },
-  { id: "dezerty", label: "Autorské dezerty" },
-  { id: "polevky", label: "Polévky & Nápoje" },
-];
+// ── Venue Types ──────────────────────────────────────────────
+const VENUE_TYPES = [
+  "Meeting room (bez kuchyně)",
+  "Reprezentativní kancelář / open-space",
+  "Konferenční / Eventový sál",
+  "Terasa / Venkovní prostor",
+  "Zatím hledáme vhodné prostory",
+] as const;
 
-const MATOUS_GALLERY_ITEMS: GalleryItem[] = [
-  {
-    id: "raut-kanapky",
-    title: "Cateringový rautový podnos kanapek & bruschett",
-    category: "raut",
-    categoryLabel: "Raut & Fingerfood",
-    image: "/images/catering/matous-cateringovy-raut-kanapky.jpg",
-    description: "Desítky pestrých bruschett s domácími pomazánkami, marinovanou zeleninou a černým sezamem pro firemní akce.",
-  },
-  {
-    id: "rostlinny-tatarak",
-    title: "Autorský rostlinný tatarák s toasty",
-    category: "tapas",
-    categoryLabel: "Předkrmy & Tapas",
-    image: "/images/catering/matous-rostlinny-tatarak-toast.jpg",
-    description: "Fine-dining rostlinný tatarák se žloutkem, nakládaným hořčičným semínkem, perličkami a křupavým chlebem.",
-  },
-  {
-    id: "glazovany-steak",
-    title: "Glazovaný zeleninový steak na řepném pyré",
-    category: "teple",
-    categoryLabel: "Teplé chody",
-    image: "/images/catering/matous-glazovany-steak-repne-pyre.jpg",
-    description: "Pečený zeleninový steak na hedvábném řepném pyré s restovanou cibulkou a pečenou sezónní zeleninou.",
-  },
-  {
-    id: "mezze-labneh",
-    title: "Středomořský krémový talíř s cizrnou",
-    category: "tapas",
-    categoryLabel: "Předkrmy & Tapas",
-    image: "/images/catering/matous-mezze-labneh-cizrna.jpg",
-    description: "Labneh krém zalitý extra panenským olivovým olejem, posypaný cizrnou, granátovým jablkem a jarní cibulkou.",
-  },
-  {
-    id: "seitanove-medailonky",
-    title: "Křupavé seitanové medailonky s kaší",
-    category: "teple",
-    categoryLabel: "Teplé chody",
-    image: "/images/catering/matous-seitanove-medailonky-kase.jpg",
-    description: "Poctivá česká kuchyně v moderním hávu: křupavé medailonky, sametová bramborová kaše a pečená řepa.",
-  },
-  {
-    id: "seitan-dynovy-krem",
-    title: "Orestovaný seitan na dýňovém krému",
-    category: "teple",
-    categoryLabel: "Teplé chody",
-    image: "/images/catering/matous-seitan-dynovy-krem.jpg",
-    description: "Šťavnaté seitanové kousky na voňavém dýňovém krému se salátem z červeného zelí a praženými semínky.",
-  },
-  {
-    id: "pecena-kukurice-kvetak",
-    title: "Pečená baby kukuřice a květák na pyré",
-    category: "teple",
-    categoryLabel: "Teplé chody",
-    image: "/images/catering/matous-pecena-kukurice-kvetak-pyre.jpg",
-    description: "Jemné bílé pyré s pečenou kukuřicí, květákem a svěžím křupavým salátkem s ředkvičkami.",
-  },
-  {
-    id: "dezerty-violky",
-    title: "Skleničkové dezerty s květy violek",
-    category: "dezerty",
-    categoryLabel: "Autorské dezerty",
-    image: "/images/catering/matous-dezerty-violky-sklenicky.jpg",
-    description: "Lehký vanilkový krém ve skleničkách s čokoládovým crumblem a jedlými květy z lokální produkce.",
-  },
-  {
-    id: "brownies-zmrzlina",
-    title: "Čokoládové brownies na břidlici s hruškou",
-    category: "dezerty",
-    categoryLabel: "Autorské dezerty",
-    image: "/images/catering/matous-brownies-zmrzlina-hruska.jpg",
-    description: "Hutné čokoládové brownies servírované s kopečkem vanilkové zmrzliny, pošírovanou hruškou a dýňovými semínky.",
-  },
-  {
-    id: "brownies-raut",
-    title: "Degustační čokoládové brownies s broskví",
-    category: "dezerty",
-    categoryLabel: "Autorské dezerty",
-    image: "/images/catering/matous-cokoladove-brownies-raut.jpg",
-    description: "Rautové porce brownies s plátkem zralé broskve a jemným kakaovým přelivem pro firemní akce.",
-  },
-  {
-    id: "peceny-syr-hermelin",
-    title: "Pečený sýr se semínky a baby špenátem",
-    category: "tapas",
-    categoryLabel: "Předkrmy & Tapas",
-    image: "/images/catering/matous-peceny-syr-hermelin.jpg",
-    description: "Zapečený sýr s křupavými semínky, restovanou paprikou, baby špenátem a opečeným kváskovým chlebem.",
-  },
-  {
-    id: "staroceska-kulajda",
-    title: "Staročeská vegetariánská kulajda",
-    category: "polevky",
-    categoryLabel: "Polévky & Nápoje",
-    image: "/images/catering/matous-staroceska-kulajda.jpg",
-    description: "Tradiční krémová kulajda s lesními houbami, čerstvým koprem, vejcem natvrdo a nočkem zakysané smetany.",
-  },
-  {
-    id: "dynovy-krem",
-    title: "Sametový dýňový krém se semínky",
-    category: "polevky",
-    categoryLabel: "Polévky & Nápoje",
-    image: "/images/catering/matous-dynovy-krem-seminka.jpg",
-    description: "Hustý dýňový krém z pečené dýně s praženými semínky a kapkou limetkové šťávy.",
-  },
-  {
-    id: "signature-drink",
-    title: "Signature osvěžující letní drink s levandulí",
-    category: "polevky",
-    categoryLabel: "Polévky & Nápoje",
-    image: "/images/catering/matous-signature-letni-drink.jpg",
-    description: "Autorský nealko aperitiv plný ledu s plátkem pomeranče, physalisem a kvetoucí levandulí.",
-  },
-];
+// ── Pricing Constants ────────────────────────────────────────
+const SIGNATURE_PRICE_PER_PERSON = 1190;
+const MIN_GUESTS = 12;
+const MAX_SIGNATURE_GUESTS = 80;
 
 export default function CateringPage() {
-  const guestCountInputId = useId();
-  // Calculator state
-  const [selectedPkgId, setSelectedPkgId] = useState<string>("signature");
+  // Navigation / Scroll
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Form & Calculator State
+  const [eventType, setEventType] = useState<EventTypeId>("client-raut");
   const [guestCount, setGuestCount] = useState<number>(25);
-  const [includeDrinks, setIncludeDrinks] = useState<boolean>(true);
-  const [includeGlassware, setIncludeGlassware] = useState<boolean>(false);
-  const [includeStaff, setIncludeStaff] = useState<boolean>(false);
+  const [eventDate, setEventDate] = useState<string>("");
+  const [eventTime, setEventTime] = useState<string>("16:00 – 20:00");
+  const [location, setLocation] = useState<string>("Praha 8");
+  const [venueType, setVenueType] = useState<string>(VENUE_TYPES[0]);
 
-  // Gallery state
-  const [activeCategory, setActiveCategory] = useState<string>("all");
-  const [lightboxItem, setLightboxItem] = useState<GalleryItem | null>(null);
+  // Company & Contact State
+  const [companyName, setCompanyName] = useState<string>("");
+  const [ico, setIco] = useState<string>("");
+  const [contactPerson, setContactPerson] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [phone, setPhone] = useState<string>("+420 ");
 
-  const filteredGalleryItems = activeCategory === "all"
-    ? MATOUS_GALLERY_ITEMS
-    : MATOUS_GALLERY_ITEMS.filter((item) => item.category === activeCategory);
+  // Diets & Add-ons State
+  const [dietNotes, setDietNotes] = useState<string>("");
+  const [addonTasting, setAddonTasting] = useState<boolean>(false);
+  const [addonWine, setAddonWine] = useState<boolean>(false);
+  const [addonLateService, setAddonLateService] = useState<boolean>(false);
 
-  // Attribution tracking state (UTM + Google Click IDs)
-  const [utmParams, setUtmParams] = useState({
-    utmSource: "",
-    utmMedium: "",
-    utmCampaign: "",
-    referrer: "",
-    landingPage: "",
-    gclid: "",
-    gbraid: "",
-    wbraid: "",
-  });
-
-  // Form submission state
-  const [formSubmitted, setFormSubmitted] = useState<boolean>(false);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  // Submission & Success State
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionSuccess, setSubmissionSuccess] = useState(false);
+  const [leadCode, setLeadCode] = useState<string>("");
+  const [mailStatus, setMailStatus] = useState<"sent" | "failed" | "not_configured" | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
-
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    date: "",
-    eventType: "firemni",
-    notes: "",
-    website_hp: "",
-  });
-
-  const [hasStartedCalculator, setHasStartedCalculator] = useState(false);
   const [hasStartedInquiry, setHasStartedInquiry] = useState(false);
 
-  // Load UTM & Google Click IDs on mount + track catering_view
+  // FAQ Accordion State
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+
+  // UTM / Attribution tracking
+  const [utmParams, setUtmParams] = useState<Record<string, string>>({});
+
   useEffect(() => {
+    trackCateringEvent("catering_view", {
+      packageId: "signature",
+      packageName: "MATOUŠ SIGNATURE",
+    });
+
     if (typeof window !== "undefined") {
-      const urlParams = new URLSearchParams(window.location.search);
-
-      // Extract & persist Google Click IDs (Strictly consent-gated: only persist custom advertising IDs if marketing consent is granted)
-      const rawGclid = urlParams.get("gclid");
-      const rawGbraid = urlParams.get("gbraid");
-      const rawWbraid = urlParams.get("wbraid");
-
-      const consentPrefs = getCookieConsentPrefs();
-      if (consentPrefs.marketing) {
-        if (rawGclid) sessionStorage.setItem("bj_gclid", rawGclid);
-        if (rawGbraid) sessionStorage.setItem("bj_gbraid", rawGbraid);
-        if (rawWbraid) sessionStorage.setItem("bj_wbraid", rawWbraid);
-      } else {
-        sessionStorage.removeItem("bj_gclid");
-        sessionStorage.removeItem("bj_gbraid");
-        sessionStorage.removeItem("bj_wbraid");
-      }
-
-      const gclid = rawGclid || (consentPrefs.marketing ? sessionStorage.getItem("bj_gclid") || "" : "");
-      const gbraid = rawGbraid || (consentPrefs.marketing ? sessionStorage.getItem("bj_gbraid") || "" : "");
-      const wbraid = rawWbraid || (consentPrefs.marketing ? sessionStorage.getItem("bj_wbraid") || "" : "");
-
-      const utm = {
-        utmSource: urlParams.get("utm_source") || "",
-        utmMedium: urlParams.get("utm_medium") || "",
-        utmCampaign: urlParams.get("utm_campaign") || "",
-        referrer: document.referrer || "",
-        landingPage: window.location.pathname,
-        gclid,
-        gbraid,
-        wbraid,
-      };
-      setUtmParams(utm);
-
-      // Track catering_view
-      trackCateringEvent("catering_view", {
-        packageId: selectedPkgId,
-        ...utm,
+      const search = new URLSearchParams(window.location.search);
+      setUtmParams({
+        utmSource: search.get("utm_source") || "",
+        utmMedium: search.get("utm_medium") || "",
+        utmCampaign: search.get("utm_campaign") || "",
+        gclid: search.get("gclid") || "",
+        gbraid: search.get("gbraid") || "",
+        wbraid: search.get("wbraid") || "",
       });
     }
   }, []);
 
-  const activePackage = CATERING_PACKAGES.find((p) => p.id === selectedPkgId) || CATERING_PACKAGES[1];
+  const isIndividualCalculation = guestCount > MAX_SIGNATURE_GUESTS;
+  const estimatedTotal = isIndividualCalculation
+    ? null
+    : guestCount * SIGNATURE_PRICE_PER_PERSON;
 
-  // Hard boundary package switcher
-  const handleSelectPackage = (pkgId: string) => {
-    setSelectedPkgId(pkgId);
-    if (!hasStartedCalculator) {
-      setHasStartedCalculator(true);
-      trackCateringEvent("calculator_started", {
-        packageId: pkgId,
-        guestCount,
-      });
-    }
-    const pkg = CATERING_PACKAGES.find((p) => p.id === pkgId);
-    if (pkg) {
-      if (guestCount < pkg.minGuests) {
-        setGuestCount(pkg.minGuests);
-      } else if (pkg.maxGuests && guestCount > pkg.maxGuests) {
-        setGuestCount(pkg.maxGuests);
-      }
-    }
-  };
-
-  const handleGuestCountChange = (newCount: number) => {
-    setGuestCount(newCount);
-    if (!hasStartedCalculator) {
-      setHasStartedCalculator(true);
-      trackCateringEvent("calculator_started", {
-        packageId: selectedPkgId,
-        guestCount: newCount,
-      });
-    }
-  };
-
-  // Authoritative Pricing Logic (No automatic volume retail discounts)
-  const basePricePerPerson = activePackage.pricePerPerson;
-  const drinkAddon = includeDrinks ? 150 : 0;
-  const glasswareAddon = includeGlassware ? 80 : 0;
-  const staffFlatFee = includeStaff ? 3500 : 0;
-
-  const calculatedPerPerson = basePricePerPerson + drinkAddon + glasswareAddon;
-  const estimatedTotal = calculatedPerPerson * guestCount + staffFlatFee;
-
-  const handleApplyCalculatorToForm = () => {
-    trackCateringEvent("calculator_completed", {
-      packageId: activePackage.id,
-      packageName: activePackage.name,
-      guestCount,
-      estimatedRevenue: estimatedTotal,
-    });
-    trackCateringEvent("inquiry_started", {
-      packageId: activePackage.id,
-      packageName: activePackage.name,
-      guestCount,
-      estimatedRevenue: estimatedTotal,
-    });
-    const el = document.getElementById("poptavka");
+  const scrollToCalculator = () => {
+    setMobileMenuOpen(false);
+    const el = document.getElementById("kalkulacka");
     if (el) {
       el.scrollIntoView({ behavior: "smooth" });
     }
   };
 
-  const handleFormFocus = () => {
+  const handleFormInteraction = () => {
     if (!hasStartedInquiry) {
       setHasStartedInquiry(true);
       trackCateringEvent("inquiry_started", {
-        packageId: activePackage.id,
-        packageName: activePackage.name,
+        packageId: "signature",
+        packageName: "MATOUŠ SIGNATURE",
         guestCount,
-        estimatedRevenue: estimatedTotal,
+        estimatedRevenue: estimatedTotal || 0,
       });
     }
+  };
+
+  const handleGuestCountChange = (delta: number) => {
+    handleFormInteraction();
+    setGuestCount(prev => Math.max(MIN_GUESTS, Math.min(250, prev + delta)));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -399,63 +158,97 @@ export default function CateringPage() {
     setIsSubmitting(true);
     setServerError(null);
 
-    try {
-      const payload = {
-        ...formData,
-        packageId: activePackage.id,
-        packageName: activePackage.name,
-        guestCount,
-        includeDrinks,
-        includeGlassware,
-        includeStaff,
-        ...utmParams,
-      };
+    const addonsList: string[] = [];
+    if (addonWine) addonsList.push("Víno / alkohol");
+    if (addonTasting) addonsList.push("Degustace před akcí");
+    if (addonLateService) addonsList.push("Servis po 23:00");
 
+    const calculatedRevenue = isIndividualCalculation ? 0 : guestCount * SIGNATURE_PRICE_PER_PERSON;
+
+    const payload = {
+      name: `${contactPerson}${companyName ? ` (${companyName})` : ""}`,
+      companyName,
+      ico,
+      contactPerson,
+      email,
+      phone,
+      guestCount,
+      eventDate: eventDate || "Dle dohody",
+      eventTime,
+      location,
+      venueType,
+      eventType: EVENT_TYPES.find(t => t.id === eventType)?.label || eventType,
+      dietNotes,
+      addons: addonsList,
+      notes: `Firma: ${companyName || "neuvedeno"}, IČO: ${ico || "neuvedeno"}, Typ akce: ${eventType}, Prostor: ${venueType}, Čas: ${eventTime}, Místo: ${location}. Diety: ${dietNotes || "žádné"}. Doplňky: ${addonsList.join(", ") || "žádné"}.`,
+      packageId: "signature",
+      packageName: "MATOUŠ SIGNATURE",
+      includeDrinks: true,
+      includeGlassware: true,
+      includeStaff: true,
+      estimatedRevenue: calculatedRevenue,
+      ...utmParams,
+    };
+
+    try {
       const res = await fetch("/api/catering-inquiry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
-      const data = await res.json();
-      if (!res.ok || data.error || !data.leadCode) {
-        setServerError(data.error || "Chyba při odesílání poptávky. Zkuste to prosím znovu.");
-      } else {
-        const estRevenue = data.estimatedRevenue || estimatedTotal;
-        trackCateringEvent("inquiry_submitted", {
-          leadCode: data.leadCode,
-          transaction_id: data.leadCode,
-          packageId: activePackage.id,
-          packageName: activePackage.name,
-          guestCount,
-          value: 1,
-          estimated_pipeline_value: estRevenue,
-          utmSource: utmParams.utmSource,
-          utmMedium: utmParams.utmMedium,
-          utmCampaign: utmParams.utmCampaign,
-          gclid: utmParams.gclid || undefined,
-          gbraid: utmParams.gbraid || undefined,
-          wbraid: utmParams.wbraid || undefined,
-        });
+      let data: any = null;
+      try {
+        data = await res.json();
+      } catch {}
+
+      if (!res.ok || !data?.success || !data?.leadCode) {
+        throw new Error(data?.error || "Poptávku se nepodařilo bezpečně uložit.");
       }
-    } catch (err: any) {
+
+      const confirmedLeadCode = String(data.leadCode);
+      setLeadCode(confirmedLeadCode);
+      setMailStatus(data?.mailStatus || null);
+      setSubmissionSuccess(true);
+
+      trackCateringEvent("inquiry_submitted", {
+        leadCode: confirmedLeadCode,
+        transaction_id: confirmedLeadCode,
+        packageId: "signature",
+        packageName: "MATOUŠ SIGNATURE",
+        guestCount,
+        value: 1,
+        estimated_pipeline_value: calculatedRevenue,
+        ...utmParams,
+      });
+
+      const el = document.getElementById("kalkulacka");
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    } catch (err) {
       console.error("Inquiry submit error", err);
-      setServerError("Nepodařilo se připojit k serveru. Zkuste to prosím znovu.");
+      setSubmissionSuccess(false);
+      setLeadCode("");
+      setMailStatus(null);
+      setServerError(
+        err instanceof Error
+          ? err.message
+          : "Poptávku se nepodařilo odeslat. Zkuste to prosím znovu."
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const selectedEventLabel = EVENT_TYPES.find(t => t.id === eventType)?.label || "Client raut";
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#F9FAF8]">
+    <div className="min-h-screen flex flex-col bg-[#FDFCF8] text-stone-800 font-sans selection:bg-amber-200 selection:text-stone-900">
       <SEOHead
-        title="Matouš Signature — Firemní catering bez masa. Bez kompromisu."
-        description="Autorská rostlinná gastronomie pro moderní firmy od šéfkuchaře Matouše. Firemní rauty, workshopy, board lunch. Obsluha i inventář v ceně, kalkulace od 1 190 Kč/os."
-        ogTitle="Matouš Signature — Firemní catering bez masa. Bez kompromisu."
-        ogDescription="Autorská rostlinná gastronomie pro moderní firmy od šéfkuchaře Matouše. Firemní rauty, workshopy, board lunch. Obsluha i inventář v ceně, kalkulace od 1 190 Kč/os."
-        ogImage="https://www.bezmasajidla.cz/images/catering/matous-catering-og.jpg"
+        title="Firemní catering Praha | Matouš Signature | BezmasáJídla"
+        description="Firemní catering v Praze od šéfkuchaře Matouše. Autorské bezmasé menu pro rauty, workshopy a board lunch. Obsluha, inventář a doprava po Praze v ceně Signature od 1 190 Kč/os."
         ogType="website"
         ogUrl="https://www.bezmasajidla.cz/catering"
+        ogImage="https://www.bezmasajidla.cz/images/catering/matous-catering-og.jpg"
       />
       <BreadcrumbJsonLd
         items={[
@@ -463,700 +256,749 @@ export default function CateringPage() {
           { name: "Catering", url: "/catering" },
         ]}
       />
-      <Header />
 
-      {/* Hero Header */}
-      <section className="relative bg-gradient-to-br from-[#1C352D] via-[#2A4D42] to-[#152B24] text-white pt-12 pb-16 overflow-hidden">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#4A7C59_1px,transparent_1px)] [background-size:16px_16px]" />
-
-        <div className="container relative z-10 max-w-6xl mx-auto px-4">
-          <div className="flex flex-col lg:flex-row items-center gap-10">
-            {/* Left Text Column */}
-            <div className="flex-1 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider text-amber-300 uppercase mb-4">
-                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                <span>MATOUŠ × BEZMASÁJÍDLA.CZ</span>
+      {/* ── 1. PREMIUM CATERING HEADER — OVER HERO ──────────────── */}
+      <header className="absolute inset-x-0 top-0 z-50 text-white">
+        <div className="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-12 h-20 lg:h-24 flex items-center justify-between">
+          <a
+            href="/catering"
+            className="flex items-center gap-3 shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded-lg"
+          >
+            <div className="w-11 h-11 rounded-full border border-amber-400/70 flex items-center justify-center text-amber-300">
+              <Leaf className="w-6 h-6" strokeWidth={1.35} />
+            </div>
+            <div className="leading-none">
+              <div className="text-[15px] sm:text-[17px] tracking-[0.24em] font-medium uppercase text-white">
+                BezmasáJídla
               </div>
-
-              <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight mb-4 font-serif">
-                Bez masa. <br />
-                <span className="text-amber-400">Bez kompromisu.</span>
-              </h1>
-
-              <p className="text-base sm:text-lg text-emerald-100/90 font-light max-w-2xl mb-6 leading-relaxed">
-                Signature catering od šéfkuchaře Matouše. Moderní evropská kuchyně, autorské receptury a středomořská lehkost pro firmy, soukromé oslavy i chvíle, kdy jídlo nemá být jen občerstvení, ale součást zážitku.
-              </p>
-
-              {/* Badges Bar */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5 mb-8 text-xs font-semibold">
-                <span className="bg-white/15 px-3 py-1.5 rounded-xl border border-white/10 flex items-center gap-1.5">
-                  📍 Praha & Okolí
-                </span>
-                <span className="bg-white/15 px-3 py-1.5 rounded-xl border border-white/10 flex items-center gap-1.5">
-                  🏢 Firemní Catering
-                </span>
-                <span className="bg-white/15 px-3 py-1.5 rounded-xl border border-white/10 flex items-center gap-1.5">
-                  🎉 Soukromé Eventy
-                </span>
-                <span className="bg-white/15 px-3 py-1.5 rounded-xl border border-white/10 flex items-center gap-1.5">
-                  ✨ Menu Na Míru
-                </span>
-              </div>
-
-              {/* Hero CTA Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                <a
-                  href="#kalkulacka"
-                  className="w-full sm:w-auto px-7 py-3.5 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold rounded-2xl shadow-lg transition-all text-center flex items-center justify-center gap-2"
-                >
-                  <Calculator className="w-4 h-4" />
-                  <span>Spočítat Cenu Akce</span>
-                </a>
-                <a
-                  href="#balicky"
-                  className="w-full sm:w-auto px-7 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-2xl border border-white/20 transition-all text-center"
-                >
-                  Prohlédnout Balíčky
-                </a>
+              <div className="mt-1.5 text-[9px] tracking-[0.38em] font-medium uppercase text-stone-300">
+                Catering
               </div>
             </div>
+          </a>
 
-            {/* Right Chef Card Image */}
-            <div className="w-full lg:w-96 flex-shrink-0">
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 bg-emerald-950 p-6 text-center">
-                <div className="w-44 h-44 mx-auto rounded-full overflow-hidden border-4 border-amber-400 mb-4 shadow-xl ring-4 ring-amber-400/20">
-                  <img
-                    src="/images/catering/matous-chef-profil.jpg?v=2"
-                    alt="Šéfkuchař Matouš — Profesionální rostlinný šéfkuchař"
-                    className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-1">Matouš</h3>
-                <p className="text-xs text-amber-400 font-bold uppercase tracking-wider mb-2">
-                  Profesionální Šéfkuchař
-                </p>
-                <a
-                  href="https://www.instagram.com/matt_tej_chef/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-200 hover:text-white transition-colors bg-white/10 hover:bg-white/20 px-3 py-1 rounded-full mb-3 border border-white/10"
-                >
-                  <Instagram className="w-3.5 h-3.5 text-pink-400" />
-                  <span>@matt_tej_chef</span>
-                </a>
-                <p className="text-xs text-emerald-100/80 italic leading-relaxed">
-                  "Spojuji klasické kuchařské řemeslo s moderní bezmasou gastronomií. Každé menu sestavuji s důrazem na čistotu surovin, sezónnost a estetiku."
-                </p>
-              </div>
+          <nav className="hidden xl:flex items-center gap-7 text-[12px] font-medium text-white/90">
+            <a href="#proc-matous" className="hover:text-amber-300 transition-colors">Pro firmy</a>
+            <a href="#signature-menu" className="hover:text-amber-300 transition-colors">Signature</a>
+            <a href="#kalkulacka" className="hover:text-amber-300 transition-colors">Kalkulačka</a>
+            <a href="#jak-to-funguje" className="hover:text-amber-300 transition-colors">Jak to funguje</a>
+            <a href="#sef-kuchar" className="hover:text-amber-300 transition-colors">Matouš</a>
+            <a href="#galerie" className="hover:text-amber-300 transition-colors">Reference</a>
+            <a href="#faq" className="hover:text-amber-300 transition-colors">FAQ</a>
+          </nav>
+
+          <div className="hidden md:flex items-center gap-4">
+            <button
+              onClick={scrollToCalculator}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-md bg-gradient-to-b from-[#FFD65A] to-[#F1B829] hover:from-[#FFE078] hover:to-[#F5C23E] text-[#142018] font-bold text-[13px] shadow-[0_8px_25px_rgba(0,0,0,.22)] transition-all"
+            >
+              Poptat termín
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="flex md:hidden items-center gap-3">
+            <button
+              onClick={scrollToCalculator}
+              className="px-4 py-2 rounded-md bg-amber-400 text-stone-950 font-bold text-xs"
+            >
+              Poptat
+            </button>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 text-white"
+              aria-label="Přepnout menu"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+        </div>
+
+        {mobileMenuOpen && (
+          <div className="md:hidden mx-4 rounded-2xl border border-white/10 bg-[#071710]/95 backdrop-blur-xl px-5 py-5 shadow-2xl">
+            <div className="grid grid-cols-2 gap-x-5 gap-y-4 text-sm text-stone-100">
+              <a href="#proc-matous" onClick={() => setMobileMenuOpen(false)}>Pro firmy</a>
+              <a href="#signature-menu" onClick={() => setMobileMenuOpen(false)}>Signature</a>
+              <a href="#kalkulacka" onClick={() => setMobileMenuOpen(false)}>Kalkulačka</a>
+              <a href="#jak-to-funguje" onClick={() => setMobileMenuOpen(false)}>Jak to funguje</a>
+              <a href="#sef-kuchar" onClick={() => setMobileMenuOpen(false)}>Matouš</a>
+              <a href="#galerie" onClick={() => setMobileMenuOpen(false)}>Reference</a>
+              <a href="#faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
+            </div>
+          </div>
+        )}
+      </header>
+
+      {/* ── 2. HERO — 1:1 PREMIUM COMPOSITION ───────────────────── */}
+      <section className="relative overflow-hidden bg-[#071710] text-white min-h-[690px] lg:min-h-[720px] border-b border-[#152b21]">
+        <img
+          src="/images/catering/matous-catering-og.jpg"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-y-0 right-0 h-full w-full lg:w-[59%] object-cover object-right opacity-40 lg:opacity-100"
+        />
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(90deg, #071710 0%, #071710 41%, rgba(7,23,16,.90) 50%, rgba(7,23,16,.30) 63%, rgba(7,23,16,0) 76%)",
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#071710]/20 via-transparent to-[#071710]/10 pointer-events-none" />
+
+        <div className="relative z-10 max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-12 pt-32 lg:pt-36 pb-10 min-h-[690px] lg:min-h-[720px] flex flex-col">
+          <div className="w-full lg:w-[51%] xl:w-[49%]">
+            <div className="flex items-center gap-3 text-[11px] sm:text-[12px] tracking-[0.40em] uppercase font-medium text-amber-300">
+              <span className="w-7 h-px bg-amber-400/80" />
+              <span>Firemní catering v Praze</span>
+            </div>
+
+            <h1 className="mt-5 font-serif text-[46px] sm:text-[58px] lg:text-[62px] xl:text-[68px] leading-[0.96] tracking-[-0.035em] font-semibold">
+              <span className="block text-white">Matouš Signature</span>
+              <span className="block mt-1 text-white">Firemní catering</span>
+              <span className="block mt-1 text-amber-300">bez masa.</span>
+              <span className="block text-amber-300">Bez kompromisu.</span>
+            </h1>
+
+            <p className="mt-6 max-w-xl text-[17px] sm:text-[20px] leading-relaxed text-stone-100/90 font-light">
+              Moderní vegetariánská gastronomie pro firmy, které chtějí skvělý zážitek, profesionální servis a transparentní rozpočet.
+            </p>
+
+            <div className="mt-7 flex flex-col sm:flex-row gap-4">
+              <button
+                onClick={scrollToCalculator}
+                className="inline-flex items-center justify-center gap-3 min-w-[218px] px-7 py-4 rounded-md bg-gradient-to-b from-[#FFD65A] to-[#F2B92B] hover:from-[#FFE078] hover:to-[#F7C542] text-[#122019] font-bold text-[15px] shadow-[0_12px_30px_rgba(0,0,0,.28)] transition-all"
+              >
+                <Calculator className="w-5 h-5" />
+                SPOČÍTAT AKCI
+                <ArrowRight className="w-4 h-4" />
+              </button>
+              <button
+                onClick={scrollToCalculator}
+                className="inline-flex items-center justify-center min-w-[176px] px-7 py-4 rounded-md border border-amber-300/80 bg-[#0b2018]/60 text-white font-semibold text-[14px] tracking-[0.08em] hover:bg-[#173528]/80 transition-colors"
+              >
+                POPTAT TERMÍN
+              </button>
             </div>
           </div>
 
-          {/* Value Pillars */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 pt-8 border-t border-white/10 text-center">
-            <div className="flex items-center justify-center gap-2 text-sm font-semibold text-emerald-100">
-              <UtensilsCrossed className="w-4 h-4 text-amber-400" />
-              <span>Chuť bez kompromisu</span>
+          <div className="mt-auto pt-8 lg:pt-12 w-full lg:w-[55%] grid grid-cols-2 sm:grid-cols-4 gap-y-4 text-[11px] sm:text-[12px] text-stone-100">
+            <div className="flex items-center gap-2.5 pr-4">
+              <MapPin className="w-5 h-5 text-amber-300 shrink-0" strokeWidth={1.7} />
+              <span>Praha a okolí</span>
             </div>
-            <div className="flex items-center justify-center gap-2 text-sm font-semibold text-emerald-100">
-              <ChefHat className="w-4 h-4 text-amber-400" />
-              <span>Poctivé Řemeslo</span>
+            <div className="flex items-center gap-2.5 px-0 sm:px-4 sm:border-l border-white/15">
+              <Users className="w-5 h-5 text-amber-300 shrink-0" strokeWidth={1.7} />
+              <span>12–80 hostů Signature</span>
             </div>
-            <div className="flex items-center justify-center gap-2 text-sm font-semibold text-emerald-100">
-              <Leaf className="w-4 h-4 text-amber-400" />
-              <span>100% Sezónnost</span>
+            <div className="flex items-center gap-2.5 px-0 sm:px-4 sm:border-l border-white/15">
+              <Clock className="w-5 h-5 text-amber-300 shrink-0" strokeWidth={1.7} />
+              <span>Odpověď do 24 h</span>
             </div>
-            <div className="flex items-center justify-center gap-2 text-sm font-semibold text-emerald-100">
-              <Sparkles className="w-4 h-4 text-amber-400" />
-              <span>Lehkost & Estetika</span>
+            <div className="flex items-center gap-2.5 px-0 sm:pl-4 sm:border-l border-white/15">
+              <FileText className="w-5 h-5 text-amber-300 shrink-0" strokeWidth={1.7} />
+              <span>Fakturace na IČO</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="hidden lg:block absolute right-[4.5%] top-[31%] z-20 bg-white/92 backdrop-blur-sm text-[#152018] px-5 py-4 shadow-xl">
+          <div className="text-[10px] uppercase tracking-[0.28em] leading-relaxed">
+            Zkušenosti<br />z Norska,<br />Islandu<br />a Nového Zélandu.
+          </div>
+        </div>
+      </section>
+
+      {/* ── 3. VALUE STRIP — COMPACT LIKE REFERENCE ─────────────── */}
+      <section id="proc-matous" className="bg-[#F7F3E9] border-b border-stone-200">
+        <div className="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="flex items-center gap-4 py-5 lg:py-6 lg:pr-8">
+              <div className="w-10 h-10 rounded-full border border-[#173226] flex items-center justify-center shrink-0">
+                <Leaf className="w-5 h-5 text-[#173226]" strokeWidth={1.5} />
+              </div>
+              <div>
+                <div className="font-semibold text-[13px] text-[#18221c]">Autorské menu</div>
+                <div className="text-[12px] text-stone-600">z kvalitních surovin</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 py-5 lg:py-6 lg:px-8 lg:border-l border-stone-300/80">
+              <div className="w-10 h-10 rounded-full border border-[#173226] flex items-center justify-center shrink-0">
+                <UtensilsCrossed className="w-5 h-5 text-[#173226]" strokeWidth={1.5} />
+              </div>
+              <div>
+                <div className="font-semibold text-[13px] text-[#18221c]">Servisní tým, inventář</div>
+                <div className="text-[12px] text-stone-600">a doprava v ceně Signature</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 py-5 lg:py-6 lg:px-8 lg:border-l border-stone-300/80">
+              <div className="w-10 h-10 rounded-full border border-[#173226] flex items-center justify-center shrink-0">
+                <Users className="w-5 h-5 text-[#173226]" strokeWidth={1.5} />
+              </div>
+              <div>
+                <div className="font-semibold text-[13px] text-[#18221c]">Firemní rauty, workshopy</div>
+                <div className="text-[12px] text-stone-600">a board lunch</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 py-5 lg:py-6 lg:pl-8 lg:border-l border-stone-300/80">
+              <div className="w-10 h-10 rounded-full border border-[#173226] flex items-center justify-center shrink-0">
+                <Sparkles className="w-5 h-5 text-[#173226]" strokeWidth={1.5} />
+              </div>
+              <div>
+                <div className="font-semibold text-[13px] text-[#18221c]">Bez masa, plná chuť</div>
+                <div className="text-[12px] text-stone-600">moderní vegetariánské menu</div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Main Content Area */}
-      <div className="container max-w-6xl mx-auto px-4 py-16">
-        {/* Section 1: 3 Standard Commercial Packages */}
-        <section id="balicky" className="mb-20">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <span className="text-xs font-bold text-[#4A7C59] uppercase tracking-wider block mb-2">
-              Standardní Nabídka
-            </span>
-            <h2 className="text-3xl font-extrabold text-[#1C2826] font-serif">
-              3 Pevné Cateringové Balíčky
+      {/* ── 4. INTERACTIVE B2B CALCULATOR & FORM + STICKY CARD ────── */}
+      <section id="kalkulacka" className="py-14 lg:py-20 bg-[#F4F1EA]/60 scroll-mt-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          {/* Section Header */}
+          <div className="max-w-2xl mb-8">
+            <h2 className="font-serif text-[38px] sm:text-[46px] font-semibold tracking-[-0.025em] leading-tight text-[#171d19]">
+              Spočítejte si svou akci
             </h2>
-            <p className="text-sm text-[#5A685D] mt-2">
-              Jasně definované složení menu i cena za osoba. Žádné skryté poplatky.
+            <p className="text-stone-600 mt-2 text-[17px]">
+              Získejte orientační kalkulaci online za 60 sekund.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {CATERING_PACKAGES.map((pkg) => (
-              <div
-                key={pkg.id}
-                onClick={() => handleSelectPackage(pkg.id)}
-                className={`bg-white rounded-3xl p-7 border transition-all cursor-pointer shadow-sm relative flex flex-col justify-between ${
-                  selectedPkgId === pkg.id
-                    ? "border-[#4A7C59] ring-2 ring-[#4A7C59]/30 shadow-md"
-                    : "border-gray-200 hover:border-gray-300"
-                }`}
-              >
-                {pkg.badge && (
-                  <div className="absolute -top-3.5 right-6 bg-amber-400 text-slate-900 text-[10px] font-black uppercase px-3 py-1 rounded-full shadow-xs">
-                    {pkg.badge}
-                  </div>
-                )}
-
-                {/* Real Food Image Thumbnail */}
-                <div className="relative h-44 -mx-2 -mt-2 mb-5 rounded-2xl overflow-hidden border border-emerald-950/10 shadow-xs">
-                  <img
-                    src={pkg.image}
-                    alt={pkg.imageAlt}
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                    loading="lazy"
-                  />
-                  <span className="absolute bottom-2.5 left-2.5 bg-black/60 backdrop-blur-xs text-white text-[10px] font-medium px-2 py-0.5 rounded-md">
-                    Foto z realizace
-                  </span>
-                </div>
-
-                <div>
-                  <span className="text-xs font-bold text-[#4A7C59] uppercase tracking-wider block mb-1">
-                    {pkg.tagline}
-                  </span>
-                  <h3 className="text-2xl font-extrabold text-[#1C2826] font-serif mb-2">
-                    {pkg.name}
-                  </h3>
-                  <p className="text-xs text-[#5A685D] leading-relaxed mb-6">
-                    {pkg.description}
-                  </p>
-
-                  {/* Price Banner */}
-                  <div className="bg-[#F4F7F4] rounded-2xl p-4 mb-6 border border-emerald-100/60">
-                    <span className="text-xs text-[#7A887D] block mb-0.5">Základní cena</span>
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-3xl font-black text-[#1C2826]">{pkg.pricePerPerson} Kč</span>
-                      <span className="text-xs text-gray-500 font-medium">/ osoba</span>
-                    </div>
-                    <span className="text-[11px] text-[#4A7C59] font-semibold block mt-1">
-                      {pkg.maxGuests ? `Rozsah ${pkg.minGuests}–${pkg.maxGuests} osob` : `Minimálně ${pkg.minGuests} osob`}
-                    </span>
-                  </div>
-
-                  {/* Features checklist */}
-                  <div className="space-y-3 mb-6">
-                    {pkg.features.map((feat, i) => (
-                      <div key={i} className="flex items-start gap-2.5 text-xs text-[#3C4A3E]">
-                        <Check className="w-4 h-4 text-[#4A7C59] flex-shrink-0 mt-0.5" />
-                        <span>{feat}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => {
-                    handleSelectPackage(pkg.id);
-                    handleApplyCalculatorToForm();
-                  }}
-                  className={`w-full py-3 rounded-xl font-bold text-xs transition-all text-center flex items-center justify-center gap-1.5 ${
-                    selectedPkgId === pkg.id
-                      ? "bg-[#4A7C59] text-white shadow-sm"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-                >
-                  <span>Vybrat tento balíček</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
+          {/* If form already successfully submitted, show rich confirmation */}
+          {submissionSuccess ? (
+            <div className="bg-white rounded-3xl p-8 lg:p-12 shadow-xl border border-emerald-200 max-w-3xl mx-auto text-center space-y-6">
+              <div className="w-20 h-20 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto shadow-inner">
+                <CheckCircle2 className="w-10 h-10 stroke-[2.5]" />
               </div>
-            ))}
-          </div>
-        </section>
 
-        {/* Section: Autorská Galerie & Skutečné Realizace Šéfkuchaře Matouše */}
-        <section id="galerie" className="mb-20">
-          <div className="text-center max-w-2xl mx-auto mb-10">
-            <div className="inline-flex items-center gap-2 bg-emerald-100/60 text-[#4A7C59] px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
-              <Camera className="w-3.5 h-3.5" />
-              <span>Portfolio & Realizace</span>
-            </div>
-            <h2 className="text-3xl font-extrabold text-[#1C2826] font-serif">
-              Autorská tvorba šéfkuchaře Matouše
-            </h2>
-            <p className="text-sm text-[#5A685D] mt-2">
-              Podívejte se na reálné pokrmy, rauty a servírování z našich bezmasých cateringů a degustací. Další inspiraci a zákulisí tvorby najdete také na Instagramu{" "}
-              <a
-                href="https://www.instagram.com/matt_tej_chef/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 font-bold text-[#4A7C59] hover:underline"
-              >
-                <Instagram className="w-3.5 h-3.5 text-pink-600 inline" />
-                @matt_tej_chef
-              </a>.
-            </p>
+              <div className="space-y-2">
+                <span className="inline-block px-3.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold tracking-wider uppercase border border-emerald-200">
+                  Poptávka úspěšně přijata
+                </span>
+                <h3 className="font-serif text-3xl font-bold text-stone-900">
+                  Děkujeme za poptávku, {contactPerson}!
+                </h3>
+                <p className="text-stone-600 text-sm max-w-lg mx-auto">
+                  Váš požadavek jsme zaevidovali. Do 24 hodin ověříme kapacitu šéfkuchaře Matouše a pošleme vám detailní položkový rozpočet.
+                </p>
+              </div>
 
-            {/* Filter Buttons */}
-            <div className="flex flex-wrap items-center justify-center gap-2 mt-6">
-              {GALLERY_CATEGORIES.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setActiveCategory(cat.id)}
-                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                    activeCategory === cat.id
-                      ? "bg-[#4A7C59] text-white shadow-sm"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Gallery Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredGalleryItems.map((item) => (
-              <div
-                key={item.id}
-                onClick={() => setLightboxItem(item)}
-                className="group bg-white rounded-3xl overflow-hidden border border-gray-200/80 shadow-xs hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col"
-              >
-                <div className="relative h-60 overflow-hidden bg-gray-100">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    loading="lazy"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-xs text-[#1C2826] font-bold text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full shadow-xs">
-                    {item.categoryLabel}
-                  </div>
-                  <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <span className="bg-white/95 text-gray-900 text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-md">
-                      <Eye className="w-3.5 h-3.5" />
-                      <span>Zvětšit detail</span>
-                    </span>
-                  </div>
+              {/* Lead Code Card */}
+              <div className="bg-stone-50 border border-stone-200 rounded-2xl p-4 max-w-md mx-auto">
+                <div className="text-xs text-stone-500 font-medium">Kód vaší poptávky</div>
+                <div className="font-mono text-xl font-bold text-emerald-900 tracking-wider mt-1">
+                  #{leadCode}
                 </div>
-                <div className="p-5 flex flex-col flex-1 justify-between">
-                  <div>
-                    <h3 className="text-base font-bold text-gray-900 group-hover:text-[#4A7C59] transition-colors leading-snug mb-1 font-serif">
-                      {item.title}
-                    </h3>
-                    <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">
-                      {item.description}
-                    </p>
-                  </div>
-                  <span className="text-[11px] font-semibold text-[#4A7C59] mt-3 inline-flex items-center gap-1">
-                    ✨ Matouš × BezmasáJídla.cz
+              </div>
+
+              {/* Summary Table */}
+              <div className="bg-[#FAF8F5] rounded-2xl p-6 text-left border border-stone-200 text-sm space-y-3 max-w-lg mx-auto">
+                <div className="flex justify-between border-b border-stone-200 pb-2">
+                  <span className="text-stone-500">Společnost:</span>
+                  <span className="font-semibold text-stone-900">{companyName || "neuvedeno"}</span>
+                </div>
+                <div className="flex justify-between border-b border-stone-200 pb-2">
+                  <span className="text-stone-500">Typ akce:</span>
+                  <span className="font-semibold text-stone-900">{selectedEventLabel}</span>
+                </div>
+                <div className="flex justify-between border-b border-stone-200 pb-2">
+                  <span className="text-stone-500">Počet hostů:</span>
+                  <span className="font-semibold text-stone-900">{guestCount} osob</span>
+                </div>
+                <div className="flex justify-between border-b border-stone-200 pb-2">
+                  <span className="text-stone-500">Termín a čas:</span>
+                  <span className="font-semibold text-stone-900">
+                    {eventDate || "Dle dohody"} ({eventTime})
+                  </span>
+                </div>
+                <div className="flex justify-between pt-1">
+                  <span className="text-stone-500">Orientační odhad rozpočtu:</span>
+                  <span className="font-bold text-emerald-800">
+                    {estimatedTotal
+                      ? `${estimatedTotal.toLocaleString("cs-CZ")} Kč bez DPH`
+                      : "Individuální kalkulace"}
                   </span>
                 </div>
               </div>
-            ))}
-          </div>
 
-          {/* Lightbox Modal */}
-          {lightboxItem && (
-            <div
-              onClick={() => setLightboxItem(null)}
-              className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
-            >
-              <div
-                onClick={(e) => e.stopPropagation()}
-                className="bg-white rounded-3xl overflow-hidden max-w-3xl w-full shadow-2xl border border-white/20 relative"
-              >
+              {/* Next Steps */}
+              <div className="text-left max-w-lg mx-auto bg-emerald-50/70 border border-emerald-200/70 rounded-2xl p-5 space-y-2 text-xs text-emerald-950">
+                <div className="font-bold text-sm text-emerald-900 flex items-center gap-1.5">
+                  <Clock className="w-4 h-4 text-emerald-700" />
+                  <span>Co se bude dít dál:</span>
+                </div>
+                <ul className="list-disc list-inside space-y-1 text-stone-700">
+                  <li>Do 24 hodin ověříme kapacitu pro váš termín.</li>
+                  <li>Připravíme konkrétní návrh menu a cenovou nabídku.</li>
+                  {mailStatus === "sent" ? (
+                    <li>Souhrn poptávky jsme poslali na <strong>{email}</strong>.</li>
+                  ) : (
+                    <li>Poptávka je bezpečně uložená. E-mailové potvrzení zatím nebylo odesláno.</li>
+                  )}
+                </ul>
+              </div>
+
+              <div className="pt-2">
                 <button
-                  onClick={() => setLightboxItem(null)}
-                  className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black transition-colors"
-                  aria-label="Zavřít"
+                  onClick={() => setSubmissionSuccess(false)}
+                  className="px-6 py-2.5 rounded-xl border border-stone-300 text-stone-600 hover:text-stone-900 text-sm font-semibold"
                 >
-                  <X className="w-5 h-5" />
+                  Zadat další poptávku
                 </button>
-                <div className="max-h-[65vh] overflow-hidden bg-black flex items-center justify-center">
-                  <img
-                    src={lightboxItem.image}
-                    alt={lightboxItem.title}
-                    className="w-full h-auto max-h-[65vh] object-contain"
-                  />
-                </div>
-                <div className="p-6">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="bg-emerald-100 text-[#4A7C59] text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
-                      {lightboxItem.categoryLabel}
-                    </span>
-                    <span className="text-xs text-gray-400">Autorská tvorba šéfkuchaře Matouše</span>
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 font-serif">
-                    {lightboxItem.title}
-                  </h3>
-                  <p className="text-sm text-gray-600 leading-relaxed mb-4">
-                    {lightboxItem.description}
-                  </p>
-                  <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
-                    <span className="text-xs text-gray-500">Máte zájem o tento chod na vaší akci?</span>
-                    <a
-                      href="#kalkulacka"
-                      onClick={() => setLightboxItem(null)}
-                      className="px-4 py-2 bg-[#4A7C59] hover:bg-[#3D6649] text-white text-xs font-bold rounded-xl transition-all inline-flex items-center gap-1.5"
-                    >
-                      <span>Přejít ke kalkulaci</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </a>
-                  </div>
-                </div>
               </div>
             </div>
-          )}
-        </section>
-
-        {/* Section 2: Interactive Real-Time Price Calculator */}
-        <section id="kalkulacka" className="mb-20 bg-gradient-to-br from-[#1C352D] to-[#25463B] rounded-3xl p-8 sm:p-12 text-white shadow-xl">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-10">
-              <div className="inline-flex items-center gap-2 bg-white/10 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-amber-300 mb-3 border border-white/10">
-                <Calculator className="w-4 h-4 text-amber-300" />
-                <span>Interaktivní Výpočet Ceny</span>
-              </div>
-              <h2 className="text-3xl sm:text-4xl font-extrabold font-serif mb-2">
-                Kalkulačka Ceny Cateringu
-              </h2>
-              <p className="text-sm text-emerald-100/80">
-                Spočítejte si orientační cenu pro vaši akci. Při akcích nad 50 osob připravujeme individuální rozpočet.
-              </p>
-            </div>
-
+          ) : (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-              {/* Left Configuration Inputs (7 cols) */}
-              <div className="lg:col-span-7 space-y-6 bg-white/5 p-6 rounded-2xl border border-white/10">
-                {/* Step A: Package Select */}
-                <div>
-                  <span className="block text-xs font-bold uppercase tracking-wider text-amber-300 mb-2">
-                    1. Vyberte Balíček
-                  </span>
-                  <div className="grid grid-cols-3 gap-2">
-                    {CATERING_PACKAGES.map((p) => (
-                      <button
-                        key={p.id}
-                        onClick={() => handleSelectPackage(p.id)}
-                        className={`p-3 rounded-xl text-left border transition-all ${
-                          selectedPkgId === p.id
-                            ? "bg-amber-400 text-slate-900 border-amber-300 font-bold shadow-md"
-                            : "bg-white/10 text-white border-white/15 hover:bg-white/15"
-                        }`}
-                      >
-                        <span className="text-xs font-extrabold block truncate">{p.name}</span>
-                        <span className="text-[10px] opacity-80">{p.pricePerPerson} Kč / os.</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Step B: Guest Count Slider */}
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label htmlFor={guestCountInputId} className="text-xs font-bold uppercase tracking-wider text-amber-300">
-                      2. Počet Osob (Hostů)
-                    </label>
-                    <span className="text-lg font-black text-amber-400 bg-black/30 px-3 py-0.5 rounded-lg border border-amber-400/30">
-                      {guestCount} osob
-                    </span>
-                  </div>
-                  <input
-                    id={guestCountInputId}
-                    type="range"
-                    min={activePackage.minGuests}
-                    max={activePackage.maxGuests || 150}
-                    step={1}
-                    value={guestCount}
-                    onChange={(e) => handleGuestCountChange(parseInt(e.target.value) || activePackage.minGuests)}
-                    className="w-full h-2 bg-emerald-950 rounded-lg appearance-none cursor-pointer accent-amber-400"
-                  />
-                  <div className="flex justify-between text-[10px] text-emerald-200/60 mt-1">
-                    <span>Min {activePackage.minGuests} osob</span>
-                    {guestCount >= 50 && <span className="text-amber-300 font-bold">✨ 50+ hostů: Individuální kalkulace</span>}
-                    <span>Max {activePackage.maxGuests || 150} osob</span>
-                  </div>
-                </div>
-
-                {/* Step C: Add-ons checkboxes */}
-                <div className="space-y-3 pt-2">
-                  <span className="block text-xs font-bold uppercase tracking-wider text-amber-300">
-                    3. Volitelné Doplňky
-                  </span>
-
-                  <label className="flex items-center justify-between p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 cursor-pointer transition-colors">
+              
+              {/* ── Left Column: 3 Clean Form Steps (7 Cols) ────────── */}
+              <div className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-stone-200/80 space-y-8">
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  
+                  {/* Step 1: O akci */}
+                  <div className="space-y-5">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 border border-amber-300/30">
-                        <img
-                          src="/images/catering/matous-signature-letni-drink.jpg"
-                          alt="Signature letní drink šéfkuchaře Matouše"
-                          className="w-full h-full object-cover"
+                      <div className="w-7 h-7 rounded-full bg-stone-900 text-white font-bold text-xs flex items-center justify-center">
+                        1
+                      </div>
+                      <h3 className="font-bold text-lg text-stone-900">O akci</h3>
+                    </div>
+
+                    {/* Typ akce pills */}
+                    <div className="space-y-2">
+                      <label className="block text-xs font-semibold text-stone-600">
+                        Typ akce
+                      </label>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        {EVENT_TYPES.map(type => (
+                          <button
+                            key={type.id}
+                            type="button"
+                            onClick={() => {
+                              handleFormInteraction();
+                              setEventType(type.id);
+                            }}
+                            className={`py-2.5 px-3 rounded-xl text-xs font-semibold border transition-all text-center ${
+                              eventType === type.id
+                                ? "bg-stone-900 border-stone-900 text-white shadow-sm"
+                                : "bg-stone-50 border-stone-200 text-stone-700 hover:bg-stone-100"
+                            }`}
+                          >
+                            {type.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Počet hostů stepper & slider */}
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <label className="text-xs font-semibold text-stone-600">
+                          Počet hostů
+                        </label>
+                        <span className="text-xs text-stone-500 font-medium">
+                          Signature model: 12 až 80 osob
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => handleGuestCountChange(-5)}
+                          className="w-11 h-11 rounded-xl border border-stone-200 bg-stone-50 text-stone-800 hover:bg-stone-100 font-bold text-lg flex items-center justify-center transition-colors"
+                        >
+                          −
+                        </button>
+                        <div className="flex-1 text-center py-2.5 bg-stone-50 border border-stone-200 rounded-xl font-bold text-stone-900 text-base">
+                          {guestCount} hostů
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleGuestCountChange(5)}
+                          className="w-11 h-11 rounded-xl border border-stone-200 bg-stone-50 text-stone-800 hover:bg-stone-100 font-bold text-lg flex items-center justify-center transition-colors"
+                        >
+                          +
+                        </button>
+                      </div>
+
+                      {/* Range slider for smooth adjustment */}
+                      <input
+                        type="range"
+                        min="12"
+                        max="120"
+                        step="1"
+                        value={guestCount}
+                        onChange={e => {
+                          handleFormInteraction();
+                          setGuestCount(Number(e.target.value));
+                        }}
+                        className="w-full accent-amber-500 cursor-pointer"
+                      />
+
+                      {guestCount > MAX_SIGNATURE_GUESTS && (
+                        <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 flex items-start gap-2">
+                          <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                          <span>
+                            Pro akce nad 80 hostů sestavujeme individuální produkční plán, personální zajištění a kalkulaci na míru.
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Datum & Čas */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-stone-600 mb-1.5">
+                          Datum akce
+                        </label>
+                        <div className="relative">
+                          <input
+                            type="date"
+                            value={eventDate}
+                            onChange={e => {
+                              handleFormInteraction();
+                              setEventDate(e.target.value);
+                            }}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-stone-600 mb-1.5">
+                          Čas
+                        </label>
+                        <div className="relative">
+                          <Clock className="w-4 h-4 text-stone-400 absolute left-3.5 top-3.5" />
+                          <input
+                            type="text"
+                            value={eventTime}
+                            onChange={e => {
+                              handleFormInteraction();
+                              setEventTime(e.target.value);
+                            }}
+                            placeholder="Např. 16:00 – 20:00"
+                            className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Místo konání & Typ prostoru */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-stone-600 mb-1.5">
+                          Místo konání
+                        </label>
+                        <div className="relative">
+                          <MapPin className="w-4 h-4 text-stone-400 absolute left-3.5 top-3.5" />
+                          <input
+                            type="text"
+                            value={location}
+                            onChange={e => {
+                              handleFormInteraction();
+                              setLocation(e.target.value);
+                            }}
+                            placeholder="Např. Praha 8 / Karlín / V sídle firmy"
+                            className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-stone-600 mb-1.5">
+                          Typ prostoru
+                        </label>
+                        <select
+                          value={venueType}
+                          onChange={e => {
+                            handleFormInteraction();
+                            setVenueType(e.target.value);
+                          }}
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all"
+                        >
+                          {VENUE_TYPES.map(vt => (
+                            <option key={vt} value={vt}>
+                              {vt}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Step 2: Firma a kontakt */}
+                  <div className="space-y-4 pt-4 border-t border-stone-200">
+                    <div className="flex items-center gap-3">
+                      <div className="w-7 h-7 rounded-full bg-stone-900 text-white font-bold text-xs flex items-center justify-center">
+                        2
+                      </div>
+                      <h3 className="font-bold text-lg text-stone-900">Firma a kontakt</h3>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-stone-600 mb-1.5">
+                          Název firmy <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={companyName}
+                          onChange={e => {
+                            handleFormInteraction();
+                            setCompanyName(e.target.value);
+                          }}
+                          placeholder="Vaše firma s.r.o."
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all"
                         />
                       </div>
                       <div>
-                        <span className="text-xs font-semibold block">Signature Nealko Bar</span>
-                        <span className="text-[10px] text-emerald-200/70">Domácí mošty, kombuchy & limonády (+150 Kč/os)</span>
+                        <label className="block text-xs font-semibold text-stone-600 mb-1.5">
+                          IČO (volitelné)
+                        </label>
+                        <input
+                          type="text"
+                          value={ico}
+                          onChange={e => {
+                            handleFormInteraction();
+                            setIco(e.target.value);
+                          }}
+                          placeholder="12345678"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all"
+                        />
                       </div>
                     </div>
-                    <input
-                      type="checkbox"
-                      checked={includeDrinks}
-                      onChange={(e) => setIncludeDrinks(e.target.checked)}
-                      className="w-4 h-4 rounded text-amber-400 focus:ring-amber-400 accent-amber-400"
-                    />
-                  </label>
 
-                  <label className="flex items-center justify-between p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 cursor-pointer transition-colors">
-                    <div className="flex items-center gap-3">
-                      <GlassWater className="w-4 h-4 text-amber-300" />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <span className="text-xs font-semibold block">Zapůjčení Skla & Porcelánu</span>
-                        <span className="text-[10px] text-emerald-200/70">Designový inventář vč. debarasu (+80 Kč/os)</span>
+                        <label className="block text-xs font-semibold text-stone-600 mb-1.5">
+                          Kontaktní osoba <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={contactPerson}
+                          onChange={e => {
+                            handleFormInteraction();
+                            setContactPerson(e.target.value);
+                          }}
+                          placeholder="Jan Novák"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all"
+                        />
                       </div>
-                    </div>
-                    <input
-                      type="checkbox"
-                      checked={includeGlassware}
-                      onChange={(e) => setIncludeGlassware(e.target.checked)}
-                      className="w-4 h-4 rounded text-amber-400 focus:ring-amber-400 accent-amber-400"
-                    />
-                  </label>
-
-                  <label className="flex items-center justify-between p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 cursor-pointer transition-colors">
-                    <div className="flex items-center gap-3">
-                      <ChefHat className="w-4 h-4 text-amber-300" />
                       <div>
-                        <span className="text-xs font-semibold block">Obsluha Na Místě</span>
-                        <span className="text-[10px] text-emerald-200/70">Základní obsluha od 3 500 Kč (potvrdíme dle rozsahu)</span>
+                        <label className="block text-xs font-semibold text-stone-600 mb-1.5">
+                          Pracovní e-mail <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="email"
+                          required
+                          value={email}
+                          onChange={e => {
+                            handleFormInteraction();
+                            setEmail(e.target.value);
+                          }}
+                          placeholder="jan.novak@firma.cz"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all"
+                        />
                       </div>
                     </div>
-                    <input
-                      type="checkbox"
-                      checked={includeStaff}
-                      onChange={(e) => setIncludeStaff(e.target.checked)}
-                      className="w-4 h-4 rounded text-amber-400 focus:ring-amber-400 accent-amber-400"
-                    />
-                  </label>
-                </div>
-              </div>
 
-              {/* Right Calculated Total Result Card (5 cols) */}
-              <div className="lg:col-span-5 bg-white text-slate-900 rounded-2xl p-6 shadow-2xl border-4 border-amber-400/40">
-                <span className="text-xs font-bold text-[#4A7C59] uppercase tracking-wider block mb-1">
-                  Kalkulovaná Odhadní Cena
-                </span>
-                <h3 className="text-xl font-bold text-[#1C2826] mb-4">
-                  {activePackage.name}
-                </h3>
+                    <div>
+                      <label className="block text-xs font-semibold text-stone-600 mb-1.5">
+                        Telefon <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="tel"
+                          required
+                          value={phone}
+                          onChange={e => {
+                            handleFormInteraction();
+                            setPhone(e.target.value);
+                          }}
+                          placeholder="+420 XXX XXX XXX"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all"
+                        />
+                      </div>
+                    </div>
+                  </div>
 
-                <div className="space-y-2 border-t border-b border-gray-100 py-4 mb-4 text-xs">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Počet hostů:</span>
-                    <span className="font-bold text-gray-900">{guestCount} osob</span>
+                  {/* Step 3: Diety a doplňky */}
+                  <div className="space-y-4 pt-4 border-t border-stone-200">
+                    <div className="flex items-center gap-3">
+                      <div className="w-7 h-7 rounded-full bg-stone-900 text-white font-bold text-xs flex items-center justify-center">
+                        3
+                      </div>
+                      <h3 className="font-bold text-lg text-stone-900">Diety a doplňky</h3>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-stone-600 mb-1.5">
+                        Diety / alergie v týmu (volitelné)
+                      </label>
+                      <input
+                        type="text"
+                        value={dietNotes}
+                        onChange={e => {
+                          handleFormInteraction();
+                          setDietNotes(e.target.value);
+                        }}
+                        placeholder="Např. 3× bez lepku, 2× bez ořechů, 1× celiakie..."
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all"
+                      />
+                    </div>
+
+                    <div className="space-y-2.5 pt-1">
+                      <div className="text-xs font-semibold text-stone-600">
+                        Volitelné prémiové doplňky:
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <label className="flex items-center gap-2.5 p-3 rounded-xl border border-stone-200 bg-stone-50/50 hover:bg-stone-50 cursor-pointer text-xs font-medium text-stone-800 transition-colors">
+                          <input
+                            type="checkbox"
+                            checked={addonTasting}
+                            onChange={e => {
+                              handleFormInteraction();
+                              setAddonTasting(e.target.checked);
+                            }}
+                            className="rounded text-amber-500 focus:ring-amber-400 w-4 h-4"
+                          />
+                          <span>Degustace před akcí</span>
+                        </label>
+
+                        <label className="flex items-center gap-2.5 p-3 rounded-xl border border-stone-200 bg-stone-50/50 hover:bg-stone-50 cursor-pointer text-xs font-medium text-stone-800 transition-colors">
+                          <input
+                            type="checkbox"
+                            checked={addonWine}
+                            onChange={e => {
+                              handleFormInteraction();
+                              setAddonWine(e.target.checked);
+                            }}
+                            className="rounded text-amber-500 focus:ring-amber-400 w-4 h-4"
+                          />
+                          <span>Víno / alkohol</span>
+                        </label>
+
+                        <label className="flex items-center gap-2.5 p-3 rounded-xl border border-stone-200 bg-stone-50/50 hover:bg-stone-50 cursor-pointer text-xs font-medium text-stone-800 transition-colors">
+                          <input
+                            type="checkbox"
+                            checked={addonLateService}
+                            onChange={e => {
+                              handleFormInteraction();
+                              setAddonLateService(e.target.checked);
+                            }}
+                            className="rounded text-amber-500 focus:ring-amber-400 w-4 h-4"
+                          />
+                          <span>Servis po 23:00</span>
+                        </label>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Základní cena:</span>
-                    <span className="font-bold text-gray-900">{basePricePerPerson} Kč / os.</span>
-                  </div>
-                  {includeDrinks && (
-                    <div className="flex justify-between text-emerald-700">
-                      <span>+ Signature Nealko Bar:</span>
-                      <span className="font-bold">+150 Kč / os.</span>
+
+                  {serverError && (
+                    <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl text-xs text-red-800 font-medium">
+                      {serverError}
                     </div>
                   )}
-                  {includeGlassware && (
-                    <div className="flex justify-between text-emerald-700">
-                      <span>+ Sklo & Porcelán:</span>
-                      <span className="font-bold">+80 Kč / os.</span>
+
+                  {/* Submit Button */}
+                  <div className="space-y-3 pt-2">
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-300 hover:to-amber-500 text-stone-950 font-bold text-base shadow-xl shadow-amber-900/10 hover:shadow-amber-500/25 transition-all transform active:scale-98 flex items-center justify-center gap-2.5 disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                      <Send className="w-5 h-5 text-stone-900" />
+                      <span>{isSubmitting ? "Odesílám poptávku..." : "ODESLAT POPTÁVKU →"}</span>
+                    </button>
+                    <p className="text-center text-xs text-stone-500 leading-normal">
+                      Nejde o rezervaci termínu. Do 24 hodin ověříme volnou kapacitu a pošleme vám položkový rozpočet.
+                    </p>
+                  </div>
+                </form>
+              </div>
+
+              {/* ── Right Column: Sticky Live Summary Card (5 Cols) ─── */}
+              <div className="lg:col-span-5 lg:sticky lg:top-24">
+                <div className="bg-white rounded-3xl overflow-hidden shadow-xl border border-stone-200/90 divide-y divide-stone-100">
+                  
+                  {/* Card Header with Canapés Image Thumbnail */}
+                  <div className="relative bg-[#0F261E] text-white p-5">
+                    <div className="flex items-center justify-between z-10 relative">
+                      <div>
+                        <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-amber-400 block">
+                          MATOUŠ SIGNATURE
+                        </span>
+                        <h4 className="font-serif text-xl font-bold text-white mt-0.5">
+                          {selectedEventLabel}
+                        </h4>
+                      </div>
+                      <div className="w-16 h-16 rounded-xl overflow-hidden border border-amber-400/40 shrink-0 shadow-md">
+                        <img
+                          src="/images/catering/matous-cateringovy-raut-kanapky.jpg"
+                          alt="Matouš kanapky"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
                     </div>
-                  )}
-                  {includeStaff && (
-                    <div className="flex justify-between text-purple-700">
-                      <span>+ Obsluha na místě:</span>
-                      <span className="font-bold">od +3 500 Kč</span>
+                  </div>
+
+                  {/* Dynamic Parameters Summary */}
+                  <div className="p-5 space-y-2.5 text-xs text-stone-700 bg-[#FAF8F5]">
+                    <div className="flex items-center gap-2.5">
+                      <Users className="w-4 h-4 text-emerald-700 shrink-0" />
+                      <span className="font-medium">
+                        <strong>{guestCount}</strong> hostů
+                      </span>
                     </div>
-                  )}
-                </div>
-
-                {/* Final Total Display */}
-                <div className="mb-6">
-                  <span className="text-xs text-gray-500 block">Celková orientační cena akce:</span>
-                  <div className="text-4xl font-black text-[#4A7C59] tracking-tight">
-                    {estimatedTotal.toLocaleString("cs-CZ")} Kč
-                  </div>
-                  <span className="text-xs text-gray-400">
-                    ({calculatedPerPerson} Kč / osoba vč. vybraných doplňků)
-                  </span>
-                </div>
-
-                <button
-                  onClick={handleApplyCalculatorToForm}
-                  className="w-full py-4 bg-[#4A7C59] hover:bg-[#3D6649] text-white font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-sm"
-                >
-                  <Send className="w-4 h-4" />
-                  <span>Poptat Tuto Akci</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Section 3: Catering Inquiry Form with Lead Tracking */}
-        <section id="poptavka" className="bg-white rounded-3xl border border-gray-200 p-8 sm:p-12 shadow-sm">
-          <div className="max-w-3xl mx-auto">
-            <div className="text-center mb-8">
-              <span className="text-xs font-bold text-[#4A7C59] uppercase tracking-wider block mb-2">
-                Nezávazná poptávka
-              </span>
-              <h2 className="text-3xl font-extrabold text-[#1C2826] font-serif mb-2">
-                Připraveni na Chuťový Zážitek?
-              </h2>
-              <p className="text-sm text-[#5A685D]">
-                Vyplňte kontaktní údaje a my vám do 24 hodin zašleme přesné potvrzení termínu a finální rozpočet.
-              </p>
-            </div>
-
-            {/* Selected summary banner */}
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 mb-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-[#4A7C59]" />
-                <div>
-                  <span className="font-bold text-[#1C2826]">Vybraný balíček: {activePackage.name}</span>
-                  <span className="text-[#5A685D] block">Počet osob: {guestCount} | Kalkulováno: {estimatedTotal.toLocaleString("cs-CZ")} Kč</span>
-                </div>
-              </div>
-              <span className="bg-[#4A7C59] text-white font-bold px-3 py-1 rounded-full text-[10px]">
-                Nezávazná rezervace
-              </span>
-            </div>
-
-            {serverError && (
-              <div className="bg-red-50 border border-red-200 text-red-700 text-xs p-4 rounded-xl mb-6">
-                <strong>Chyba:</strong> {serverError}
-              </div>
-            )}
-
-            {formSubmitted ? (
-              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-8 text-center">
-                <CheckCircle2 className="w-12 h-12 text-[#4A7C59] mx-auto mb-3" />
-                <h3 className="text-xl font-bold text-[#1C2826] mb-2">Poptávka byla úspěšně odeslána!</h3>
-                <p className="text-sm text-[#5A685D]">
-                  Děkujeme. Šéfkuchař Matouš a náš tým se vám ozvou zpět na e-mail <strong>{formData.email}</strong> do 24 hodin s finálním potvrzením termínu a rozpočtu.
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Honeypot Anti-Bot Field */}
-                <input
-                  type="text"
-                  name="website_hp"
-                  value={formData.website_hp}
-                  onChange={(e) => setFormData({ ...formData, website_hp: e.target.value })}
-                  style={{ display: "none" }}
-                  tabIndex={-1}
-                  autoComplete="off"
-                />
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-[#2C352E] uppercase mb-1">
-                      Jméno a příjmení / Firma *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Jan Novák / Název firmy"
-                      value={formData.name}
-                      onFocus={handleFormFocus}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#4A7C59] focus:outline-none text-sm"
-                    />
+                    <div className="flex items-center gap-2.5">
+                      <Calendar className="w-4 h-4 text-emerald-700 shrink-0" />
+                      <span>{eventDate ? new Date(eventDate).toLocaleDateString("cs-CZ") : "Termín dle dohody"}</span>
+                    </div>
+                    <div className="flex items-center gap-2.5">
+                      <MapPin className="w-4 h-4 text-emerald-700 shrink-0" />
+                      <span>{location || "Praha a okolí"}</span>
+                    </div>
+                    <div className="flex items-center gap-2.5">
+                      <Clock className="w-4 h-4 text-emerald-700 shrink-0" />
+                      <span>{eventTime || "Čas dle dohody"}</span>
+                    </div>
+                    <div className="flex items-center gap-2.5">
+                      <Building2 className="w-4 h-4 text-emerald-700 shrink-0" />
+                      <span className="truncate">{venueType}</span>
+                    </div>
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-[#2C352E] uppercase mb-1">
-                      E-mail *
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      placeholder="jan.novak@email.cz"
-                      value={formData.email}
-                      onFocus={handleFormFocus}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#4A7C59] focus:outline-none text-sm"
-                    />
+                  {/* Price Box */}
+                  <div className="p-5 bg-white space-y-1">
+                    {isIndividualCalculation ? (
+                      <div>
+                        <div className="font-serif text-2xl font-bold text-stone-900">
+                          Individuální rozpočet
+                        </div>
+                        <div className="text-xs text-stone-500 mt-1">
+                          Nad 80 hostů připravujeme velkokapacitní kalkulaci na klíč.
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="flex items-baseline justify-between">
+                          <div className="font-serif text-2xl sm:text-3xl font-bold text-stone-900">
+                            1 190 Kč{" "}
+                            <span className="text-xs font-sans font-normal text-stone-500">
+                              / osoba
+                            </span>
+                          </div>
+                        </div>
+                        <div className="text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100 inline-block mt-1.5">
+                          Orientačně:{" "}
+                          <span className="font-bold text-emerald-900">
+                            {estimatedTotal?.toLocaleString("cs-CZ")} Kč bez DPH
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-[#2C352E] uppercase mb-1">
-                      Telefon *
-                    </label>
-                    <input
-                      type="tel"
-                      required
-                      placeholder="+420 777 123 456"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#4A7C59] focus:outline-none text-sm"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-[#2C352E] uppercase mb-1">
-                      Datum Akce
-                    </label>
-                    <input
-                      type="date"
-                      value={formData.date}
-                      onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#4A7C59] focus:outline-none text-sm"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-[#2C352E] uppercase mb-1">
-                    Poznámka / Místo konání / Diety
-                  </label>
-                  <textarea
-                    rows={3}
-                    placeholder="Místo konání akce v Praze, alergie, speciální přání..."
-                    value={formData.notes}
-                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#4A7C59] focus:outline-none text-sm"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full py-4 bg-[#4A7C59] hover:bg-[#3D6649] text-white font-bold rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 text-base disabled:opacity-50"
-                >
-                  <Send className="w-5 h-5" />
-                  <span>{isSubmitting ? "Odesílám..." : "Odeslat Nezávaznou Poptávku Akce"}</span>
-                </button>
-              </form>
-            )}
-
-            {/* Direct Contact Footer */}
-            <div className="mt-8 pt-8 border-t border-gray-100 text-center flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-[#5A685D]">
-              <a href="tel:+420734123456" className="flex items-center gap-2 hover:text-[#4A7C59] font-medium">
-                <Phone className="w-4 h-4 text-[#4A7C59]" />
-                <span>+420 734 123 456</span>
-              </a>
-              <a href="mailto:catering@bezmasajidla.cz" className="flex items-center gap-2 hover:text-[#4A7C59] font-medium">
-                <Mail className="w-4 h-4 text-[#4A7C59]" />
-                <span>catering@bezmasajidla.cz</span>
-              </a>
-            </div>
-          </div>
-        </section>
-      </div>
-
-      <Footer />
-    </div>
-  );
-}
+[executed on device: DESKTOP-ALZABOX (7e869a05-3e3d-4dd2-adbd-ebf450ac342d)]
