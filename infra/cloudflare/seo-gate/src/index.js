@@ -69,12 +69,38 @@ const EXTRA_VALID_PATHS = new Set([
   "/recepty/cockova-polevka-uzena-paprika",
   "/recepty/spenatove-palacinky-tofu-ricottou",
   "/",
+  "/restaurace",
+  "/recepty",
+  "/mapa",
+  "/blog",
+  "/catering",
   "/o-nas",
   "/inzerce",
   "/inzerce/pridat-podnik",
   "/podminky",
   "/ochrana-soukromi",
   "/kontakt",
+  "/varianty-nakladaneho-hermelinu",
+  "/restaurace/vegetarianske-restaurace-praha",
+  "/restaurace/veganske-restaurace-praha",
+  "/restaurace/vegansky-obed-praha",
+  "/restaurace/praha/vinohrady",
+  "/restaurace/praha/karlin",
+  "/restaurace/praha/smichov",
+  "/restaurace/praha/stare-mesto",
+  "/restaurace/vegetarianske-restaurace-brno",
+  "/restaurace/veganske-restaurace-ostrava",
+  "/restaurace/bezmase-restaurace-plzen",
+  "/recepty/tofu",
+  "/recepty/cizrna",
+  "/recepty/cocka",
+  "/recepty/kvetak",
+  "/recepty/tempeh",
+  "/recepty/ceska-klasika-bez-masa",
+  "/recepty/rychle-bezmase-vecere",
+  "/recepty/bezlepkove-recepty",
+  "/tydenni-planovac-receptu",
+  "/bezmasy-warrior-vyzva",
   "/profil",
   "/admin",
   "/pridat-recept",
@@ -298,6 +324,19 @@ export default {
     if (url.pathname.length > 1 && url.pathname.endsWith("/")) {
       const target = new URL(request.url);
       target.pathname = target.pathname.replace(/\/+$/, "");
+      return Response.redirect(target.toString(), 301);
+    }
+
+    const EDGE_301_REDIRECTS = {
+      "/blog/top-10-veganskych-restauraci-praha-2025": "/blog/top-10-veganskych-restauraci-praha-2026",
+      "/blog/bezmase-budapest-veganske-restaurace-ceny": "/blog/bezmasa-budapest-veganske-restaurace-ceny",
+      "/recepty/spenatove-palacinkys-tofu-ricottou": "/recepty/spenatove-palacinky-tofu-ricottou",
+      "/recepty/spenatove-palacinky-s-tofu-ricottou": "/recepty/spenatove-palacinky-tofu-ricottou",
+      "/recepty/cockov%C3%A1-polevka-uzena-paprika": "/recepty/cockova-polevka-uzena-paprika",
+      "/recepty/cocková-polevka-uzena-paprika": "/recepty/cockova-polevka-uzena-paprika",
+    };
+    if (EDGE_301_REDIRECTS[path]) {
+      const target = new URL(EDGE_301_REDIRECTS[path], "https://www.bezmasajidla.cz");
       return Response.redirect(target.toString(), 301);
     }
 

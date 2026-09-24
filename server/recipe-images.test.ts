@@ -50,9 +50,29 @@ describe("recipe image catalog", () => {
     expect(
       catalogImages.filter(image => isUnavailableLegacyImage(image))
     ).toEqual([]);
+    const recipeImages = recipes.flatMap(recipe => recipe.images.map(image => image.url));
+    const restaurantImages = restaurants.flatMap(restaurant => [
+      restaurant.image,
+      ...(restaurant.gallery || []),
+      ...(restaurant.fastFoodItems || [])
+        .map(item => item.image)
+        .filter((image): image is string => Boolean(image)),
+    ]);
+    const blogImages = blogPosts.map(post => post.coverImage);
+
     expect(
       duplicates(
-        catalogImages.filter(image => !image.includes("/images/placeholders/"))
+        recipeImages.filter(image => !image.includes("/images/placeholders/"))
+      )
+    ).toEqual([]);
+    expect(
+      duplicates(
+        restaurantImages.filter(image => !image.includes("/images/placeholders/"))
+      )
+    ).toEqual([]);
+    expect(
+      duplicates(
+        blogImages.filter(image => !image.includes("/images/placeholders/"))
       )
     ).toEqual([]);
   });

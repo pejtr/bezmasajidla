@@ -71,6 +71,29 @@ async function startServer() {
     next();
   });
 
+  // 301 Permanent Redirects for legacy and variant URLs (Google Search Console compliance)
+  const LEGACY_301_REDIRECTS: Record<string, string> = {
+    "/blog/top-10-veganskych-restauraci-praha-2025": "/blog/top-10-veganskych-restauraci-praha-2026",
+    "/blog/bezmase-budapest-veganske-restaurace-ceny": "/blog/bezmasa-budapest-veganske-restaurace-ceny",
+    "/recepty/spenatove-palacinkys-tofu-ricottou": "/recepty/spenatove-palacinky-tofu-ricottou",
+    "/recepty/spenatove-palacinky-s-tofu-ricottou": "/recepty/spenatove-palacinky-tofu-ricottou",
+    "/recepty/cockov%C3%A1-polevka-uzena-paprika": "/recepty/cockova-polevka-uzena-paprika",
+    "/recepty/cocková-polevka-uzena-paprika": "/recepty/cockova-polevka-uzena-paprika",
+  };
+
+  app.use((req, res, next) => {
+    const rawPath = req.path;
+    let decodedPath = rawPath;
+    try {
+      decodedPath = decodeURIComponent(rawPath);
+    } catch {}
+    const target = LEGACY_301_REDIRECTS[rawPath] || LEGACY_301_REDIRECTS[decodedPath];
+    if (target) {
+      return res.redirect(301, target);
+    }
+    next();
+  });
+
   // Robots.txt Handler
   app.get("/robots.txt", (_req, res) => {
     res.header("Content-Type", "text/plain");

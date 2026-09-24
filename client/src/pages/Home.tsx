@@ -364,8 +364,13 @@ export default function Home() {
         <div className="bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-950 text-white rounded-3xl p-8 md:p-12 border border-emerald-800 shadow-xl space-y-8">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="space-y-3 max-w-2xl">
-              <div className="inline-flex items-center gap-2 bg-amber-400/20 text-amber-400 font-extrabold text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                🌿 MATOUŠ × BEZMASÁJÍDLA.CZ
+              <div className="inline-flex items-center gap-2 bg-amber-400/20 text-amber-400 font-extrabold text-xs px-3 py-1.5 rounded-full uppercase tracking-wider">
+                <img
+                  src="/images/catering/matous-chef-profil.jpg"
+                  alt="Šéfkuchař Matouš"
+                  className="w-5 h-5 rounded-full object-cover border border-amber-400"
+                />
+                <span>🌿 MATOUŠ × BEZMASÁJÍDLA.CZ</span>
               </div>
               <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: "'DM Serif Display', serif" }}>
                 Plánujete firemní akci nebo oslavu bez masa?

@@ -556,7 +556,10 @@ async function resolveMeta(url: string): Promise<SeoMeta> {
     };
   }
 
-  const staticPages: Record<string, Pick<SeoMeta, "title" | "description">> = {
+  const staticPages: Record<
+    string,
+    Pick<SeoMeta, "title" | "description"> & { image?: string }
+  > = {
     "/restaurace": {
       title: "Veganské a vegetariánské restaurace v Praze | Bezmasé jídlo",
       description:
@@ -573,9 +576,10 @@ async function resolveMeta(url: string): Promise<SeoMeta> {
         "Recepty, restaurace a ověřené průvodce bezmasým jídlem v Česku i Evropě, včetně aktuálních cen a praktických tipů.",
     },
     "/catering": {
-      title: "Vegetariánský catering Praha | Bezmasá Jídla",
+      title: "Vegetariánský catering Praha — Signature Catering by Matouš × BezmasáJídla.cz",
       description:
-        "Bezmasý catering pro firemní akce, oslavy a soukromé večeře v Praze. Prohlédněte si balíčky a orientační kalkulaci.",
+        "Autorský bezmasý catering od šéfkuchaře Matouše. Prémiový fingerfood, rauty a fine-dining menu pro firmy i soukromé akce v Praze. Spočtěte si orientační kalkulaci online.",
+      image: "https://www.bezmasajidla.cz/images/catering/matous-cateringovy-raut-kanapky.jpg",
     },
     "/o-nas": {
       title: "O projektu Bezmasá Jídla | Recepty a restaurace bez masa",
@@ -609,7 +613,7 @@ async function resolveMeta(url: string): Promise<SeoMeta> {
   if (staticMeta) {
     return {
       ...staticMeta,
-      image: DEFAULT_IMAGE,
+      image: staticMeta.image || DEFAULT_IMAGE,
       canonicalPath,
     };
   }
@@ -646,6 +650,10 @@ function injectHead(html: string, meta: SeoMeta) {
     .replace(/<meta\s+property=["']og:title["'][^>]*>\s*/gi, "")
     .replace(/<meta\s+property=["']og:description["'][^>]*>\s*/gi, "")
     .replace(/<meta\s+property=["']og:image["'][^>]*>\s*/gi, "")
+    .replace(/<meta\s+property=["']og:image:secure_url["'][^>]*>\s*/gi, "")
+    .replace(/<meta\s+property=["']og:image:width["'][^>]*>\s*/gi, "")
+    .replace(/<meta\s+property=["']og:image:height["'][^>]*>\s*/gi, "")
+    .replace(/<meta\s+property=["']og:image:type["'][^>]*>\s*/gi, "")
     .replace(/<meta\s+property=["']og:url["'][^>]*>\s*/gi, "")
     .replace(/<meta\s+name=["']twitter:title["'][^>]*>\s*/gi, "")
     .replace(/<meta\s+name=["']twitter:description["'][^>]*>\s*/gi, "")
@@ -663,6 +671,9 @@ function injectHead(html: string, meta: SeoMeta) {
     <meta property="og:title" content="${title}" />
     <meta property="og:description" content="${description}" />
     <meta property="og:image" content="${image}" />
+    <meta property="og:image:secure_url" content="${image}" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:url" content="${canonical}" />
     <meta name="twitter:title" content="${title}" />
     <meta name="twitter:description" content="${description}" />

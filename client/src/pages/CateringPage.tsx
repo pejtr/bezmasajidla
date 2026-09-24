@@ -30,6 +30,7 @@ import {
   Camera,
   Eye,
   X,
+  Instagram,
 } from "lucide-react";
 import { trackCateringEvent, getCookieConsentPrefs } from "@/lib/cateringTracking";
 
@@ -449,7 +450,10 @@ export default function CateringPage() {
     <div className="min-h-screen flex flex-col bg-[#F9FAF8]">
       <SEOHead
         title="Bezmasý Catering v Praze — Signature Catering by Matouš × BezmasáJídla.cz"
-        description="Prémiový bezmasý catering pro firmy, soukromé oslavy a wedding eventy v Praze. Kalkulačka ceny na míru, 3 pevné balíčky, osobní chef experience."
+        description="Autorský bezmasý catering od šéfkuchaře Matouše. Prémiový fingerfood, rauty a fine-dining menu pro firmy i soukromé akce v Praze. Spočtěte si kalkulaci online."
+        ogTitle="Bezmasý Catering v Praze — Signature Catering by Matouš × BezmasáJídla.cz"
+        ogDescription="Autorský bezmasý catering od šéfkuchaře Matouše. Prémiový fingerfood, rauty a fine-dining menu pro firmy i soukromé akce v Praze. Spočtěte si kalkulaci online."
+        ogImage="https://www.bezmasajidla.cz/images/catering/matous-cateringovy-raut-kanapky.jpg"
         ogType="website"
         ogUrl="https://www.bezmasajidla.cz/catering"
       />
@@ -520,17 +524,26 @@ export default function CateringPage() {
             {/* Right Chef Card Image */}
             <div className="w-full lg:w-96 flex-shrink-0">
               <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 bg-emerald-950 p-6 text-center">
-                <div className="w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-amber-400 mb-4 shadow-md">
+                <div className="w-36 h-36 mx-auto rounded-full overflow-hidden border-4 border-amber-400 mb-4 shadow-xl ring-4 ring-amber-400/20">
                   <img
-                    src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=400&q=80"
-                    alt="Matouš — Profesionální Šéfkuchař"
-                    className="w-full h-full object-cover"
+                    src="/images/catering/matous-chef-profil.jpg"
+                    alt="Šéfkuchař Matouš — Profesionální rostlinný šéfkuchař"
+                    className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-1">Matouš</h3>
-                <p className="text-xs text-amber-400 font-bold uppercase tracking-wider mb-3">
+                <p className="text-xs text-amber-400 font-bold uppercase tracking-wider mb-2">
                   Profesionální Šéfkuchař
                 </p>
+                <a
+                  href="https://www.instagram.com/matt_tej_chef/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-200 hover:text-white transition-colors bg-white/10 hover:bg-white/20 px-3 py-1 rounded-full mb-3 border border-white/10"
+                >
+                  <Instagram className="w-3.5 h-3.5 text-pink-400" />
+                  <span>@matt_tej_chef</span>
+                </a>
                 <p className="text-xs text-emerald-100/80 italic leading-relaxed">
                   "Spojuji klasické kuchařské řemeslo s moderní bezmasou gastronomií. Každé menu sestavuji s důrazem na čistotu surovin, sezónnost a estetiku."
                 </p>
@@ -670,7 +683,16 @@ export default function CateringPage() {
               Autorská tvorba šéfkuchaře Matouše
             </h2>
             <p className="text-sm text-[#5A685D] mt-2">
-              Podívejte se na reálné pokrmy, rauty a servírování z našich bezmasých cateringů a degustací.
+              Podívejte se na reálné pokrmy, rauty a servírování z našich bezmasých cateringů a degustací. Další inspiraci a zákulisí tvorby najdete také na Instagramu{" "}
+              <a
+                href="https://www.instagram.com/matt_tej_chef/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 font-bold text-[#4A7C59] hover:underline"
+              >
+                <Instagram className="w-3.5 h-3.5 text-pink-600 inline" />
+                @matt_tej_chef
+              </a>.
             </p>
 
             {/* Filter Buttons */}
