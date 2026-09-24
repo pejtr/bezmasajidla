@@ -1,3 +1,7 @@
+[Reading 442 lines from start (total: 442 lines, 0 remaining)]
+
+import { handleCateringInquiry } from "./catering-api.js";
+
 const BASE = "https://www.bezmasajidla.cz";
 
 const PAGES_ORIGIN = "https://bezmasajidla.pages.dev";
@@ -280,7 +284,7 @@ function notFoundResponse() {
 }
 
 export default {
-  async fetch(request) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
     if (url.hostname === "bezmasajidla.cz") {
@@ -303,6 +307,10 @@ export default {
       return Response.redirect(target.toString(), 301);
     }
 
+
+    if (path === "/api/catering-inquiry") {
+      return handleCateringInquiry(request, env);
+    }
 
     if (path === "/robots.txt") return robotsResponse();
     if (
@@ -366,8 +374,10 @@ export default {
     const PAGE_METAS = {
       "/catering": {
         title: "Matouš Signature — Firemní catering bez masa. Bez kompromisu.",
-        description: "Autorská rostlinná gastronomie pro moderní firmy od šéfkuchaře Matouše. Firemní rauty, workshopy, board lunch. Obsluha i inventář v ceně, kalkulace od 1 190 Kč/os.",
+        description: "Firemní cateringová sekce BezmasáJídla.cz (/catering). Autorská rostlinná gastronomie od šéfkuchaře Matouše. Rauty, workshopy, board lunch. Obsluha i inventář v ceně, kalkulace od 1 190 Kč/os.",
         image: "https://www.bezmasajidla.cz/images/catering/matous-catering-og.jpg",
+        url: "https://www.bezmasajidla.cz/catering",
+        siteName: "BezmasáJídla.cz | Catering",
       },
     };
 
@@ -378,6 +388,8 @@ export default {
       const pageTitle = pageMeta ? pageMeta.title : null;
       const pageDesc = pageMeta ? pageMeta.description : null;
       const pageImg = pageMeta ? pageMeta.image : OG_IMAGE;
+      const canonicalUrl = (pageMeta && pageMeta.url) ? pageMeta.url : `${BASE}${path === "/" ? "" : path}`;
+      const siteName = (pageMeta && pageMeta.siteName) ? pageMeta.siteName : "Bezmasá Jídla";
 
       if (pageTitle) {
         html = html.replace(/<title>[^<]*<\/title>/i, `<title>${pageTitle}</title>`);
@@ -389,6 +401,12 @@ export default {
         html = html.replace(/<meta\s+property=["']og:description["'][^>]*>/i, `<meta property="og:description" content="${pageDesc}" />`);
         html = html.replace(/<meta\s+name=["']twitter:description["'][^>]*>/i, `<meta name="twitter:description" content="${pageDesc}" />`);
       }
+
+      html = html.replace(/<link\s+rel=["']canonical["'][^>]*>/i, `<link rel="canonical" href="${canonicalUrl}" />`);
+      html = html.replace(/<meta\s+property=["']og:url["'][^>]*>/i, `<meta property="og:url" content="${canonicalUrl}" />`);
+      html = html.replace(/<meta\s+name=["']twitter:url["'][^>]*>/i, `<meta name="twitter:url" content="${canonicalUrl}" />`);
+      html = html.replace(/<meta\s+property=["']og:site_name["'][^>]*>/i, `<meta property="og:site_name" content="${siteName}" />`);
+
       html = html.replace(
         /<meta\s+property=["']og:image["'][^>]*>/i,
         '<meta property="og:image" content="' + pageImg + '" />'
@@ -424,3 +442,5 @@ export default {
     });
   }
 };
+
+[executed on device: DESKTOP-ALZABOX (7e869a05-3e3d-4dd2-adbd-ebf450ac342d)]
