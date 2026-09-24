@@ -45,6 +45,7 @@ export function selectHomepageRecipes<
  * Keeping this mapping separate makes duplicate-image audits deterministic.
  */
 export const recipeImageOverrides: Record<string, string> = {
+  "svickova-bez-masa": `${RECIPE_IMAGE_ROOT}/svickova-bez-masa.webp`,
   "veganska-michana-vajicka-z-tofu": `${RECIPE_IMAGE_ROOT}/veganska-michana-vajicka-z-tofu.webp`,
   "kynute-livance-v-americkem-duchu": `${RECIPE_IMAGE_ROOT}/kynute-livance-v-americkem-duchu.webp`,
   "pres-noc-namocena-chia-ovesna-kase-s-boruvkami": `${RECIPE_IMAGE_ROOT}/pres-noc-namocena-chia-ovesna-kase-s-boruvkami.webp`,

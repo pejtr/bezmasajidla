@@ -453,7 +453,7 @@ export default function CateringPage() {
         description="Autorský bezmasý catering od šéfkuchaře Matouše. Prémiový fingerfood, rauty a fine-dining menu pro firmy i soukromé akce v Praze. Spočtěte si kalkulaci online."
         ogTitle="Bezmasý Catering v Praze — Signature Catering by Matouš × BezmasáJídla.cz"
         ogDescription="Autorský bezmasý catering od šéfkuchaře Matouše. Prémiový fingerfood, rauty a fine-dining menu pro firmy i soukromé akce v Praze. Spočtěte si kalkulaci online."
-        ogImage="https://www.bezmasajidla.cz/images/catering/matous-cateringovy-raut-kanapky.jpg"
+        ogImage="https://www.bezmasajidla.cz/images/catering/matous-chef-profil.jpg"
         ogType="website"
         ogUrl="https://www.bezmasajidla.cz/catering"
       />
@@ -524,11 +524,11 @@ export default function CateringPage() {
             {/* Right Chef Card Image */}
             <div className="w-full lg:w-96 flex-shrink-0">
               <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 bg-emerald-950 p-6 text-center">
-                <div className="w-36 h-36 mx-auto rounded-full overflow-hidden border-4 border-amber-400 mb-4 shadow-xl ring-4 ring-amber-400/20">
+                <div className="w-44 h-44 mx-auto rounded-full overflow-hidden border-4 border-amber-400 mb-4 shadow-xl ring-4 ring-amber-400/20">
                   <img
-                    src="/images/catering/matous-chef-profil.jpg"
+                    src="/images/catering/matous-chef-profil.jpg?v=2"
                     alt="Šéfkuchař Matouš — Profesionální rostlinný šéfkuchař"
-                    className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-1">Matouš</h3>

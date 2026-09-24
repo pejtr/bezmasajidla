@@ -2766,11 +2766,11 @@ const recipeSource: Recipe[] = [
     cookTime: 90,
     servings: 4,
     difficulty: "střední",
-    image: "https://images.unsplash.com/photo-1582650365183-fefb14c26acd?auto=format&fit=crop&w=800&q=80",
+    image: "/images/recipes/svickova-bez-masa.webp",
     images: [
       {
-        url: "https://images.unsplash.com/photo-1582650365183-fefb14c26acd?auto=format&fit=crop&w=800&q=80",
-        alt: "Veganská svíčková na smetaně — hotové jídlo se seitanem, houskový knedlík a brusinkový dresink",
+        url: "/images/recipes/svickova-bez-masa.webp",
+        alt: "Veganská svíčková na smetaně s houskovými knedlíky, seitanem a brusinkami",
       },
     ],
     description:

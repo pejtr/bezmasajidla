@@ -150,11 +150,11 @@ function vitePluginManusDebugCollector(): Plugin {
 }
 
 export default defineConfig(async ({ command }) => {
-  const plugins = [react(), tailwindcss(), jsxLocPlugin()];
+  const plugins = [react(), tailwindcss()];
 
   if (command === "serve") {
     const { vitePluginManusRuntime } = await import("vite-plugin-manus-runtime");
-    plugins.push(vitePluginManusRuntime(), vitePluginManusDebugCollector());
+    plugins.push(jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector());
   }
 
   return {

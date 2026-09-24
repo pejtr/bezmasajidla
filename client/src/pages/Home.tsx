@@ -366,9 +366,9 @@ export default function Home() {
             <div className="space-y-3 max-w-2xl">
               <div className="inline-flex items-center gap-2 bg-amber-400/20 text-amber-400 font-extrabold text-xs px-3 py-1.5 rounded-full uppercase tracking-wider">
                 <img
-                  src="/images/catering/matous-chef-profil.jpg"
+                  src="/images/catering/matous-chef-profil.jpg?v=2"
                   alt="Šéfkuchař Matouš"
-                  className="w-5 h-5 rounded-full object-cover border border-amber-400"
+                  className="w-5 h-5 rounded-full object-cover object-top border border-amber-400"
                 />
                 <span>🌿 MATOUŠ × BEZMASÁJÍDLA.CZ</span>
               </div>

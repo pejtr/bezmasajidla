@@ -252,9 +252,11 @@ function isStaticAsset(path) {
   return /\.[a-z0-9]{1,8}$/i.test(path);
 }
 
-function wantsHtml(request) {
+function wantsHtml(request, path) {
   const accept = request.headers.get("accept") || "";
-  return accept.includes("text/html") || accept.includes("application/xhtml+xml");
+  if (accept.includes("text/html") || accept.includes("application/xhtml+xml") || accept === "" || accept.includes("*/*")) return true;
+  if (!path || !path.includes(".")) return true;
+  return false;
 }
 
 function notFoundResponse() {
@@ -318,7 +320,7 @@ export default {
 
     if (isStaticAsset(path)) return pageFetch(request);
 
-    if (!wantsHtml(request)) return pageFetch(request);
+    if (!wantsHtml(request, path)) return pageFetch(request);
 
     // One canonical URL shape: no trailing slash except root.
     if (url.pathname.length > 1 && url.pathname.endsWith("/")) {
@@ -365,7 +367,7 @@ export default {
       "/catering": {
         title: "Vegetariánský catering Praha — Signature Catering by Matouš × BezmasáJídla.cz",
         description: "Prémiový vegetariánský a veganský catering v Praze od šéfkuchaře Matouše (@matt_tej_chef). Firemní akce, svatby, coffee breaky i soukromé oslavy. Sezónní suroviny a nezapomenutelný zážitek.",
-        image: "https://www.bezmasajidla.cz/images/catering/matous-cateringovy-raut-kanapky.jpg",
+        image: "https://www.bezmasajidla.cz/images/catering/matous-chef-profil.jpg",
       },
     };
 
