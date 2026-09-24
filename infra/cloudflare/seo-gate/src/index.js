@@ -361,16 +361,50 @@ export default {
 
     headers.set("x-bezmasa-origin", "cloudflare-pages");
 
+    const PAGE_METAS = {
+      "/catering": {
+        title: "Vegetariánský catering Praha — Signature Catering by Matouš × BezmasáJídla.cz",
+        description: "Prémiový vegetariánský a veganský catering v Praze od šéfkuchaře Matouše (@matt_tej_chef). Firemní akce, svatby, coffee breaky i soukromé oslavy. Sezónní suroviny a nezapomenutelný zážitek.",
+        image: "https://www.bezmasajidla.cz/images/catering/matous-cateringovy-raut-kanapky.jpg",
+      },
+    };
+
     const contentType = headers.get("content-type") || "";
     if (request.method === "GET" && contentType.includes("text/html")) {
       let html = await origin.text();
+      const pageMeta = PAGE_METAS[path];
+      const pageTitle = pageMeta ? pageMeta.title : null;
+      const pageDesc = pageMeta ? pageMeta.description : null;
+      const pageImg = pageMeta ? pageMeta.image : OG_IMAGE;
+
+      if (pageTitle) {
+        html = html.replace(/<title>[^<]*<\/title>/i, `<title>${pageTitle}</title>`);
+        html = html.replace(/<meta\s+property=["']og:title["'][^>]*>/i, `<meta property="og:title" content="${pageTitle}" />`);
+        html = html.replace(/<meta\s+name=["']twitter:title["'][^>]*>/i, `<meta name="twitter:title" content="${pageTitle}" />`);
+      }
+      if (pageDesc) {
+        html = html.replace(/<meta\s+name=["']description["'][^>]*>/i, `<meta name="description" content="${pageDesc}" />`);
+        html = html.replace(/<meta\s+property=["']og:description["'][^>]*>/i, `<meta property="og:description" content="${pageDesc}" />`);
+        html = html.replace(/<meta\s+name=["']twitter:description["'][^>]*>/i, `<meta name="twitter:description" content="${pageDesc}" />`);
+      }
       html = html.replace(
         /<meta\s+property=["']og:image["'][^>]*>/i,
-        '<meta property="og:image" content="' + OG_IMAGE + '" />'
+        '<meta property="og:image" content="' + pageImg + '" />'
       );
+      if (html.includes('property="og:image:secure_url"')) {
+        html = html.replace(
+          /<meta\s+property=["']og:image:secure_url["'][^>]*>/i,
+          '<meta property="og:image:secure_url" content="' + pageImg + '" />'
+        );
+      } else {
+        html = html.replace(
+          'content="' + pageImg + '" />',
+          'content="' + pageImg + '" />\n    <meta property="og:image:secure_url" content="' + pageImg + '" />'
+        );
+      }
       html = html.replace(
         /<meta\s+name=["']twitter:image["'][^>]*>/i,
-        '<meta name="twitter:image" content="' + OG_IMAGE + '" />'
+        '<meta name="twitter:image" content="' + pageImg + '" />'
       );
       headers.delete("content-length");
       headers.delete("content-encoding");
