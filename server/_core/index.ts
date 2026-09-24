@@ -1,3 +1,5 @@
+[Reading 888 lines from start (total: 888 lines, 0 remaining)]
+
 import "dotenv/config";
 import express from "express";
 import { createServer } from "http";
@@ -67,29 +69,6 @@ async function startServer() {
   app.use((req, res, next) => {
     if (req.path.startsWith("/assets/") && (req.headers["sec-fetch-dest"] === "document" || req.headers.accept?.includes("text/html"))) {
       return res.redirect(301, "/");
-    }
-    next();
-  });
-
-  // 301 Permanent Redirects for legacy and variant URLs (Google Search Console compliance)
-  const LEGACY_301_REDIRECTS: Record<string, string> = {
-    "/blog/top-10-veganskych-restauraci-praha-2025": "/blog/top-10-veganskych-restauraci-praha-2026",
-    "/blog/bezmase-budapest-veganske-restaurace-ceny": "/blog/bezmasa-budapest-veganske-restaurace-ceny",
-    "/recepty/spenatove-palacinkys-tofu-ricottou": "/recepty/spenatove-palacinky-tofu-ricottou",
-    "/recepty/spenatove-palacinky-s-tofu-ricottou": "/recepty/spenatove-palacinky-tofu-ricottou",
-    "/recepty/cockov%C3%A1-polevka-uzena-paprika": "/recepty/cockova-polevka-uzena-paprika",
-    "/recepty/cocková-polevka-uzena-paprika": "/recepty/cockova-polevka-uzena-paprika",
-  };
-
-  app.use((req, res, next) => {
-    const rawPath = req.path;
-    let decodedPath = rawPath;
-    try {
-      decodedPath = decodeURIComponent(rawPath);
-    } catch {}
-    const target = LEGACY_301_REDIRECTS[rawPath] || LEGACY_301_REDIRECTS[decodedPath];
-    if (target) {
-      return res.redirect(301, target);
     }
     next();
   });
@@ -414,11 +393,11 @@ async function startServer() {
     signature: {
       id: "signature",
       name: "MATOUŠ SIGNATURE",
-      pricePerPerson: 950,
-      minGuests: 10,
-      maxGuests: 150,
-      tagline: "Kurátorovaný Raut",
-      description: "Kompletní zážitkové menu. Vyvážená kombinace teplých i studených chodů s prémiovým servisem.",
+      pricePerPerson: 1190,
+      minGuests: 12,
+      maxGuests: 80,
+      tagline: "Firemní catering bez kompromisu",
+      description: "All-inclusive firemní catering: autorské menu, nealko, servisní tým, inventář, doprava po Praze a debaras.",
       features: [
         "6× Studené tapas & bruschetty (hummus, pečený lilek, sušená rajčata)",
         "3× Teplé signature chody (květákový steak, seitanový goulash, varenyky)",
@@ -449,9 +428,9 @@ async function startServer() {
     return res.status(200).json({
       packages: Object.values(SERVER_CATERING_PACKAGES),
       addons: [
-        { id: "drinks", name: "Signature Nealko Bar", pricePerPerson: 150 },
-        { id: "glassware", name: "Zapůjčení Skla & Porcelánu", pricePerPerson: 80 },
-        { id: "staff", name: "Obsluha Na Místě", baseFee: 3500 },
+        { id: "wine", name: "Víno / alkohol", pricing: "individual" },
+        { id: "tasting", name: "Degustace před akcí", pricing: "individual" },
+        { id: "late_service", name: "Servis po 23:00", pricing: "individual" },
       ],
       notice: "Orientační cena. Finální nabídku potvrdíme dle termínu, lokality a rozsahu služby.",
     });
@@ -603,18 +582,23 @@ async function startServer() {
         });
       }
 
-      if (pkg.maxGuests && numGuests > pkg.maxGuests) {
+      if (packageId === "signature" && numGuests > 250) {
+        return res.status(400).json({
+          error: "Signature poptávka podporuje maximálně 250 osob."
+        });
+      }
+      if (packageId !== "signature" && pkg.maxGuests && numGuests > pkg.maxGuests) {
         return res.status(400).json({
           error: `Balíček ${pkg.name} umožňuje maximálně ${pkg.maxGuests} osob.`
         });
       }
 
-      // Authoritative Server-Side Pricing Engine (Never trust client-passed price)
-      const drinksFee = includeDrinks ? 150 : 0;
-      const glasswareFee = includeGlassware ? 80 : 0;
-      const staffFee = includeStaff ? 3500 : 0;
-      const calculatedPerPerson = pkg.pricePerPerson + drinksFee + glasswareFee;
-      const estimatedRevenue = calculatedPerPerson * numGuests + staffFee;
+      // Authoritative Server-Side Pricing Engine (Never trust client-passed price).
+      // Signature 12–80 is all-inclusive at 1 190 Kč/os.; above 80 is individual.
+      const estimatedRevenue =
+        packageId === "signature" && numGuests > 80
+          ? 0
+          : pkg.pricePerPerson * numGuests;
 
       const isSyntheticTest = Boolean(isTest);
       const leadCode = `LEAD-${now}-${Math.floor(Math.random() * 1000)}`;
@@ -904,3 +888,5 @@ startServer().catch(err => {
   process.exit(1);
 });
 
+
+[executed on device: DESKTOP-ALZABOX (7e869a05-3e3d-4dd2-adbd-ebf450ac342d)]
