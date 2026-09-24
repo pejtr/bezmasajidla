@@ -576,9 +576,9 @@ async function resolveMeta(url: string): Promise<SeoMeta> {
         "Recepty, restaurace a ověřené průvodce bezmasým jídlem v Česku i Evropě, včetně aktuálních cen a praktických tipů.",
     },
     "/catering": {
-      title: "Vegetariánský catering Praha — Signature Catering by Matouš × BezmasáJídla.cz",
+      title: "Matouš Signature — Firemní catering bez masa. Bez kompromisu.",
       description:
-        "Autorský bezmasý catering od šéfkuchaře Matouše. Prémiový fingerfood, rauty a fine-dining menu pro firmy i soukromé akce v Praze. Spočtěte si orientační kalkulaci online.",
+        "Autorská rostlinná gastronomie pro moderní firmy od šéfkuchaře Matouše. Firemní rauty, workshopy, board lunch. Obsluha i inventář v ceně, kalkulace od 1 190 Kč/os.",
       image: "https://www.bezmasajidla.cz/images/catering/matous-catering-og.jpg",
     },
     "/o-nas": {

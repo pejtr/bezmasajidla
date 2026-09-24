@@ -365,8 +365,8 @@ export default {
 
     const PAGE_METAS = {
       "/catering": {
-        title: "Vegetariánský catering Praha — Signature Catering by Matouš × BezmasáJídla.cz",
-        description: "Prémiový vegetariánský a veganský catering v Praze od šéfkuchaře Matouše (@matt_tej_chef). Firemní akce, svatby, coffee breaky i soukromé oslavy. Sezónní suroviny a nezapomenutelný zážitek.",
+        title: "Matouš Signature — Firemní catering bez masa. Bez kompromisu.",
+        description: "Autorská rostlinná gastronomie pro moderní firmy od šéfkuchaře Matouše. Firemní rauty, workshopy, board lunch. Obsluha i inventář v ceně, kalkulace od 1 190 Kč/os.",
         image: "https://www.bezmasajidla.cz/images/catering/matous-catering-og.jpg",
       },
     };

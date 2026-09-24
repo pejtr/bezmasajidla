@@ -449,10 +449,10 @@ export default function CateringPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#F9FAF8]">
       <SEOHead
-        title="Bezmasý Catering v Praze — Signature Catering by Matouš × BezmasáJídla.cz"
-        description="Autorský bezmasý catering od šéfkuchaře Matouše. Prémiový fingerfood, rauty a fine-dining menu pro firmy i soukromé akce v Praze. Spočtěte si kalkulaci online."
-        ogTitle="Bezmasý Catering v Praze — Signature Catering by Matouš × BezmasáJídla.cz"
-        ogDescription="Autorský bezmasý catering od šéfkuchaře Matouše. Prémiový fingerfood, rauty a fine-dining menu pro firmy i soukromé akce v Praze. Spočtěte si kalkulaci online."
+        title="Matouš Signature — Firemní catering bez masa. Bez kompromisu."
+        description="Autorská rostlinná gastronomie pro moderní firmy od šéfkuchaře Matouše. Firemní rauty, workshopy, board lunch. Obsluha i inventář v ceně, kalkulace od 1 190 Kč/os."
+        ogTitle="Matouš Signature — Firemní catering bez masa. Bez kompromisu."
+        ogDescription="Autorská rostlinná gastronomie pro moderní firmy od šéfkuchaře Matouše. Firemní rauty, workshopy, board lunch. Obsluha i inventář v ceně, kalkulace od 1 190 Kč/os."
         ogImage="https://www.bezmasajidla.cz/images/catering/matous-catering-og.jpg"
         ogType="website"
         ogUrl="https://www.bezmasajidla.cz/catering"
