@@ -1,4 +1,4 @@
-import { restaurants, recipes, hasVerifiedRecipeImage } from "../../client/src/lib/data";
+import { restaurants, recipes, hasVerifiedRecipeImage, resolveRecipeSlug } from "../../client/src/lib/data";
 import { getBlogPostBySlug } from "../../client/src/lib/blogData";
 import { getUserRecipeBySlug } from "../db";
 
@@ -422,21 +422,21 @@ async function resolveMeta(url: string): Promise<SeoMeta> {
   }
 
   if (path.startsWith("/recepty/")) {
-    const slug = path.split("/")[2];
+    const slug = resolveRecipeSlug(path.split("/")[2]);
     const recipe = recipes.find(item => item.slug === slug);
     if (recipe) {
       return {
         title: `${recipe.title} | Bezmasé recepty`,
         description: recipe.description,
         image: recipe.images?.[0]?.url || recipe.image,
-        canonicalPath,
+        canonicalPath: `/recepty/${recipe.slug}`,
         noIndex: !hasVerifiedRecipeImage(recipe),
         jsonLd: {
           "@type": "Recipe",
           name: recipe.title,
           description: recipe.description,
           image: [recipe.images?.[0]?.url || recipe.image].filter(Boolean),
-          url: absoluteUrl(path),
+          url: absoluteUrl(`/recepty/${recipe.slug}`),
           author: organizationSchema(),
           publisher: organizationSchema(),
           recipeCategory: recipe.category,

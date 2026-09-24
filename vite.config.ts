@@ -4,7 +4,6 @@ import react from "@vitejs/plugin-react";
 import fs from "node:fs";
 import path from "node:path";
 import { defineConfig, type Plugin, type ViteDevServer } from "vite";
-import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
 
 // =============================================================================
 // Manus Debug Collector - Vite Plugin
@@ -150,16 +149,16 @@ function vitePluginManusDebugCollector(): Plugin {
   };
 }
 
-const isDev = process.env.NODE_ENV !== "production";
-const plugins = [
-  react(),
-  tailwindcss(),
-  jsxLocPlugin(),
-  ...(isDev ? [vitePluginManusRuntime(), vitePluginManusDebugCollector()] : []),
-];
+export default defineConfig(async ({ command }) => {
+  const plugins = [react(), tailwindcss(), jsxLocPlugin()];
 
-export default defineConfig({
-  plugins,
+  if (command === "serve") {
+    const { vitePluginManusRuntime } = await import("vite-plugin-manus-runtime");
+    plugins.push(vitePluginManusRuntime(), vitePluginManusDebugCollector());
+  }
+
+  return {
+    plugins,
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
@@ -176,7 +175,7 @@ export default defineConfig({
     cssCodeSplit: true,
     rollupOptions: {
       output: {
-        manualChunks(id) {
+        manualChunks(id: string) {
           if (id.includes("node_modules")) {
             if (id.includes("react") || id.includes("wouter")) return "vendor-core";
             if (id.includes("@radix-ui") || id.includes("framer-motion") || id.includes("lucide-react")) return "vendor-ui";
@@ -201,4 +200,5 @@ export default defineConfig({
       deny: ["**/.*"],
     },
   },
+  };
 });

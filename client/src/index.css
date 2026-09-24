@@ -5,7 +5,7 @@
    Fonts: DM Serif Display (headings) + DM Sans (body)
    ============================================================ */
 
-@import "tailwindcss";
+@import "tailwindcss" source(".");
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));

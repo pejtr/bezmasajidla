@@ -2789,7 +2789,7 @@ const recipeSource: Recipe[] = [
   {
     id: "r2",
     title: "Čočková polévka s uzenou paprikou",
-    slug: "cocková-polevka-uzena-paprika",
+    slug: "cockova-polevka-uzena-paprika",
     category: "Polévky",
     prepTime: 10,
     cookTime: 30,
@@ -2878,7 +2878,7 @@ const recipeSource: Recipe[] = [
   {
     id: "r5",
     title: "Špenátové palačinky s tofu ricottou",
-    slug: "spenatove-palacinkys-tofu-ricottou",
+    slug: "spenatove-palacinky-tofu-ricottou",
     category: "Snídaně",
     prepTime: 15,
     cookTime: 20,
@@ -6904,6 +6904,22 @@ export const recipes: Recipe[] = Array.from(
   ];
   return { ...recipe, image, images };
 });
+
+
+export const LEGACY_RECIPE_SLUG_ALIASES: Record<string, string> = {
+  "cocková-polevka-uzena-paprika": "cockova-polevka-uzena-paprika",
+  "spenatove-palacinkys-tofu-ricottou": "spenatove-palacinky-tofu-ricottou",
+};
+
+export function resolveRecipeSlug(slug: string): string {
+  let decoded = slug;
+  try {
+    decoded = decodeURIComponent(slug);
+  } catch {
+    // Keep the original slug when malformed percent-encoding is received.
+  }
+  return LEGACY_RECIPE_SLUG_ALIASES[decoded] || decoded;
+}
 
 export const districts = [
   "Všechny čtvrti",

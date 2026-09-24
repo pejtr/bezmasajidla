@@ -9,7 +9,7 @@ import { Clock, Users, ChefHat, ArrowLeft, Leaf, ChevronLeft, ChevronRight, Shop
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { hasVerifiedRecipeImage, recipes, type Recipe } from "@/lib/data";
+import { hasVerifiedRecipeImage, recipes, resolveRecipeSlug, type Recipe } from "@/lib/data";
 import SEOHead from "@/components/SEOHead";
 import OptimizedImage from "@/components/OptimizedImage";
 import { getRohlikLink, getKosikLink, getScukLink, getTescoLink, trackAffiliateClick, trackAffiliateIntent } from "@/lib/affiliates";
@@ -35,7 +35,7 @@ const sampleIngredients: Record<string, string[]> = {
     "Houskové knedlíky k podávání",
     "Brusinkový džem k podávání",
   ],
-  "cocková-polevka-uzena-paprika": [
+  "cockova-polevka-uzena-paprika": [
     "250 g červené čočky",
     "1 velká cibule",
     "3 stroužky česneku",
@@ -75,7 +75,7 @@ const sampleIngredients: Record<string, string[]> = {
     "Houskové knedlíky k podávání",
     "Čerstvá petrželka na ozdobu",
   ],
-  "spenatove-palacinkys-tofu-ricottou": [
+  "spenatove-palacinky-tofu-ricottou": [
     "200 g čerstvého špenátu",
     "150 g hladké mouky",
     "250 ml rostlinného mléka",
@@ -563,7 +563,7 @@ const sampleSteps: Record<string, string[]> = {
     "Omáčku dochutíte solí a pepřem, případně přidejte trochu cukru pro vyvážení chuti.",
     "Podávejte s houskovými knedlíky a brusinkovým džemem.",
   ],
-  "cocková-polevka-uzena-paprika": [
+  "cockova-polevka-uzena-paprika": [
     "Na olivovém oleji orestujte nakrájenou cibuli a česnek do zlatova.",
     "Přidejte nakrájenou mrkev a restujte 3 minuty.",
     "Vsypte uzenou papriku a kmín, míchejte 30 sekund.",
@@ -590,7 +590,7 @@ const sampleSteps: Record<string, string[]> = {
     "Vařte pod pokličkou na mírném ohni 40–50 minut, dokud guláš nezhoustne.",
     "Dochutíte solí a pepřem. Podávejte s houskovými knedlíky a čerstvou petrželkou.",
   ],
-  "spenatove-palacinkys-tofu-ricottou": [
+  "spenatove-palacinky-tofu-ricottou": [
     "Špenát blanšírujte, scedíte a rozmixujte s rostlinným mlékem.",
     "Smíchejte špenátovou směs s moukou a špetkou soli. Těsto by mělo být hladké.",
     "Tofu rozmačkejte vidličkou, přidejte citronovou šťávu, česnek, nutriční droždí a koření.",
@@ -1434,7 +1434,7 @@ function ImageGallery({ images, title }: { images: { url: string; alt: string }[
 
 export default function RecipeDetail() {
   const params = useParams<{ slug: string }>();
-  const recipe = recipes.find((r) => r.slug === params.slug);
+  const recipe = recipes.find((r) => r.slug === resolveRecipeSlug(params.slug));
   const recordLandingMutation = trpc.affiliate.recordSocialLanding.useMutation();
 
   useEffect(() => {

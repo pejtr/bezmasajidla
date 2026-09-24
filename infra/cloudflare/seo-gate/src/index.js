@@ -1,11 +1,27 @@
 const BASE = "https://www.bezmasajidla.cz";
 
+const PAGES_ORIGIN = "https://bezmasajidla.pages.dev";
+const OG_IMAGE = BASE + "/og-preview.png";
+
+const REDIRECTS = new Map([
+  ["/recepty/cocková-polevka-uzena-paprika", "/recepty/cockova-polevka-uzena-paprika"],
+  ["/recepty/spenatove-palacinkys-tofu-ricottou", "/recepty/spenatove-palacinky-tofu-ricottou"],
+  ["/blog/top-10-veganskych-restauraci-praha-2025", "/blog/top-10-veganskych-restauraci-praha-2026"],
+  ["/blog/bezmase-budapest-veganske-restaurace-ceny", "/blog/bezmasa-budapest-veganske-restaurace-ceny"],
+]);
+
+async function pageFetch(request, overridePath) {
+  const incoming = new URL(request.url);
+  const target = new URL(overridePath || incoming.pathname, PAGES_ORIGIN);
+  target.search = overridePath ? "" : incoming.search;
+  return fetch(new Request(target.toString(), request));
+}
+
+
 const UNVERIFIED_RECIPE_PATHS = new Set([
   "/recepty/svickova-bez-masa",
-  "/recepty/cocková-polevka-uzena-paprika",
   "/recepty/buddha-bowl-pecena-zelenina",
   "/recepty/gulas-bez-masa",
-  "/recepty/spenatove-palacinkys-tofu-ricottou",
   "/recepty/houbove-rizoto-kešu-parmezan",
   "/recepty/veganske-palacinky",
   "/recepty/vegetariansky-bramborovy-salat",
@@ -130,10 +146,7 @@ async function loadOriginSitemap(request) {
     return { xml: cachedSitemap, paths: cachedPaths };
   }
 
-  const target = new URL(request.url);
-  target.hostname = "www.bezmasajidla.cz";
-  target.pathname = "/sitemap.xml";
-  target.search = "";
+  const target = new URL("/sitemap.xml", PAGES_ORIGIN);
 
   const origin = await fetch(new Request(target.toString(), request), {
     cf: { cacheTtl: 300, cacheEverything: true }
@@ -202,7 +215,7 @@ async function sitemapResponse(request) {
       }
     });
   } catch {
-    return fetch(request);
+    return pageFetch(request);
   }
 }
 
@@ -250,6 +263,17 @@ export default {
 
     const path = normalizedPath(url.pathname);
 
+    const redirectPath = REDIRECTS.get(path);
+    if (redirectPath) {
+      const target = new URL(request.url);
+      target.protocol = "https:";
+      target.hostname = "www.bezmasajidla.cz";
+      target.port = "";
+      target.pathname = redirectPath;
+      return Response.redirect(target.toString(), 301);
+    }
+
+
     if (path === "/robots.txt") return robotsResponse();
     if (
       path === "/sitemap.xml" ||
@@ -261,12 +285,12 @@ export default {
     }
 
     if (request.method !== "GET" && request.method !== "HEAD") {
-      return fetch(request);
+      return pageFetch(request);
     }
 
-    if (isStaticAsset(path)) return fetch(request);
+    if (isStaticAsset(path)) return pageFetch(request);
 
-    if (!wantsHtml(request)) return fetch(request);
+    if (!wantsHtml(request)) return pageFetch(request);
 
     // One canonical URL shape: no trailing slash except root.
     if (url.pathname.length > 1 && url.pathname.endsWith("/")) {
@@ -279,7 +303,7 @@ export default {
     try {
       ({ paths } = await loadOriginSitemap(request));
     } catch {
-      return fetch(request);
+      return pageFetch(request);
     }
 
     const isValid = paths.has(path) || EXTRA_VALID_PATHS.has(path);
@@ -287,11 +311,33 @@ export default {
       return notFoundResponse();
     }
 
-    const origin = await fetch(request);
+    const origin = await pageFetch(request);
     const headers = new Headers(origin.headers);
 
     if (UNVERIFIED_RECIPE_PATHS.has(path) || PRIVATE_NOINDEX.has(path)) {
       headers.set("x-robots-tag", "noindex, follow");
+    }
+
+    headers.set("x-bezmasa-origin", "cloudflare-pages");
+
+    const contentType = headers.get("content-type") || "";
+    if (request.method === "GET" && contentType.includes("text/html")) {
+      let html = await origin.text();
+      html = html.replace(
+        /<meta\s+property=["']og:image["'][^>]*>/i,
+        '<meta property="og:image" content="' + OG_IMAGE + '" />'
+      );
+      html = html.replace(
+        /<meta\s+name=["']twitter:image["'][^>]*>/i,
+        '<meta name="twitter:image" content="' + OG_IMAGE + '" />'
+      );
+      headers.delete("content-length");
+      headers.delete("content-encoding");
+      return new Response(html, {
+        status: origin.status,
+        statusText: origin.statusText,
+        headers
+      });
     }
 
     return new Response(origin.body, {
