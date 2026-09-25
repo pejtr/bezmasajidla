@@ -1,5 +1,3 @@
-[Reading 44 lines from start (total: 44 lines, 0 remaining)]
-
 CREATE TABLE IF NOT EXISTS catering_leads (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   lead_code TEXT NOT NULL UNIQUE,
@@ -44,5 +42,3 @@ CREATE INDEX IF NOT EXISTS idx_catering_leads_ip_created
 
 CREATE INDEX IF NOT EXISTS idx_catering_leads_email
   ON catering_leads(email);
-
-[executed on device: DESKTOP-ALZABOX (7e869a05-3e3d-4dd2-adbd-ebf450ac342d)]

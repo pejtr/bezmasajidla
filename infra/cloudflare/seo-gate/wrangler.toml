@@ -1,5 +1,3 @@
-[Reading 13 lines from start (total: 13 lines, 0 remaining)]
-
 name = "bezmasajidla-seo-gate"
 main = "src/index.js"
 compatibility_date = "2026-09-21"
@@ -13,5 +11,3 @@ routes = [
 binding = "CATERING_DB"
 database_name = "bezmasajidla-catering"
 database_id = "cc7e439b-ff6d-4c37-997f-a9da388cbc00"
-
-[executed on device: DESKTOP-ALZABOX (7e869a05-3e3d-4dd2-adbd-ebf450ac342d)]

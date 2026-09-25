@@ -3,7 +3,7 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import fs from "node:fs";
 import path from "node:path";
-import { defineConfig, type Plugin, type ViteDevServer } from "vite";
+import { defineConfig, type Plugin, type PluginOption, type ViteDevServer } from "vite";
 
 // =============================================================================
 // Manus Debug Collector - Vite Plugin
@@ -150,7 +150,7 @@ function vitePluginManusDebugCollector(): Plugin {
 }
 
 export default defineConfig(async ({ command }) => {
-  const plugins = [react(), tailwindcss()];
+  const plugins: PluginOption[] = [react(), tailwindcss()];
 
   if (command === "serve") {
     const { vitePluginManusRuntime } = await import("vite-plugin-manus-runtime");

@@ -1,5 +1,3 @@
-[Reading 442 lines from start (total: 442 lines, 0 remaining)]
-
 import { handleCateringInquiry } from "./catering-api.js";
 
 const BASE = "https://www.bezmasajidla.cz";
@@ -77,6 +75,19 @@ const EXTRA_VALID_PATHS = new Set([
   "/recepty",
   "/mapa",
   "/blog",
+  "/blog/bezmasa-budapest-veganske-restaurace-ceny",
+  "/blog/top-10-veganskych-restauraci-praha-2026",
+  "/blog/pruvodce-veganskou-prahou-ctvrti",
+  "/blog/veganske-restaurace-pro-deti-praha",
+  "/blog/nejlepsi-veganske-brunche-praha",
+  "/blog/ceska-veganska-kuchyne-tradicni-jidla-bez-masa",
+  "/blog/vegansky-fast-food-praha-kde-jist-rychle-a-dobre",
+  "/blog/bezlepkove-veganske-restaurace-praha",
+  "/blog/zdrave-obedy-do-200-kc-vegan-praha",
+  "/blog/veganske-pizzerie-praha-nejlepsi-pizza-bez-masa",
+  "/blog/veganske-vanoce-trhy-advent-praha-co-jist",
+  "/blog/domaci-marmelada-dzem-rozdil-recepty",
+  "/blog/francouzsky-quiche-druhy-naplni-recept",
   "/catering",
   "/en/catering",
   "/o-nas",
@@ -358,7 +369,7 @@ export default {
       return pageFetch(request);
     }
 
-    const isValid = paths.has(path) || EXTRA_VALID_PATHS.has(path);
+    const isValid = paths.has(path) || EXTRA_VALID_PATHS.has(path) || /^\/blog\/[a-z0-9-]+$/.test(path);
     if (!isValid) {
       return notFoundResponse();
     }
@@ -443,5 +454,3 @@ export default {
     });
   }
 };
-
-[executed on device: DESKTOP-ALZABOX (7e869a05-3e3d-4dd2-adbd-ebf450ac342d)]

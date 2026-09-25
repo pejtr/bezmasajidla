@@ -188,6 +188,7 @@ export default function BlogDetail() {
             category={post.category}
             tags={post.tags}
             type="blog"
+            content={post.content}
           />
 
           {/* ── PREV / NEXT NAVIGATION ── */}

@@ -1,5 +1,3 @@
-[Reading 264 lines from start (total: 264 lines, 0 remaining)]
-
 const SIGNATURE_PRICE = 1190;
 const MIN_GUESTS = 12;
 const MAX_SIGNATURE_GUESTS = 80;
@@ -264,5 +262,3 @@ export async function handleCateringInquiry(request, env) {
     mailStatus: mail.status,
   }, 201);
 }
-
-[executed on device: DESKTOP-ALZABOX (7e869a05-3e3d-4dd2-adbd-ebf450ac342d)]

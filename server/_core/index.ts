@@ -1,5 +1,3 @@
-[Reading 888 lines from start (total: 888 lines, 0 remaining)]
-
 import "dotenv/config";
 import express from "express";
 import { createServer } from "http";
@@ -886,7 +884,4 @@ async function startServer() {
 startServer().catch(err => {
   console.error("Failed to start server:", err);
   process.exit(1);
-});
-
-
-[executed on device: DESKTOP-ALZABOX (7e869a05-3e3d-4dd2-adbd-ebf450ac342d)]
+});
