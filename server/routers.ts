@@ -11,6 +11,7 @@ import { createComgatePayment } from "./_core/comgate";
 import { notifyGoogleIndexing } from "./_core/google-indexing";
 import { affiliateRouter } from "./affiliate/router";
 import { foodIntelligenceRouter } from "./food-intelligence/food-intelligence-router";
+import { oIdentityRouter } from "./o-identity/router";
 import {
   getSocialPublisherStatus,
   listSocialPosts,
@@ -41,6 +42,7 @@ import {
 
 export const appRouter = router({
   system: systemRouter,
+  oIdentity: oIdentityRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

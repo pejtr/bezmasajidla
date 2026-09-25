@@ -5,7 +5,7 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useParams, Link } from "wouter";
-import { Clock, Users, ChefHat, ArrowLeft, Leaf, ChevronLeft, ChevronRight, ShoppingCart, ExternalLink, BookOpen, Flame, Share2, Download, Instagram } from "lucide-react";
+import { Clock, Users, ChefHat, ArrowLeft, Leaf, ChevronLeft, ChevronRight, ShoppingCart, ExternalLink, BookOpen, Flame, Share2, Download, Instagram, BookmarkPlus, Check } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ import RelatedProducts from "@/components/affiliate/RelatedProducts";
 import RelatedExperiences from "@/components/affiliate/RelatedExperiences";
 import { initSocialLandingAttribution } from "@/lib/attribution";
 import RecipeGroceryWidget from "@/components/RecipeGroceryWidget";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 const sampleIngredients: Record<string, string[]> = {
   "svickova-bez-masa": [
@@ -1478,6 +1479,23 @@ export default function RecipeDetail() {
   const params = useParams<{ slug: string }>();
   const recipe = recipes.find((r) => r.slug === resolveRecipeSlug(params.slug));
   const recordLandingMutation = trpc.affiliate.recordSocialLanding.useMutation();
+  const { isAuthenticated } = useAuth();
+  const identityUtils = trpc.useUtils();
+  const { data: cookPlans = [] } = trpc.oIdentity.interactions.list.useQuery(
+    { targetType: "recipe", action: "want_to_cook" },
+    { enabled: isAuthenticated && Boolean(recipe) },
+  );
+  const wantToCook = Boolean(
+    recipe && cookPlans.some(item => item.targetId === recipe.slug),
+  );
+  const setCookPlan = trpc.oIdentity.interactions.set.useMutation({
+    onSuccess: () => {
+      identityUtils.oIdentity.interactions.list.invalidate({
+        targetType: "recipe",
+        action: "want_to_cook",
+      });
+    },
+  });
 
   useEffect(() => {
     if (!recipe) return;
@@ -1639,6 +1657,32 @@ export default function RecipeDetail() {
                   <ShoppingCart className="w-4 h-4" />
                   Nakoupit ingredience
                 </a>
+                {isAuthenticated && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCookPlan.mutate({
+                        targetType: "recipe",
+                        targetId: recipe.slug,
+                        action: "want_to_cook",
+                        active: !wantToCook,
+                      })
+                    }
+                    disabled={setCookPlan.isPending}
+                    className={`inline-flex items-center justify-center gap-2 rounded-md border px-4 py-2 text-sm font-semibold transition-colors disabled:opacity-60 ${
+                      wantToCook
+                        ? "border-emerald-600 bg-emerald-50 text-emerald-700"
+                        : "border-emerald-200 bg-white text-emerald-700 hover:bg-emerald-50"
+                    }`}
+                  >
+                    {wantToCook ? (
+                      <Check className="w-4 h-4" />
+                    ) : (
+                      <BookmarkPlus className="w-4 h-4" />
+                    )}
+                    {wantToCook ? "Chci uvařit ✓" : "Chci uvařit"}
+                  </button>
+                )}
                 <ShareRecipeCard recipe={recipe} />
               </div>
 

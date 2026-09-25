@@ -381,3 +381,201 @@ export const foodTranslationCache = mysqlTable(
 
 export type FoodTranslationCacheRecord = typeof foodTranslationCache.$inferSelect;
 export type InsertFoodTranslationCache = typeof foodTranslationCache.$inferInsert;
+
+
+/**
+ * O-Identity v1
+ *
+ * Root o_ID is server-side only. Apps receive pairwise domain subject ids
+ * (vegID first) so a leaked app database does not expose cross-world identity.
+ */
+export const oIdentities = mysqlTable(
+  "o_identities",
+  {
+    id: varchar("id", { length: 36 }).primaryKey(),
+    entityType: mysqlEnum("entity_type", [
+      "person",
+      "organization",
+      "venue",
+      "brand",
+      "creator",
+      "agent",
+    ])
+      .default("person")
+      .notNull(),
+    status: mysqlEnum("status", ["active", "disabled", "deleted"])
+      .default("active")
+      .notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+  },
+  table => ({
+    entityStatusIdx: index("o_identities_entity_status_idx").on(
+      table.entityType,
+      table.status,
+    ),
+  }),
+);
+
+export type OIdentityRecord = typeof oIdentities.$inferSelect;
+export type InsertOIdentity = typeof oIdentities.$inferInsert;
+
+export const identityLinks = mysqlTable(
+  "o_identity_links",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    oIdentityId: varchar("o_identity_id", { length: 36 }).notNull(),
+    provider: varchar("provider", { length: 64 }).notNull(),
+    providerSubject: varchar("provider_subject", { length: 191 }).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  table => ({
+    providerSubjectUid: uniqueIndex(
+      "o_identity_links_provider_subject_uidx",
+    ).on(table.provider, table.providerSubject),
+    oIdentityIdx: index("o_identity_links_o_identity_idx").on(table.oIdentityId),
+  }),
+);
+
+export type IdentityLinkRecord = typeof identityLinks.$inferSelect;
+export type InsertIdentityLink = typeof identityLinks.$inferInsert;
+
+export const domainIdentities = mysqlTable(
+  "o_domain_identities",
+  {
+    subjectId: varchar("subject_id", { length: 64 }).primaryKey(),
+    oIdentityId: varchar("o_identity_id", { length: 36 }).notNull(),
+    domain: mysqlEnum("domain", [
+      "veg",
+      "travel",
+      "creator",
+      "shopper",
+      "wellmind",
+    ]).notNull(),
+    visibility: mysqlEnum("visibility", ["private", "public"])
+      .default("private")
+      .notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+  },
+  table => ({
+    rootDomainUid: uniqueIndex("o_domain_identities_root_domain_uidx").on(
+      table.oIdentityId,
+      table.domain,
+    ),
+    domainIdx: index("o_domain_identities_domain_idx").on(table.domain),
+  }),
+);
+
+export type DomainIdentityRecord = typeof domainIdentities.$inferSelect;
+export type InsertDomainIdentity = typeof domainIdentities.$inferInsert;
+
+export const vegProfiles = mysqlTable(
+  "veg_profiles",
+  {
+    subjectId: varchar("subject_id", { length: 64 }).primaryKey(),
+    displayName: varchar("display_name", { length: 120 }),
+    publicHandle: varchar("public_handle", { length: 40 }).unique(),
+    dietStyle: mysqlEnum("diet_style", [
+      "vegan",
+      "vegetarian",
+      "flexitarian",
+      "plant-curious",
+      "other",
+    ]),
+    favoriteCuisines: text("favorite_cuisines"),
+    profileVisibility: mysqlEnum("profile_visibility", ["private", "public"])
+      .default("private")
+      .notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+  },
+  table => ({
+    visibilityIdx: index("veg_profiles_visibility_idx").on(
+      table.profileVisibility,
+    ),
+  }),
+);
+
+export type VegProfileRecord = typeof vegProfiles.$inferSelect;
+export type InsertVegProfile = typeof vegProfiles.$inferInsert;
+
+export const userInteractions = mysqlTable(
+  "o_user_interactions",
+  {
+    id: varchar("id", { length: 36 }).primaryKey(),
+    subjectId: varchar("subject_id", { length: 64 }).notNull(),
+    targetType: mysqlEnum("target_type", [
+      "recipe",
+      "venue",
+      "article",
+      "product",
+    ]).notNull(),
+    targetId: varchar("target_id", { length: 256 }).notNull(),
+    action: mysqlEnum("action", [
+      "favorite",
+      "want_to_visit",
+      "visited",
+      "want_to_cook",
+      "cooked",
+      "saved",
+    ]).notNull(),
+    metadata: text("metadata"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  table => ({
+    subjectActionIdx: index("o_user_interactions_subject_action_idx").on(
+      table.subjectId,
+      table.action,
+    ),
+    subjectTargetActionUid: uniqueIndex(
+      "o_user_interactions_subject_target_action_uidx",
+    ).on(table.subjectId, table.targetType, table.targetId, table.action),
+  }),
+);
+
+export type UserInteractionRecord = typeof userInteractions.$inferSelect;
+export type InsertUserInteraction = typeof userInteractions.$inferInsert;
+
+export const consentGrants = mysqlTable(
+  "o_consent_grants",
+  {
+    id: varchar("id", { length: 36 }).primaryKey(),
+    subjectId: varchar("subject_id", { length: 64 }).notNull(),
+    scope: varchar("scope", { length: 128 }).notNull(),
+    status: mysqlEnum("status", ["granted", "revoked"]).notNull(),
+    source: varchar("source", { length: 64 }).default("user").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    revokedAt: timestamp("revoked_at"),
+  },
+  table => ({
+    subjectScopeIdx: index("o_consent_grants_subject_scope_idx").on(
+      table.subjectId,
+      table.scope,
+    ),
+  }),
+);
+
+export type ConsentGrantRecord = typeof consentGrants.$inferSelect;
+export type InsertConsentGrant = typeof consentGrants.$inferInsert;
+
+export const identityAuditEvents = mysqlTable(
+  "o_identity_audit_events",
+  {
+    id: varchar("id", { length: 36 }).primaryKey(),
+    oIdentityId: varchar("o_identity_id", { length: 36 }).notNull(),
+    actorSubjectId: varchar("actor_subject_id", { length: 64 }),
+    eventType: varchar("event_type", { length: 96 }).notNull(),
+    metadata: text("metadata"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  table => ({
+    rootCreatedIdx: index("o_identity_audit_root_created_idx").on(
+      table.oIdentityId,
+      table.createdAt,
+    ),
+  }),
+);
+
+export type IdentityAuditEventRecord = typeof identityAuditEvents.$inferSelect;
+export type InsertIdentityAuditEvent = typeof identityAuditEvents.$inferInsert;

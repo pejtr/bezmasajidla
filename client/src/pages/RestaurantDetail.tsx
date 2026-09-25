@@ -21,6 +21,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Maximize2,
+  BookmarkPlus,
+  Check,
 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -41,6 +43,8 @@ import ReviewSection from "@/components/ReviewSection";
 import { getNearestRestaurants, getNearestFastFood } from "@/lib/geo";
 import SEOHead from "@/components/SEOHead";
 import { getWoltLink } from "@/lib/affiliates";
+import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 const RESTAURANT_IMG = "/images/placeholders/restaurant-placeholder.svg";
 
@@ -413,6 +417,23 @@ export default function RestaurantDetail() {
   const params = useParams<{ slug: string }>();
   const restaurant = restaurants.find(r => r.slug === params.slug);
   const [mapReady, setMapReady] = useState(false);
+  const { isAuthenticated } = useAuth();
+  const identityUtils = trpc.useUtils();
+  const { data: visitPlans = [] } = trpc.oIdentity.interactions.list.useQuery(
+    { targetType: "venue", action: "want_to_visit" },
+    { enabled: isAuthenticated && Boolean(restaurant) },
+  );
+  const wantToVisit = Boolean(
+    restaurant && visitPlans.some(item => item.targetId === restaurant.slug),
+  );
+  const setVisitPlan = trpc.oIdentity.interactions.set.useMutation({
+    onSuccess: () => {
+      identityUtils.oIdentity.interactions.list.invalidate({
+        targetType: "venue",
+        action: "want_to_visit",
+      });
+    },
+  });
 
   const jsonLd = restaurant ? (
     <>

@@ -11,6 +11,8 @@ import {
   ArrowLeft,
   ArrowRight,
   BookOpen,
+  BookmarkPlus,
+  Check,
 } from "lucide-react";
 import { getBlogPostBySlug, blogPosts } from "@/lib/blogData";
 import Header from "@/components/Header";
@@ -18,6 +20,8 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { Streamdown } from "streamdown";
 import SmartInternalLinks from "@/components/SmartInternalLinks";
+import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("cs-CZ", {
@@ -30,6 +34,23 @@ function formatDate(iso: string): string {
 export default function BlogDetail() {
   const { slug } = useParams<{ slug: string }>();
   const post = getBlogPostBySlug(slug || "");
+  const { isAuthenticated } = useAuth();
+  const identityUtils = trpc.useUtils();
+  const { data: savedArticles = [] } = trpc.oIdentity.interactions.list.useQuery(
+    { targetType: "article", action: "saved" },
+    { enabled: isAuthenticated && Boolean(post) },
+  );
+  const isSaved = Boolean(
+    post && savedArticles.some(item => item.targetId === post.slug),
+  );
+  const setSavedArticle = trpc.oIdentity.interactions.set.useMutation({
+    onSuccess: () => {
+      identityUtils.oIdentity.interactions.list.invalidate({
+        targetType: "article",
+        action: "saved",
+      });
+    },
+  });
 
   if (!post) {
     return (
@@ -160,6 +181,35 @@ export default function BlogDetail() {
               </span>
             ))}
           </div>
+
+          {isAuthenticated && (
+            <div className="mb-6">
+              <button
+                type="button"
+                onClick={() =>
+                  setSavedArticle.mutate({
+                    targetType: "article",
+                    targetId: post.slug,
+                    action: "saved",
+                    active: !isSaved,
+                  })
+                }
+                disabled={setSavedArticle.isPending}
+                className={`inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-semibold transition-colors disabled:opacity-60 ${
+                  isSaved
+                    ? "border-emerald-600 bg-emerald-50 text-emerald-700"
+                    : "border-emerald-200 bg-white text-emerald-700 hover:bg-emerald-50"
+                }`}
+              >
+                {isSaved ? (
+                  <Check className="h-4 w-4" />
+                ) : (
+                  <BookmarkPlus className="h-4 w-4" />
+                )}
+                {isSaved ? "Uloženo na později" : "Uložit na později"}
+              </button>
+            </div>
+          )}
 
           {/* Excerpt */}
           <p className="text-lg text-gray-600 leading-relaxed mb-8 font-medium">
