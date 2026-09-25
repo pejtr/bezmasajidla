@@ -54,6 +54,7 @@ const PodminkyPage = lazy(() => import("./pages/PodminkyPage"));
 const OchranaPage = lazy(() => import("./pages/OchranaPage"));
 const KontaktPage = lazy(() => import("./pages/KontaktPage"));
 const CateringPage = lazy(() => import("./pages/CateringPage"));
+const CateringPageEn = lazy(() => import("./pages/CateringPageEn"));
 
 const DistrictPillarPage = lazy(() => import("./pages/DistrictPillarPage"));
 const IngredientPillarPage = lazy(() => import("./pages/IngredientPillarPage"));
@@ -158,6 +159,7 @@ function Router() {
         <Route path="/ochrana-soukromi" component={OchranaPage} />
         <Route path="/kontakt" component={KontaktPage} />
         <Route path="/catering" component={CateringPage} />
+        <Route path="/en/catering" component={CateringPageEn} />
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
       </Switch>

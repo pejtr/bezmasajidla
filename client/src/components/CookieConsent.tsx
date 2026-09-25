@@ -48,6 +48,7 @@ export function updateGoogleConsent(analytics: boolean, marketing: boolean) {
 }
 
 export default function CookieConsent() {
+  const isEnglish = typeof window !== "undefined" && window.location.pathname.startsWith("/en/");
   const [visible, setVisible] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [prefs, setPrefs] = useState<CookiePrefs>({
@@ -97,19 +98,19 @@ export default function CookieConsent() {
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="text-xs font-bold text-gray-900 mb-0.5">
-                Tento web používá cookies
+                {isEnglish ? "This website uses cookies" : "Tento web používá cookies"}
               </h3>
               <p className="text-[11px] text-gray-500 leading-normal">
-                Používáme anonymní cookies pro analýzu návštěvnosti.{" "}
+                {isEnglish ? "We use anonymous cookies for traffic analytics." : "Používáme anonymní cookies pro analýzu návštěvnosti."}{" "}
                 <Link href="/ochrana-soukromi" className="text-emerald-600 hover:underline">
-                  Více informací
+                  {isEnglish ? "More information" : "Více informací"}
                 </Link>
               </p>
             </div>
             <button
               onClick={() => save("rejected", { necessary: true, analytics: false, marketing: false })}
               className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
-              aria-label="Odmítnout cookies"
+              aria-label={isEnglish ? "Reject cookies" : "Odmítnout cookies"}
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -172,13 +173,13 @@ export default function CookieConsent() {
               className="flex items-center gap-1.5 bg-emerald-700 hover:bg-emerald-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
             >
               <Check className="w-3.5 h-3.5" />
-              Přijmout vše
+              {isEnglish ? "Accept all" : "Přijmout vše"}
             </button>
             <button
               onClick={() => save("rejected", { necessary: true, analytics: false, marketing: false })}
               className="flex items-center gap-1.5 border border-gray-200 text-gray-600 hover:bg-gray-50 text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
             >
-              Odmítnout vše
+              {isEnglish ? "Reject all" : "Odmítnout vše"}
             </button>
             {showDetails ? (
               <button
@@ -186,7 +187,7 @@ export default function CookieConsent() {
                 className="flex items-center gap-1.5 border border-emerald-200 text-emerald-700 hover:bg-emerald-50 text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
               >
                 <Check className="w-3.5 h-3.5" />
-                Uložit výběr
+                {isEnglish ? "Save selection" : "Uložit výběr"}
               </button>
             ) : (
               <button
@@ -194,7 +195,7 @@ export default function CookieConsent() {
                 className="flex items-center gap-1.5 text-gray-500 hover:text-gray-700 text-sm px-3 py-2.5 rounded-xl transition-colors"
               >
                 <Settings className="w-3.5 h-3.5" />
-                Přizpůsobit
+                {isEnglish ? "Customise" : "Přizpůsobit"}
               </button>
             )}
           </div>

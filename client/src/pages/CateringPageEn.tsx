@@ -1,7 +1,7 @@
 // ============================================================
 // BEZMASAJIDLA.CZ — MATOUŠ SIGNATURE B2B CATERING FUNNEL
 // Premium Corporate Sales Page & Conversion Engine
-// Matouš Signature: od 1 190 Kč / osoba bez DPH (12–80 hostů)
+// Matouš Signature: od CZK 1,190 / person bez DPH (12–80 guests)
 // Obsluha, inventář a kompletní servis v ceně
 // ============================================================
 
@@ -45,19 +45,19 @@ import { trackCateringEvent } from "@/lib/cateringTracking";
 const EVENT_TYPES = [
   { id: "workshop", label: "Workshop" },
   { id: "board-lunch", label: "Board lunch" },
-  { id: "client-raut", label: "Client raut" },
-  { id: "jina-akce", label: "Jiná akce" },
+  { id: "client-raut", label: "Client buffet" },
+  { id: "jina-akce", label: "Other event" },
 ] as const;
 
 type EventTypeId = (typeof EVENT_TYPES)[number]["id"];
 
 // ── Venue Types ──────────────────────────────────────────────
 const VENUE_TYPES = [
-  "Meeting room (bez kuchyně)",
-  "Reprezentativní kancelář / open-space",
-  "Konferenční / Eventový sál",
-  "Terasa / Venkovní prostor",
-  "Zatím hledáme vhodné prostory",
+  "Meeting room (no kitchen)",
+  "Executive office / open space",
+  "Conference / event hall",
+  "Terrace / outdoor venue",
+  "We are still looking for a suitable venue",
 ] as const;
 
 
@@ -73,29 +73,29 @@ type GalleryItem = {
 };
 
 const GALLERY_CATEGORIES = [
-  { id: "all", label: "Všechny ukázky" },
+  { id: "all", label: "All dishes" },
   { id: "raut", label: "Raut & kanapky" },
-  { id: "teple", label: "Teplé chody" },
-  { id: "tapas", label: "Předkrmy & tapas" },
-  { id: "dezerty", label: "Autorské dezerty" },
-  { id: "polevky", label: "Polévky & nápoje" },
+  { id: "teple", label: "Hot courses" },
+  { id: "tapas", label: "Starters & tapas" },
+  { id: "dezerty", label: "Signature desserts" },
+  { id: "polevky", label: "Soups & drinks" },
 ] as const;
 
 const MATOUS_GALLERY_ITEMS: GalleryItem[] = [
-  { id: "raut-kanapky", title: "Cateringový rautový podnos", category: "raut", categoryLabel: "Raut & fingerfood", image: "/images/catering/matous-cateringovy-raut-kanapky.jpg", description: "Pestrý raut s bruschettami, domácími pomazánkami, marinovanou zeleninou a sezónními toppingy." },
-  { id: "rostlinny-tatarak", title: "Autorský rostlinný tatarák", category: "tapas", categoryLabel: "Předkrmy & tapas", image: "/images/catering/matous-rostlinny-tatarak-toast.jpg", description: "Rostlinný tatarák s hořčičným semínkem, bylinkami, perličkami a křupavým chlebem." },
-  { id: "glazovany-steak", title: "Glazovaný steak na řepném pyré", category: "teple", categoryLabel: "Teplé chody", image: "/images/catering/matous-glazovany-steak-repne-pyre.jpg", description: "Výrazný teplý signature chod s řepným pyré, pečenou zeleninou a křupavou cibulkou." },
-  { id: "mezze-labneh", title: "Krémové mezze s cizrnou", category: "tapas", categoryLabel: "Předkrmy & tapas", image: "/images/catering/matous-mezze-labneh-cizrna.jpg", description: "Krémový základ s cizrnou, granátovým jablkem, bylinkami a olivovým olejem." },
-  { id: "seitanove-medailonky", title: "Seitanové medailonky s kaší", category: "teple", categoryLabel: "Teplé chody", image: "/images/catering/matous-seitanove-medailonky-kase.jpg", description: "Křupavé medailonky, jemná kaše a sezónní zelenina v moderním českém pojetí." },
-  { id: "seitan-dynovy-krem", title: "Orestovaný seitan na dýňovém krému", category: "teple", categoryLabel: "Teplé chody", image: "/images/catering/matous-seitan-dynovy-krem.jpg", description: "Šťavnatý seitan na voňavém dýňovém krému se svěžím salátem a praženými semínky." },
-  { id: "pecena-kukurice-kvetak", title: "Pečená baby kukuřice a květák", category: "teple", categoryLabel: "Teplé chody", image: "/images/catering/matous-pecena-kukurice-kvetak-pyre.jpg", description: "Pečená kukuřice a květák na jemném pyré se svěžím křupavým salátem." },
-  { id: "dezerty-violky", title: "Skleničkové dezerty s violkami", category: "dezerty", categoryLabel: "Autorské dezerty", image: "/images/catering/matous-dezerty-violky-sklenicky.jpg", description: "Lehký krém ve skleničkách s čokoládovým crumblem a jedlými květy." },
-  { id: "brownies-zmrzlina", title: "Brownies s ovocem a zmrzlinou", category: "dezerty", categoryLabel: "Autorské dezerty", image: "/images/catering/matous-brownies-zmrzlina-hruska.jpg", description: "Hutný čokoládový dezert s vanilkovou zmrzlinou, ovocem a praženými semínky." },
-  { id: "brownies-raut", title: "Degustační brownies pro raut", category: "dezerty", categoryLabel: "Autorské dezerty", image: "/images/catering/matous-cokoladove-brownies-raut.jpg", description: "Malé rautové porce brownies s ovocem a kakaovým přelivem." },
-  { id: "peceny-syr", title: "Pečený sýr se semínky", category: "tapas", categoryLabel: "Předkrmy & tapas", image: "/images/catering/matous-peceny-syr-hermelin.jpg", description: "Pečený sýr s křupavými semínky, paprikou, baby špenátem a opečeným chlebem." },
-  { id: "kulajda", title: "Staročeská vegetariánská kulajda", category: "polevky", categoryLabel: "Polévky & nápoje", image: "/images/catering/matous-staroceska-kulajda.jpg", description: "Krémová kulajda s houbami, koprem, vejcem a jemnou smetanovou linkou." },
-  { id: "dynovy-krem", title: "Sametový dýňový krém", category: "polevky", categoryLabel: "Polévky & nápoje", image: "/images/catering/matous-dynovy-krem-seminka.jpg", description: "Hustý dýňový krém s praženými semínky a limetkou." },
-  { id: "signature-drink", title: "Signature letní drink", category: "polevky", categoryLabel: "Polévky & nápoje", image: "/images/catering/matous-signature-letni-drink.jpg", description: "Autorský nealko aperitiv s citrusy, physalisem a levandulí." },
+  { id: "raut-kanapky", title: "Catering buffet platter", category: "raut", categoryLabel: "Raut & fingerfood", image: "/images/catering/matous-cateringovy-raut-kanapky.jpg", description: "A colourful buffet with bruschetta, house-made spreads, marinated vegetables and seasonal toppings." },
+  { id: "rostlinny-tatarak", title: "Signature plant-based tartare", category: "tapas", categoryLabel: "Starters & tapas", image: "/images/catering/matous-rostlinny-tatarak-toast.jpg", description: "Plant-based tartare with mustard seeds, herbs, pearls and crisp bread." },
+  { id: "glazovany-steak", title: "Glazed steak on beetroot purée", category: "teple", categoryLabel: "Hot courses", image: "/images/catering/matous-glazovany-steak-repne-pyre.jpg", description: "A bold hot signature course with beetroot purée, roasted vegetables and crispy onions." },
+  { id: "mezze-labneh", title: "Creamy mezze with chickpeas", category: "tapas", categoryLabel: "Starters & tapas", image: "/images/catering/matous-mezze-labneh-cizrna.jpg", description: "Creamy base with chickpeas, pomegranate, herbs and olive oil." },
+  { id: "seitanove-medailonky", title: "Seitan medallions with mash", category: "teple", categoryLabel: "Hot courses", image: "/images/catering/matous-seitanove-medailonky-kase.jpg", description: "Crisp medallions, smooth mash and seasonal vegetables in a modern Czech style." },
+  { id: "seitan-dynovy-krem", title: "Seared seitan on pumpkin cream", category: "teple", categoryLabel: "Hot courses", image: "/images/catering/matous-seitan-dynovy-krem.jpg", description: "Juicy seitan on fragrant pumpkin cream with a fresh salad and toasted seeds." },
+  { id: "pecena-kukurice-kvetak", title: "Roasted baby corn and cauliflower", category: "teple", categoryLabel: "Hot courses", image: "/images/catering/matous-pecena-kukurice-kvetak-pyre.jpg", description: "Roasted corn and cauliflower on a smooth purée with a fresh crunchy salad." },
+  { id: "dezerty-violky", title: "Dessert jars with violets", category: "dezerty", categoryLabel: "Signature desserts", image: "/images/catering/matous-dezerty-violky-sklenicky.jpg", description: "Light cream in jars with chocolate crumble and edible flowers." },
+  { id: "brownies-zmrzlina", title: "Brownies with fruit and ice cream", category: "dezerty", categoryLabel: "Signature desserts", image: "/images/catering/matous-brownies-zmrzlina-hruska.jpg", description: "Rich chocolate dessert with vanilla ice cream, fruit and toasted seeds." },
+  { id: "brownies-raut", title: "Tasting brownies for a buffet", category: "dezerty", categoryLabel: "Signature desserts", image: "/images/catering/matous-cokoladove-brownies-raut.jpg", description: "Small buffet portions of brownies with fruit and cocoa sauce." },
+  { id: "peceny-syr", title: "Baked cheese with seeds", category: "tapas", categoryLabel: "Starters & tapas", image: "/images/catering/matous-peceny-syr-hermelin.jpg", description: "Baked cheese with crunchy seeds, peppers, baby spinach and toasted bread." },
+  { id: "kulajda", title: "Traditional Czech vegetarian kulajda", category: "polevky", categoryLabel: "Soups & drinks", image: "/images/catering/matous-staroceska-kulajda.jpg", description: "Creamy kulajda with mushrooms, dill, egg and a delicate cream finish." },
+  { id: "dynovy-krem", title: "Velvety pumpkin soup", category: "polevky", categoryLabel: "Soups & drinks", image: "/images/catering/matous-dynovy-krem-seminka.jpg", description: "Thick pumpkin soup with toasted seeds and lime." },
+  { id: "signature-drink", title: "Signature summer drink", category: "polevky", categoryLabel: "Soups & drinks", image: "/images/catering/matous-signature-letni-drink.jpg", description: "A signature alcohol-free aperitif with citrus, physalis and lavender." },
 ];
 
 // ── Pricing Constants ────────────────────────────────────────
@@ -103,7 +103,7 @@ const SIGNATURE_PRICE_PER_PERSON = 1190;
 const MIN_GUESTS = 12;
 const MAX_SIGNATURE_GUESTS = 80;
 
-export default function CateringPage() {
+export default function CateringPageEn() {
   // Navigation / Scroll
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -112,7 +112,7 @@ export default function CateringPage() {
   const [guestCount, setGuestCount] = useState<number>(25);
   const [eventDate, setEventDate] = useState<string>("");
   const [eventTime, setEventTime] = useState<string>("16:00 – 20:00");
-  const [location, setLocation] = useState<string>("Praha 8");
+  const [location, setLocation] = useState<string>("Prague 8");
   const [venueType, setVenueType] = useState<string>(VENUE_TYPES[0]);
 
   // Company & Contact State
@@ -205,8 +205,8 @@ export default function CateringPage() {
     setServerError(null);
 
     const addonsList: string[] = [];
-    if (addonWine) addonsList.push("Víno / alkohol");
-    if (addonTasting) addonsList.push("Degustace před akcí");
+    if (addonWine) addonsList.push("Wine / alcohol");
+    if (addonTasting) addonsList.push("Pre-event tasting");
     if (addonLateService) addonsList.push("Servis po 23:00");
 
     const calculatedRevenue = isIndividualCalculation ? 0 : guestCount * SIGNATURE_PRICE_PER_PERSON;
@@ -226,7 +226,7 @@ export default function CateringPage() {
       eventType: EVENT_TYPES.find(t => t.id === eventType)?.label || eventType,
       dietNotes,
       addons: addonsList,
-      notes: `Firma: ${companyName || "neuvedeno"}, IČO: ${ico || "neuvedeno"}, Typ akce: ${eventType}, Prostor: ${venueType}, Čas: ${eventTime}, Místo: ${location}. Diety: ${dietNotes || "žádné"}. Doplňky: ${addonsList.join(", ") || "žádné"}.`,
+      notes: `Company: ${companyName || "not provided"}, Company ID: ${ico || "not provided"}, Event type: ${eventType}, Venue type: ${venueType}, Time: ${eventTime}, Venue: ${location}. Dietary needs: ${dietNotes || "none"}. Extras: ${addonsList.join(", ") || "none"}.`,
       packageId: "signature",
       packageName: "MATOUŠ SIGNATURE",
       includeDrinks: true,
@@ -249,7 +249,7 @@ export default function CateringPage() {
       } catch {}
 
       if (!res.ok || !data?.success || !data?.leadCode) {
-        throw new Error(data?.error || "Poptávku se nepodařilo bezpečně uložit.");
+        throw new Error(data?.error || "We could not save your enquiry safely.");
       }
 
       const confirmedLeadCode = String(data.leadCode);
@@ -278,28 +278,28 @@ export default function CateringPage() {
       setServerError(
         err instanceof Error
           ? err.message
-          : "Poptávku se nepodařilo odeslat. Zkuste to prosím znovu."
+          : "We could not send your enquiry. Please try again."
       );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const selectedEventLabel = EVENT_TYPES.find(t => t.id === eventType)?.label || "Client raut";
+  const selectedEventLabel = EVENT_TYPES.find(t => t.id === eventType)?.label || "Client buffet";
 
   return (
     <div className="min-h-screen flex flex-col overflow-x-hidden bg-[#FDFCF8] text-stone-800 font-sans selection:bg-amber-200 selection:text-stone-900">
       <SEOHead
-        title="Firemní catering Praha | Matouš Signature | BezmasáJídla"
-        description="Firemní catering v Praze od šéfkuchaře Matouše. Autorské bezmasé menu pro rauty, workshopy a board lunch. Obsluha, inventář a doprava po Praze v ceně Signature od 1 190 Kč/os."
+        title="Corporate catering Prague | Matouš Signature | BezmasáJídla"
+        description="Corporate catering in Prague by chef Matouš. Signature meat-free menus for buffets, workshops and board lunches. Service, equipment and Prague delivery included in Signature from CZK 1,190 per person."
         ogType="website"
-        ogUrl="https://www.bezmasajidla.cz/catering"
+        ogUrl="https://www.bezmasajidla.cz/en/catering"
         ogImage="https://www.bezmasajidla.cz/images/catering/matous-catering-og.jpg"
       />
       <BreadcrumbJsonLd
         items={[
-          { name: "Domů", url: "/" },
-          { name: "Catering", url: "/catering" },
+          { name: "Home", url: "/" },
+          { name: "Catering", url: "/en/catering" },
         ]}
       />
 
@@ -324,39 +324,39 @@ export default function CateringPage() {
           </a>
 
           <nav className="hidden xl:flex items-center gap-7 text-[12px] font-medium text-white/90">
-            <a href="#proc-matous" className="hover:text-amber-300 transition-colors">Pro firmy</a>
+            <a href="#proc-matous" className="hover:text-amber-300 transition-colors">For companies</a>
             <a href="#signature-menu" className="hover:text-amber-300 transition-colors">Signature</a>
-            <a href="#kalkulacka" className="hover:text-amber-300 transition-colors">Kalkulačka</a>
-            <a href="#jak-to-funguje" className="hover:text-amber-300 transition-colors">Jak to funguje</a>
+            <a href="#kalkulacka" className="hover:text-amber-300 transition-colors">Calculator</a>
+            <a href="#jak-to-funguje" className="hover:text-amber-300 transition-colors">How it works</a>
             <a href="#sef-kuchar" className="hover:text-amber-300 transition-colors">Matouš</a>
-            <a href="#galerie" className="hover:text-amber-300 transition-colors">Reference</a>
+            <a href="#galerie" className="hover:text-amber-300 transition-colors">Gallery</a>
             <a href="#faq" className="hover:text-amber-300 transition-colors">FAQ</a>
           </nav>
 
           <div className="hidden xl:flex items-center gap-4">
-            <a href="/en/catering" className="text-[11px] font-semibold tracking-[0.16em] text-white/75 hover:text-amber-300 transition-colors">EN</a>
+            <a href="/catering" className="text-[11px] font-semibold tracking-[0.16em] text-white/75 hover:text-amber-300 transition-colors">CZ</a>
             <button
               onClick={scrollToCalculator}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-md bg-gradient-to-b from-[#FFD65A] to-[#F1B829] hover:from-[#FFE078] hover:to-[#F5C23E] text-[#142018] font-bold text-[13px] shadow-[0_8px_25px_rgba(0,0,0,.22)] transition-all"
             >
-              Poptat termín
+              Check availability
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
 
           <div className="absolute right-3 sm:right-5 top-5 flex xl:hidden items-center gap-1.5 sm:gap-3">
-            <a href="/en/catering" className="px-2 py-2 text-[10px] font-bold tracking-[0.14em] text-white/80">EN</a>
+            <a href="/catering" className="px-2 py-2 text-[10px] font-bold tracking-[0.14em] text-white/80">CZ</a>
             <button
               onClick={scrollToCalculator}
               className="hidden sm:inline-flex px-3 sm:px-4 py-2 rounded-md bg-amber-400 text-stone-950 font-bold text-[11px] sm:text-xs"
             >
-              <span className="sm:hidden">Poptat</span>
-              <span className="hidden sm:inline">Poptat termín</span>
+              <span className="sm:hidden">Enquire</span>
+              <span className="hidden sm:inline">Check availability</span>
             </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-1.5 sm:p-2 text-white"
-              aria-label="Přepnout menu"
+              aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -366,12 +366,12 @@ export default function CateringPage() {
         {mobileMenuOpen && (
           <div className="xl:hidden mx-4 sm:ml-auto sm:mr-5 sm:w-[380px] rounded-2xl border border-white/10 bg-[#071710]/95 backdrop-blur-xl px-5 py-5 shadow-2xl">
             <div className="grid grid-cols-2 gap-x-5 gap-y-4 text-sm text-stone-100">
-              <a href="#proc-matous" onClick={() => setMobileMenuOpen(false)}>Pro firmy</a>
+              <a href="#proc-matous" onClick={() => setMobileMenuOpen(false)}>For companies</a>
               <a href="#signature-menu" onClick={() => setMobileMenuOpen(false)}>Signature</a>
-              <a href="#kalkulacka" onClick={() => setMobileMenuOpen(false)}>Kalkulačka</a>
-              <a href="#jak-to-funguje" onClick={() => setMobileMenuOpen(false)}>Jak to funguje</a>
+              <a href="#kalkulacka" onClick={() => setMobileMenuOpen(false)}>Calculator</a>
+              <a href="#jak-to-funguje" onClick={() => setMobileMenuOpen(false)}>How it works</a>
               <a href="#sef-kuchar" onClick={() => setMobileMenuOpen(false)}>Matouš</a>
-              <a href="#galerie" onClick={() => setMobileMenuOpen(false)}>Reference</a>
+              <a href="#galerie" onClick={() => setMobileMenuOpen(false)}>Gallery</a>
               <a href="#faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
             </div>
           </div>
@@ -410,7 +410,7 @@ export default function CateringPage() {
           <div className="w-full max-w-[290px] sm:max-w-[490px] lg:max-w-none lg:w-[56%] xl:w-[49%]">
             <div className="flex items-center gap-2.5 sm:gap-3 text-[9px] sm:text-[12px] tracking-[0.28em] sm:tracking-[0.40em] uppercase font-medium text-amber-300">
               <span className="w-7 h-px bg-amber-400/80" />
-              <span>Firemní catering v Praze</span>
+              <span>Corporate catering in Prague</span>
             </div>
 
             <h1 className="mt-4 sm:mt-5 leading-[0.98]">
@@ -421,18 +421,18 @@ export default function CateringPage() {
                 Matouš Signature
               </span>
               <span className="block mt-1 font-serif text-[30px] sm:text-[47px] lg:text-[50px] xl:text-[64px] leading-[0.98] tracking-[-0.03em] font-semibold text-white">
-                Firemní catering
+                Corporate catering
               </span>
               <span className="block mt-1 font-serif text-[36px] sm:text-[52px] lg:text-[56px] xl:text-[68px] leading-[0.96] tracking-[-0.035em] font-semibold text-amber-300">
-                bez masa.
+                meat-free.
               </span>
               <span className="block font-serif text-[32px] sm:text-[50px] lg:text-[54px] xl:text-[68px] leading-[0.96] tracking-[-0.035em] font-semibold text-amber-300">
-                Bez kompromisu.
+                No compromises.
               </span>
             </h1>
 
             <p className="mt-5 sm:mt-6 max-w-[330px] sm:max-w-xl text-[15px] sm:text-[18px] lg:text-[20px] leading-relaxed text-stone-100/90 font-light">
-              Moderní vegetariánská gastronomie pro firmy, které chtějí skvělý zážitek, profesionální servis a transparentní rozpočet.
+              Modern vegetarian gastronomy for companies that want a memorable experience, professional service and a transparent budget.
             </p>
 
             <div className="mt-6 sm:mt-7 flex flex-col sm:flex-row gap-3 sm:gap-4">
@@ -441,14 +441,14 @@ export default function CateringPage() {
                 className="inline-flex items-center justify-center gap-3 min-w-[218px] px-7 py-4 rounded-md bg-gradient-to-b from-[#FFD65A] to-[#F2B92B] hover:from-[#FFE078] hover:to-[#F7C542] text-[#122019] font-bold text-[15px] shadow-[0_12px_30px_rgba(0,0,0,.28)] transition-all"
               >
                 <Calculator className="w-5 h-5" />
-                SPOČÍTAT AKCI
+                CALCULATE EVENT
                 <ArrowRight className="w-4 h-4" />
               </button>
               <button
                 onClick={scrollToCalculator}
                 className="inline-flex items-center justify-center min-w-[176px] px-7 py-4 rounded-md border border-amber-300/80 bg-[#0b2018]/60 text-white font-semibold text-[14px] tracking-[0.08em] hover:bg-[#173528]/80 transition-colors"
               >
-                POPTAT TERMÍN
+                CHECK AVAILABILITY
               </button>
             </div>
           </div>
@@ -456,19 +456,19 @@ export default function CateringPage() {
           <div className="mt-auto pt-8 lg:pt-12 w-full lg:w-[55%] grid grid-cols-2 sm:grid-cols-4 gap-y-4 text-[11px] sm:text-[12px] text-stone-100">
             <div className="flex items-center gap-2.5 pr-4">
               <MapPin className="w-5 h-5 text-amber-300 shrink-0" strokeWidth={1.7} />
-              <span>Praha a okolí</span>
+              <span>Prague and surroundings</span>
             </div>
             <div className="flex items-center gap-2.5 px-0 sm:px-4 sm:border-l border-white/15">
               <Users className="w-5 h-5 text-amber-300 shrink-0" strokeWidth={1.7} />
-              <span>12–80 hostů Signature</span>
+              <span>12–80 guests Signature</span>
             </div>
             <div className="flex items-center gap-2.5 px-0 sm:px-4 sm:border-l border-white/15">
               <Clock className="w-5 h-5 text-amber-300 shrink-0" strokeWidth={1.7} />
-              <span>Odpověď do 24 h</span>
+              <span>Reply within 24 h</span>
             </div>
             <div className="flex items-center gap-2.5 px-0 sm:pl-4 sm:border-l border-white/15">
               <FileText className="w-5 h-5 text-amber-300 shrink-0" strokeWidth={1.7} />
-              <span>Fakturace na IČO</span>
+              <span>Business invoicing</span>
             </div>
           </div>
         </div>
@@ -477,7 +477,7 @@ export default function CateringPage() {
           <div className="relative h-full max-w-[1440px] mx-auto">
             <div className="absolute right-[20%] top-[58%] z-20 bg-white/92 backdrop-blur-sm text-[#152018] px-5 py-4 shadow-xl">
               <div className="text-[10px] uppercase tracking-[0.28em] leading-relaxed">
-                Zkušenosti<br />z Norska,<br />Islandu<br />a Nového Zélandu.
+                Experience<br />from Norway,<br />Iceland<br />and New Zealand.
               </div>
             </div>
           </div>
@@ -493,8 +493,8 @@ export default function CateringPage() {
                 <Leaf className="w-5 h-5 text-[#173226]" strokeWidth={1.5} />
               </div>
               <div>
-                <div className="font-semibold text-[13px] text-[#18221c]">Autorské menu</div>
-                <div className="text-[12px] text-stone-600">z kvalitních surovin</div>
+                <div className="font-semibold text-[13px] text-[#18221c]">Signature menu</div>
+                <div className="text-[12px] text-stone-600">from quality ingredients</div>
               </div>
             </div>
             <div className="flex items-center gap-4 py-5 lg:py-6 lg:px-8 lg:border-l border-stone-300/80">
@@ -502,8 +502,8 @@ export default function CateringPage() {
                 <UtensilsCrossed className="w-5 h-5 text-[#173226]" strokeWidth={1.5} />
               </div>
               <div>
-                <div className="font-semibold text-[13px] text-[#18221c]">Servisní tým, inventář</div>
-                <div className="text-[12px] text-stone-600">a doprava v ceně Signature</div>
+                <div className="font-semibold text-[13px] text-[#18221c]">Service team & equipment</div>
+                <div className="text-[12px] text-stone-600">and delivery included in Signature</div>
               </div>
             </div>
             <div className="flex items-center gap-4 py-5 lg:py-6 lg:px-8 lg:border-l border-stone-300/80">
@@ -511,8 +511,8 @@ export default function CateringPage() {
                 <Users className="w-5 h-5 text-[#173226]" strokeWidth={1.5} />
               </div>
               <div>
-                <div className="font-semibold text-[13px] text-[#18221c]">Firemní rauty, workshopy</div>
-                <div className="text-[12px] text-stone-600">a board lunch</div>
+                <div className="font-semibold text-[13px] text-[#18221c]">Corporate buffets & workshops</div>
+                <div className="text-[12px] text-stone-600">and board lunches</div>
               </div>
             </div>
             <div className="flex items-center gap-4 py-5 lg:py-6 lg:pl-8 lg:border-l border-stone-300/80">
@@ -520,8 +520,8 @@ export default function CateringPage() {
                 <Sparkles className="w-5 h-5 text-[#173226]" strokeWidth={1.5} />
               </div>
               <div>
-                <div className="font-semibold text-[13px] text-[#18221c]">Bez masa, plná chuť</div>
-                <div className="text-[12px] text-stone-600">moderní vegetariánské menu</div>
+                <div className="font-semibold text-[13px] text-[#18221c]">Meat-free, full of flavour</div>
+                <div className="text-[12px] text-stone-600">modern vegetarian menu</div>
               </div>
             </div>
           </div>
@@ -535,10 +535,10 @@ export default function CateringPage() {
           {/* Section Header */}
           <div className="max-w-2xl mb-8">
             <h2 className="font-serif text-[38px] sm:text-[46px] font-semibold tracking-[-0.025em] leading-tight text-[#171d19]">
-              Spočítejte si svou akci
+              Calculate your event
             </h2>
             <p className="text-stone-600 mt-2 text-[17px]">
-              Získejte orientační kalkulaci online za 60 sekund.
+              Get an indicative quote online in 60 seconds.
             </p>
           </div>
 
@@ -551,19 +551,19 @@ export default function CateringPage() {
 
               <div className="space-y-2">
                 <span className="inline-block px-3.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold tracking-wider uppercase border border-emerald-200">
-                  Poptávka úspěšně přijata
+                  Enquiry received
                 </span>
                 <h3 className="font-serif text-3xl font-bold text-stone-900">
-                  Děkujeme za poptávku, {contactPerson}!
+                  Thank you for your enquiry, {contactPerson}!
                 </h3>
                 <p className="text-stone-600 text-sm max-w-lg mx-auto">
-                  Váš požadavek jsme zaevidovali. Do 24 hodin ověříme kapacitu šéfkuchaře Matouše a pošleme vám detailní položkový rozpočet.
+                  We have recorded your request. Within 24 hours we will confirm chef Matouš's availability and send you a detailed itemised quote.
                 </p>
               </div>
 
               {/* Lead Code Card */}
               <div className="bg-stone-50 border border-stone-200 rounded-2xl p-4 max-w-md mx-auto">
-                <div className="text-xs text-stone-500 font-medium">Kód vaší poptávky</div>
+                <div className="text-xs text-stone-500 font-medium">Your enquiry code</div>
                 <div className="font-mono text-xl font-bold text-emerald-900 tracking-wider mt-1">
                   #{leadCode}
                 </div>
@@ -572,29 +572,29 @@ export default function CateringPage() {
               {/* Summary Table */}
               <div className="bg-[#FAF8F5] rounded-2xl p-6 text-left border border-stone-200 text-sm space-y-3 max-w-lg mx-auto">
                 <div className="flex justify-between border-b border-stone-200 pb-2">
-                  <span className="text-stone-500">Společnost:</span>
-                  <span className="font-semibold text-stone-900">{companyName || "neuvedeno"}</span>
+                  <span className="text-stone-500">Company:</span>
+                  <span className="font-semibold text-stone-900">{companyName || "not provided"}</span>
                 </div>
                 <div className="flex justify-between border-b border-stone-200 pb-2">
-                  <span className="text-stone-500">Typ akce:</span>
+                  <span className="text-stone-500">Event type:</span>
                   <span className="font-semibold text-stone-900">{selectedEventLabel}</span>
                 </div>
                 <div className="flex justify-between border-b border-stone-200 pb-2">
-                  <span className="text-stone-500">Počet hostů:</span>
+                  <span className="text-stone-500">Guest count:</span>
                   <span className="font-semibold text-stone-900">{guestCount} osob</span>
                 </div>
                 <div className="flex justify-between border-b border-stone-200 pb-2">
-                  <span className="text-stone-500">Termín a čas:</span>
+                  <span className="text-stone-500">Date and time:</span>
                   <span className="font-semibold text-stone-900">
                     {eventDate || "Dle dohody"} ({eventTime})
                   </span>
                 </div>
                 <div className="flex justify-between pt-1">
-                  <span className="text-stone-500">Orientační odhad rozpočtu:</span>
+                  <span className="text-stone-500">Indicative budget estimate:</span>
                   <span className="font-bold text-emerald-800">
                     {estimatedTotal
-                      ? `${estimatedTotal.toLocaleString("cs-CZ")} Kč bez DPH`
-                      : "Individuální kalkulace"}
+                      ? `${estimatedTotal.toLocaleString("en-GB")} CZK excl. VAT`
+                      : "Custom quote"}
                   </span>
                 </div>
               </div>
@@ -603,15 +603,15 @@ export default function CateringPage() {
               <div className="text-left max-w-lg mx-auto bg-emerald-50/70 border border-emerald-200/70 rounded-2xl p-5 space-y-2 text-xs text-emerald-950">
                 <div className="font-bold text-sm text-emerald-900 flex items-center gap-1.5">
                   <Clock className="w-4 h-4 text-emerald-700" />
-                  <span>Co se bude dít dál:</span>
+                  <span>What happens next:</span>
                 </div>
                 <ul className="list-disc list-inside space-y-1 text-stone-700">
-                  <li>Do 24 hodin ověříme kapacitu pro váš termín.</li>
-                  <li>Připravíme konkrétní návrh menu a cenovou nabídku.</li>
+                  <li>Within 24 hours we will confirm availability for your date.</li>
+                  <li>We will prepare a specific menu proposal and price quote.</li>
                   {mailStatus === "sent" ? (
-                    <li>Souhrn poptávky jsme poslali na <strong>{email}</strong>.</li>
+                    <li>We sent an enquiry summary to <strong>{email}</strong>.</li>
                   ) : (
-                    <li>Poptávka je bezpečně uložená. E-mailové potvrzení zatím nebylo odesláno.</li>
+                    <li>Your enquiry is safely stored. The email confirmation has not been sent yet.</li>
                   )}
                 </ul>
               </div>
@@ -621,7 +621,7 @@ export default function CateringPage() {
                   onClick={() => setSubmissionSuccess(false)}
                   className="px-6 py-2.5 rounded-xl border border-stone-300 text-stone-600 hover:text-stone-900 text-sm font-semibold"
                 >
-                  Zadat další poptávku
+                  Submit another enquiry
                 </button>
               </div>
             </div>
@@ -638,13 +638,13 @@ export default function CateringPage() {
                       <div className="w-7 h-7 rounded-full bg-stone-900 text-white font-bold text-xs flex items-center justify-center">
                         1
                       </div>
-                      <h3 className="font-bold text-lg text-stone-900">O akci</h3>
+                      <h3 className="font-bold text-lg text-stone-900">Event details</h3>
                     </div>
 
-                    {/* Typ akce pills */}
+                    {/* Event type pills */}
                     <div className="space-y-2">
                       <label className="block text-xs font-semibold text-stone-600">
-                        Typ akce
+                        Event type
                       </label>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                         {EVENT_TYPES.map(type => (
@@ -667,14 +667,14 @@ export default function CateringPage() {
                       </div>
                     </div>
 
-                    {/* Počet hostů stepper & slider */}
+                    {/* Number of guests stepper & slider */}
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
                         <label className="text-xs font-semibold text-stone-600">
-                          Počet hostů
+                          Number of guests
                         </label>
                         <span className="text-xs text-stone-500 font-medium">
-                          Signature model: 12 až 80 osob
+                          Signature model: 12 to 80 guests
                         </span>
                       </div>
                       <div className="flex items-center gap-3">
@@ -686,7 +686,7 @@ export default function CateringPage() {
                           −
                         </button>
                         <div className="flex-1 text-center py-2.5 bg-stone-50 border border-stone-200 rounded-xl font-bold text-stone-900 text-base">
-                          {guestCount} hostů
+                          {guestCount} guests
                         </div>
                         <button
                           type="button"
@@ -715,17 +715,17 @@ export default function CateringPage() {
                         <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 flex items-start gap-2">
                           <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                           <span>
-                            Pro akce nad 80 hostů sestavujeme individuální produkční plán, personální zajištění a kalkulaci na míru.
+                            For events above 80 guests we create a custom production plan, staffing plan and quote.
                           </span>
                         </div>
                       )}
                     </div>
 
-                    {/* Datum & Čas */}
+                    {/* Datum & Time */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-semibold text-stone-600 mb-1.5">
-                          Datum akce
+                          Event date
                         </label>
                         <div className="relative">
                           <input
@@ -741,7 +741,7 @@ export default function CateringPage() {
                       </div>
                       <div>
                         <label className="block text-xs font-semibold text-stone-600 mb-1.5">
-                          Čas
+                          Time
                         </label>
                         <div className="relative">
                           <Clock className="w-4 h-4 text-stone-400 absolute left-3.5 top-3.5" />
@@ -752,18 +752,18 @@ export default function CateringPage() {
                               handleFormInteraction();
                               setEventTime(e.target.value);
                             }}
-                            placeholder="Např. 16:00 – 20:00"
+                            placeholder="e.g. 16:00 – 20:00"
                             className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all"
                           />
                         </div>
                       </div>
                     </div>
 
-                    {/* Místo konání & Typ prostoru */}
+                    {/* Venue & Venue type */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-semibold text-stone-600 mb-1.5">
-                          Místo konání
+                          Venue
                         </label>
                         <div className="relative">
                           <MapPin className="w-4 h-4 text-stone-400 absolute left-3.5 top-3.5" />
@@ -774,14 +774,14 @@ export default function CateringPage() {
                               handleFormInteraction();
                               setLocation(e.target.value);
                             }}
-                            placeholder="Např. Praha 8 / Karlín / V sídle firmy"
+                            placeholder="e.g. Prague 8 / Karlín / Company HQ"
                             className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all"
                           />
                         </div>
                       </div>
                       <div>
                         <label className="block text-xs font-semibold text-stone-600 mb-1.5">
-                          Typ prostoru
+                          Venue type
                         </label>
                         <select
                           value={venueType}
@@ -801,19 +801,19 @@ export default function CateringPage() {
                     </div>
                   </div>
 
-                  {/* Step 2: Firma a kontakt */}
+                  {/* Step 2: Company & contact */}
                   <div className="space-y-4 pt-4 border-t border-stone-200">
                     <div className="flex items-center gap-3">
                       <div className="w-7 h-7 rounded-full bg-stone-900 text-white font-bold text-xs flex items-center justify-center">
                         2
                       </div>
-                      <h3 className="font-bold text-lg text-stone-900">Firma a kontakt</h3>
+                      <h3 className="font-bold text-lg text-stone-900">Company & contact</h3>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-semibold text-stone-600 mb-1.5">
-                          Název firmy <span className="text-red-500">*</span>
+                          Company name <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="text"
@@ -823,13 +823,13 @@ export default function CateringPage() {
                             handleFormInteraction();
                             setCompanyName(e.target.value);
                           }}
-                          placeholder="Vaše firma s.r.o."
+                          placeholder="Your Company Ltd."
                           className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all"
                         />
                       </div>
                       <div>
                         <label className="block text-xs font-semibold text-stone-600 mb-1.5">
-                          IČO (volitelné)
+                          Company ID (optional)
                         </label>
                         <input
                           type="text"
@@ -847,7 +847,7 @@ export default function CateringPage() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-semibold text-stone-600 mb-1.5">
-                          Kontaktní osoba <span className="text-red-500">*</span>
+                          Contact person <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="text"
@@ -857,13 +857,13 @@ export default function CateringPage() {
                             handleFormInteraction();
                             setContactPerson(e.target.value);
                           }}
-                          placeholder="Jan Novák"
+                          placeholder="John Smith"
                           className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all"
                         />
                       </div>
                       <div>
                         <label className="block text-xs font-semibold text-stone-600 mb-1.5">
-                          Pracovní e-mail <span className="text-red-500">*</span>
+                          Work email <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="email"
@@ -873,7 +873,7 @@ export default function CateringPage() {
                             handleFormInteraction();
                             setEmail(e.target.value);
                           }}
-                          placeholder="jan.novak@firma.cz"
+                          placeholder="john.smith@company.com"
                           className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all"
                         />
                       </div>
@@ -881,7 +881,7 @@ export default function CateringPage() {
 
                     <div>
                       <label className="block text-xs font-semibold text-stone-600 mb-1.5">
-                        Telefon <span className="text-red-500">*</span>
+                        Phone <span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
                         <input
@@ -899,18 +899,18 @@ export default function CateringPage() {
                     </div>
                   </div>
 
-                  {/* Step 3: Diety a doplňky */}
+                  {/* Step 3: Dietary needs & extras */}
                   <div className="space-y-4 pt-4 border-t border-stone-200">
                     <div className="flex items-center gap-3">
                       <div className="w-7 h-7 rounded-full bg-stone-900 text-white font-bold text-xs flex items-center justify-center">
                         3
                       </div>
-                      <h3 className="font-bold text-lg text-stone-900">Diety a doplňky</h3>
+                      <h3 className="font-bold text-lg text-stone-900">Dietary needs & extras</h3>
                     </div>
 
                     <div>
                       <label className="block text-xs font-semibold text-stone-600 mb-1.5">
-                        Diety / alergie v týmu (volitelné)
+                        Dietary needs / allergies (optional)
                       </label>
                       <input
                         type="text"
@@ -919,14 +919,14 @@ export default function CateringPage() {
                           handleFormInteraction();
                           setDietNotes(e.target.value);
                         }}
-                        placeholder="Např. 3× bez lepku, 2× bez ořechů, 1× celiakie..."
+                        placeholder="e.g. 3× gluten-free, 2× nut-free, 1× coeliac..."
                         className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:bg-white transition-all"
                       />
                     </div>
 
                     <div className="space-y-2.5 pt-1">
                       <div className="text-xs font-semibold text-stone-600">
-                        Volitelné prémiové doplňky:
+                        Optional premium extras:
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <label className="flex items-center gap-2.5 p-3 rounded-xl border border-stone-200 bg-stone-50/50 hover:bg-stone-50 cursor-pointer text-xs font-medium text-stone-800 transition-colors">
@@ -939,7 +939,7 @@ export default function CateringPage() {
                             }}
                             className="rounded text-amber-500 focus:ring-amber-400 w-4 h-4"
                           />
-                          <span>Degustace před akcí</span>
+                          <span>Pre-event tasting</span>
                         </label>
 
                         <label className="flex items-center gap-2.5 p-3 rounded-xl border border-stone-200 bg-stone-50/50 hover:bg-stone-50 cursor-pointer text-xs font-medium text-stone-800 transition-colors">
@@ -952,7 +952,7 @@ export default function CateringPage() {
                             }}
                             className="rounded text-amber-500 focus:ring-amber-400 w-4 h-4"
                           />
-                          <span>Víno / alkohol</span>
+                          <span>Wine / alcohol</span>
                         </label>
 
                         <label className="flex items-center gap-2.5 p-3 rounded-xl border border-stone-200 bg-stone-50/50 hover:bg-stone-50 cursor-pointer text-xs font-medium text-stone-800 transition-colors">
@@ -985,10 +985,10 @@ export default function CateringPage() {
                       className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-300 hover:to-amber-500 text-stone-950 font-bold text-base shadow-xl shadow-amber-900/10 hover:shadow-amber-500/25 transition-all transform active:scale-98 flex items-center justify-center gap-2.5 disabled:opacity-70 disabled:cursor-not-allowed"
                     >
                       <Send className="w-5 h-5 text-stone-900" />
-                      <span>{isSubmitting ? "Odesílám poptávku..." : "ODESLAT POPTÁVKU →"}</span>
+                      <span>{isSubmitting ? "Sending enquiry..." : "SEND ENQUIRY →"}</span>
                     </button>
                     <p className="text-center text-xs text-stone-500 leading-normal">
-                      Nejde o rezervaci termínu. Do 24 hodin ověříme volnou kapacitu a pošleme vám položkový rozpočet.
+                      This is not a confirmed booking. Within 24 hours we will verify availability and send you an itemised quote.
                     </p>
                   </div>
                 </form>
@@ -1012,7 +1012,7 @@ export default function CateringPage() {
                       <div className="w-28 h-24 rounded-2xl overflow-hidden border border-amber-400/40 shrink-0 shadow-lg">
                         <img
                           src="/images/catering/matous-glazovany-steak-repne-pyre.jpg"
-                          alt="Glazovaný signature chod Matouše"
+                          alt="Matouš glazed signature course"
                           className="w-full h-full object-cover object-center"
                         />
                       </div>
@@ -1024,20 +1024,20 @@ export default function CateringPage() {
                     <div className="flex items-center gap-2.5">
                       <Users className="w-4 h-4 text-emerald-700 shrink-0" />
                       <span className="font-medium">
-                        <strong>{guestCount}</strong> hostů
+                        <strong>{guestCount}</strong> guests
                       </span>
                     </div>
                     <div className="flex items-center gap-2.5">
                       <Calendar className="w-4 h-4 text-emerald-700 shrink-0" />
-                      <span>{eventDate ? new Date(eventDate).toLocaleDateString("cs-CZ") : "Termín dle dohody"}</span>
+                      <span>{eventDate ? new Date(eventDate).toLocaleDateString("en-GB") : "Date to be agreed"}</span>
                     </div>
                     <div className="flex items-center gap-2.5">
                       <MapPin className="w-4 h-4 text-emerald-700 shrink-0" />
-                      <span>{location || "Praha a okolí"}</span>
+                      <span>{location || "Prague and surroundings"}</span>
                     </div>
                     <div className="flex items-center gap-2.5">
                       <Clock className="w-4 h-4 text-emerald-700 shrink-0" />
-                      <span>{eventTime || "Čas dle dohody"}</span>
+                      <span>{eventTime || "Time to be agreed"}</span>
                     </div>
                     <div className="flex items-center gap-2.5">
                       <Building2 className="w-4 h-4 text-emerald-700 shrink-0" />
@@ -1050,26 +1050,26 @@ export default function CateringPage() {
                     {isIndividualCalculation ? (
                       <div>
                         <div className="font-serif text-2xl font-bold text-stone-900">
-                          Individuální rozpočet
+                          Custom budget
                         </div>
                         <div className="text-xs text-stone-500 mt-1">
-                          Nad 80 hostů připravujeme velkokapacitní kalkulaci na klíč.
+                          For more than 80 guests we prepare a tailored large-event quote.
                         </div>
                       </div>
                     ) : (
                       <div>
                         <div className="flex items-baseline justify-between">
                           <div className="font-serif text-2xl sm:text-3xl font-bold text-stone-900">
-                            1 190 Kč{" "}
+                            CZK 1,190{" "}
                             <span className="text-xs font-sans font-normal text-stone-500">
-                              / osoba
+                              / person
                             </span>
                           </div>
                         </div>
                         <div className="text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100 inline-block mt-1.5">
-                          Orientačně:{" "}
+                          Estimated:{" "}
                           <span className="font-bold text-emerald-900">
-                            {estimatedTotal?.toLocaleString("cs-CZ")} Kč bez DPH
+                            {estimatedTotal?.toLocaleString("en-GB")} CZK excl. VAT
                           </span>
                         </div>
                       </div>
@@ -1079,28 +1079,28 @@ export default function CateringPage() {
                   {/* Inclusions Checklist */}
                   <div className="p-5 space-y-3 bg-white text-xs">
                     <div className="font-bold text-stone-900 tracking-wide uppercase text-[11px] text-stone-500">
-                      V ceně Signature:
+                      Included in Signature:
                     </div>
                     <ul className="space-y-2 text-stone-700">
                       <li className="flex items-center gap-2">
                         <Check className="w-4 h-4 text-emerald-600 shrink-0 stroke-[2.5]" />
-                        <span>Autorské menu ze sezónních surovin</span>
+                        <span>Signature menu from seasonal ingredients</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <Check className="w-4 h-4 text-emerald-600 shrink-0 stroke-[2.5]" />
-                        <span>Nealko nápoje (domácí limonády & infuze)</span>
+                        <span>Alcohol-free drinks (house lemonades & infusions)</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <Check className="w-4 h-4 text-emerald-600 shrink-0 stroke-[2.5]" />
-                        <span>Kompletní servisní tým po celou dobu akce</span>
+                        <span>Full service team throughout the event</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <Check className="w-4 h-4 text-emerald-600 shrink-0 stroke-[2.5]" />
-                        <span>Šéfkuchař na teplé vlny & finální servis</span>
+                        <span>Chef for hot service waves & final plating</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <Check className="w-4 h-4 text-emerald-600 shrink-0 stroke-[2.5]" />
-                        <span>Prémiový inventář (sklo, porcelán, příbory)</span>
+                        <span>Premium equipment (glassware, porcelain, cutlery)</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <Check className="w-4 h-4 text-emerald-600 shrink-0 stroke-[2.5]" />
@@ -1108,7 +1108,7 @@ export default function CateringPage() {
                       </li>
                       <li className="flex items-center gap-2">
                         <Check className="w-4 h-4 text-emerald-600 shrink-0 stroke-[2.5]" />
-                        <span>Průběžný debaras a finální úklid</span>
+                        <span>Continuous clearing and final clean-up</span>
                       </li>
                     </ul>
                   </div>
@@ -1116,19 +1116,19 @@ export default function CateringPage() {
                   {/* Synchronized Add-ons */}
                   <div className="p-5 bg-stone-50/60 space-y-2.5 text-xs text-stone-700">
                     <div className="font-bold text-stone-900 tracking-wide uppercase text-[11px] text-stone-500">
-                      Volitelné doplňky:
+                      Optional extras:
                     </div>
                     <div className="space-y-1.5">
                       <div className="flex items-center gap-2">
                         <span className={`w-2 h-2 rounded-full ${addonWine ? "bg-amber-500" : "bg-stone-300"}`} />
                         <span className={addonWine ? "font-semibold text-stone-900" : "text-stone-500"}>
-                          Víno / alkohol
+                          Wine / alcohol
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <span className={`w-2 h-2 rounded-full ${addonTasting ? "bg-amber-500" : "bg-stone-300"}`} />
                         <span className={addonTasting ? "font-semibold text-stone-900" : "text-stone-500"}>
-                          Degustace před akcí
+                          Pre-event tasting
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
@@ -1157,10 +1157,10 @@ export default function CateringPage() {
               <span>Portfolio & Realizace</span>
             </div>
             <h2 className="text-3xl font-extrabold text-[#1C2826] font-serif">
-              Autorská tvorba šéfkuchaře Matouše
+              Chef Matouš's signature creations
             </h2>
             <p className="text-sm text-[#5A685D] mt-2">
-              Podívejte se na reálné pokrmy, rauty a servírování z našich bezmasých cateringů a degustací.
+              Explore real dishes, buffets and plating from our meat-free catering events and tastings.
             </p>
 
             {/* Filter Buttons */}
@@ -1202,7 +1202,7 @@ export default function CateringPage() {
                   <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                     <span className="bg-white/95 text-gray-900 text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-md">
                       <Eye className="w-3.5 h-3.5" />
-                      <span>Zvětšit detail</span>
+                      <span>View detail</span>
                     </span>
                   </div>
                 </div>
@@ -1236,7 +1236,7 @@ export default function CateringPage() {
                 <button
                   onClick={() => setLightboxItem(null)}
                   className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black transition-colors"
-                  aria-label="Zavřít"
+                  aria-label="Close"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -1252,7 +1252,7 @@ export default function CateringPage() {
                     <span className="bg-emerald-100 text-[#4A7C59] text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
                       {lightboxItem.categoryLabel}
                     </span>
-                    <span className="text-xs text-gray-400">Autorská tvorba šéfkuchaře Matouše</span>
+                    <span className="text-xs text-gray-400">Chef Matouš's signature creations</span>
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-2 font-serif">
                     {lightboxItem.title}
@@ -1261,13 +1261,13 @@ export default function CateringPage() {
                     {lightboxItem.description}
                   </p>
                   <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
-                    <span className="text-xs text-gray-500">Máte zájem o tento chod na vaší akci?</span>
+                    <span className="text-xs text-gray-500">Would you like this dish at your event?</span>
                     <a
                       href="#kalkulacka"
                       onClick={() => setLightboxItem(null)}
                       className="px-4 py-2 bg-[#4A7C59] hover:bg-[#3D6649] text-white text-xs font-bold rounded-xl transition-all inline-flex items-center gap-1.5"
                     >
-                      <span>Přejít ke kalkulaci</span>
+                      <span>Go to calculator</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </a>
                   </div>
@@ -1284,10 +1284,10 @@ export default function CateringPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-stone-900">
-              Jak to funguje
+              How it works
             </h2>
             <p className="text-stone-600 mt-2 text-base">
-              Od poptávky k úspěšné akci ve 3 krocích. Žádný stres, žádné starosti s inventářem.
+              From enquiry to a successful event in 3 steps. No stress, no equipment worries.
             </p>
           </div>
 
@@ -1297,9 +1297,9 @@ export default function CateringPage() {
               <div className="w-12 h-12 rounded-2xl bg-amber-400 text-stone-950 font-bold text-lg flex items-center justify-center shadow-md">
                 1
               </div>
-              <h3 className="font-bold text-xl text-stone-900">Pošlete poptávku</h3>
+              <h3 className="font-bold text-xl text-stone-900">Send an enquiry</h3>
               <p className="text-stone-600 text-sm leading-relaxed">
-                Vyplníte krátký online formulář v kalkulačce výše. Zabere vám to přesně 1 minutu.
+                Complete the short online form in the calculator above. It takes about one minute.
               </p>
             </div>
 
@@ -1308,9 +1308,9 @@ export default function CateringPage() {
               <div className="w-12 h-12 rounded-2xl bg-amber-400 text-stone-950 font-bold text-lg flex items-center justify-center shadow-md">
                 2
               </div>
-              <h3 className="font-bold text-xl text-stone-900">Připravíme nabídku</h3>
+              <h3 className="font-bold text-xl text-stone-900">We prepare the proposal</h3>
               <p className="text-stone-600 text-sm leading-relaxed">
-                Do 24 hodin ověříme volnou kapacitu a pošleme vám detailní položkový rozpočet a složení menu.
+                Within 24 hours we verify availability and send you a detailed itemised quote and menu composition.
               </p>
             </div>
 
@@ -1319,9 +1319,9 @@ export default function CateringPage() {
               <div className="w-12 h-12 rounded-2xl bg-amber-400 text-stone-950 font-bold text-lg flex items-center justify-center shadow-md">
                 3
               </div>
-              <h3 className="font-bold text-xl text-stone-900">Už jen si užít akci</h3>
+              <h3 className="font-bold text-xl text-stone-900">Enjoy your event</h3>
               <p className="text-stone-600 text-sm leading-relaxed">
-                Přivezeme inventář, jídlo i kuchaře. Postaráme se o servis, debaras i závěrečný úklid.
+                We bring the equipment, food and chef. We take care of service, clearing and final clean-up.
               </p>
             </div>
           </div>
@@ -1333,13 +1333,13 @@ export default function CateringPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mb-12">
             <span className="text-xs font-bold tracking-widest uppercase text-emerald-800 block mb-2">
-              Zážitková gastronomie
+              Experience-led gastronomy
             </span>
             <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-stone-900">
-              Co přesně obsahuje Matouš Signature
+              What Matouš Signature includes
             </h2>
             <p className="text-stone-600 mt-2 text-base">
-              Vyvážená kombinace finger foodu, teplých signature vln, dezertů a nealko baru za 1 190 Kč / osoba bez DPH.
+              A balanced combination of finger food, hot signature waves, desserts and an alcohol-free bar for CZK 1,190 per person excl. VAT.
             </p>
           </div>
 
@@ -1352,10 +1352,10 @@ export default function CateringPage() {
               </div>
               <h3 className="font-bold text-lg text-stone-900">Finger food & tapas</h3>
               <p className="text-xs text-stone-600 leading-relaxed">
-                6 druhů autorských kanapek, bruschett a tartaletek. Pečená kořenová zelenina, mandlové ricotty, hummusy a uzené marinády.
+                Six types of signature canapés, bruschetta and tartlets. Roasted root vegetables, almond ricotta, hummus and smoked marinades.
               </p>
               <div className="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md inline-block">
-                Průběžný studený raut
+                Continuous cold buffet
               </div>
             </div>
 
@@ -1364,12 +1364,12 @@ export default function CateringPage() {
               <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-900 flex items-center justify-center">
                 <ChefHat className="w-6 h-6 text-amber-700" />
               </div>
-              <h3 className="font-bold text-lg text-stone-900">Teplé signature chody</h3>
+              <h3 className="font-bold text-lg text-stone-900">Hot signature courses</h3>
               <p className="text-xs text-stone-600 leading-relaxed">
-                3 teplé chody servírované kuchařem v časových vlnách. Glazovaný zeleninový steak, jemná dýňová pyré, křupavý tempeh a ragú.
+                Three hot courses served by the chef in timed waves. Glazed vegetable steak, smooth pumpkin purées, crispy tempeh and ragout.
               </p>
               <div className="text-[11px] font-semibold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-md inline-block">
-                Šéfkuchař na place
+                Chef on site
               </div>
             </div>
 
@@ -1378,12 +1378,12 @@ export default function CateringPage() {
               <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-900 flex items-center justify-center">
                 <Sparkles className="w-6 h-6 text-purple-700" />
               </div>
-              <h3 className="font-bold text-lg text-stone-900">Autorské dezerty</h3>
+              <h3 className="font-bold text-lg text-stone-900">Signature desserts</h3>
               <p className="text-xs text-stone-600 leading-relaxed">
-                2 druhy jemných dezertů ve skleničkách s jedlými květy a lesním ovocem. Kakaové brownies, meruňkový mousse a oříškové praliné.
+                Two delicate desserts in jars with edible flowers and forest berries. Cocoa brownies, apricot mousse and nut praline.
               </p>
               <div className="text-[11px] font-semibold text-purple-800 bg-purple-50 px-2.5 py-1 rounded-md inline-block">
-                Sladká tečka
+                Sweet finish
               </div>
             </div>
 
@@ -1394,10 +1394,10 @@ export default function CateringPage() {
               </div>
               <h3 className="font-bold text-lg text-stone-900">Signature nealko bar</h3>
               <p className="text-xs text-stone-600 leading-relaxed">
-                Čerstvé bylinkové limonády, infuzované pramenité vody, řemeslné mošty, výběrová filtrovaná káva a sypané čaje v neomezeném množství.
+                Fresh herb lemonades, infused spring water, craft juices, specialty filter coffee and loose-leaf teas in unlimited quantities.
               </p>
               <div className="text-[11px] font-semibold text-blue-800 bg-blue-50 px-2.5 py-1 rounded-md inline-block">
-                Nealko v ceně
+                Alcohol-free drinks included
               </div>
             </div>
 
@@ -1415,7 +1415,7 @@ export default function CateringPage() {
               <div className="rounded-3xl overflow-hidden shadow-2xl border border-emerald-800/40 relative">
                 <img
                   src="/images/catering/matous-chef-profil.jpg"
-                  alt="Šéfkuchař Matouš v kuchařském rondonu"
+                  alt="Chef Matouš in chef whites"
                   className="w-full h-auto object-cover object-top"
                 />
                 <div className="absolute bottom-4 left-4 right-4 bg-stone-950/80 backdrop-blur-md p-4 rounded-2xl border border-white/10">
@@ -1423,7 +1423,7 @@ export default function CateringPage() {
                     Matouš
                   </div>
                   <div className="text-xs text-stone-300">
-                    Šéfkuchař & autor Signature cateringu
+                    Chef & creator of Signature catering
                   </div>
                 </div>
               </div>
@@ -1433,22 +1433,22 @@ export default function CateringPage() {
             <div className="lg:col-span-7 space-y-6">
               <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] text-amber-400 uppercase">
                 <Award className="w-4 h-4 text-amber-400" />
-                <span>Kuchařské řemeslo bez kompromisů</span>
+                <span>Craftsmanship without compromise</span>
               </div>
 
               <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-white leading-tight">
-                „Jídlo bez masa nemusí být náhražka. Je to plnohodnotný kulinářský zážitek.“
+                “Meat-free food does not have to be a substitute. It can be a complete culinary experience.”
               </h2>
 
               <div className="space-y-4 text-stone-300 text-sm sm:text-base leading-relaxed font-light">
                 <p>
-                  Moje gastronomická cesta vedla přes kuchyně v <strong>Norsku, na Islandu i na Novém Zélandu</strong>. V severských a tichomořských restauracích jsem se naučil hlubokému respektu k čistotě surovin, technice kouře, marinování a vyvažování kyselin a textur.
+                  My culinary journey has taken me through kitchens in <strong>Norway, Iceland and New Zealand</strong>. In Nordic and Pacific restaurants I learned a deep respect for ingredient purity, smoke techniques, marination and balancing acidity and texture.
                 </p>
                 <p>
-                  V projektu <strong>Matouš Signature</strong> přenáším tuto zkušenost do firemního cateringu. Nechceme napodobovat maso polotovary. Pracujeme s poctivou kořenovou zeleninou, fermentací, ořechy, bylinkami a luštěninami tak, aby každý chod vyvolal u stolu živou debatu a nadšení.
+                  In <strong>Matouš Signature</strong> I bring that experience into corporate catering. We do not try to imitate meat with processed substitutes. We work with honest root vegetables, fermentation, nuts, herbs and legumes so that every course sparks conversation and excitement at the table.
                 </p>
                 <p className="text-amber-300 font-normal">
-                  Na každé akci ručně dohlížím na teplé vlny a finální prezentaci. Vaši kolegové a klienti budou mít zážitek, o kterém se bude mluvit ještě další týden v kanceláři.
+                  At every event I personally oversee the hot service waves and final presentation. Your colleagues and clients will have an experience people will still be talking about the following week.
                 </p>
               </div>
 
@@ -1457,7 +1457,7 @@ export default function CateringPage() {
                   onClick={scrollToCalculator}
                   className="px-7 py-3.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-stone-950 font-bold text-sm shadow-lg transition-colors"
                 >
-                  Poptat termín s Matoušem →
+                  Check a date with Matouš →
                 </button>
               </div>
             </div>
@@ -1471,34 +1471,34 @@ export default function CateringPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-xl mx-auto mb-12">
             <span className="text-xs font-bold tracking-widest uppercase text-emerald-800 block mb-2">
-              Odpovědi na otázky organizátorů
+              Answers for event organisers
             </span>
             <h2 className="font-serif text-3xl font-bold tracking-tight text-stone-900">
-              Často kladené dotazy
+              Frequently asked questions
             </h2>
           </div>
 
           <div className="space-y-4">
             {[
               {
-                q: "Kdy nejpozději musíme termín závazně poptat?",
-                a: "Ideální je poptat termín 2 až 4 týdny předem. U urgentních termínů do týdne pošlete poptávku přes formulář a ověříme, zda je možné akci produkčně zajistit.",
+                q: "How far in advance should we enquire?",
+                a: "Ideally, enquire 2 to 4 weeks in advance. For urgent dates within a week, send the form and we will check whether production can be arranged.",
               },
               {
-                q: "Jak řešíte specifické alergie a diety (lepek, ořechy, laktóza)?",
-                a: "Všechna jídla připravujeme čerstvá a autorsky. Stačí nám v poptávce uvést počet osob s bezlepkovou dietou, alergií na ořechy či jiné intolerance. Pro tyto hosty připravujeme plnohodnotné, vizuálně i chuťově srovnatelné alternativy.",
+                q: "How do you handle specific allergies and diets (gluten, nuts, lactose)?",
+                a: "All dishes are prepared fresh and in-house. Just tell us how many guests require gluten-free food, have nut allergies or other intolerances. We prepare complete alternatives that are comparable in both presentation and flavour.",
               },
               {
-                q: "Co všechno je skutečně v ceně 1 190 Kč / osoba bez DPH?",
-                a: "Cena je all-inclusive pro model Signature: kompletní jídlo (finger food, 3 teplé vlny, 2 dezerty), nealko bar po celou dobu akce, obsluhující personál, kuchař, zapůjčení kompletního inventáře (talíře, sklo na nealko, příbory), doprava v Praze a průběžný debaras s finálním úklidem.",
+                q: "What is actually included in CZK 1,190 per person excl. VAT?",
+                a: "The Signature price is all-inclusive: complete food service (finger food, 3 hot waves, 2 desserts), an alcohol-free bar throughout the event, service staff, chef, full equipment hire (plates, glassware and cutlery), delivery within Prague, continuous clearing and final clean-up.",
               },
               {
-                q: "Jak probíhá fakturace a splatnost pro firemní klienty?",
-                a: "Vystavujeme standardní daňový doklad na IČO vaší společnosti. Konkrétní výše zálohy, splatnost a platební podmínky budou vždy uvedené v nabídce pro danou akci.",
+                q: "How do invoicing and payment terms work for corporate clients?",
+                a: "We issue a standard tax invoice to your company. The deposit amount, due date and payment terms are always specified in the proposal for your event.",
               },
               {
-                q: "Co když máme akci pro více než 80 hostů?",
-                a: "Pro akce nad 80 hostů zapojujeme rozšířený kuchařský a servisní tým a připravujeme velkokapacitní logistický plán na míru. V kalkulačce stačí zadat reálný počet hostů a my vám připravíme individuální cenovou nabídku.",
+                q: "What if our event has more than 80 guests?",
+                a: "For events above 80 guests we add an expanded kitchen and service team and create a custom large-scale logistics plan. Enter the real guest count in the calculator and we will prepare a tailored quote.",
               },
             ].map((faq, i) => {
               const isOpen = openFaqIndex === i;
@@ -1535,27 +1535,27 @@ export default function CateringPage() {
       <section className="py-16 bg-[#0F261E] text-white text-center">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           <span className="text-xs font-bold tracking-[0.2em] uppercase text-amber-400 block">
-            Nezávazná kalkulace za 60 sekund
+            Indicative quote in 60 seconds
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white">
-            Připravte pro svůj tým zážitek, který si budou pamatovat.
+            Create an experience your team will remember.
           </h2>
           <p className="text-stone-300 text-sm sm:text-base max-w-xl mx-auto">
-            Matouš Signature je firemní catering nové generace. Bez masa, bez kompromisů, s kompletním servisem v ceně.
+            Matouš Signature is next-generation corporate catering. Meat-free, uncompromising, with full service included.
           </p>
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={scrollToCalculator}
               className="w-full sm:w-auto px-8 py-4 rounded-xl bg-amber-400 hover:bg-amber-300 text-stone-950 font-bold text-base shadow-xl transition-all transform active:scale-95"
             >
-              Spočítat akci online →
+              Calculate your event online →
             </button>
             <button
               onClick={scrollToCalculator}
               className="w-full sm:w-auto px-7 py-4 rounded-xl border border-emerald-700 text-stone-200 hover:text-white hover:bg-emerald-900/40 text-base font-semibold transition-colors flex items-center justify-center gap-2"
             >
               <Mail className="w-4 h-4 text-amber-400" />
-              <span>Poptat termín</span>
+              <span>Check availability</span>
             </button>
           </div>
         </div>
