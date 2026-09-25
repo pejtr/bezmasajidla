@@ -78,6 +78,7 @@ const EXTRA_VALID_PATHS = new Set([
   "/mapa",
   "/blog",
   "/catering",
+  "/en/catering",
   "/o-nas",
   "/inzerce",
   "/inzerce/pridat-podnik",
