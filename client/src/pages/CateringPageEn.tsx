@@ -671,15 +671,21 @@ export default function CateringPageEn() {
               <a href="#sef-kuchar" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#E9B949]">Chef Matouš</a>
               <a href="#galerie" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#E9B949]">Portfolio</a>
               <a href="#faq" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#E9B949]">FAQ</a>
-              <a href="/catering"
-              onClick={() =>
-                trackCateringEvent("catering_language_switch", {
-                  language: "en",
-                  source_section: "header",
-                  target_language: "cz",
-                  ...utmParams,
-                })
-              } onClick={() => setMobileMenuOpen(false)} className="text-[#E9B949] font-bold">Čeština (CZ)</a>
+              <a
+                href="/catering"
+                onClick={() => {
+                  trackCateringEvent("catering_language_switch", {
+                    language: "en",
+                    source_section: "header_drawer",
+                    target_language: "cz",
+                    ...utmParams,
+                  });
+                  setMobileMenuOpen(false);
+                }}
+                className="text-[#E9B949] font-bold"
+              >
+                Čeština (CZ)
+              </a>
             </div>
           </div>
         )}
