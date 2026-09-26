@@ -33,6 +33,8 @@ interface SEOProps {
   ogType?: "website" | "article" | "restaurant" | "recipe";
   ogUrl?: string;
   canonicalUrl?: string;
+  locale?: string;
+  hreflangAlternates?: Array<{ hreflang: string; href: string }>;
   noIndex?: boolean;
   /** Pass for recipe pages to inject recipe-specific meta */
   recipeMeta?: RecipeMeta;
@@ -65,15 +67,20 @@ function setCanonical(url: string) {
   el.setAttribute("href", url);
 }
 
-/** Inject hreflang alternate links for Czech + x-default */
-function setHreflang(url: string) {
-  // Remove old hreflang links
+/** Inject hreflang alternate links. */
+function setHreflang(
+  url: string,
+  alternates?: Array<{ hreflang: string; href: string }>
+) {
   document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(el => el.remove());
 
-  const hreflangs = [
-    { hreflang: "cs", href: url },
-    { hreflang: "x-default", href: url },
-  ];
+  const hreflangs =
+    alternates && alternates.length > 0
+      ? alternates
+      : [
+          { hreflang: "cs", href: url },
+          { hreflang: "x-default", href: url },
+        ];
 
   hreflangs.forEach(({ hreflang, href }) => {
     const el = document.createElement("link");
@@ -97,6 +104,8 @@ export default function SEOHead({
   ogType = "website",
   ogUrl,
   canonicalUrl,
+  locale = "cs_CZ",
+  hreflangAlternates,
   noIndex = false,
   recipeMeta,
 }: SEOProps) {
@@ -125,7 +134,7 @@ export default function SEOHead({
     setMeta("og:image:alt", ogTitle || title, true);
     setMeta("og:type", ogTypeValue, true);
     setMeta("og:site_name", SITE_NAME, true);
-    setMeta("og:locale", "cs_CZ", true);
+    setMeta("og:locale", locale, true);
     if (ogUrl) {
       setMeta("og:url", ogUrl, true);
     }
@@ -195,14 +204,14 @@ export default function SEOHead({
     // Hreflang — always set cs + x-default pointing to canonical URL
     const hreflangUrl = canonicalUrl || ogUrl;
     if (hreflangUrl) {
-      setHreflang(hreflangUrl);
+      setHreflang(hreflangUrl, hreflangAlternates);
     }
 
     // Cleanup: restore defaults on unmount
     return () => {
       document.title = `${SITE_NAME} — Vegetariánské recepty a restaurace`;
     };
-  }, [title, description, ogTitle, ogDescription, ogImage, ogType, ogUrl, canonicalUrl, noIndex, recipeMeta]);
+  }, [title, description, ogTitle, ogDescription, ogImage, ogType, ogUrl, canonicalUrl, locale, hreflangAlternates, noIndex, recipeMeta]);
 
   return null;
 }
