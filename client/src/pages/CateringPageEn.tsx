@@ -399,12 +399,19 @@ export default function CateringPageEn() {
   const handleFormInteraction = () => {
     if (!hasStartedInquiry) {
       setHasStartedInquiry(true);
-      trackCateringEvent("inquiry_started", {
-        packageId: "signature-en",
+      const startPayload = {
+        language: "en" as const,
+        event_type: eventType,
+        guest_count: guestCount,
+        source_section: "calculator_form",
+        packageId: "signature",
         packageName: "MATOUŠ SIGNATURE (EN)",
         guestCount,
         estimatedRevenue: estimatedTotal || 0,
-      });
+        ...utmParams,
+      };
+      trackCateringEvent("catering_form_start", startPayload);
+      trackCateringEvent("inquiry_started", startPayload);
     }
   };
 
@@ -461,7 +468,7 @@ export default function CateringPageEn() {
       dietNotes,
       addons: addonsList,
       notes: `[EN inquiry] Company: ${companyName || "N/A"}, Reg No: ${ico || "N/A"}, Event: ${eventType}, Venue: ${venueType}, Time: ${eventTime}, Location: ${location}. Diets: ${dietNotes || "none"}. Addons: ${addonsList.join(", ") || "none"}.`,
-      packageId: "signature-en",
+      packageId: "signature",
       packageName: "MATOUŠ SIGNATURE (EN)",
       includeDrinks: true,
       includeGlassware: true,
@@ -499,7 +506,7 @@ export default function CateringPageEn() {
         leadCode: confirmedLeadCode,
         transaction_id: confirmedLeadCode,
         packageId: "signature",
-        packageName: "MATOUŠ SIGNATURE",
+        packageName: "MATOUŠ SIGNATURE (EN)",
         guestCount,
         value: 1,
         estimated_pipeline_value: calculatedRevenue,
@@ -509,7 +516,7 @@ export default function CateringPageEn() {
       trackCateringEvent("inquiry_submitted", {
         leadCode: confirmedLeadCode,
         transaction_id: confirmedLeadCode,
-        packageId: "signature-en",
+        packageId: "signature",
         packageName: "MATOUŠ SIGNATURE (EN)",
         guestCount,
         value: 1,
