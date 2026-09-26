@@ -5,7 +5,7 @@
 // Obsluha, inventář a kompletní servis v ceně
 // ============================================================
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { BreadcrumbJsonLd } from "@/components/JsonLd";
@@ -56,6 +56,12 @@ const VENUE_TYPES = [
   "Zatím hledáme vhodné prostory",
 ] as const;
 
+const CATERING_HREFLANG = [
+  { hreflang: "cs", href: "https://www.bezmasajidla.cz/catering" },
+  { hreflang: "en", href: "https://www.bezmasajidla.cz/en/catering" },
+  { hreflang: "x-default", href: "https://www.bezmasajidla.cz/catering" },
+];
+
 // ── Matouš portfolio gallery ─────────────────────────────────
 type GalleryCategory = "raut" | "teple" | "tapas" | "dezerty" | "polevky";
 type GalleryItem = {
@@ -77,14 +83,6 @@ const GALLERY_CATEGORIES = [
 ] as const;
 
 const MATOUS_GALLERY_ITEMS: GalleryItem[] = [
-  {
-    id: "raut-kanapky",
-    title: "Cateringový rautový podnos",
-    category: "raut",
-    categoryLabel: "Raut & fingerfood",
-    image: "/images/catering/matous-cateringovy-raut-kanapky.jpg",
-    description: "Pestrý raut s bruschettami, domácími pomazánkami, marinovanou zeleninou a sezónními toppingy.",
-  },
   {
     id: "rostlinny-tatarak",
     title: "Autorský rostlinný tatarák",
@@ -108,6 +106,14 @@ const MATOUS_GALLERY_ITEMS: GalleryItem[] = [
     categoryLabel: "Předkrmy & tapas",
     image: "/images/catering/matous-mezze-labneh-cizrna.jpg",
     description: "Krémový základ s marinovanou cizrnou, granátovým jablkem, bylinkami a panenským olivovým olejem.",
+  },
+  {
+    id: "raut-kanapky",
+    title: "Cateringový rautový podnos",
+    category: "raut",
+    categoryLabel: "Raut & fingerfood",
+    image: "/images/catering/matous-cateringovy-raut-kanapky.jpg",
+    description: "Pestrý raut s bruschettami, domácími pomazánkami, marinovanou zeleninou a sezónními toppingy.",
   },
   {
     id: "seitanove-medailonky",
@@ -243,30 +249,38 @@ export default function CateringPage() {
 
   // UTM / Attribution tracking
   const [utmParams, setUtmParams] = useState<Record<string, string>>({});
+  const trackedStep1Ref = useRef(false);
+  const trackedStep2Ref = useRef(false);
+  const trackedStep3Ref = useRef(false);
+  const lightboxRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    trackCateringEvent("catering_view", {
+    if (typeof window === "undefined") return;
+
+    const search = new URLSearchParams(window.location.search);
+    const attribution = {
+      utmSource: search.get("utm_source") || "",
+      utmMedium: search.get("utm_medium") || "",
+      utmCampaign: search.get("utm_campaign") || "",
+      gclid: search.get("gclid") || "",
+      gbraid: search.get("gbraid") || "",
+      wbraid: search.get("wbraid") || "",
+    };
+    setUtmParams(attribution);
+
+    const pagePayload = {
+      language: "cz" as const,
+      source_section: "page",
       packageId: "signature",
       packageName: "MATOUŠ SIGNATURE",
-    });
+      ...attribution,
+    };
+    trackCateringEvent("catering_page_view", pagePayload);
+    trackCateringEvent("catering_view", pagePayload);
 
-    if (typeof window !== "undefined") {
-      const search = new URLSearchParams(window.location.search);
-      setUtmParams({
-        utmSource: search.get("utm_source") || "",
-        utmMedium: search.get("utm_medium") || "",
-        utmCampaign: search.get("utm_campaign") || "",
-        gclid: search.get("gclid") || "",
-        gbraid: search.get("gbraid") || "",
-        wbraid: search.get("wbraid") || "",
-      });
-
-      const handleScroll = () => {
-        setShowBackToTop(window.scrollY > 400);
-      };
-      window.addEventListener("scroll", handleScroll, { passive: true });
-      return () => window.removeEventListener("scroll", handleScroll);
-    }
+    const handleScroll = () => setShowBackToTop(window.scrollY > 400);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const isIndividualCalculation = guestCount > MAX_SIGNATURE_GUESTS;
@@ -274,12 +288,108 @@ export default function CateringPage() {
     ? null
     : guestCount * SIGNATURE_PRICE_PER_PERSON;
 
-  const scrollToCalculator = () => {
+  useEffect(() => {
+    if (
+      !trackedStep1Ref.current &&
+      Boolean(eventDate) &&
+      Boolean(eventTime.trim()) &&
+      Boolean(location.trim()) &&
+      Boolean(venueType)
+    ) {
+      trackedStep1Ref.current = true;
+      trackCateringEvent("catering_form_step_1_complete", {
+        language: "cz",
+        event_type: eventType,
+        guest_count: guestCount,
+        source_section: "calculator_form",
+        ...utmParams,
+      });
+    }
+  }, [eventDate, eventTime, location, venueType, eventType, guestCount, utmParams]);
+
+  useEffect(() => {
+    const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const phoneDigits = phone.replace(/\D/g, "");
+    if (
+      !trackedStep2Ref.current &&
+      Boolean(companyName.trim()) &&
+      Boolean(contactPerson.trim()) &&
+      validEmail &&
+      phoneDigits.length >= 6
+    ) {
+      trackedStep2Ref.current = true;
+      trackCateringEvent("catering_form_step_2_complete", {
+        language: "cz",
+        event_type: eventType,
+        guest_count: guestCount,
+        source_section: "calculator_form",
+        ...utmParams,
+      });
+    }
+  }, [companyName, contactPerson, email, phone, eventType, guestCount, utmParams]);
+
+  useEffect(() => {
+    if (!lightboxItem || typeof document === "undefined") return;
+
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const getFocusable = () =>
+      Array.from(
+        lightboxRef.current?.querySelectorAll<HTMLElement>(
+          'button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        ) || []
+      );
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setLightboxItem(null);
+        return;
+      }
+      if (event.key !== "Tab") return;
+
+      const focusable = getFocusable();
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    requestAnimationFrame(() => getFocusable()[0]?.focus());
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus();
+    };
+  }, [lightboxItem]);
+
+  const scrollToCalculator = (
+    sourceSection = "page",
+    intent: "calculator" | "date" = "calculator"
+  ) => {
+    trackCateringEvent(
+      intent === "date" ? "catering_cta_date_click" : "catering_cta_calculator_click",
+      {
+        language: "cz",
+        event_type: eventType,
+        guest_count: guestCount,
+        source_section: sourceSection,
+        ...utmParams,
+      }
+    );
     setMobileMenuOpen(false);
     const el = document.getElementById("kalkulacka");
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-    }
+    if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
   const scrollToTop = () => {
@@ -289,12 +399,19 @@ export default function CateringPage() {
   const handleFormInteraction = () => {
     if (!hasStartedInquiry) {
       setHasStartedInquiry(true);
-      trackCateringEvent("inquiry_started", {
+      const startPayload = {
+        language: "cz" as const,
+        event_type: eventType,
+        guest_count: guestCount,
+        source_section: "calculator_form",
         packageId: "signature",
         packageName: "MATOUŠ SIGNATURE",
         guestCount,
         estimatedRevenue: estimatedTotal || 0,
-      });
+        ...utmParams,
+      };
+      trackCateringEvent("catering_form_start", startPayload);
+      trackCateringEvent("inquiry_started", startPayload);
     }
   };
 
@@ -305,6 +422,26 @@ export default function CateringPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
+    if (!trackedStep3Ref.current) {
+      trackedStep3Ref.current = true;
+      trackCateringEvent("catering_form_step_3_complete", {
+        language: "cz",
+        event_type: eventType,
+        guest_count: guestCount,
+        source_section: "calculator_form",
+        ...utmParams,
+      });
+    }
+    trackCateringEvent("catering_form_submit_attempt", {
+      language: "cz",
+      event_type: eventType,
+      guest_count: guestCount,
+      source_section: "calculator_form",
+      ...utmParams,
+    });
+
     setIsSubmitting(true);
     setServerError(null);
 
@@ -361,6 +498,21 @@ export default function CateringPage() {
       setMailStatus(data?.mailStatus || null);
       setSubmissionSuccess(true);
 
+      trackCateringEvent("catering_form_submit_success", {
+        language: "cz",
+        event_type: eventType,
+        guest_count: guestCount,
+        source_section: "calculator_form",
+        leadCode: confirmedLeadCode,
+        transaction_id: confirmedLeadCode,
+        packageId: "signature",
+        packageName: "MATOUŠ SIGNATURE",
+        guestCount,
+        value: 1,
+        estimated_pipeline_value: calculatedRevenue,
+        ...utmParams,
+      });
+
       trackCateringEvent("inquiry_submitted", {
         leadCode: confirmedLeadCode,
         transaction_id: confirmedLeadCode,
@@ -375,6 +527,14 @@ export default function CateringPage() {
       const el = document.getElementById("kalkulacka");
       if (el) el.scrollIntoView({ behavior: "smooth" });
     } catch (err) {
+      trackCateringEvent("catering_form_submit_error", {
+        language: "cz",
+        event_type: eventType,
+        guest_count: guestCount,
+        source_section: "calculator_form",
+        error_kind: err instanceof Error ? "request_error" : "unknown_error",
+        ...utmParams,
+      });
       console.error("Inquiry submit error", err);
       setSubmissionSuccess(false);
       setLeadCode("");
@@ -399,6 +559,9 @@ export default function CateringPage() {
         ogType="website"
         ogUrl="https://www.bezmasajidla.cz/catering"
         ogImage="https://www.bezmasajidla.cz/images/catering/matous-catering-og.jpg"
+        canonicalUrl="https://www.bezmasajidla.cz/catering"
+        locale="cs_CZ"
+        hreflangAlternates={CATERING_HREFLANG}
       />
       <BreadcrumbJsonLd
         items={[
@@ -444,12 +607,20 @@ export default function CateringPage() {
           <div className="hidden xl:flex items-center gap-4">
             <a
               href="/en/catering"
+              onClick={() =>
+                trackCateringEvent("catering_language_switch", {
+                  language: "cz",
+                  source_section: "header",
+                  target_language: "en",
+                  ...utmParams,
+                })
+              }
               className="text-[12px] font-semibold tracking-[0.16em] text-white/80 hover:text-[#E9B949] transition-colors"
             >
               EN
             </a>
             <button
-              onClick={scrollToCalculator}
+              onClick={() => scrollToCalculator("header", "date")}
               className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-gradient-to-b from-[#F2C75C] to-[#E9B949] hover:from-[#F7D47C] hover:to-[#F2C75C] text-[#071710] font-bold text-[13px] shadow-[0_4px_15px_rgba(233,185,73,0.25)] transition-all cursor-pointer"
             >
               <span>Poptat termín</span>
@@ -461,12 +632,20 @@ export default function CateringPage() {
           <div className="flex xl:hidden items-center gap-2 sm:gap-3 shrink-0 flex-nowrap">
             <a
               href="/en/catering"
+              onClick={() =>
+                trackCateringEvent("catering_language_switch", {
+                  language: "cz",
+                  source_section: "header",
+                  target_language: "en",
+                  ...utmParams,
+                })
+              }
               className="px-2 py-1 text-xs font-bold tracking-wider text-white/80 hover:text-[#E9B949] transition-colors"
             >
               EN
             </a>
             <button
-              onClick={scrollToCalculator}
+              onClick={() => scrollToCalculator("header", "date")}
               className="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-[#E9B949] hover:bg-[#F2C75C] text-[#071710] font-bold text-xs sm:text-sm transition-colors whitespace-nowrap cursor-pointer shadow-sm"
             >
               Poptat termín
@@ -492,7 +671,21 @@ export default function CateringPage() {
               <a href="#sef-kuchar" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#E9B949]">Matouš</a>
               <a href="#galerie" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#E9B949]">Reference</a>
               <a href="#faq" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#E9B949]">FAQ</a>
-              <a href="/en/catering" onClick={() => setMobileMenuOpen(false)} className="text-[#E9B949] font-bold">English (EN)</a>
+              <a
+                href="/en/catering"
+                onClick={() => {
+                  trackCateringEvent("catering_language_switch", {
+                    language: "cz",
+                    source_section: "header_drawer",
+                    target_language: "en",
+                    ...utmParams,
+                  });
+                  setMobileMenuOpen(false);
+                }}
+                className="text-[#E9B949] font-bold"
+              >
+                English (EN)
+              </a>
             </div>
           </div>
         )}
@@ -563,7 +756,7 @@ export default function CateringPage() {
             {/* Desktop CTAs */}
             <div className="mt-7 sm:mt-8 flex flex-col sm:flex-row gap-3.5 sm:gap-4">
               <button
-                onClick={scrollToCalculator}
+                onClick={() => scrollToCalculator("hero", "calculator")}
                 className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-gradient-to-b from-[#F2C75C] to-[#E9B949] hover:from-[#F7D47C] hover:to-[#F2C75C] text-[#071710] font-bold text-[15px] shadow-[0_8px_25px_rgba(233,185,73,0.3)] transition-all cursor-pointer transform hover:-translate-y-0.5"
               >
                 <Calculator className="w-5 h-5 text-[#071710]" />
@@ -571,7 +764,7 @@ export default function CateringPage() {
                 <ArrowRight className="w-4 h-4 text-[#071710]" />
               </button>
               <button
-                onClick={scrollToCalculator}
+                onClick={() => scrollToCalculator("hero", "date")}
                 className="inline-flex items-center justify-center px-8 py-4 rounded-xl border border-[#E9B949]/70 bg-[#0B241A]/70 hover:bg-[#103426] text-white font-semibold text-[14px] tracking-[0.05em] transition-colors cursor-pointer"
               >
                 POPTAT TERMÍN
@@ -640,7 +833,7 @@ export default function CateringPage() {
           {/* Full-width Mobile CTAs */}
           <div className="relative z-10 mt-6 flex flex-col gap-2.5">
             <button
-              onClick={scrollToCalculator}
+              onClick={() => scrollToCalculator("hero", "calculator")}
               className="w-full py-3.5 px-5 rounded-xl bg-gradient-to-b from-[#F2C75C] to-[#E9B949] text-[#071710] font-bold text-[14px] shadow-lg flex items-center justify-center gap-2 cursor-pointer"
             >
               <Calculator className="w-4 h-4 text-[#071710]" />
@@ -648,7 +841,7 @@ export default function CateringPage() {
               <ArrowRight className="w-4 h-4 text-[#071710]" />
             </button>
             <button
-              onClick={scrollToCalculator}
+              onClick={() => scrollToCalculator("hero", "date")}
               className="w-full py-3.5 px-5 rounded-xl border border-[#E9B949]/70 bg-[#0B241A]/80 text-white font-semibold text-[13px] tracking-wide text-center cursor-pointer"
             >
               POPTAT TERMÍN
@@ -1379,7 +1572,34 @@ export default function CateringPage() {
           {filteredGalleryItems.map((item) => (
             <div
               key={item.id}
-              onClick={() => setLightboxItem(item)}
+              onClick={() => {
+                trackCateringEvent("catering_gallery_open", {
+                  language: "cz",
+                  event_type: eventType,
+                  guest_count: guestCount,
+                  source_section: "gallery",
+                  gallery_item: item.id,
+                  ...utmParams,
+                });
+                setLightboxItem(item);
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  trackCateringEvent("catering_gallery_open", {
+                    language: "cz",
+                    event_type: eventType,
+                    guest_count: guestCount,
+                    source_section: "gallery",
+                    gallery_item: item.id,
+                    ...utmParams,
+                  });
+                  setLightboxItem(item);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label={`Otevřít detail: ${item.title}`}
               className="group bg-white rounded-3xl overflow-hidden border border-[#E8E2D5] shadow-xs hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col"
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-stone-100">
@@ -1419,6 +1639,10 @@ export default function CateringPage() {
         {/* Lightbox Modal */}
         {lightboxItem && (
           <div
+            ref={lightboxRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="catering-lightbox-title"
             onClick={() => setLightboxItem(null)}
             className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
           >
@@ -1447,7 +1671,7 @@ export default function CateringPage() {
                   </span>
                   <span className="text-xs text-stone-400">Autorská tvorba šéfkuchaře Matouše</span>
                 </div>
-                <h3 className="text-2xl font-bold text-stone-900 mb-2 font-editorial">
+                <h3 id="catering-lightbox-title" className="text-2xl font-bold text-stone-900 mb-2 font-editorial">
                   {lightboxItem.title}
                 </h3>
                 <p className="text-sm text-stone-600 leading-relaxed mb-4">
@@ -1458,7 +1682,7 @@ export default function CateringPage() {
                   <button
                     onClick={() => {
                       setLightboxItem(null);
-                      scrollToCalculator();
+                      scrollToCalculator("gallery_lightbox", "calculator");
                     }}
                     className="px-4 py-2 bg-[#0B241A] hover:bg-[#103426] text-white text-xs font-bold rounded-xl transition-all inline-flex items-center gap-1.5 cursor-pointer"
                   >
@@ -1647,7 +1871,7 @@ export default function CateringPage() {
 
               <div className="pt-2">
                 <button
-                  onClick={scrollToCalculator}
+                  onClick={() => scrollToCalculator("chef", "date")}
                   className="px-8 py-4 rounded-xl bg-gradient-to-b from-[#F2C75C] to-[#E9B949] hover:from-[#F7D47C] hover:to-[#F2C75C] text-[#071710] font-bold text-sm shadow-xl transition-all cursor-pointer transform hover:-translate-y-0.5"
                 >
                   Poptat termín s Matoušem →
@@ -1738,13 +1962,13 @@ export default function CateringPage() {
           </p>
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
-              onClick={scrollToCalculator}
+              onClick={() => scrollToCalculator("final_cta", "calculator")}
               className="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-b from-[#F2C75C] to-[#E9B949] hover:from-[#F7D47C] hover:to-[#F2C75C] text-[#071710] font-bold text-base shadow-xl transition-all cursor-pointer transform hover:-translate-y-0.5"
             >
               Spočítat akci online →
             </button>
             <button
-              onClick={scrollToCalculator}
+              onClick={() => scrollToCalculator("final_cta", "date")}
               className="w-full sm:w-auto px-7 py-4 rounded-xl border border-white/20 text-stone-200 hover:text-white hover:bg-white/5 text-base font-semibold transition-colors flex items-center justify-center gap-2 cursor-pointer"
             >
               <Mail className="w-4 h-4 text-[#E9B949]" />
