@@ -429,3 +429,12 @@
     display: none;
   }
 }
+
+/* Catering & Gastronomy Editorial System */
+.font-signature {
+  font-family: 'Caveat', 'Segoe Script', 'Brush Script MT', cursive;
+}
+.font-editorial {
+  font-family: 'Cormorant Garamond', 'DM Serif Display', Georgia, serif;
+}
+
